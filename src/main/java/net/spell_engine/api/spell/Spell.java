@@ -318,7 +318,6 @@ public class Spell {
             /// Example values:
             /// 14 - torch
             /// 10 - soul torch
-
             public int light_level = 0;
             public ParticleBatch[] travel_particles;
             public ProjectileModel model;

@@ -734,7 +734,7 @@ public class SpellHelper {
                                 var look = target.getRotationVector();
                                 var startingPosition = target.getPos();
                                 var destination = TargetHelper.findTeleportDestination(livingTarget, look, forward.distance, data.required_clearance_block_y);
-                                var groundJustBelow = TargetHelper.findSolidBlockBelow(livingTarget, destination, target.getWorld(), -1);
+                                var groundJustBelow = TargetHelper.findSolidBlockBelow(livingTarget, destination, target.getWorld(), -1.5F);
                                 if (groundJustBelow != null) {
                                     destination = groundJustBelow;
                                 }
