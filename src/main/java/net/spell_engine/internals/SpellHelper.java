@@ -2,6 +2,7 @@ package net.spell_engine.internals;
 
 import com.google.common.base.Suppliers;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
@@ -803,15 +805,22 @@ public class SpellHelper {
     }
 
 
-    public static void applyEntityPlacement(Entity entity, LivingEntity target, Vec3d position, Spell.EntityPlacement placement) {
+    public static void applyEntityPlacement(Entity entity, LivingEntity target, Vec3d initialPosition, Spell.EntityPlacement placement) {
+        var position = initialPosition;
         if (placement != null) {
-            if (placement.force_onto_ground) {
-                var groundPosBelow = TargetHelper.findSolidBlockBelow(target, target.getPos(), target.getWorld(), -20);
-                position = groundPosBelow != null ? groundPosBelow : position;
-            }
             if (placement.location_offset_by_look > 0) {
                 float yaw = target.getYaw() + placement.location_yaw_offset;
                 position = position.add(Vec3d.fromPolar(0, yaw).multiply(placement.location_offset_by_look));
+            }
+            position = position.add(new Vec3d(placement.location_offset_x, placement.location_offset_y, placement.location_offset_z));
+            if (placement.force_onto_ground) {
+                var searchPosition = position;
+                var blockPos = BlockPos.ofFloored(searchPosition.getX(), searchPosition.getY(), searchPosition.getZ());
+                if (target.getWorld().getBlockState(blockPos).isSolid()) {
+                    searchPosition = searchPosition.add(0, 2, 0);
+                }
+                var groundPosBelow = TargetHelper.findSolidBlockBelow(target, searchPosition, target.getWorld(), -20);
+                position = groundPosBelow != null ? groundPosBelow : position;
             }
             if (placement.apply_yaw) {
                 entity.setYaw(target.getYaw());
