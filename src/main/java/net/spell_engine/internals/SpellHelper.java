@@ -468,7 +468,7 @@ public class SpellHelper {
             return false;
         }
         if (rule > 0) {
-            return index > rule;
+            return index >= rule;
         } else {
             return index < (-1 * rule);
         }
