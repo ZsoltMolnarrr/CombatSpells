@@ -29,6 +29,7 @@ Functional changes:
 - Fix projectile pitch setting #40
 - Fix some spells unable to hit Ender Dragon
 - Update Italian translation, thanks to Zano1999
+- Piglins love RPG Series golden weapons
 
 # 0.12.5
 
