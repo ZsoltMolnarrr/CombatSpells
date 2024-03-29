@@ -347,10 +347,10 @@ public class SpellHelper {
     }
 
     public static void shootProjectile(World world, LivingEntity caster, Entity target, SpellInfo spellInfo, ImpactContext context) {
-        shootProjectile(world, caster, target, spellInfo, context, true);
+        shootProjectile(world, caster, target, spellInfo, context, 0);
     }
 
-    public static void shootProjectile(World world, LivingEntity caster, Entity target, SpellInfo spellInfo, ImpactContext context, boolean initial) {
+    public static void shootProjectile(World world, LivingEntity caster, Entity target, SpellInfo spellInfo, ImpactContext context, int sequenceIndex) {
         if (world.isClient) {
             return;
         }
@@ -368,7 +368,7 @@ public class SpellHelper {
         var mutableLaunchProperties = data.launch_properties.copy();
         if (SpellEvents.PROJECTILE_SHOOT.isListened()) {
             SpellEvents.PROJECTILE_SHOOT.invoke((listener) -> listener.onProjectileLaunch(
-                    new SpellEvents.ProjectileLaunchEvent(projectile, mutableLaunchProperties, caster, target, spellInfo, context, initial)));
+                    new SpellEvents.ProjectileLaunchEvent(projectile, mutableLaunchProperties, caster, target, spellInfo, context, sequenceIndex)));
         }
         var velocity = mutableLaunchProperties.velocity;
         var divergence = projectileData.divergence;
@@ -384,24 +384,25 @@ public class SpellHelper {
 
         world.spawnEntity(projectile);
 
-        if (initial && mutableLaunchProperties.extra_launch_count > 0) {
+        if (sequenceIndex == 0 && mutableLaunchProperties.extra_launch_count > 0) {
             for (int i = 0; i < mutableLaunchProperties.extra_launch_count; i++) {
                 var ticks = (i + 1) * mutableLaunchProperties.extra_launch_delay;
+                var nextSequenceIndex = i + 1;
                 ((WorldScheduler)world).schedule(ticks, () -> {
                     if (caster == null || !caster.isAlive()) {
                         return;
                     }
-                    shootProjectile(world, caster, target, spellInfo, context, false);
+                    shootProjectile(world, caster, target, spellInfo, context, nextSequenceIndex);
                 });
             }
         }
     }
 
     public static void fallProjectile(World world, LivingEntity caster, Entity target, SpellInfo spellInfo, ImpactContext context) {
-        fallProjectile(world, caster, target, spellInfo, context, true);
+        fallProjectile(world, caster, target, spellInfo, context, 0);
     }
 
-    public static void fallProjectile(World world, LivingEntity caster, Entity target, SpellInfo spellInfo, ImpactContext context, boolean initial) {
+    public static void fallProjectile(World world, LivingEntity caster, Entity target, SpellInfo spellInfo, ImpactContext context, int sequenceIndex) {
         if (world.isClient) {
             return;
         }
@@ -420,16 +421,26 @@ public class SpellHelper {
                 SpellProjectile.Behaviour.FALL, spellInfo.id(), target, context, mutablePerks);
 
         if (SpellEvents.PROJECTILE_FALL.isListened()) {
-            SpellEvents.PROJECTILE_FALL.invoke((listener) -> listener.onProjectileLaunch(new SpellEvents.ProjectileLaunchEvent(projectile, mutableLaunchProperties, caster, target, spellInfo, context, initial)));
+            SpellEvents.PROJECTILE_FALL.invoke((listener) -> listener.onProjectileLaunch(new SpellEvents.ProjectileLaunchEvent(projectile, mutableLaunchProperties, caster, target, spellInfo, context, sequenceIndex)));
         }
 
         projectile.setYaw(0);
         projectile.setPitch(90);
-        if (!initial) {
+
+        if (launchSequenceEligible(sequenceIndex, meteor.divergence_requires_sequence)) {
             projectile.setVelocity( 0, - 1, 0, mutableLaunchProperties.velocity, 0.5F, projectileData.divergence);
-            projectile.setFollowedTarget(null);
         } else {
             projectile.setVelocity(new Vec3d(0, - mutableLaunchProperties.velocity, 0));
+        }
+        if (launchSequenceEligible(sequenceIndex, meteor.follow_target_requires_sequence)) {
+            projectile.setFollowedTarget(target);
+        } else {
+            projectile.setFollowedTarget(null);
+        }
+        if (meteor.launch_radius > 0 && launchSequenceEligible(sequenceIndex, meteor.offset_requires_sequence)) {
+            var randomAngle = Math.toRadians(world.random.nextFloat() * 360);
+            var offset = (new Vec3d(meteor.launch_radius, 0, 0)).rotateY((float) randomAngle);
+            projectile.setPosition(projectile.getPos().add(offset));
         }
 
         projectile.prevYaw = projectile.getYaw();
@@ -438,16 +449,28 @@ public class SpellHelper {
 
         world.spawnEntity(projectile);
 
-        if (initial && mutableLaunchProperties.extra_launch_count > 0) {
+        if (sequenceIndex == 0 && mutableLaunchProperties.extra_launch_count > 0) {
             for (int i = 0; i < mutableLaunchProperties.extra_launch_count; i++) {
                 var ticks = (i + 1) * mutableLaunchProperties.extra_launch_delay;
+                var nextSequenceIndex = i + 1;
                 ((WorldScheduler)world).schedule(ticks, () -> {
                     if (caster == null || !caster.isAlive()) {
                         return;
                     }
-                    fallProjectile(world, caster, target, spellInfo, context, false);
+                    fallProjectile(world, caster, target, spellInfo, context, nextSequenceIndex);
                 });
             }
+        }
+    }
+
+    private static boolean launchSequenceEligible(int index, int rule) {
+        if (rule == 0) {
+            return false;
+        }
+        if (rule > 0) {
+            return index > rule;
+        } else {
+            return index < (-1 * rule);
         }
     }
 

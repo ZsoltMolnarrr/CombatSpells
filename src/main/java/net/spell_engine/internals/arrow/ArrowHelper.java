@@ -29,10 +29,10 @@ import org.joml.Vector3f;
 
 public class ArrowHelper {
     public static void shootArrow(World world, LivingEntity shooter, SpellInfo spellInfo, SpellHelper.ImpactContext context) {
-        shootArrow(world, shooter, spellInfo, context, true);
+        shootArrow(world, shooter, spellInfo, context, 0);
     }
 
-    public static void shootArrow(World world, LivingEntity shooter, SpellInfo spellInfo, SpellHelper.ImpactContext context, boolean initial) {
+    public static void shootArrow(World world, LivingEntity shooter, SpellInfo spellInfo, SpellHelper.ImpactContext context, int sequenceIndex) {
         boolean isCreative = shooter instanceof PlayerEntity && ((PlayerEntity)shooter).getAbilities().creativeMode;
 
         var spell = spellInfo.spell();
@@ -60,17 +60,18 @@ public class ArrowHelper {
             }
             if (SpellEvents.ARROW_FIRED.isListened()) {
                 SpellEvents.ARROW_FIRED.invoke((listener) -> listener.onArrowLaunch(
-                        new SpellEvents.ArrowLaunchEvent(projectile, shooter, spellInfo, context, initial)));
+                        new SpellEvents.ArrowLaunchEvent(projectile, shooter, spellInfo, context, sequenceIndex)));
             }
             var extra_launch = launchProperties.extra_launch_count;
-            if (initial && extra_launch > 0) {
+            if (sequenceIndex == 0 && extra_launch > 0) {
                 for (int i = 0; i < extra_launch; i++) {
                     var ticks = (i + 1) * launchProperties.extra_launch_delay;
+                    var nextSequenceIndex = i + 1;
                     ((WorldScheduler)world).schedule(ticks, () -> {
                         if (shooter == null || !shooter.isAlive()) {
                             return;
                         }
-                        shootArrow(world, shooter, spellInfo, context, false);
+                        shootArrow(world, shooter, spellInfo, context, nextSequenceIndex);
                     });
                 }
             }

@@ -132,6 +132,11 @@ public class Spell {
             public static class Meteor { public Meteor() { }
                 /// How high the falling projectile is launched from compared to the position of the target
                 public float launch_height = 10;
+                public int offset_requires_sequence = 1;
+                public int divergence_requires_sequence = 1;
+                public int follow_target_requires_sequence = -1;
+                /// How far horizontally the falling projectile is launched from the target
+                public float launch_radius = 0;
                 /// Launch properties of the falling projectile
                 public LaunchProperties launch_properties = new LaunchProperties();
                 /// The projectile to be launched

@@ -15,6 +15,7 @@ API changes:
 - Add SpellCloud `presence_sound` data field, batch spawning, custom positioning and timing
 - Add SpellCloud `spawn` structure for particles and sounds for spawning
 - Add SpellCloud LambDynamicLights support
+- Add new spawn directives for Meteor spawning
 
 Functional changes:
 - Spell Container resolution

@@ -18,7 +18,7 @@ public class SpellEvents {
                                         @Nullable Entity target,
                                         SpellInfo spellInfo,
                                         SpellHelper.ImpactContext context,
-                                        boolean initial) { }
+                                        int sequenceIndex) { }
     public interface ProjectileLaunch {
         void onProjectileLaunch(ProjectileLaunchEvent event);
     }
@@ -28,7 +28,7 @@ public class SpellEvents {
                                    LivingEntity shooter,
                                    SpellInfo spellInfo,
                                    SpellHelper.ImpactContext context,
-                                   boolean initial) { }
+                                   int sequenceIndex) { }
     public interface ArrowLaunch {
         void onArrowLaunch(ArrowLaunchEvent event);
     }
