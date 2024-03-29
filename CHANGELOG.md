@@ -27,6 +27,7 @@ Functional changes:
 - Loot configuration now supports item tag id entries
 - Spell particle emitting entity yaw and pitch now being synchronized
 - Fix projectile pitch setting #40
+- Fix some spells unable to hit Ender Dragon
 - Update Italian translation, thanks to Zano1999
 
 # 0.12.5
