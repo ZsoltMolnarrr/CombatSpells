@@ -30,6 +30,7 @@
   "client": [
     "client.AbstractClientPlayerEntityMixin",
     "client.ClientPlayerEntityMixin",
+    "client.ClientWorldMixin",
     "client.EntityRenderMixin",
     "client.LivingEntityVisualMixin",
     "client.action_impair.ClientPlayerActionImpairing",

@@ -1,7 +1,5 @@
 package net.spell_engine.entity;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.*;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -17,6 +15,7 @@ import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.particle.ParticleHelper;
+import net.spell_engine.utils.SoundPlayerWorld;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -158,18 +157,17 @@ public class SpellCloud extends Entity implements Ownable {
             // this.discard();
             return;
         }
-        if (this.getWorld().isClient) {
+        var world = this.getWorld();
+        if (world.isClient) {
             // Client side tick
             var clientData = cloudData.client_data;
             for (var particleBatch : clientData.particles) {
-                ParticleHelper.play(this.getWorld(), this, particleBatch);
+                ParticleHelper.play(world, this, particleBatch);
             }
             var presence_sound = cloudData.presence_sound;
             if (!presenceSoundFired && presence_sound != null) {
-                var clientWorld = (ClientWorld) this.getWorld();
-                var player = MinecraftClient.getInstance().player;
                 var soundEvent = SoundEvent.of(new Identifier(presence_sound.id()));
-                clientWorld.playSoundFromEntity(player, this, soundEvent, SoundCategory.PLAYERS,
+                ((SoundPlayerWorld)world).playSoundFromEntity(this, soundEvent, SoundCategory.PLAYERS,
                         presence_sound.volume(),
                         presence_sound.randomizedPitch());
                 presenceSoundFired = true;

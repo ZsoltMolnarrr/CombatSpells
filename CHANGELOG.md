@@ -1,3 +1,7 @@
+# 0.13.1
+
+- Fix launch crash on dedicated servers 
+
 # 0.13.0
 
 API changes:
