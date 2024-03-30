@@ -111,6 +111,7 @@ public class Spell {
                 public static class ClientData {
                     public int light_level = 0;
                     public ParticleBatch[] particles = new ParticleBatch[]{};
+                    public ProjectileModel model;
                 }
                 public Spawn spawn = new Spawn();
                 public static class Spawn {

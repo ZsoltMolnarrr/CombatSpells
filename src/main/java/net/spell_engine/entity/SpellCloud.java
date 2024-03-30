@@ -43,7 +43,7 @@ public class SpellCloud extends Entity implements Ownable {
 
     public void onCreatedFromSpell(Identifier spellId, Spell.Release.Target.Cloud cloudData, SpellHelper.ImpactContext context) {
         this.spellId = spellId;
-        this.getDataTracker().set(SPELL_ID_TRACKER, this.spellId.toString());
+        this.context = context;
 
         var spell = getSpell();
         if (spell != null) {
@@ -54,21 +54,31 @@ public class SpellCloud extends Entity implements Ownable {
             }
             this.dataIndex = index;
         }
+        this.getDataTracker().set(SPELL_ID_TRACKER, this.spellId.toString());
         this.getDataTracker().set(DATA_INDEX_TRACKER, this.dataIndex);
+        this.getDataTracker().set(RADIUS_TRACKER, calculateRadius());
 
-        this.context = context;
         this.timeToLive = (int) (cloudData.time_to_live_seconds * 20);
     }
 
-    public EntityDimensions getDimensions(EntityPose pose) {
+    private float calculateRadius() {
         var cloudData = getCloudData();
         if (cloudData != null) {
             var extraRadius = 0F;
             if (context != null) {
                 extraRadius = cloudData.extra_radius.power_coefficient * (Math.min(
-                        cloudData.extra_radius.power_cap, (float)context.power().baseValue()));
+                        cloudData.extra_radius.power_cap, (float) context.power().baseValue()));
             }
-            var radius = cloudData.volume.radius + extraRadius;
+            return cloudData.volume.radius + extraRadius;
+        } else {
+            return 0F;
+        }
+    }
+
+    public EntityDimensions getDimensions(EntityPose pose) {
+        var cloudData = getCloudData();
+        if (cloudData != null) {
+            var radius = getDataTracker().get(RADIUS_TRACKER);
             var heightMultiplier = cloudData.volume.area.vertical_range_multiplier;
             return EntityDimensions.changing(radius * 2, radius * heightMultiplier);
         } else {
@@ -99,11 +109,13 @@ public class SpellCloud extends Entity implements Ownable {
 
     private static final TrackedData<String> SPELL_ID_TRACKER  = DataTracker.registerData(SpellCloud.class, TrackedDataHandlerRegistry.STRING);
     private static final TrackedData<Integer> DATA_INDEX_TRACKER = DataTracker.registerData(SpellCloud.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<Float> RADIUS_TRACKER = DataTracker.registerData(SpellCloud.class, TrackedDataHandlerRegistry.FLOAT);
 
     @Override
     protected void initDataTracker() {
         this.getDataTracker().startTracking(SPELL_ID_TRACKER, "");
         this.getDataTracker().startTracking(DATA_INDEX_TRACKER, this.dataIndex);
+        this.getDataTracker().startTracking(RADIUS_TRACKER, 0F);
     }
 
     public void onTrackedDataSet(TrackedData<?> data) {

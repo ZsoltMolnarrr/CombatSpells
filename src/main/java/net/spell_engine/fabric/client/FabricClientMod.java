@@ -15,6 +15,7 @@ import net.spell_engine.client.gui.SpellTooltip;
 import net.spell_engine.client.input.Keybindings;
 import net.spell_engine.client.particle.*;
 import net.spell_engine.client.render.CustomModelRegistry;
+import net.spell_engine.client.render.SpellCloudRenderer;
 import net.spell_engine.client.render.SpellProjectileRenderer;
 import net.spell_engine.entity.SpellCloud;
 import net.spell_engine.entity.SpellProjectile;
@@ -33,7 +34,7 @@ public class FabricClientMod implements ClientModInitializer {
             SpellTooltip.addSpellInfo(itemStack, lines);
         });
         EntityRendererRegistry.register(SpellProjectile.ENTITY_TYPE, SpellProjectileRenderer::new);
-        EntityRendererRegistry.register(SpellCloud.ENTITY_TYPE, EmptyEntityRenderer::new);
+        EntityRendererRegistry.register(SpellCloud.ENTITY_TYPE, SpellCloudRenderer::new);
 
         registerParticleAppearances();
     }

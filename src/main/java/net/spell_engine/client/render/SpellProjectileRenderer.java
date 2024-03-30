@@ -88,19 +88,13 @@ public class SpellProjectileRenderer<T extends Entity & FlyingItemEntity> extend
             matrices.scale(renderData.scale, renderData.scale, renderData.scale);
             if (renderData.model_id != null && !renderData.model_id.isEmpty()) {
                 var modelId = new Identifier(renderData.model_id);
-                CustomModels.render(LAYERS.get(renderData.light_emission), itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
+                CustomModels.render(SpellModelHelper.LAYERS.get(renderData.light_emission), itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
             }
             matrices.pop();
             return true;
         }
         return false;
     }
-
-    private static final Map<LightEmission, RenderLayer> LAYERS = Map.of(
-            LightEmission.NONE, CustomLayers.projectile(LightEmission.NONE),
-            LightEmission.GLOW, CustomLayers.projectile(LightEmission.GLOW),
-            LightEmission.RADIATE, CustomLayers.projectile(LightEmission.RADIATE)
-    );
 
     public Identifier getTexture(Entity entity) {
         return SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;

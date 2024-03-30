@@ -2,6 +2,7 @@
 
 - Add particle batch extent special behaviour
 - Add Spell Cloud extra radius
+- Add Spell Cloud center model rendering
 
 # 0.13.1
 
