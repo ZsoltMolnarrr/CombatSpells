@@ -1,3 +1,7 @@
+# 0.13.2
+
+- Add particle batch extent special behaviour
+
 # 0.13.1
 
 - Fix launch crash on dedicated servers 

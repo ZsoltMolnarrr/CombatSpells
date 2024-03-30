@@ -202,6 +202,10 @@ public class ParticleHelper {
     private static Vec3d offset(float width, float extent, ParticleBatch.Shape shape, Vec3d direction,
                                 ParticleBatch.Rotation rotation, float yaw, float pitch) {
         var offset = Vec3d.ZERO;
+        if (extent >= ParticleBatch.EXTENT_TRESHOLD) {
+            width = 0;
+            extent -= ParticleBatch.EXTENT_TRESHOLD;
+        }
         switch (shape) {
             case CIRCLE, CONE, SPHERE -> {
                 if (extent > 0) {

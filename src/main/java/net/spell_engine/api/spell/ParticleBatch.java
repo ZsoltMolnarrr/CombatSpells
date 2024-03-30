@@ -39,7 +39,9 @@ public class ParticleBatch { public ParticleBatch() { }
     public float min_speed = 0;
     public float max_speed = 1;
     public float angle = 0;
-    // Static position offset
+
+    public static final float EXTENT_TRESHOLD = 1000;
+    // Static position offset, if absolute value greater than 1000, entity width is ignored
     public float extent = 0;
     // Motion based position offset
     public float pre_spawn_travel = 0;
