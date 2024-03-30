@@ -1,6 +1,7 @@
 # 0.13.2
 
 - Add particle batch extent special behaviour
+- Add Spell Cloud extra radius
 
 # 0.13.1
 

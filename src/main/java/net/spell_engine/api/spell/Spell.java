@@ -95,6 +95,11 @@ public class Spell {
                 // Custom entity type id to spawn, must be a subclass of `SpellCloud`
                 @Nullable public String entity_type_id;
                 public AreaImpact volume = new AreaImpact();
+                public ExtraRadius extra_radius = new ExtraRadius();
+                public static class ExtraRadius {
+                    public float power_coefficient = 0;
+                    public float power_cap = 0;
+                }
                 public float time_to_live_seconds = 0;
 
                 /// The number of ticks between looking for targets and trying to apply impact

@@ -63,7 +63,12 @@ public class SpellCloud extends Entity implements Ownable {
     public EntityDimensions getDimensions(EntityPose pose) {
         var cloudData = getCloudData();
         if (cloudData != null) {
-            var radius = cloudData.volume.radius;
+            var extraRadius = 0F;
+            if (context != null) {
+                extraRadius = cloudData.extra_radius.power_coefficient * (Math.min(
+                        cloudData.extra_radius.power_cap, (float)context.power().baseValue()));
+            }
+            var radius = cloudData.volume.radius + extraRadius;
             var heightMultiplier = cloudData.volume.area.vertical_range_multiplier;
             return EntityDimensions.changing(radius * 2, radius * heightMultiplier);
         } else {
