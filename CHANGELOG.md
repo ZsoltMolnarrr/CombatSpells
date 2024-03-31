@@ -1,3 +1,7 @@
+# 0.13.3
+
+- Update Italian translation, thanks to Zano1999
+
 # 0.13.2
 
 - Add particle batch extent special behaviour
