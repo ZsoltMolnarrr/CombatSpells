@@ -185,6 +185,8 @@ public class SpellTooltip {
                 if (cloud_duration > 0) {
                     description = description.replace("{cloud_duration}", formattedNumber(cloud_duration));
                 }
+                var radius = cloud.volume.combinedRadius(primaryPower);
+                description = description.replace("{cloud_radius}", formattedNumber(radius));
             }
         }
 
