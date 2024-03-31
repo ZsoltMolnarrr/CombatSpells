@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class SpellModelHelper {
     public static final Map<LightEmission, RenderLayer> LAYERS = Map.of(
-            LightEmission.NONE, CustomLayers.projectile(LightEmission.NONE),
-            LightEmission.GLOW, CustomLayers.projectile(LightEmission.GLOW),
-            LightEmission.RADIATE, CustomLayers.projectile(LightEmission.RADIATE)
+            LightEmission.NONE, CustomLayers.spellObject(LightEmission.NONE),
+            LightEmission.GLOW, CustomLayers.spellObject(LightEmission.GLOW),
+            LightEmission.RADIATE, CustomLayers.spellObject(LightEmission.RADIATE)
     );
 }

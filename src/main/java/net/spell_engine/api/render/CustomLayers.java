@@ -79,6 +79,16 @@ public class CustomLayers extends RenderLayer {
         return RenderLayer.of("entity_translucent_emissive", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 256, true, true, multiPhaseParameters);
     }
 
+    public static RenderLayer spellObject(LightEmission lightEmission) {
+        switch (lightEmission) {
+            case RADIATE, GLOW:
+                return spellObject(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, lightEmission, false);
+            case NONE:
+                break;
+        }
+        return RenderLayer.getEntityTranslucent(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+    }
+
     public static RenderLayer spellObject(Identifier texture, LightEmission lightEmission, boolean translucent) {
         RenderPhase.ShaderProgram shaderProgram = switch (lightEmission) {
             case RADIATE -> ENTITY_TRANSLUCENT_EMISSIVE_PROGRAM;

@@ -5,6 +5,7 @@ API Changes:
 
 Functional changes:
 - Update Italian translation, thanks to Zano1999
+- Fix render glitches of spell objects without emitted light, when not using shaders
 
 # 0.13.2
 
