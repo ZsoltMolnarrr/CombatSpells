@@ -3,6 +3,7 @@ package net.spell_engine.api.spell;
 import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellPower;
 import org.jetbrains.annotations.Nullable;
 
 public class Spell {
@@ -95,11 +96,6 @@ public class Spell {
                 // Custom entity type id to spawn, must be a subclass of `SpellCloud`
                 @Nullable public String entity_type_id;
                 public AreaImpact volume = new AreaImpact();
-                public ExtraRadius extra_radius = new ExtraRadius();
-                public static class ExtraRadius {
-                    public float power_coefficient = 0;
-                    public float power_cap = 0;
-                }
                 public float time_to_live_seconds = 0;
 
                 /// The number of ticks between looking for targets and trying to apply impact
@@ -258,10 +254,19 @@ public class Spell {
 
     public static class AreaImpact { public AreaImpact() { }
         public float radius = 1F;
+        public ExtraRadius extra_radius = new ExtraRadius();
+        public static class ExtraRadius {
+            public float power_coefficient = 0;
+            public float power_cap = 0;
+        }
         public Release.Target.Area area = new Release.Target.Area();
         public ParticleBatch[] particles = new ParticleBatch[]{};
         @Nullable
         public Sound sound;
+
+        public float combinedRadius(SpellPower.Result power) {
+            return radius + extra_radius.power_coefficient * (float) Math.min(extra_radius.power_cap, power.baseValue());
+        }
     }
 
     public static class LaunchProperties { public LaunchProperties() { }

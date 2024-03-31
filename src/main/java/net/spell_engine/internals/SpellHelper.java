@@ -496,11 +496,12 @@ public class SpellHelper {
 
     public static void lookupAndPerformAreaImpact(Spell.AreaImpact area_impact, SpellInfo spellInfo, LivingEntity caster, Entity exclude, Entity aoeSource, ImpactContext context, boolean additionalTargetLookup) {
         var center = context.position();
-        var targets = TargetHelper.targetsFromArea(aoeSource, center, area_impact.radius, area_impact.area, null);
+        var radius = area_impact.combinedRadius(context.power());
+        var targets = TargetHelper.targetsFromArea(aoeSource, center, radius, area_impact.area, null);
         if (exclude != null) {
             targets.remove(exclude);
         }
-        applyAreaImpact(aoeSource.getWorld(), caster, targets, area_impact.radius, area_impact.area, spellInfo, context.target(TargetHelper.TargetingMode.AREA), additionalTargetLookup);
+        applyAreaImpact(aoeSource.getWorld(), caster, targets, radius, area_impact.area, spellInfo, context.target(TargetHelper.TargetingMode.AREA), additionalTargetLookup);
         ParticleHelper.sendBatches(aoeSource, area_impact.particles);
         SoundHelper.playSound(aoeSource.getWorld(), aoeSource, area_impact.sound);
     }

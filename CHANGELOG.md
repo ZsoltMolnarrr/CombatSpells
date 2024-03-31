@@ -1,5 +1,9 @@
 # 0.13.3
 
+API Changes:
+- Change embedding scope of `ExtraRadius` to `AreaImpact` to be more widely applicable
+
+Functional changes:
 - Update Italian translation, thanks to Zano1999
 
 # 0.13.2

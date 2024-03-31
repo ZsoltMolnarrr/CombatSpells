@@ -19,6 +19,7 @@ import net.spell_engine.client.input.Keybindings;
 import net.spell_engine.internals.SpellCasterItemStack;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
+import net.spell_power.api.SpellPower;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,6 +120,7 @@ public class SpellTooltip {
         if (spell == null) {
             return lines;
         }
+        var primaryPower = SpellPower.getSpellPower(spell.school, player);
 
         var name = Text.translatable(spellTranslationKey(spellId))
                 .formatted(Formatting.BOLD)
@@ -214,7 +216,8 @@ public class SpellTooltip {
             }
             var area_impact = spell.area_impact;
             if (area_impact != null) {
-                description = description.replace(impactRangeToken, formattedNumber(area_impact.radius));
+                var radius = area_impact.combinedRadius(primaryPower);
+                description = description.replace(impactRangeToken, formattedNumber(radius));
             }
         }
 

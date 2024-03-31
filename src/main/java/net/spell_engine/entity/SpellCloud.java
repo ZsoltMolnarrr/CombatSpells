@@ -64,12 +64,11 @@ public class SpellCloud extends Entity implements Ownable {
     private float calculateRadius() {
         var cloudData = getCloudData();
         if (cloudData != null) {
-            var extraRadius = 0F;
+            var radius = cloudData.volume.radius;
             if (context != null) {
-                extraRadius = cloudData.extra_radius.power_coefficient * (Math.min(
-                        cloudData.extra_radius.power_cap, (float) context.power().baseValue()));
+                radius = cloudData.volume.combinedRadius(context.power());
             }
-            return cloudData.volume.radius + extraRadius;
+            return radius;
         } else {
             return 0F;
         }
