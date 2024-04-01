@@ -40,6 +40,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
     public final int[] spellId = new int[MAXIMUM_SPELL_COUNT];
     public final int[] spellCost = new int[MAXIMUM_SPELL_COUNT];
     public final int[] spellLevelRequirement = new int[MAXIMUM_SPELL_COUNT];
+    public final int[] spellPoweredByLib = new int[MAXIMUM_SPELL_COUNT];
 
     public SpellBindingScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
@@ -79,6 +80,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
             this.addProperty(Property.create(this.spellId, i));
             this.addProperty(Property.create(this.spellCost, i));
             this.addProperty(Property.create(this.spellLevelRequirement, i));
+            this.addProperty(Property.create(this.spellPoweredByLib, i));
         }
         this.addProperty(Property.create(this.mode, 0));
     }
@@ -103,6 +105,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                 this.spellId[i] = 0;
                 this.spellCost[i] = 0;
                 this.spellLevelRequirement[i] = 0;
+                this.spellPoweredByLib[i] = 0;
             }
         } else {
             this.context.run((world, pos) -> {
@@ -121,10 +124,12 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                         this.spellId[i] = offer.id();
                         this.spellCost[i] = offer.cost();
                         this.spellLevelRequirement[i] = offer.levelRequirement();
+                        this.spellPoweredByLib[i] = offer.isPowered() ? 1 : 0;
                     } else {
                         this.spellId[i] = 0;
                         this.spellCost[i] = 0;
                         this.spellLevelRequirement[i] = 0;
+                        this.spellPoweredByLib[i] = 0;
                     }
                 }
                 this.sendContentUpdates();
@@ -193,9 +198,14 @@ public class SpellBindingScreenHandler extends ScreenHandler {
             var rawId = spellId[id];
             var cost = spellCost[id];
             var requiredLevel = spellLevelRequirement[id];
+            var poweredByLib = spellPoweredByLib[id];
             var lapisCount = getLapisCount();
             var weaponStack = getStacks().get(0);
             var lapisStack = getStacks().get(1);
+
+            if (poweredByLib == 0) {
+                return false;
+            }
 
             switch (mode) {
 

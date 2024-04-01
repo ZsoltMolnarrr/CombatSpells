@@ -6,12 +6,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -151,7 +148,9 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                     tooltip.add(Text.literal(" "));
                     tooltip.addAll(SpellTooltip.spellInfo(button.spell.id(), player, itemStack, true));
                 }
-                context.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
+                if (button.isDetailsPublic) {
+                    context.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
+                }
                 break;
             }
         }
@@ -236,6 +235,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                 var rawId = handler.spellId[i];
                 var cost = handler.spellCost[i];
                 var requirement = handler.spellLevelRequirement[i];
+                var powered = handler.spellPoweredByLib[i] == 1;
                 boolean shown = (i >= pageOffset) && (i < (pageOffset + PAGE_SIZE));
                 // System.out.println("Server offers spell ID: " + rawId + " | mode: " + mode);
                 switch (mode) {
@@ -245,18 +245,22 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                             continue;
                         }
                         var id = spellId.get();
+                        SpellBinding.State bindingState = SpellBinding.State.of(id, itemStack, cost, requirement);
+                        boolean isDetailsPublic = powered || bindingState.state == SpellBinding.State.ApplyState.ALREADY_APPLIED;
+                        boolean isEnabled = powered && bindingState.readyToApply(player, lapisCount);
+                        var text = Text.translatable(SpellTooltip.spellTranslationKey(id));
+                        if (!isDetailsPublic) {
+                            text = text.formatted(Formatting.OBFUSCATED);
+                        }
                         var spell = new SpellInfo(
                                 id,
                                 SpellRender.iconTexture(id),
-                                Text.translatable(SpellTooltip.spellTranslationKey(id)));
-                        SpellBinding.State bindingState = SpellBinding.State.of(id, itemStack, cost, requirement);
-                        boolean isEnabled = bindingState.readyToApply(player, lapisCount);
+                                text);
                         var button = new ButtonViewModel(shown,
                                 originX + BUTTONS_ORIGIN_X, originY + BUTTONS_ORIGIN_Y + ((buttons.size() - pageOffset) * BUTTON_HEIGHT),
                                 BUTTON_WIDTH, BUTTON_HEIGHT,
-                                isEnabled, spell, null, bindingState);
+                                isEnabled, isDetailsPublic, spell, null, bindingState);
                         buttons.add(button);
-
                     }
                     case BOOK -> {
                         if (rawId < SpellBinding.BOOK_OFFSET) continue; // Filter blank offers
@@ -267,7 +271,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                         var button = new ButtonViewModel(shown,
                                 originX + BUTTONS_ORIGIN_X, originY + BUTTONS_ORIGIN_Y + ((buttons.size() - pageOffset) * BUTTON_HEIGHT),
                                 BUTTON_WIDTH, BUTTON_HEIGHT,
-                                isEnabled, null, (Item) item, bindingState);
+                                isEnabled, true, null, (Item) item, bindingState);
                         buttons.add(button);
                     }
                 }
@@ -295,7 +299,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
 
     enum ButtonState { NORMAL, HOVER }
     record SpellInfo(Identifier id, Identifier icon, Text name) { }
-    record ButtonViewModel(boolean shown, int x, int y, int width, int height, boolean isEnabled, @Nullable SpellInfo spell, @Nullable Item item, SpellBinding.State binding) {
+    record ButtonViewModel(boolean shown, int x, int y, int width, int height, boolean isEnabled, boolean isDetailsPublic, @Nullable SpellInfo spell, @Nullable Item item, SpellBinding.State binding) {
         public boolean mouseOver(int mouseX, int mouseY) {
             if(!shown) { return false; }
             return (mouseX > x && mouseX < x + width) && (mouseY > y && mouseY < y + height);

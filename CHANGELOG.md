@@ -1,3 +1,8 @@
+# 0.13.4
+
+Functional changes:
+- Add obfuscated spell binding entries, when Spell Binding Table is not having enough supporting bookshelves
+
 # 0.13.3
 
 API Changes:

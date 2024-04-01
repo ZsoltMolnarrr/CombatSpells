@@ -23,7 +23,7 @@ public class SpellBinding {
     private static final int LIBRARY_POWER_CAP = 18;
     public static final int BOOK_OFFSET = 1;
     public enum Mode { SPELL, BOOK }
-    public record Offer(int id, int cost, int levelRequirement) {  }
+    public record Offer(int id, int cost, int levelRequirement, boolean isPowered) {  }
     public record OfferResult(Mode mode, List<Offer> offers) { }
 
     public static OfferResult offersFor(ItemStack itemStack, int libraryPower) {
@@ -34,7 +34,8 @@ public class SpellBinding {
                 offers.add(new Offer(
                         i + BOOK_OFFSET,
                         SpellEngineMod.config.spell_book_binding_level_cost,
-                        SpellEngineMod.config.spell_book_binding_level_requirement));
+                        SpellEngineMod.config.spell_book_binding_level_requirement,
+                        true));
             }
             return new OfferResult(Mode.BOOK, offers);
         }
@@ -53,13 +54,17 @@ public class SpellBinding {
                 .filter(entry -> entry.getValue().learn != null
                         && entry.getValue().learn.tier > 0)
                 .sorted(SpellContainerHelper.spellSorter)
-                .map(entry -> new Offer(
-                    SpellRegistry.rawSpellId(entry.getKey()),
-                    entry.getValue().learn.tier * entry.getValue().learn.level_cost_per_tier,
-                    entry.getValue().learn.tier * entry.getValue().learn.level_requirement_per_tier
-                ))
-                .filter(offer -> (libraryPower == LIBRARY_POWER_CAP)
-                        || ((LIBRARY_POWER_BASE + libraryPower * LIBRARY_POWER_MULTIPLIER) >= offer.levelRequirement))
+                .map(entry -> {
+                    var cost = entry.getValue().learn.tier * entry.getValue().learn.level_cost_per_tier;
+                    var levelRequirement = entry.getValue().learn.tier * entry.getValue().learn.level_requirement_per_tier;
+                    return new Offer(
+                            SpellRegistry.rawSpellId(entry.getKey()),
+                            cost,
+                            levelRequirement,
+                            (libraryPower == LIBRARY_POWER_CAP)
+                            || ((LIBRARY_POWER_BASE + libraryPower * LIBRARY_POWER_MULTIPLIER) >= levelRequirement)
+                    );
+                })
                 .collect(Collectors.toList())
         );
     }
