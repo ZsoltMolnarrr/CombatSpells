@@ -11,7 +11,8 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.api.spell.SpellPool;
 import net.spell_engine.utils.WeaponCompatibility;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 
 import java.io.InputStreamReader;
 import java.util.*;
@@ -30,7 +31,7 @@ public class SpellRegistry {
     private static final Map<Identifier, SpellPool> pools = new HashMap<>();
     public static final Map<Identifier, SpellContainer> book_containers = new HashMap<>();
     public static final Map<Identifier, SpellContainer> containers = new HashMap<>();
-    private static final Map<MagicSchool, Integer> spellCount = new HashMap<>();
+    private static final Map<SpellSchool, Integer> spellCount = new HashMap<>();
 
     public static Map<Identifier, SpellEntry> all() {
         return spells;
@@ -66,8 +67,7 @@ public class SpellRegistry {
                 parsed.put(new Identifier(id), new SpellEntry(container, rawId++));
                 // System.out.println("loaded spell - id: " + id +  " spell: " + gson.toJson(container));
             } catch (Exception e) {
-                System.err.println("Failed to parse spell: " + identifier);
-                e.printStackTrace();
+                System.err.println("Spell Engine: Failed to parse spell: " + identifier + " | Reason: " + e.getMessage());
             }
         }
         spells.clear();
@@ -93,8 +93,7 @@ public class SpellRegistry {
                 parsed.put(new Identifier(id), pool);
                 // System.out.println("loaded pool - " + id +  " ids: " + pool.spell_ids);
             } catch (Exception e) {
-                System.err.println("Failed to parse spell_pool: " + identifier);
-                e.printStackTrace();
+                System.err.println("Spell Engine: Failed to parse spell pool: " + identifier + " | Reason: " + e.getMessage());
             }
         }
         Map<Identifier, Spell> spellFlat = spells.entrySet()
@@ -124,8 +123,7 @@ public class SpellRegistry {
                 parsed.put(new Identifier(id), container);
                 // System.out.println("loaded assignment - id: " + id +  " assignment: " + container.spell);
             } catch (Exception e) {
-                System.err.println("Failed to parse spell_assignment: " + identifier);
-                e.printStackTrace();
+                System.err.println("Spell Engine: Failed to parse spell_assignment: " + identifier + " | Reason: " + e.getMessage());
             }
         }
         containers.clear();
@@ -136,7 +134,7 @@ public class SpellRegistry {
     private static void spellsUpdated() {
         updateReverseMaps();
         spellCount.clear();
-        for(var school: MagicSchool.values()) {
+        for(var school: SpellSchools.all()) {
             spellCount.put(school, 0);
         }
         for(var spell: spells.entrySet()) {
@@ -146,7 +144,7 @@ public class SpellRegistry {
         }
     }
 
-    public static int numberOfSpells(MagicSchool school) {
+    public static int numberOfSpells(SpellSchool school) {
         return spellCount.get(school);
     }
 

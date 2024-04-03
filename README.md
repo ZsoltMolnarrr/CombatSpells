@@ -106,7 +106,7 @@ Example:
 ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
 
 // +3  Fire Spell Power
-builder.put(EntityAttributes_SpellPower.POWER.get(MagicSchool.FIRE),
+builder.put(EntityAttributes_SpellPower.POWER.get(SpellSchool.FIRE),
                         new EntityAttributeModifier(
                                 "Modifier name",
                                 3,

@@ -6,7 +6,8 @@ import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.DefaultParticleType;
 import net.spell_engine.client.util.Color;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 
 @Environment(value= EnvType.CLIENT)
 public class SpellHitParticle extends SpriteBillboardParticle {
@@ -68,7 +69,7 @@ public class SpellHitParticle extends SpriteBillboardParticle {
     @Environment(EnvType.CLIENT)
     public static class ArcaneFactory extends GenericFactory {
         public ArcaneFactory(SpriteProvider spriteProvider) {
-            super(spriteProvider, Color.from(MagicSchool.ARCANE.color()));
+            super(spriteProvider, Color.from(SpellSchools.ARCANE.color));
         }
     }
 

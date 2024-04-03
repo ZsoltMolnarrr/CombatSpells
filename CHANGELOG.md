@@ -1,4 +1,7 @@
-# 0.13.4
+# 0.14.0
+
+API Changes:
+- BREAKING! - Migrated to new version of Spell Power Attribute API
 
 Functional changes:
 - Add obfuscated spell binding entries, when Spell Binding Table is not having enough supporting bookshelves

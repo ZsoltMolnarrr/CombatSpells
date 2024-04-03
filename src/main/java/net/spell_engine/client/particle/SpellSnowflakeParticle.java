@@ -5,9 +5,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.util.math.Box;
 import net.spell_engine.client.util.Color;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 
 @Environment(value= EnvType.CLIENT)
 public class SpellSnowflakeParticle extends SnowflakeParticle {
@@ -38,7 +38,7 @@ public class SpellSnowflakeParticle extends SnowflakeParticle {
             this.spriteProvider = spriteProvider;
         }
 
-        public static Color color = Color.from(MagicSchool.FROST.color());
+        public static Color color = Color.from(SpellSchools.FROST.color);
 
         @Override
         public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
@@ -98,7 +98,7 @@ public class SpellSnowflakeParticle extends SnowflakeParticle {
             this.spriteProvider = spriteProvider;
         }
 
-        public static Color color = Color.from(MagicSchool.FROST.color());
+        public static Color color = Color.from(SpellSchools.FROST.color);
 
         @Override
         public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {

@@ -7,7 +7,8 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.math.random.Random;
 import net.spell_engine.client.util.Color;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 
 public class GenericSpellParticle extends SpriteBillboardParticle  {
     private static final Random RANDOM = Random.create();
@@ -67,7 +68,7 @@ public class GenericSpellParticle extends SpriteBillboardParticle  {
     @Environment(EnvType.CLIENT)
     public static class ArcaneSpellFactory extends SpellFactory implements ParticleFactory<DefaultParticleType> {
         public ArcaneSpellFactory(SpriteProvider spriteProvider) {
-            super(spriteProvider, Color.from(MagicSchool.ARCANE.color()));
+            super(spriteProvider, Color.from(SpellSchools.ARCANE.color));
         }
     }
 
@@ -86,7 +87,7 @@ public class GenericSpellParticle extends SpriteBillboardParticle  {
             this.spriteProvider = spriteProvider;
         }
 
-        public static Color color = Color.from(MagicSchool.ARCANE.color());
+        public static Color color = Color.from(SpellSchools.ARCANE.color);
 
         public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var spellParticle = new GenericSpellParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);

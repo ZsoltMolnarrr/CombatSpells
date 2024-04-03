@@ -20,8 +20,6 @@ import net.minecraft.util.Lazy;
 import net.spell_engine.api.item.AttributeResolver;
 import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.ItemConfig;
-import net.spell_power.api.MagicSchool;
-import net.spell_power.api.attributes.SpellAttributes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -197,7 +195,7 @@ public class Weapon {
         return builder.build();
     }
 
-    private static final UUID miscWeaponAttributeUUID = SpellAttributes.POWER.get(MagicSchool.ARCANE).attribute.weaponUUID;
+    private static final UUID miscWeaponAttributeUUID = UUID.fromString("c102cb57-a7b8-4a98-8c6e-2cd7b70b74c1");
     private static final Identifier attackDamageId = new Identifier("generic.attack_damage");
     private static final Identifier projectileDamageId = new Identifier("projectile_damage", "generic");
     private static abstract class ItemAccessor extends Item {

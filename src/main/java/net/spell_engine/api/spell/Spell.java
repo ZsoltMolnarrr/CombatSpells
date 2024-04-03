@@ -1,14 +1,17 @@
 package net.spell_engine.api.spell;
 
+import com.google.gson.annotations.JsonAdapter;
 import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.utils.TargetHelper;
-import net.spell_power.api.MagicSchool;
 import net.spell_power.api.SpellPower;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 import org.jetbrains.annotations.Nullable;
 
 public class Spell {
     // Structure
-    public MagicSchool school;
+    @JsonAdapter(SpellSchools.IdTypeAdapter.class)
+    public SpellSchool school;
     public float range = 50;
 
     // An arbitrary group to group spells by
@@ -164,7 +167,7 @@ public class Spell {
     public static class Impact { public Impact() { }
         public Action action;
         /// Magic school of this specific impact, if null then spell school is used
-        @Nullable public MagicSchool school;
+        @Nullable public SpellSchool school;
         public static class Action { public Action() { }
             public Type type;
             public boolean apply_to_caster = false;

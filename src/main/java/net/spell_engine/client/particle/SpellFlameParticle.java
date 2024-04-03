@@ -6,7 +6,8 @@ import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.DefaultParticleType;
 import net.spell_engine.client.util.Color;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 import org.jetbrains.annotations.Nullable;
 
 @Environment(value= EnvType.CLIENT)
@@ -143,7 +144,7 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
     @Environment(EnvType.CLIENT)
     public static class HealingFactory extends ColorableFactory {
         public HealingFactory(SpriteProvider spriteProvider) {
-            super(spriteProvider, Color.from(MagicSchool.HEALING.color()));
+            super(spriteProvider, Color.from(SpellSchools.HEALING.color));
         }
     }
 

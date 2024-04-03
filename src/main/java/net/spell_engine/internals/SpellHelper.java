@@ -39,7 +39,7 @@ import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.AnimationHelper;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
 import org.jetbrains.annotations.Nullable;
@@ -101,12 +101,12 @@ public class SpellHelper {
         return value / haste;
     }
 
-    public static float hasteAffectedValue(LivingEntity caster, float value) {
-        return hasteAffectedValue(caster, value, null);
+    public static float hasteAffectedValue(LivingEntity caster, SpellSchool school, float value) {
+        return hasteAffectedValue(caster, school, value, null);
     }
 
-    public static float hasteAffectedValue(LivingEntity caster, float value, ItemStack provisionedWeapon) {
-        var haste = (float) SpellPower.getHaste(caster, provisionedWeapon);
+    public static float hasteAffectedValue(LivingEntity caster, SpellSchool school, float value, ItemStack provisionedWeapon) {
+        var haste = SpellPower.getHaste(caster, school); // FIXME: ? Provisioned weapon
         return hasteAffectedValue(value, haste);
     }
 
@@ -118,12 +118,12 @@ public class SpellHelper {
         if (spell.cast == null) {
             return 0;
         }
-        return hasteAffectedValue(caster, spell.cast.duration, provisionedWeapon);
+        return hasteAffectedValue(caster, spell.school, spell.cast.duration, provisionedWeapon);
     }
 
     public static SpellCast.Duration getCastTimeDetails(LivingEntity caster, Spell spell) {
         var haste = spell.cast.haste_affected
-                ? (float) SpellPower.getHaste(caster, null)
+                ? (float) SpellPower.getHaste(caster, spell.school)
                 : 1F;
         var duration =  hasteAffectedValue(spell.cast.duration, haste);
         return new SpellCast.Duration(haste, Math.round(duration * 20F));
@@ -137,7 +137,7 @@ public class SpellHelper {
         var duration = spell.cost.cooldown_duration;
         if (duration > 0) {
             if (SpellEngineMod.config.haste_affects_cooldown && spell.cost.cooldown_haste_affected) {
-                duration = hasteAffectedValue(caster, spell.cost.cooldown_duration, provisionedWeapon);
+                duration = hasteAffectedValue(caster, spell.school, spell.cost.cooldown_duration, provisionedWeapon);
             }
         }
         return duration;
@@ -659,7 +659,7 @@ public class SpellHelper {
                     amount *= damageData.spell_power_coefficient;
                     amount *= context.total();
                     if (context.isChanneled()) {
-                        amount *= SpellPower.getHaste(caster);
+                        amount *= SpellPower.getHaste(caster, school);
                     }
                     particleMultiplier = power.criticalDamage() + vulnerability.criticalDamageBonus();
 
@@ -685,7 +685,7 @@ public class SpellHelper {
                         amount *= healData.spell_power_coefficient;
                         amount *= context.total();
                         if (context.isChanneled()) {
-                            amount *= SpellPower.getHaste(caster);
+                            amount *= SpellPower.getHaste(caster, school);
                         }
 
                         livingTarget.heal((float) amount);
@@ -919,7 +919,7 @@ public class SpellHelper {
         return null;
     }
 
-    public static boolean underApplyLimit(SpellPower.Result spellPower, LivingEntity target, MagicSchool school, Spell.Impact.Action.StatusEffect.ApplyLimit limit) {
+    public static boolean underApplyLimit(SpellPower.Result spellPower, LivingEntity target, SpellSchool school, Spell.Impact.Action.StatusEffect.ApplyLimit limit) {
         if (limit == null) {
             return true;
         }
@@ -946,7 +946,7 @@ public class SpellHelper {
 
         for (var impact: spell.impact) {
             var school = impact.school != null ? impact.school : spellSchool;
-            var power = SpellPower.getSpellPower(school, caster, forSpellBook ? null : itemStack);
+            var power = SpellPower.getSpellPower(school, caster);  // FIXME: ? Provisioned weapon
             if (power.baseValue() < impact.action.min_power) {
                 power = new SpellPower.Result(power.school(), impact.action.min_power, power.criticalChance(), power.criticalDamage());
             }

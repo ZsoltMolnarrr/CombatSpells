@@ -1,11 +1,12 @@
 package net.spell_engine.api.item;
 
 import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.spell_power.api.MagicSchool;
-import net.spell_power.api.attributes.SpellAttributeEntry;
-import net.spell_power.api.attributes.SpellAttributes;
+import net.minecraft.util.Identifier;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ItemConfig { public ItemConfig() { }
     public static class Attribute { public Attribute() {}
@@ -18,35 +19,27 @@ public class ItemConfig { public ItemConfig() { }
             this.value = value;
             this.operation = operation;
         }
-        public static Attribute bonus(SpellAttributeEntry attribute, float value) {
+        public static Attribute bonus(Identifier attributeId, float value) {
             return new Attribute(
-                    attribute.id.toString(),
+                    attributeId.toString(),
                     value,
                     EntityAttributeModifier.Operation.ADDITION
             );
         }
 
-        public static Attribute multiply(SpellAttributeEntry attribute, float value) {
+        public static Attribute multiply(Identifier attributeId, float value) {
             return new Attribute(
-                    attribute.id.toString(),
+                    attributeId.toString(),
                     value,
                     EntityAttributeModifier.Operation.MULTIPLY_BASE
             );
         }
 
-        public static ArrayList<Attribute> bonuses(EnumSet<MagicSchool> schools, float value) {
-            var list = schools.stream()
-                    .map(school -> SpellAttributes.POWER.get(school))
-                    .toList();
-
-            return bonuses(list, value);
-        }
-
-        public static ArrayList<Attribute> bonuses(List<SpellAttributeEntry> entries, float value) {
+        public static ArrayList<Attribute> bonuses(List<Identifier> attributeIds, float value) {
             ArrayList<Attribute> spellAttributes = new ArrayList<>();
-            for (var attribute: entries) {
+            for (var attributeId: attributeIds) {
                 spellAttributes.add(new Attribute(
-                        attribute.id.toString(),
+                        attributeId.toString(),
                         value,
                         EntityAttributeModifier.Operation.ADDITION
                     )

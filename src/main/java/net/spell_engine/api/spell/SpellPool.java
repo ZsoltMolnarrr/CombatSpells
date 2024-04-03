@@ -1,14 +1,15 @@
 package net.spell_engine.api.spell;
 
 import net.minecraft.util.Identifier;
-import net.spell_power.api.MagicSchool;
+import net.spell_power.api.SpellSchool;
+import net.spell_power.api.SpellSchools;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
-public record SpellPool(List<Identifier> spellIds, List<MagicSchool> schools, boolean craftable) {
+public record SpellPool(List<Identifier> spellIds, List<SpellSchool> schools, boolean craftable) {
 
     public static final SpellPool empty = new SpellPool(List.of(), List.of(), true);
 
@@ -19,7 +20,7 @@ public record SpellPool(List<Identifier> spellIds, List<MagicSchool> schools, bo
     // MARK: Helpers
 
     @Nullable
-    public MagicSchool firstSchool() {
+    public SpellSchool firstSchool() {
         return schools().stream().findFirst().orElse(null);
     }
 
@@ -27,14 +28,14 @@ public record SpellPool(List<Identifier> spellIds, List<MagicSchool> schools, bo
 
     public static class DataFormat { public DataFormat() { }
         public List<String> spell_ids = List.of();
-        public List<MagicSchool> all_of_schools = List.of();
+        public List<String> all_of_schools = List.of();
         public boolean creatable_as_spellbook = true;
     }
 
     public static SpellPool fromData(DataFormat json, Map<Identifier, Spell> spells) {
         // LinkedHashSet to avoid duplicates
         var spellsIds = new LinkedHashSet<Identifier>();
-        var schools = new LinkedHashSet<MagicSchool>();
+        var schools = new LinkedHashSet<SpellSchool>();
         if (json.spell_ids != null) {
             for (var idString: json.spell_ids) {
                 var id = new Identifier(idString);
@@ -45,11 +46,13 @@ public record SpellPool(List<Identifier> spellIds, List<MagicSchool> schools, bo
                 }
             }
         }
-        if (json.all_of_schools != null && !json.all_of_schools.isEmpty()) {
+
+        if (json.all_of_schools != null) {
+            var allOfSchools = json.all_of_schools.stream().map(SpellSchools::getSchool).toList();
             for (var entry: spells.entrySet()) {
                 var id = entry.getKey();
                 var spell = entry.getValue();
-                if (json.all_of_schools.contains(spell.school)) {
+                if (allOfSchools.contains(spell.school)) {
                     spellsIds.add(id);
                     schools.add(spell.school);
                 }
@@ -63,7 +66,7 @@ public record SpellPool(List<Identifier> spellIds, List<MagicSchool> schools, bo
     public SyncFormat toSync() {
         var formatted = new SyncFormat();
         formatted.spell_ids = spellIds.stream().map(Identifier::toString).toList();
-        formatted.schools = schools.stream().map(MagicSchool::toString).toList();
+        formatted.schools = schools.stream().map(school -> school.id.toString()).toList();
         formatted.craftable = this.craftable();
         return formatted;
     }
@@ -71,7 +74,7 @@ public record SpellPool(List<Identifier> spellIds, List<MagicSchool> schools, bo
     public static SpellPool fromSync(SyncFormat json) {
         return new SpellPool(
                 json.spell_ids.stream().map(Identifier::new).toList(),
-                json.schools.stream().map(MagicSchool::valueOf).toList(),
+                json.schools.stream().map(SpellSchools::getSchool).toList(),
                 json.craftable
                 );
     }

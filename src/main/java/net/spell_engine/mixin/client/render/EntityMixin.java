@@ -19,7 +19,7 @@ public class EntityMixin {
             if (TargetHelper.isTargetedByPlayer(entity, clientPlayer)) {
                 var spell = ((SpellCasterClient) clientPlayer).getCurrentSpell();
                 if (spell != null) {
-                    cir.setReturnValue(spell.school.color());
+                    cir.setReturnValue(spell.school.color);
                     cir.cancel();
                 }
             }
