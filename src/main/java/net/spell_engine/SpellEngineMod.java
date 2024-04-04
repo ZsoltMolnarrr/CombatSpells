@@ -114,35 +114,37 @@ public class SpellEngineMod {
         // Sync attack power to client so physical attack damage spells can be estimated.
         // Probably several other mods perform this operation, but its no problem.
         EntityAttributes.GENERIC_ATTACK_DAMAGE.setTracked(true);
-        var melee = new SpellSchool(new Identifier(SpellPowerMod.ID, "physical_melee"),
+        var melee = new SpellSchool(SpellSchool.Archetype.MELEE,
+                new Identifier(SpellPowerMod.ID, "physical_melee"),
                 0xb3b3b3,
                 DamageTypes.PLAYER_ATTACK,
                 EntityAttributes.GENERIC_ATTACK_DAMAGE);
         melee.attributeManagement = SpellSchool.Manage.EXTERNAL;
-        melee.addSource(SpellSchool.Trait.POWER, new SpellSchool.Source(SpellSchool.Apply.ADD, query -> {
+        melee.addSource(SpellSchool.Trait.POWER, SpellSchool.Apply.ADD, query -> {
                 var power = query.entity().getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
                 var level = EnchantmentHelper.getLevel(Enchantments.SHARPNESS, query.entity().getMainHandStack());
                 power *= 1 + (0.05 * level);
                 // TODO: Maybe consider attack speed
                 return power;
-        }));
+        });
         SpellSchools.configureSpellHaste(melee);
         SpellSchools.register(melee);
 
         if (FabricLoader.getInstance().isModLoaded("projectile_damage")) {
             EntityAttributes_ProjectileDamage.GENERIC_PROJECTILE_DAMAGE.setTracked(true);
-            var ranged = new SpellSchool(new Identifier(SpellPowerMod.ID, "physical_ranged"),
+            var ranged = new SpellSchool(SpellSchool.Archetype.ARCHERY,
+                    new Identifier(SpellPowerMod.ID, "physical_ranged"),
                     0x805e4d,
                     DamageTypes.ARROW,
                     EntityAttributes_ProjectileDamage.GENERIC_PROJECTILE_DAMAGE);
             ranged.attributeManagement = SpellSchool.Manage.EXTERNAL;
-            ranged.addSource(SpellSchool.Trait.POWER, new SpellSchool.Source(SpellSchool.Apply.ADD, query -> {
+            ranged.addSource(SpellSchool.Trait.POWER, SpellSchool.Apply.ADD, query -> {
                     var power = query.entity().getAttributeValue(EntityAttributes_ProjectileDamage.GENERIC_PROJECTILE_DAMAGE);
                     var level = EnchantmentHelper.getLevel(Enchantments.SHARPNESS, query.entity().getMainHandStack());
                     power *= 1 + (0.05 * level);
                     // TODO: Maybe consider ranged weapon speed
                     return power;
-            }));
+            });
             SpellSchools.register(ranged);
         }
     }
