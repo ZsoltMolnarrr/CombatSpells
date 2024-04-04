@@ -86,12 +86,6 @@ public class SpellEngineMod {
             return container != null && container.isValid() && container.content != SpellContainer.ContentType.ARCHERY;
         });
 
-        // Sync attack power to client so physical attack damage spells can be estimated.
-        // Probably several other mods perform this operation, but its no problem.
-        EntityAttributes.GENERIC_ATTACK_DAMAGE.setTracked(true);
-        if (FabricLoader.getInstance().isModLoaded("projectile_damage")) {
-            EntityAttributes_ProjectileDamage.GENERIC_PROJECTILE_DAMAGE.setTracked(true);
-        }
         QuiverCompat.init();
         registerCustomSchools();
         RPGSeriesCore.initialize();
@@ -117,6 +111,9 @@ public class SpellEngineMod {
     }
 
     private static void registerCustomSchools() {
+        // Sync attack power to client so physical attack damage spells can be estimated.
+        // Probably several other mods perform this operation, but its no problem.
+        EntityAttributes.GENERIC_ATTACK_DAMAGE.setTracked(true);
         var melee = new SpellSchool(new Identifier(SpellPowerMod.ID, "physical_melee"),
                 0xb3b3b3,
                 DamageTypes.PLAYER_ATTACK,
@@ -133,6 +130,7 @@ public class SpellEngineMod {
         SpellSchools.register(melee);
 
         if (FabricLoader.getInstance().isModLoaded("projectile_damage")) {
+            EntityAttributes_ProjectileDamage.GENERIC_PROJECTILE_DAMAGE.setTracked(true);
             var ranged = new SpellSchool(new Identifier(SpellPowerMod.ID, "physical_ranged"),
                     0x805e4d,
                     DamageTypes.ARROW,
