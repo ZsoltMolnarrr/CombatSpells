@@ -1,6 +1,5 @@
 package net.spell_engine.api.item;
 
-import net.combatroll.api.EntityAttributes_CombatRoll;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.registry.Registries;
@@ -15,6 +14,8 @@ public class AttributeResolver {
     static {
         setup();
     }
+
+    @Deprecated
     /**
      * Called upon initialization of this mod.
      */
@@ -24,11 +25,6 @@ public class AttributeResolver {
                     EntityAttributes_ProjectileDamage.attributeId,
                     EntityAttributes_ProjectileDamage.GENERIC_PROJECTILE_DAMAGE
             );
-        }
-        if (FabricLoader.getInstance().isModLoaded("combatroll")) {
-            register(EntityAttributes_CombatRoll.countId, EntityAttributes_CombatRoll.COUNT);
-            register(EntityAttributes_CombatRoll.distanceId, EntityAttributes_CombatRoll.DISTANCE);
-            register(EntityAttributes_CombatRoll.rechargeId, EntityAttributes_CombatRoll.RECHARGE);
         }
 
         // Mixin here to add custom attributes, don't call `register` outside of this function
