@@ -3,6 +3,7 @@ package net.spell_engine;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
+import net.fabric_extras.ranged_weapon.api.EntityAttributes_RangedWeapon;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.criterion.Criteria;
@@ -17,7 +18,6 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.projectile_damage.api.EntityAttributes_ProjectileDamage;
 import net.spell_engine.api.enchantment.Enchantments_SpellEngine;
 import net.spell_engine.api.item.weapon.StaffItem;
 import net.spell_engine.api.spell.SpellContainer;
@@ -130,17 +130,16 @@ public class SpellEngineMod {
         SpellSchools.configureSpellHaste(melee);
         SpellSchools.register(melee);
 
-        if (FabricLoader.getInstance().isModLoaded("projectile_damage")) {
-            EntityAttributes_ProjectileDamage.GENERIC_PROJECTILE_DAMAGE.setTracked(true);
+        if (FabricLoader.getInstance().isModLoaded("ranged_weapon_api")) {
             var ranged = new SpellSchool(SpellSchool.Archetype.ARCHERY,
                     new Identifier(SpellPowerMod.ID, "physical_ranged"),
                     0x805e4d,
                     DamageTypes.ARROW,
-                    EntityAttributes_ProjectileDamage.GENERIC_PROJECTILE_DAMAGE);
+                    EntityAttributes_RangedWeapon.DAMAGE.attribute);
             ranged.attributeManagement = SpellSchool.Manage.EXTERNAL;
             ranged.addSource(SpellSchool.Trait.POWER, SpellSchool.Apply.ADD, query -> {
-                    var power = query.entity().getAttributeValue(EntityAttributes_ProjectileDamage.GENERIC_PROJECTILE_DAMAGE);
-                    var level = EnchantmentHelper.getLevel(Enchantments.SHARPNESS, query.entity().getMainHandStack());
+                    var power = query.entity().getAttributeValue(EntityAttributes_RangedWeapon.DAMAGE.attribute);
+                    var level = EnchantmentHelper.getLevel(Enchantments.POWER, query.entity().getMainHandStack());
                     power *= 1 + (0.05 * level);
                     // TODO: Maybe consider ranged weapon speed
                     return power;

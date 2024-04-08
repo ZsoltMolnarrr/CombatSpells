@@ -2,6 +2,7 @@
 
 API Changes:
 - BREAKING! - Migrated to new version of Spell Power Attribute API
+- Migrated to new version of Ranged Weapon API, Projectile Damage Attribute is no longer being used
 
 Functional changes:
 - Add obfuscated spell binding entries, when Spell Binding Table is not having enough supporting bookshelves
