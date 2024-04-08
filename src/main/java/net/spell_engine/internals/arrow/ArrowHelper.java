@@ -1,6 +1,7 @@
 package net.spell_engine.internals.arrow;
 
-import dev.kosmx.playerAnim.core.data.quarktool.Playable;
+import net.fabric_extras.ranged_weapon.api.EntityAttributes_RangedWeapon;
+import net.fabric_extras.ranged_weapon.internal.ScalingUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.CrossbowUser;
@@ -51,11 +52,12 @@ public class ArrowHelper {
                 }
             }
 
+            var scaling = ScalingUtil.scaling(shooter.getMainHandStack(), shooter.getAttributeValue(EntityAttributes_RangedWeapon.DAMAGE.attribute));
             var projectile = shoot(world, shooter, Hand.MAIN_HAND, shooter.getMainHandStack(),
                     ammo, 1.0F, isCreative,
-                    launchProperties.velocity, 1.0F, 0.0F, spellInfo);
+                    (float) (launchProperties.velocity * scaling.velocity()), 1.0F, 0.0F, spellInfo);
             if (projectile instanceof PersistentProjectileEntity persistentProjectile) {
-                persistentProjectile.setDamage(persistentProjectile.getDamage() * shoot_arrow.damage_multiplier);
+                persistentProjectile.setDamage(persistentProjectile.getDamage() * shoot_arrow.damage_multiplier * scaling.damage());
                 persistentProjectile.pickupType = arrowPickUpType;
             }
             if (SpellEvents.ARROW_FIRED.isListened()) {
