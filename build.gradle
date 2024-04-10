@@ -56,9 +56,10 @@ dependencies {
     modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}")
     modImplementation("dev.emi:trinkets:${project.trinkets_version}")
 
-    // modImplementation("maven.modrinth:spell-power:${project.spell_power_version}-fabric")
-    modImplementation(files("run/mods/dev/spell_power-${project.spell_power_version}.jar"))
-    modImplementation(files("run/mods/dev/ranged_weapon_api-${project.ranged_weapon_api_version}.jar"))
+    modImplementation("maven.modrinth:spell-power:${project.spell_power_version}")
+    modImplementation("maven.modrinth:ranged-weapon-api:${project.ranged_weapon_api_version}")
+//    modImplementation(files("run/mods/dev/spell_power-${project.spell_power_version}.jar"))
+//    modImplementation(files("run/mods/dev/ranged_weapon_api-${project.ranged_weapon_api_version}.jar"))
 
     // Compatibility
     modImplementation("com.terraformersmc:modmenu:${project.mod_menu_version}")
