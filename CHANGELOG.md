@@ -1,4 +1,4 @@
-# 0.14.1
+# 0.14.2
 
 API Changes:
 - BREAKING! - Migrated to new version of Spell Power Attribute API
@@ -7,6 +7,7 @@ API Changes:
 
 Functional changes:
 - Add obfuscated spell binding entries, when Spell Binding Table is not having enough supporting bookshelves
+- Migrate to latest API of Shoulder Surfing
 
 # 0.13.3
 

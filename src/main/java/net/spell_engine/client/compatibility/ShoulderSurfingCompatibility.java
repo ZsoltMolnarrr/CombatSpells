@@ -1,13 +1,13 @@
 package net.spell_engine.client.compatibility;
 
-import com.teamderpy.shouldersurfing.api.IShoulderSurfingPlugin;
-import com.teamderpy.shouldersurfing.api.IShoulderSurfingRegistrar;
+import com.github.exopandora.shouldersurfing.api.IShoulderSurfingPlugin;
+import com.github.exopandora.shouldersurfing.api.IShoulderSurfingRegistrar;
 import net.minecraft.client.MinecraftClient;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.casting.SpellCasterClient;
 
-public class ShoulderSurfingCompatibility implements IShoulderSurfingPlugin {
+public class ShoulderSurfingCompatibility implements IShoulderSurfingPlugin  {
     private static final int toleranceTicks = 3;
     private int lastTimeCasted = 0;
     @Override
