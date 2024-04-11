@@ -1,4 +1,4 @@
-# 0.14.0
+# 0.14.1
 
 API Changes:
 - BREAKING! - Migrated to new version of Spell Power Attribute API
