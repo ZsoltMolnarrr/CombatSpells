@@ -167,6 +167,7 @@ public class Spell {
     public static class Impact { public Impact() { }
         public Action action;
         /// Magic school of this specific impact, if null then spell school is used
+        @JsonAdapter(SpellSchools.IdTypeAdapter.class)
         @Nullable public SpellSchool school;
         public static class Action { public Action() { }
             public Type type;
