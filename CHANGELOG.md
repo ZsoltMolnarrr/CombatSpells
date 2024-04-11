@@ -3,6 +3,7 @@
 API Changes:
 - BREAKING! - Migrated to new version of Spell Power Attribute API
 - Migrated to new version of Ranged Weapon API, Projectile Damage Attribute is no longer being used
+- Expose `PHSICAL_RANGED` and `PHYSICAL_MELEE` schools into public package (ExternalSpellSchools)
 
 Functional changes:
 - Add obfuscated spell binding entries, when Spell Binding Table is not having enough supporting bookshelves

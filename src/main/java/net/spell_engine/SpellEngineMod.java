@@ -3,23 +3,18 @@ package net.spell_engine;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
-import net.fabric_extras.ranged_weapon.api.EntityAttributes_RangedWeapon;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
 import net.spell_engine.api.enchantment.Enchantments_SpellEngine;
 import net.spell_engine.api.item.weapon.StaffItem;
+import net.spell_engine.api.spell.ExternalSpellSchools;
 import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.compat.QuiverCompat;
 import net.spell_engine.config.EnchantmentsConfig;
@@ -32,9 +27,6 @@ import net.spell_engine.network.ServerNetwork;
 import net.spell_engine.particle.Particles;
 import net.spell_engine.rpg_series.RPGSeriesCore;
 import net.spell_engine.spellbinding.*;
-import net.spell_power.SpellPowerMod;
-import net.spell_power.api.SpellSchool;
-import net.spell_power.api.SpellSchools;
 import net.spell_power.api.enchantment.EnchantmentRestriction;
 import net.spell_power.api.enchantment.Enchantments_SpellPowerMechanics;
 import net.spell_power.api.enchantment.SpellPowerEnchanting;
@@ -87,7 +79,7 @@ public class SpellEngineMod {
         });
 
         QuiverCompat.init();
-        registerCustomSchools();
+        ExternalSpellSchools.initialize();
         RPGSeriesCore.initialize();
     }
 
@@ -107,44 +99,6 @@ public class SpellEngineMod {
         enchantmentConfig.value.apply();
         for(var entry: Enchantments_SpellEngine.all.entrySet()) {
             Registry.register(Registries.ENCHANTMENT, entry.getKey(), entry.getValue());
-        }
-    }
-
-    private static void registerCustomSchools() {
-        // Sync attack power to client so physical attack damage spells can be estimated.
-        // Probably several other mods perform this operation, but its no problem.
-        EntityAttributes.GENERIC_ATTACK_DAMAGE.setTracked(true);
-        var melee = new SpellSchool(SpellSchool.Archetype.MELEE,
-                new Identifier(SpellPowerMod.ID, "physical_melee"),
-                0xb3b3b3,
-                DamageTypes.PLAYER_ATTACK,
-                EntityAttributes.GENERIC_ATTACK_DAMAGE);
-        melee.attributeManagement = SpellSchool.Manage.EXTERNAL;
-        melee.addSource(SpellSchool.Trait.POWER, SpellSchool.Apply.ADD, query -> {
-                var power = query.entity().getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-                var level = EnchantmentHelper.getLevel(Enchantments.SHARPNESS, query.entity().getMainHandStack());
-                power *= 1 + (0.05 * level);
-                // TODO: Maybe consider attack speed
-                return power;
-        });
-        SpellSchools.configureSpellHaste(melee);
-        SpellSchools.register(melee);
-
-        if (FabricLoader.getInstance().isModLoaded("ranged_weapon_api")) {
-            var ranged = new SpellSchool(SpellSchool.Archetype.ARCHERY,
-                    new Identifier(SpellPowerMod.ID, "physical_ranged"),
-                    0x805e4d,
-                    DamageTypes.ARROW,
-                    EntityAttributes_RangedWeapon.DAMAGE.attribute);
-            ranged.attributeManagement = SpellSchool.Manage.EXTERNAL;
-            ranged.addSource(SpellSchool.Trait.POWER, SpellSchool.Apply.ADD, query -> {
-                    var power = query.entity().getAttributeValue(EntityAttributes_RangedWeapon.DAMAGE.attribute);
-                    var level = EnchantmentHelper.getLevel(Enchantments.POWER, query.entity().getMainHandStack());
-                    power *= 1 + (0.05 * level);
-                    // TODO: Maybe consider ranged weapon speed
-                    return power;
-            });
-            SpellSchools.register(ranged);
         }
     }
 }
