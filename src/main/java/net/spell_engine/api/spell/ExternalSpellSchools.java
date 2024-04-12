@@ -45,7 +45,6 @@ public class ExternalSpellSchools {
             var power = query.entity().getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
             var level = EnchantmentHelper.getLevel(Enchantments.SHARPNESS, query.entity().getMainHandStack());
             power *= 1 + (0.05 * level);
-            // TODO: Maybe consider attack speed
             return power;
         });
         SpellSchools.configureSpellHaste(PHYSICAL_MELEE);
@@ -57,8 +56,12 @@ public class ExternalSpellSchools {
                 var power = query.entity().getAttributeValue(EntityAttributes_RangedWeapon.DAMAGE.attribute);
                 var level = EnchantmentHelper.getLevel(Enchantments.POWER, query.entity().getMainHandStack());
                 power *= 1 + (0.05 * level);
-                // TODO: Maybe consider ranged weapon speed
                 return power;
+            });
+            PHYSICAL_RANGED.addSource(SpellSchool.Trait.HASTE, SpellSchool.Apply.ADD, query -> {
+                var haste = query.entity().getAttributeValue(EntityAttributes_RangedWeapon.HASTE.attribute); // 110
+                var rate = EntityAttributes_RangedWeapon.HASTE.asMultiplier(haste);    // For example: 110/100 = 1.1
+                return rate - 1;  // 0.1
             });
         }
         SpellSchools.register(PHYSICAL_RANGED);

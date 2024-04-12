@@ -1,4 +1,4 @@
-# 0.14.2
+# 0.14.3
 
 API Changes:
 - BREAKING! - Migrated to new version of Spell Power Attribute API
@@ -8,6 +8,7 @@ API Changes:
 Functional changes:
 - Add obfuscated spell binding entries, when Spell Binding Table is not having enough supporting bookshelves
 - Migrate to latest API of Shoulder Surfing
+- Draw Speed attribute (`ranged_weapon:haste`) working as haste for archery skills (`PHSICAL_RANGED` school)
 
 # 0.13.3
 
