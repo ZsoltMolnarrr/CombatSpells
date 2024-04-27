@@ -13,6 +13,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -223,6 +224,10 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
         downButton.active = hasPageDown();
     }
 
+
+    private static final Identifier RUNES_FONT_ID = new Identifier("minecraft", "alt");
+    private static final Style RUNE_STYLE = Style.EMPTY.withFont(RUNES_FONT_ID);
+
     private void updateButtons(int originX, int originY) {
         var buttons = new ArrayList<ButtonViewModel>();
         var itemStack = handler.getStacks().get(0);
@@ -250,7 +255,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                         boolean isEnabled = powered && bindingState.readyToApply(player, lapisCount);
                         var text = Text.translatable(SpellTooltip.spellTranslationKey(id));
                         if (!isDetailsPublic) {
-                            text = text.formatted(Formatting.OBFUSCATED);
+                            text = text.formatted(Formatting.OBFUSCATED).fillStyle(RUNE_STYLE);
                         }
                         var spell = new SpellInfo(
                                 id,
