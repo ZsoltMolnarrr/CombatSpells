@@ -1,3 +1,8 @@
+# 0.9.27
+
+Functional changes:
+- Migrate to latest API of Shoulder Surfing
+
 # 0.9.26
 
 -  Fix right click to use abilities for blacklisted items
