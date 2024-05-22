@@ -1,6 +1,7 @@
 # 0.14.4
 
 - Improve Spell Binding obfuscation style (thanks to fzzyhammers)
+- Update Fabric Loader to 15+ for embedded MixinExtras
 
 # 0.14.3
 
