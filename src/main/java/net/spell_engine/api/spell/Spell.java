@@ -223,7 +223,7 @@ public class Spell {
 
             public Teleport teleport;
             public static class Teleport { public Teleport() { }
-                public enum Mode { FORWARD }
+                public enum Mode { FORWARD, BEHIND_TARGET }
                 public Mode mode;
                 public int required_clearance_block_y = 1;
                 public TargetHelper.Intent intent = TargetHelper.Intent.HELPFUL;
@@ -231,7 +231,12 @@ public class Spell {
                 public static class Forward { public Forward() { }
                     public float distance = 10;
                 }
+                public BehindTarget behind_target;
+                public static class BehindTarget { public BehindTarget() { }
+                    public float distance = 1.5F;
+                }
                 @Nullable public ParticleBatch[] depart_particles;
+                @Nullable public ParticleBatch[] arrive_particles;
             }
         }
 

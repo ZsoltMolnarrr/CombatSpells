@@ -3,6 +3,7 @@
 - Improve Spell Binding obfuscation style (thanks to fzzyhammers)
 - Update Fabric Loader to 15+ for embedded MixinExtras
 - Add new particle effects and player animations
+- Add teleport behind action
 - Refactor SpellTooltip internals, add custom mutators
 
 # 0.14.3

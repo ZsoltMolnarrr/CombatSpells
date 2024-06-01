@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -756,23 +757,63 @@ public class SpellHelper {
                 case TELEPORT -> {
                     var data = impact.action.teleport;
                     if (target instanceof LivingEntity livingTarget) {
+                        LivingEntity teleportedEntity = null;
+                        Vec3d destination = null;
+                        Vec3d startingPosition = null;
+                        Float applyRotation = null;
                         switch (data.mode) {
                             case FORWARD -> {
+                                teleportedEntity = livingTarget;
                                 var forward = data.forward;
                                 var look = target.getRotationVector();
-                                var startingPosition = target.getPos();
-                                var destination = TargetHelper.findTeleportDestination(livingTarget, look, forward.distance, data.required_clearance_block_y);
-                                var groundJustBelow = TargetHelper.findSolidBlockBelow(livingTarget, destination, target.getWorld(), -1.5F);
+                                startingPosition = target.getPos();
+                                destination = TargetHelper.findTeleportDestination(teleportedEntity, look, forward.distance, data.required_clearance_block_y);
+                                var groundJustBelow = TargetHelper.findSolidBlockBelow(teleportedEntity, destination, target.getWorld(), -1.5F);
                                 if (groundJustBelow != null) {
                                     destination = groundJustBelow;
                                 }
-                                if (destination != null) {
-                                    ParticleHelper.sendBatches(livingTarget, data.depart_particles, false);
-                                    world.emitGameEvent(GameEvent.TELEPORT, startingPosition, GameEvent.Emitter.of(target));
-                                    livingTarget.teleport(destination.x, destination.y, destination.z);
-                                    success = true;
-                                }
                             }
+                            case BEHIND_TARGET -> {
+                                if (livingTarget == caster) {
+                                    return false;
+                                }
+                                var look = target.getRotationVector();
+                                var distance = 1F;
+                                if (data.behind_target != null) {
+                                    distance = data.behind_target.distance;
+                                }
+                                teleportedEntity = caster;
+                                startingPosition = caster.getPos();
+                                destination = target.getPos().add(look.multiply(-distance));
+                                var groundJustBelow = TargetHelper.findSolidBlockBelow(teleportedEntity, destination, target.getWorld(), -1.5F);
+                                if (groundJustBelow != null) {
+                                    destination = groundJustBelow;
+                                }
+
+                                double x = look.x;
+                                double z = look.z;
+                                // Calculate yaw using arctangent function
+                                float yaw = (float) Math.toDegrees(Math.atan2(-x, z));
+                                // Normalize yaw to the range [0, 360)
+                                yaw = yaw < 0 ? yaw + 360 : yaw;
+                                applyRotation = yaw;
+                            }
+                        }
+                        if (destination != null && startingPosition != null && teleportedEntity != null) {
+                            ParticleHelper.sendBatches(teleportedEntity, data.depart_particles, false);
+                            world.emitGameEvent(GameEvent.TELEPORT, startingPosition, GameEvent.Emitter.of(teleportedEntity));
+
+                            if (applyRotation != null
+                                    && teleportedEntity instanceof ServerPlayerEntity serverPlayer
+                                    && world instanceof ServerWorld serverWorld) {
+                                serverPlayer.teleport(serverWorld, destination.x, destination.y, destination.z, applyRotation, serverPlayer.getPitch());
+                                // teleportedEntity.teleport(destination.x, destination.y, destination.z, new HashSet<>(), applyRotation, 0);
+                            } else {
+                                teleportedEntity.teleport(destination.x, destination.y, destination.z);
+                            }
+                            success = true;
+
+                            ParticleHelper.sendBatches(teleportedEntity, data.arrive_particles, false);
                         }
                     }
                 }
