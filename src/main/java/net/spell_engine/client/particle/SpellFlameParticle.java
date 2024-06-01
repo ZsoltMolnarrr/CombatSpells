@@ -52,7 +52,6 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
         }
     }
 
-
     @Environment(EnvType.CLIENT)
     public static class FlameFactory implements ParticleFactory<DefaultParticleType> {
         private final SpriteProvider spriteProvider;

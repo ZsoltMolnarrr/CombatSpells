@@ -22,18 +22,21 @@ import net.spell_engine.internals.SpellRegistry;
 import net.spell_power.api.SpellPower;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SpellTooltip {
-    private static final String damageToken = "{damage}";
-    private static final String healToken = "{heal}";
-    private static final String rangeToken = "{range}";
-    private static final String durationToken = "{duration}";
-    private static final String itemToken = "{item}";
-    private static final String effectDurationToken = "{effect_duration}";
-    private static final String effectAmplifierToken = "{effect_amplifier}";
-    private static final String impactRangeToken = "{impact_range}";
-    private static final String teleportDistanceToken = "{teleport_distance}";
+    private static final String damageToken = "damage";
+    private static final String healToken = "heal";
+    private static final String rangeToken = "range";
+    private static final String durationToken = "duration";
+    private static final String itemToken = "item";
+    private static final String effectDurationToken = "effect_duration";
+    private static final String effectAmplifierToken = "effect_amplifier";
+    private static final String impactRangeToken = "impact_range";
+    private static final String teleportDistanceToken = "teleport_distance";
+    public static String placeholder(String token) { return "{" + token + "}"; }
 
     public static void addSpellInfo(ItemStack itemStack, List<Text> lines) {
         var player = MinecraftClient.getInstance().player;
@@ -65,8 +68,8 @@ public class SpellTooltip {
                         String limit = "";
                         if (container.max_spell_count > 0) {
                             limit = I18n.translate("spell.tooltip.host.limit")
-                                    .replace("{current}", "" + container.spell_ids.size())
-                                    .replace("{max}", "" + container.max_spell_count);
+                                    .replace(placeholder("current"), "" + container.spell_ids.size())
+                                    .replace(placeholder("max"), "" + container.max_spell_count);
                         }
 
                         var key = "spell.tooltip.host.list.spell";
@@ -150,16 +153,16 @@ public class SpellTooltip {
             }
             if (projectile != null) {
                 if (projectile.perks.ricochet > 0) {
-                    description = description.replace("{ricochet}", formattedNumber(projectile.perks.ricochet));
+                    description = description.replace(placeholder("ricochet"), formattedNumber(projectile.perks.ricochet));
                 }
                 if (projectile.perks.bounce > 0) {
-                    description = description.replace("{bounce}", formattedNumber(projectile.perks.bounce));
+                    description = description.replace(placeholder("bounce"), formattedNumber(projectile.perks.bounce));
                 }
                 if (projectile.perks.pierce > 0) {
-                    description = description.replace("{pierce}", formattedNumber(projectile.perks.pierce));
+                    description = description.replace(placeholder("pierce"), formattedNumber(projectile.perks.pierce));
                 }
                 if (projectile.perks.chain_reaction_size > 0) {
-                    description = description.replace("{chain_reaction_size}", formattedNumber(projectile.perks.chain_reaction_size));
+                    description = description.replace(placeholder("chain_reaction_size"), formattedNumber(projectile.perks.chain_reaction_size));
                 }
             }
 
@@ -173,7 +176,7 @@ public class SpellTooltip {
             if (launchProperties != null) {
                 var extra_launch_count = launchProperties.extra_launch_count;
                 if (extra_launch_count > 0) {
-                    description = description.replace("{extra_launch}", formattedNumber(extra_launch_count));
+                    description = description.replace(placeholder("extra_launch"), formattedNumber(extra_launch_count));
                 }
             }
             var cloud = spell.release.target.cloud;
@@ -183,10 +186,10 @@ public class SpellTooltip {
             if (cloud != null) {
                 var cloud_duration = cloud.time_to_live_seconds;
                 if (cloud_duration > 0) {
-                    description = description.replace("{cloud_duration}", formattedNumber(cloud_duration));
+                    description = description.replace(placeholder("cloud_duration"), formattedNumber(cloud_duration));
                 }
                 var radius = cloud.volume.combinedRadius(primaryPower);
-                description = description.replace("{cloud_radius}", formattedNumber(radius));
+                description = description.replace(placeholder("cloud_radius"), formattedNumber(radius));
             }
         }
 
@@ -202,15 +205,15 @@ public class SpellTooltip {
                     }
                     case STATUS_EFFECT -> {
                         var statusEffect = impact.action.status_effect;
-                        description = description.replace(effectAmplifierToken, "" + (statusEffect.amplifier + 1));
-                        description = description.replace(effectDurationToken, formattedNumber(statusEffect.duration));
+                        description = description.replace(placeholder(effectAmplifierToken), "" + (statusEffect.amplifier + 1));
+                        description = description.replace(placeholder(effectDurationToken), formattedNumber(statusEffect.duration));
                     }
                     case TELEPORT -> {
                         var teleport = impact.action.teleport;
                         switch (teleport.mode) {
                             case FORWARD -> {
                                 var forward = teleport.forward;
-                                description = description.replace(teleportDistanceToken, formattedNumber(forward.distance));
+                                description = description.replace(placeholder(teleportDistanceToken), formattedNumber(forward.distance));
                             }
                         }
                     }
@@ -219,8 +222,14 @@ public class SpellTooltip {
             var area_impact = spell.area_impact;
             if (area_impact != null) {
                 var radius = area_impact.combinedRadius(primaryPower);
-                description = description.replace(impactRangeToken, formattedNumber(radius));
+                description = description.replace(placeholder(impactRangeToken), formattedNumber(radius));
             }
+        }
+
+        var mutator = descriptionMutators.get(spellId);
+        if (mutator != null) {
+            var args = new DescriptionMutator.Args(description, player);
+            description = mutator.mutate(args);
         }
 
         lines.add(Text.literal(" ")
@@ -234,7 +243,7 @@ public class SpellTooltip {
         } else {
             var castDuration = SpellHelper.getCastDuration(player, spell, itemStack);
             var castTimeKey = keyWithPlural("spell.tooltip.cast_time", castDuration);
-            var castTime = I18n.translate(castTimeKey).replace(durationToken, formattedNumber(castDuration));
+            var castTime = I18n.translate(castTimeKey).replace(placeholder(durationToken), formattedNumber(castDuration));
             lines.add(Text.literal(" ")
                     .append(Text.literal(castTime))
                     .formatted(Formatting.GOLD));
@@ -243,7 +252,7 @@ public class SpellTooltip {
 
         if (spell.range > 0) {
             var rangeKey = keyWithPlural("spell.tooltip.range", spell.range);
-            var range = I18n.translate(rangeKey).replace(rangeToken, formattedNumber(spell.range));
+            var range = I18n.translate(rangeKey).replace(placeholder(rangeToken), formattedNumber(spell.range));
             lines.add(Text.literal(" ")
                     .append(Text.literal(range))
                     .formatted(Formatting.GOLD));
@@ -256,7 +265,7 @@ public class SpellTooltip {
                 cooldown = I18n.translate("spell.tooltip.cooldown.proportional");
             } else {
                 var cooldownKey = keyWithPlural("spell.tooltip.cooldown", cooldownDuration);
-                cooldown = I18n.translate(cooldownKey).replace(durationToken, formattedNumber(cooldownDuration));
+                cooldown = I18n.translate(cooldownKey).replace(placeholder(durationToken), formattedNumber(cooldownDuration));
             }
             lines.add(Text.literal(" ")
                     .append(Text.literal(cooldown))
@@ -273,7 +282,7 @@ public class SpellTooltip {
             if (item != Items.AIR) {
                 var ammoKey = keyWithPlural("spell.tooltip.ammo", 1); // Add variable ammo count later
                 var itemName = I18n.translate(item.getTranslationKey());
-                var ammo = I18n.translate(ammoKey).replace(itemToken, itemName);
+                var ammo = I18n.translate(ammoKey).replace(placeholder(itemToken), itemName);
                 var hasItem = SpellHelper.ammoForSpell(player, spell, itemStack).satisfied();
                 lines.add(Text.literal(" ")
                         .append(Text.literal(ammo).formatted(hasItem ? Formatting.GREEN : Formatting.RED)));
@@ -287,7 +296,7 @@ public class SpellTooltip {
         boolean indexTokens = values.size() > 1;
         for (int i = 0; i < values.size(); ++i) {
             var range = values.get(i);
-            var actualToken = indexTokens ? (token + "_" + i) : token;
+            var actualToken = indexTokens ? placeholder(token + "_" + (i + 1)) : placeholder(token);
             text = text.replace(actualToken, formattedRange(range.min(), range.max()));
         }
         return text;
@@ -334,5 +343,16 @@ public class SpellTooltip {
     private static <T> T coalesce(T ...items) {
         for (T i : items) if (i != null) return i;
         return null;
+    }
+
+    public interface DescriptionMutator {
+        record Args(String description, PlayerEntity player) { }
+        String mutate(Args args);
+    }
+
+    private static final Map<Identifier, DescriptionMutator> descriptionMutators = new HashMap<>();
+
+    public static void addDescriptionHandler(Identifier spellId, DescriptionMutator handler) {
+        descriptionMutators.put(spellId, handler);
     }
 }
