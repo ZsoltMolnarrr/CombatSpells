@@ -2,6 +2,7 @@
 
 - Improve Spell Binding obfuscation style (thanks to fzzyhammers)
 - Update Fabric Loader to 15+ for embedded MixinExtras
+- Add new particle effects
 
 # 0.14.3
 

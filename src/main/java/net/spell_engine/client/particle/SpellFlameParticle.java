@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Environment(value= EnvType.CLIENT)
 public class SpellFlameParticle extends AbstractSlowingParticle {
+    boolean glow = true;
     private SpriteProvider spriteProviderForAnimation = null;
 
     public SpellFlameParticle(ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
@@ -36,7 +37,11 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
 
     @Override
     public int getBrightness(float tint) {
-        return 255;
+        if (glow) {
+            return 255;
+        } else {
+            return super.getBrightness(tint);
+        }
     }
 
     @Override
@@ -136,7 +141,9 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
             particle.setColor(1F, 1F, 1F);
             particle.spriteProviderForAnimation = this.spriteProvider;
             particle.velocityMultiplier = 0.8F;
-            particle.setAlpha(0.9F);
+            particle.setAlpha(0.8F);
+            particle.glow = false;
+            particle.gravityStrength = -0.01F;
             return particle;
         }
     }
