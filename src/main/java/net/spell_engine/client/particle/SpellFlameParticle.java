@@ -229,6 +229,13 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
     }
 
     @Environment(EnvType.CLIENT)
+    public static class WhiteFactory extends ColorableFactory {
+        public WhiteFactory(SpriteProvider spriteProvider) {
+            super(spriteProvider, Color.WHITE);
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
     public static class NatureSlowingFactory extends NatureFactory {
         public NatureSlowingFactory(SpriteProvider spriteProvider) {
             super(spriteProvider);
