@@ -9,7 +9,6 @@ import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.CrossbowItem;
-import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.client.animation.AnimationRegistry;
