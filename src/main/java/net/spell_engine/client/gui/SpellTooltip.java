@@ -352,7 +352,7 @@ public class SpellTooltip {
 
     private static final Map<Identifier, DescriptionMutator> descriptionMutators = new HashMap<>();
 
-    public static void addDescriptionHandler(Identifier spellId, DescriptionMutator handler) {
+    public static void addDescriptionMutator(Identifier spellId, DescriptionMutator handler) {
         descriptionMutators.put(spellId, handler);
     }
 }
