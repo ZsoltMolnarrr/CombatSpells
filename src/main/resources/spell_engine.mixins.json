@@ -24,6 +24,7 @@
     "effect.StatusEffectSynchronized",
     "entity.EntityCollision",
     "entity.LivingEntityAccessor",
+    "entity.LivingEntityEvents",
     "entity.LivingEntityKnockback",
     "entity.PlayerEntityMixin"
   ],

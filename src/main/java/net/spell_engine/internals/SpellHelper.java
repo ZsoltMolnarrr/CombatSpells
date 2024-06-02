@@ -24,6 +24,7 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityImmunity;
 import net.spell_engine.api.enchantment.Enchantments_SpellEngine;
 import net.spell_engine.api.entity.SpellSpawnedEntity;
+import net.spell_engine.api.event.CombatEvents;
 import net.spell_engine.api.item.trinket.SpellBookItem;
 import net.spell_engine.api.spell.CustomSpellHandler;
 import net.spell_engine.api.spell.Spell;
@@ -311,6 +312,10 @@ public class SpellHelper {
                 if (spell.cost.effect_id != null) {
                     var effect = Registries.STATUS_EFFECT.get(new Identifier(spell.cost.effect_id));
                     player.removeStatusEffect(effect);
+                }
+                if (CombatEvents.SPELL_CAST.isListened()) {
+                    var args = new CombatEvents.SpellCast.Args(player, spellInfo, targets, action, progress);
+                    CombatEvents.SPELL_CAST.invoke((listener) -> listener.onSpellCast(args));
                 }
             }
         }
