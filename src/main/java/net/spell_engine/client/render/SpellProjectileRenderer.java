@@ -62,33 +62,45 @@ public class SpellProjectileRenderer<T extends Entity & FlyingItemEntity> extend
         if (entity.age >= 2 || !(dispatcher.camera.getFocusedEntity().squaredDistanceTo(entity) < 12.25)) {
             matrices.push();
             matrices.scale(scale, scale, scale);
-            switch (renderData.render) {
-                case FLAT -> {
+            switch (renderData.orientation) {
+                case TOWARDS_CAMERA -> {
                     matrices.multiply(dispatcher.getRotation());
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180.0F));
                 }
-                case DEEP -> {
+                case TOWARDS_MOTION, ALONG_MOTION -> {
                     var velocity = entity.getVelocity();
                     if (previousVelocity != null) {
                         velocity = previousVelocity.lerp(velocity, tickDelta);
                     }
                     velocity = velocity.normalize();
                     var directionBasedYaw = Math.toDegrees(Math.atan2(velocity.x, velocity.z)) + 180F; //entity.getYaw();
+                    if (renderData.orientation == Spell.ProjectileModel.Orientation.ALONG_MOTION) {
+                        directionBasedYaw += 90;
+                    }
                     var directionBasedPitch = Math.toDegrees(Math.asin(velocity.y));
                     matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((float) directionBasedYaw));
                     matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees((float) directionBasedPitch));
                 }
             }
 
-            var time = entity.getWorld().getTime();
-            var absoluteTime = (float)time + tickDelta;
             if (allowSpin) {
-                matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(absoluteTime * renderData.rotate_degrees_per_tick));
+                matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(
+                        renderData.rotate_degrees_offset +
+                        (entity.age + tickDelta) * renderData.rotate_degrees_per_tick)
+                );
             }
             matrices.scale(renderData.scale, renderData.scale, renderData.scale);
-            if (renderData.model_id != null && !renderData.model_id.isEmpty()) {
-                var modelId = new Identifier(renderData.model_id);
-                CustomModels.render(SpellModelHelper.LAYERS.get(renderData.light_emission), itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
+
+            Identifier modelId = null;
+            if (entity instanceof SpellProjectile spellProjectile) {
+                modelId = spellProjectile.getModelId();
+            } else if (renderData.model_id != null && !renderData.model_id.isEmpty()) {
+                modelId = new Identifier(renderData.model_id);
+            }
+
+            if (modelId != null) {
+                var layer = SpellModelHelper.LAYERS.get(renderData.light_emission);
+                CustomModels.render(layer, itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
             }
             matrices.pop();
             return true;

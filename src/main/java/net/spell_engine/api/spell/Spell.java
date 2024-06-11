@@ -350,13 +350,15 @@ public class Spell {
     }
 
     public static class ProjectileModel { public ProjectileModel() { }
+        public boolean use_held_item = false;
         public String model_id;
         public LightEmission light_emission = LightEmission.GLOW;
         public float scale = 1F;
         public float rotate_degrees_per_tick = 2F;
-        public RenderMode render = RenderMode.DEEP;
-        public enum RenderMode {
-            FLAT, DEEP
+        public float rotate_degrees_offset = 0;
+        public Orientation orientation = Orientation.TOWARDS_MOTION;
+        public enum Orientation {
+            TOWARDS_CAMERA, TOWARDS_MOTION, ALONG_MOTION
         }
     }
 
