@@ -11,6 +11,7 @@ API Changes:
 - Add teleport "BEHIND_TARGET" teleport action type
 - Add spell projectile model rendered as held item (for throw skills)
 - Add spell projectile travel sound
+- Add spell specific movement speed multiplier during casting
 
 # 0.14.3
 
