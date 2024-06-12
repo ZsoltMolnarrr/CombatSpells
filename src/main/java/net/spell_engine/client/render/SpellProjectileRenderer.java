@@ -1,27 +1,26 @@
 package net.spell_engine.client.render;
 
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.FlyingItemEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
-import net.spell_engine.api.render.CustomLayers;
 import net.spell_engine.api.render.CustomModels;
 import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.entity.SpellProjectile;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 
 // Mostly copied from: FlyingItemEntityRenderer
@@ -92,15 +91,23 @@ public class SpellProjectileRenderer<T extends Entity & FlyingItemEntity> extend
             matrices.scale(renderData.scale, renderData.scale, renderData.scale);
 
             Identifier modelId = null;
-            if (entity instanceof SpellProjectile spellProjectile) {
-                modelId = spellProjectile.getModelId();
+            ItemStack modelItemStack = null;
+            if (entity instanceof SpellProjectile spellProjectile && spellProjectile.getItemStackModel() != null) {
+                modelId = spellProjectile.getItemModelId();
+                modelItemStack = spellProjectile.getItemStackModel();
             } else if (renderData.model_id != null && !renderData.model_id.isEmpty()) {
                 modelId = new Identifier(renderData.model_id);
             }
 
+            var layer = SpellModelHelper.LAYERS.get(LightEmission.NONE);
             if (modelId != null) {
-                var layer = SpellModelHelper.LAYERS.get(renderData.light_emission);
-                CustomModels.render(layer, itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
+                if (modelItemStack != null) {
+                    var model = itemRenderer.getModel(modelItemStack, entity.getWorld(), null, entity.getId());
+                    model.getTransformation().getTransformation(ModelTransformationMode.FIXED).apply(false, matrices);
+                    CustomModels.render(layer, itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
+                } else {
+                    CustomModels.render(layer, itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
+                }
             }
             matrices.pop();
             return true;
