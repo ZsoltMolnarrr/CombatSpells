@@ -302,6 +302,9 @@ public class Spell {
     public static class ProjectileData { public ProjectileData() { }
         public float divergence = 0;
         public float homing_angle = 1F;
+        /// The frequency of playing the travel sound in ticks
+        public int travel_sound_interval = 20;
+        @Nullable public Sound travel_sound;
 
         public Perks perks = new Perks();
         public static class Perks { Perks() { }

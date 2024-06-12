@@ -1,10 +1,16 @@
 # 0.14.4
 
+Functional changes:
 - Improve Spell Binding obfuscation style (thanks to fzzyhammers)
-- Update Fabric Loader to 15+ for embedded MixinExtras
 - Add new particle effects and player animations
-- Add teleport behind action
-- Refactor SpellTooltip internals, add custom mutators
+
+API Changes:
+- BREAKING! Replace spell projectile `ProjectileModel.RenderMode` with `Orientation`
+- Update Fabric Loader to 15+ for embedded MixinExtras
+- Add custom spell tooltip mutators (refactored SpellTooltip internals)
+- Add teleport "BEHIND_TARGET" teleport action type
+- Add spell projectile model rendered as held item (for throw skills)
+- Add spell projectile travel sound
 
 # 0.14.3
 

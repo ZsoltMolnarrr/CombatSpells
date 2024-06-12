@@ -32,6 +32,7 @@ import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.RecordsWithGson;
+import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_engine.utils.VectorHelper;
 
@@ -310,11 +311,15 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                     g = 0.8F;
                 }
 
-                if (getWorld().isClient) {
-                    var data = projectileData();
-                    if (data != null) {
+                var data = projectileData();
+                if (data != null) {
+                    if (getWorld().isClient) {
                         for (var travel_particles : data.client_data.travel_particles) {
                             ParticleHelper.play(getWorld(), this, getYaw(), getPitch(), travel_particles);
+                        }
+                    } else {
+                        if (data.travel_sound != null && age % data.travel_sound_interval == 0) {
+                            SoundHelper.playSound(getWorld(), this, data.travel_sound);
                         }
                     }
                 }
