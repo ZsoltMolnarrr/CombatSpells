@@ -1,4 +1,4 @@
-# 0.14.4
+# 0.15.0
 
 Functional changes:
 - Improve Spell Binding obfuscation style (thanks to fzzyhammers)
@@ -6,6 +6,7 @@ Functional changes:
 
 API Changes:
 - BREAKING! Replace spell projectile `ProjectileModel.RenderMode` with `Orientation`
+- BREAKING! Spell tooltip: Multiple placeholders of the same kind have new format (example: `{damage_1}`, `{damage_2}` ...) 
 - Update Fabric Loader to 15+ for embedded MixinExtras
 - Add custom spell tooltip mutators (refactored SpellTooltip internals)
 - Add teleport "BEHIND_TARGET" teleport action type
