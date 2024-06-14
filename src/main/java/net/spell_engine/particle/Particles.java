@@ -71,6 +71,8 @@ public class Particles {
     public static final ParticleEntry electric_arc_B = particle("electric_arc_b").customTexture();
     public static final ParticleEntry smoke_medium = particle("smoke_medium").customTexture();
     public static final ParticleEntry weakness_smoke = particle("weakness_smoke").customTexture();
+    public static final ParticleEntry buff_rage = particle("buff_rage").customTexture();
+    public static final ParticleEntry sign_charge = particle("sign_charge").customTexture();
 
     public static void register() {
         for(var entry: all) {

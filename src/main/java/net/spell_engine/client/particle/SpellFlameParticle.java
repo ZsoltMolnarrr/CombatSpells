@@ -269,4 +269,61 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
             return particle;
         }
     }
+
+    @Environment(EnvType.CLIENT)
+    public static class BuffFactory implements ParticleFactory<DefaultParticleType> {
+        private final SpriteProvider spriteProvider;
+        public Color color = Color.from(0xffffff);
+
+        public BuffFactory(SpriteProvider spriteProvider, Color color) {
+            this.spriteProvider = spriteProvider;
+            this.color = color;
+        }
+
+        @Nullable
+        @Override
+        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+            var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
+            particle.setSprite(this.spriteProvider);
+            float j = clientWorld.random.nextFloat() * 0.5F + 0.35F;
+            particle.setColor(color.red() * j, color.green() * j, color.blue() * j);
+            particle.maxAge = 16;
+            return particle;
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static class BuffRageFactory extends BuffFactory {
+        public BuffRageFactory(SpriteProvider spriteProvider) {
+            super(spriteProvider, Color.RAGE);
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static class PopupSignFactory implements ParticleFactory<DefaultParticleType> {
+        private final SpriteProvider spriteProvider;
+        public Color color = Color.from(0xffffff);
+        public PopupSignFactory(SpriteProvider spriteProvider, Color color) {
+            this.spriteProvider = spriteProvider;
+            this.color = color;
+        }
+
+        @Override
+        public @Nullable Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+            var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
+            particle.setSprite(this.spriteProvider);
+            particle.setColor(color.red(), color.green(), color.blue());
+            particle.velocityMultiplier = 0.6F;
+            particle.scale = 0.4F;
+            particle.maxAge = 40;
+            return particle;
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static class RageSignFactory extends PopupSignFactory {
+        public RageSignFactory(SpriteProvider spriteProvider) {
+            super(spriteProvider, Color.RAGE);
+        }
+    }
 }

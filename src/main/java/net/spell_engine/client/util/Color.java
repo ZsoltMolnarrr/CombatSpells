@@ -17,4 +17,5 @@ public record Color(float red, float green, float blue) {
     public static final Color NATURE = Color.from(0x66ff66);
     public static final Color FROST = Color.from(0x66ccff);
     public static final Color ELECTRIC = Color.from(0xffff66);
+    public static final Color RAGE = Color.from(0xbf4040);
 }
