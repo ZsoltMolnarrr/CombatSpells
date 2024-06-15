@@ -8,9 +8,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.Identifier;
+import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityActionsAllowed;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.client.SpellEngineClient;
+import net.spell_engine.client.input.SpellHotbar;
+import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.casting.SpellCast;
@@ -118,6 +121,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
                 var process = new SpellCast.Process(spellId, spell, itemStack.getItem(), 1, 0, caster.getWorld().getTime());
                 this.setSpellCastProcess(process, false);
                 this.updateSpellCast();
+                applyInstantGlobalCooldown();
             } else {
                 // Start casting
                 var details = SpellHelper.getCastTimeDetails(caster, spell);
@@ -125,6 +129,18 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             }
         }
         return attempt;
+    }
+
+    private void applyInstantGlobalCooldown() {
+        var duration = SpellEngineMod.config.spell_instant_cast_gcd;
+        if (duration > 0) {
+            for (var slot: SpellHotbar.INSTANCE.slots) {
+                var info = slot.spell();
+                if (info.spell().cast != null && info.spell().cast.duration <= 0) {
+                    getCooldownManager().set(info.id(), duration, false);
+                }
+            }
+        }
     }
 
     @Nullable public SpellCast.Progress getSpellCastProgress() {

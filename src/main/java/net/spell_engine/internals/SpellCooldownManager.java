@@ -48,9 +48,18 @@ public class SpellCooldownManager {
         }
     }
 
+    public void set(Identifier spell, int duration, boolean force) {
+        if (force
+                || !this.entries.containsKey(spell)
+                || (this.entries.get(spell).timeLeft(tick) < duration)
+        ) {
+            this.entries.put(spell, new SpellCooldownManager.Entry(this.tick, this.tick + duration));
+            this.cooldownSet(spell, duration);
+        }
+    }
+
     public void set(Identifier spell, int duration) {
-        this.entries.put(spell, new SpellCooldownManager.Entry(this.tick, this.tick + duration));
-        this.cooldownSet(spell, duration);
+        this.set(spell, duration, true);
     }
 
     public void remove(Identifier spell) {
@@ -72,5 +81,9 @@ public class SpellCooldownManager {
         }
     }
 
-    record Entry(int startTick, int endTick) { }
+    record Entry(int startTick, int endTick) {
+        int timeLeft(int currentTick) {
+            return Math.max(0, endTick - currentTick);
+        }
+    }
 }
