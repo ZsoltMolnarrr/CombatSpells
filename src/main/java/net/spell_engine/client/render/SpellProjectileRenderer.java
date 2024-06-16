@@ -99,7 +99,7 @@ public class SpellProjectileRenderer<T extends Entity & FlyingItemEntity> extend
                 modelId = new Identifier(renderData.model_id);
             }
 
-            var layer = SpellModelHelper.LAYERS.get(LightEmission.NONE);
+            var layer = SpellModelHelper.LAYERS.get(renderData.light_emission);
             if (modelId != null) {
                 if (modelItemStack != null) {
                     var model = itemRenderer.getModel(modelItemStack, entity.getWorld(), null, entity.getId());
