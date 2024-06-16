@@ -4,10 +4,10 @@
       "item": "spell_engine:spell_binding"
     },
     "title": {
-      "translate": "advancements.rpg_classes.root.title"
+      "translate": "advancements.rpg_series.root.title"
     },
     "description": {
-      "translate": "advancements.rpg_classes.root.description"
+      "translate": "advancements.rpg_series.root.description"
     },
     "background": "minecraft:textures/block/chiseled_quartz_block.png",
     "frame": "task",

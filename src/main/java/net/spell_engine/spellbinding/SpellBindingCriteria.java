@@ -49,18 +49,12 @@ public class SpellBindingCriteria extends AbstractCriterion<SpellBindingCriteria
         }
 
         public boolean test(Identifier usedSpellPool, boolean isComplete) {
+            var poolMatches = true;
             if (spellPool != null) {
-                if (spellPool.equals(usedSpellPool)) {
-                    if (this.complete) {
-                        // Having to check for completeness
-                        return isComplete;
-                    }
-                }
-                return false;
-            } else {
-                // No conditions, just fire trigger
-                return true;
+                poolMatches = spellPool.equals(usedSpellPool);
             }
+            var completeMatches = this.complete == isComplete;
+            return poolMatches && completeMatches;
         }
 
         @Override

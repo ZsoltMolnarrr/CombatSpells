@@ -4,17 +4,17 @@
       "item": "minecraft:enchanted_book"
     },
     "title": {
-      "translate": "advancements.rpg_classes.enchant_spell_infinity.title"
+      "translate": "advancements.rpg_series.enchant_spell_infinity.title"
     },
     "description": {
-      "translate": "advancements.rpg_classes.enchant_spell_infinity.description"
+      "translate": "advancements.rpg_series.enchant_spell_infinity.description"
     },
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false
   },
-  "parent": "rpg_classes:root",
+  "parent": "rpg_series:root",
   "criteria": {
     "enchant": {
       "trigger": "spell_engine:enchant_specific",

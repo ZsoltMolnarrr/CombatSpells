@@ -4,17 +4,17 @@
       "item": "runes:crafting_altar"
     },
     "title": {
-      "translate": "advancements.rpg_classes.rune_crafter.title"
+      "translate": "advancements.rpg_series.rune_crafter.title"
     },
     "description": {
-      "translate": "advancements.rpg_classes.rune_crafter.description"
+      "translate": "advancements.rpg_series.rune_crafter.description"
     },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false
   },
-  "parent": "rpg_classes:root",
+  "parent": "rpg_series:root",
   "criteria": {
     "craft": {
       "trigger": "runes:crafting"

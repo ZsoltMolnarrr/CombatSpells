@@ -122,14 +122,14 @@
   "gui.spell_engine.spell_binding.available" : "Apprendi l'incantesimo",
   "gui.spell_engine.spell_binding.level_req_fail" : "Livello richiesto: %s",
 
-  "advancements.rpg_classes.root.title": "Incantesimi",
-  "advancements.rpg_classes.root.description": "Scopri l'arte del combattimento magico!",
-  "advancements.rpg_classes.enchant_spell_infinity.title": "Energia gratis",
-  "advancements.rpg_classes.enchant_spell_infinity.description": "Ottieni l'incantamento Incantesimo infinito dalla Tavola degli incantamenti",
-  "advancements.rpg_classes.rune_crafter.title": "Lacrime e lampade",
-  "advancements.rpg_classes.rune_crafter.description": "Usa l'altare per la creazione di rune per ottenere il doppio delle rune",
-  "advancements.rpg_classes.spellbinder.title": "Incantatore",
-  "advancements.rpg_classes.spellbinder.description": "Vincola un incantesimo ad un'arma magica idonea",
-  "advancements.rpg_classes.classes.title": "Scegli il tuo percorso",
-  "advancements.rpg_classes.classes.description": "Trasforma un libro in un libro di incantesimi sul tavolo degli incantesimi"
+  "advancements.rpg_series.root.title": "Incantesimi",
+  "advancements.rpg_series.root.description": "Scopri l'arte del combattimento magico!",
+  "advancements.rpg_series.enchant_spell_infinity.title": "Energia gratis",
+  "advancements.rpg_series.enchant_spell_infinity.description": "Ottieni l'incantamento Incantesimo infinito dalla Tavola degli incantamenti",
+  "advancements.rpg_series.rune_crafter.title": "Lacrime e lampade",
+  "advancements.rpg_series.rune_crafter.description": "Usa l'altare per la creazione di rune per ottenere il doppio delle rune",
+  "advancements.rpg_series.spellbinder.title": "Incantatore",
+  "advancements.rpg_series.spellbinder.description": "Vincola un incantesimo ad un'arma magica idonea",
+  "advancements.rpg_series.classes.title": "Scegli il tuo percorso",
+  "advancements.rpg_series.classes.description": "Trasforma un libro in un libro di incantesimi sul tavolo degli incantesimi"
 }

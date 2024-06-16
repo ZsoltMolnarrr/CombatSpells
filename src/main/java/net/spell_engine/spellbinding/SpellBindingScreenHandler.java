@@ -83,6 +83,9 @@ public class SpellBindingScreenHandler extends ScreenHandler {
             this.addProperty(Property.create(this.spellPoweredByLib, i));
         }
         this.addProperty(Property.create(this.mode, 0));
+        if (playerInventory.player instanceof ServerPlayerEntity serverPlayer) {
+            SpellBindingCriteria.INSTANCE.trigger(serverPlayer, SpellBinding.ADVANCEMENT_VISIT_ID, true);
+        }
     }
 
     public int getLapisCount() {
@@ -239,6 +242,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                                 var pool = SpellContainerHelper.getPool(container);
                                 var isComplete = container.spell_ids.size() == pool.spellIds().size();
                                 SpellBindingCriteria.INSTANCE.trigger(serverPlayer, poolId, isComplete);
+                                System.out.println("Triggering advancement SpellBindingCriteria.INSTANCE poolId: " + poolId + " isComplete: " + isComplete);
                             } else {
                                 SpellBindingCriteria.INSTANCE.trigger(serverPlayer, null, false);
                             }

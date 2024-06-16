@@ -3,7 +3,8 @@
 Functional changes:
 - Improve Spell Binding obfuscation style (thanks to fzzyhammers)
 - Add new particle effects and player animations
-- Add global cooldown after instant spell cast (configurable) 
+- Add global cooldown after instant spell cast (configurable)
+- Update advancements scope and basic structure
 
 API Changes:
 - BREAKING! Replace spell projectile `ProjectileModel.RenderMode` with `Orientation`

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SpellBinding {
+    public static final Identifier ADVANCEMENT_VISIT_ID = new Identifier(SpellEngineMod.ID, "visit_spell_binding_table");
     public static final String name = "spell_binding";
     public static final Identifier ID = new Identifier(SpellEngineMod.ID, name);
     private static final float LIBRARY_POWER_BASE = 10;
