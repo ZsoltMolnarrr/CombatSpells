@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 // TODO: This class should probably be moved to net.spell_engine.api.item as it seems to be mod-agnostic
 public class SpellBooks {
-    private static final ArrayList<SpellBookItem> all = new ArrayList<>();
+    public static final ArrayList<SpellBookItem> all = new ArrayList<>();
 
     public static List<SpellBookItem> sorted() {
         return SpellBooks.all
