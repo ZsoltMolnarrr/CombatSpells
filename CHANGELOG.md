@@ -1,3 +1,7 @@
+# 0.15.1
+
+- Fix random crashes of Spell Projectiles
+
 # 0.15.0
 
 Functional changes:
