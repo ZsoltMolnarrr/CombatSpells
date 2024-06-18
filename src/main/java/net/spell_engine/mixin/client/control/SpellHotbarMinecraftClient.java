@@ -3,16 +3,23 @@ package net.spell_engine.mixin.client.control;
 import com.llamalad7.mixinextras.injector.WrapWithCondition;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerInventory;
-import net.spell_engine.api.item.trinket.SpellBookItem;
-import net.spell_engine.api.spell.Spell;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.Keybindings;
 import net.spell_engine.client.input.SpellHotbar;
 import net.spell_engine.client.input.WrappedKeybinding;
+import net.spell_engine.compat.TrinketsCompat;
+import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.casting.SpellCasterClient;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -22,19 +29,22 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Mixin(MinecraftClient.class)
+@Mixin(value = MinecraftClient.class, priority = 999)
 public abstract class SpellHotbarMinecraftClient {
     @Shadow @Nullable public ClientPlayerEntity player;
     @Shadow @Final public GameOptions options;
     @Shadow private int itemUseCooldown;
     @Shadow public int attackCooldown;
-
     @Shadow @Nullable public Screen currentScreen;
+    @Shadow @Nullable public abstract ClientPlayNetworkHandler getNetworkHandler();
+    
     @Nullable private WrappedKeybinding.Category spellHotbarHandle = null;
+
     @Inject(method = "handleInputEvents", at = @At(value = "HEAD"))
     private void handleInputEvents_HEAD_SpellHotbar(CallbackInfo ci) {
         spellHotbarHandle = null;
@@ -132,5 +142,69 @@ public abstract class SpellHotbarMinecraftClient {
         } else {
             return true;
         }
+    }
+
+    private static final int autoSwapCooldown = 5;
+
+    @Inject(method = "doItemUse", at = @At("HEAD"), cancellable = true)
+    private void doItemUse_autoSwap_HEAD(CallbackInfo ci) {
+        if(autoSwap(false)) {
+            itemUseCooldown = autoSwapCooldown;
+            attackCooldown = autoSwapCooldown;
+            ci.cancel();
+        }
+    }
+
+    @Inject(method = "doAttack", at = @At("HEAD"), cancellable = true)
+    private void doAttack_autoSwap_HEAD(CallbackInfoReturnable<Boolean> cir) {
+        if(autoSwap(true)) {
+            itemUseCooldown = autoSwapCooldown;
+            attackCooldown = autoSwapCooldown;
+            cir.setReturnValue(false);
+            cir.cancel();
+        }
+    }
+
+
+    private boolean autoSwap(boolean isAttackInteraction) {
+        var player = this.player;
+        if (player == null || player.isSpectator()) { return false; }
+        var mainHand = player.getMainHandStack();
+        var offHand = player.getInventory().offHand.get(0);
+        if (isAttackInteraction) {
+            if (!isWeapon(mainHand) && isWeapon(offHand)) {
+                swapHeldItems();
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            var mainHandContainer = SpellContainerHelper.containerFromItemStack(mainHand);
+            var offHandContainer = SpellContainerHelper.containerFromItemStack(offHand);
+            var spellbookContainer = SpellContainerHelper.containerFromItemStack(TrinketsCompat.getSpellBookStack(player));
+            if (mainHandContainer != null && offHandContainer != null && spellbookContainer != null) {
+                if (mainHandContainer.content != spellbookContainer.content
+                        && offHandContainer.content == spellbookContainer.content) {
+                    swapHeldItems();
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private void swapHeldItems() {
+        getNetworkHandler().sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
+    }
+
+    private boolean isWeapon(ItemStack itemStack) {
+        return itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+    }
+
+    private boolean isCaster(ItemStack itemStack) {
+        // FIXME
+        return itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(EntityAttributes.GENERIC_ATTACK_DAMAGE);
     }
 }

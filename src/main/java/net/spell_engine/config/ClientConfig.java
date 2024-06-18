@@ -13,6 +13,8 @@ public class ClientConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public boolean holdToCastCharged = true;
     @ConfigEntry.Gui.Tooltip
+    public boolean autoSwapHands = true;
+    @ConfigEntry.Gui.Tooltip
     public boolean spellHotbarShowsOffhand = true;
     @ConfigEntry.Gui.Tooltip
     @Nullable

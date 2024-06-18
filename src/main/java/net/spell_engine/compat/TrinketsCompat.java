@@ -77,4 +77,15 @@ public class TrinketsCompat {
 
         return new ArrayList<>(collectedSpellIds);
     }
+
+    public static ItemStack getSpellBookStack(PlayerEntity player) {
+        if (!enabled) {
+            return ItemStack.EMPTY;
+        }
+        var component = TrinketsApi.getTrinketComponent(player);
+        if (component.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        return component.get().getInventory().get("charm").get("spell_book").getStack(0);
+    }
 }

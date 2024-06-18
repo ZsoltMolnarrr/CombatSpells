@@ -1,5 +1,10 @@
 # 0.15.1
 
+- Add automatic hand swap (client configurable feature)
+  - Works when having a melee weapon and a skill use weapon in main and off hands
+  - Attack key will swap the melee weapon to the main hand
+  - Use key will swap the skill use weapon to the main hand
+  - Typically useful for archers (bow + spear)
 - Fix random crashes of Spell Projectiles
 - Update to latest Shoulder Surfing API
 
