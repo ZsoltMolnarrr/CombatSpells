@@ -1,6 +1,7 @@
 # 0.15.1
 
 - Fix random crashes of Spell Projectiles
+- Update to latest Shoulder Surfing API
 
 # 0.15.0
 
