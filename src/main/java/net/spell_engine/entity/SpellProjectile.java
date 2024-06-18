@@ -129,11 +129,21 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         }
         if (itemModelId == null) {
             var idString = this.getDataTracker().get(ITEM_MODEL_ID);
-            if (idString != null && !idString.isEmpty()) {
-                itemModelId = new Identifier(this.getDataTracker().get(ITEM_MODEL_ID));
-                itemStackModel = Registries.ITEM.get(itemModelId).getDefaultStack();
-            }
+            updateItemModel(idString);
         }
+    }
+
+    private void updateItemModel(String idString) {
+        if (idString != null && !idString.isEmpty()) {
+            itemModelId = new Identifier(this.getDataTracker().get(ITEM_MODEL_ID));
+            itemStackModel = Registries.ITEM.get(itemModelId).getDefaultStack();
+        }
+    }
+
+    public void setItemStackModel(ItemStack itemStack) {
+        var modelId = Registries.ITEM.getId(itemStack.getItem());
+        this.itemModelId = modelId;
+        this.getDataTracker().set(ITEM_MODEL_ID, modelId.toString());
     }
 
     public void setVelocity(double x, double y, double z, float speed, float spread, float divergence) {
@@ -149,12 +159,6 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         this.setPitch((float)(MathHelper.atan2(vec3d.y, d) * 57.2957763671875));
         this.prevYaw = this.getYaw();
         this.prevPitch = this.getPitch();
-    }
-
-    public void setItemStackModel(ItemStack itemStack) {
-        var modelId = Registries.ITEM.getId(itemStack.getItem());
-        this.itemModelId = modelId;
-        this.getDataTracker().set(ITEM_MODEL_ID, modelId.toString());
     }
 
     public void setFollowedTarget(Entity target) {
@@ -611,7 +615,9 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         nbt.putString(NBT_SPELL_ID, gson.toJson(spellId));
         nbt.putString(NBT_IMPACT_CONTEXT, gson.toJson(context));
         nbt.putString(NBT_PERKS, gson.toJson(this.perks));
-        nbt.putString(NBT_ITEM_MODEL_ID, itemModelId.toString());
+        if (itemModelId != null) {
+            nbt.putString(NBT_ITEM_MODEL_ID, itemModelId.toString());
+        }
     }
 
     public void readCustomDataFromNbt(NbtCompound nbt) {
@@ -625,8 +631,9 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                         .create();
                 this.context = recordReader.fromJson(nbt.getString(NBT_IMPACT_CONTEXT), SpellHelper.ImpactContext.class);
                 this.perks = gson.fromJson(nbt.getString(NBT_PERKS), Spell.ProjectileData.Perks.class);
-                this.itemModelId = new Identifier(nbt.getString(NBT_ITEM_MODEL_ID));
-                this.itemStackModel = Registries.ITEM.get(this.itemModelId).getDefaultStack();
+                if (nbt.contains(NBT_ITEM_MODEL_ID, NbtElement.STRING_TYPE)) {
+                    updateItemModel(nbt.getString(NBT_ITEM_MODEL_ID));
+                }
             } catch (Exception e) {
                 System.err.println("SpellProjectile - Failed to read spell data from NBT");
             }
