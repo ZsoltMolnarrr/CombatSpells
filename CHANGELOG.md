@@ -1,3 +1,8 @@
+# 0.15.2
+
+Functional changes:
+- Improve automatic hand swap feature
+
 # 0.15.1
 
 Functional changes:

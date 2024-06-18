@@ -31,7 +31,8 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     public int spell_book_binding_level_cost = 1;
     @Comment("Should the player be able to cast spells from the offhand spell book?")
     public boolean spell_book_offhand = false;
-
+    @Comment("Auto swap Bow & Spear cooldown ticks to apply for attack and itemUse")
+    public int auto_swap_cooldown = 5;
     @Comment("Apply `Spell Casting from Spell Book` capability to anything that subclasses Sword")
     public boolean add_spell_casting_to_swords = true;
     @Comment("Apply `Spell Casting from Spell Book` capability to any item matching this regex. (Not applied of empty)")

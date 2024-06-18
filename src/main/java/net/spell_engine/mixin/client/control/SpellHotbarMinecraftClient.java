@@ -14,7 +14,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.spell_engine.SpellEngineMod;
 import net.spell_engine.client.SpellEngineClient;
+import net.spell_engine.client.input.AutoSwapHelper;
 import net.spell_engine.client.input.Keybindings;
 import net.spell_engine.client.input.SpellHotbar;
 import net.spell_engine.client.input.WrappedKeybinding;
@@ -68,10 +70,6 @@ public abstract class SpellHotbarMinecraftClient {
         }
         if (handled != null) {
             spellHotbarHandle = handled.category();
-//            if (handled.spell().spell().mode == Spell.Mode.ITEM_USE
-//                    && !handled.keyBinding().equals(options.useKey)  ) {
-//                doItemUse();
-//            }
         }
 
         if (((SpellCasterClient)player).isCastingSpell()) {
@@ -144,14 +142,12 @@ public abstract class SpellHotbarMinecraftClient {
         }
     }
 
-    private static final int autoSwapCooldown = 5;
-
     @Inject(method = "doItemUse", at = @At("HEAD"), cancellable = true)
     private void doItemUse_autoSwap_HEAD(CallbackInfo ci) {
         if (SpellEngineClient.config.autoSwapHands) {
-            if (autoSwap(false)) {
-                itemUseCooldown = autoSwapCooldown;
-                attackCooldown = autoSwapCooldown;
+            if (AutoSwapHelper.autoSwapForSpells()) {
+                itemUseCooldown = SpellEngineMod.config.auto_swap_cooldown;
+                attackCooldown = SpellEngineMod.config.auto_swap_cooldown;;
                 ci.cancel();
             }
         }
@@ -160,55 +156,12 @@ public abstract class SpellHotbarMinecraftClient {
     @Inject(method = "doAttack", at = @At("HEAD"), cancellable = true)
     private void doAttack_autoSwap_HEAD(CallbackInfoReturnable<Boolean> cir) {
         if (SpellEngineClient.config.autoSwapHands) {
-            if (autoSwap(true)) {
-                itemUseCooldown = autoSwapCooldown;
-                attackCooldown = autoSwapCooldown;
+            if (AutoSwapHelper.autoSwapForAttack()) {
+                itemUseCooldown = SpellEngineMod.config.auto_swap_cooldown;;
+                attackCooldown = SpellEngineMod.config.auto_swap_cooldown;;
                 cir.setReturnValue(false);
                 cir.cancel();
             }
         }
-    }
-
-
-    private boolean autoSwap(boolean isAttackInteraction) {
-        var player = this.player;
-        if (player == null || player.isSpectator()) { return false; }
-        var mainHand = player.getMainHandStack();
-        var offHand = player.getInventory().offHand.get(0);
-        if (isAttackInteraction) {
-            if (!isWeapon(mainHand) && isWeapon(offHand)) {
-                swapHeldItems();
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            var mainHandContainer = SpellContainerHelper.containerFromItemStack(mainHand);
-            var offHandContainer = SpellContainerHelper.containerFromItemStack(offHand);
-            var spellbookContainer = SpellContainerHelper.containerFromItemStack(TrinketsCompat.getSpellBookStack(player));
-            if (mainHandContainer != null && offHandContainer != null && spellbookContainer != null) {
-                if (mainHandContainer.content != spellbookContainer.content
-                        && offHandContainer.content == spellbookContainer.content) {
-                    swapHeldItems();
-                    return true;
-                }
-            } else {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    private void swapHeldItems() {
-        getNetworkHandler().sendPacket(new PlayerActionC2SPacket(PlayerActionC2SPacket.Action.SWAP_ITEM_WITH_OFFHAND, BlockPos.ORIGIN, Direction.DOWN));
-    }
-
-    private boolean isWeapon(ItemStack itemStack) {
-        return itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-    }
-
-    private boolean isCaster(ItemStack itemStack) {
-        // FIXME
-        return itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(EntityAttributes.GENERIC_ATTACK_DAMAGE);
     }
 }
