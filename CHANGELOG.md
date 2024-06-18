@@ -1,5 +1,6 @@
 # 0.15.1
 
+Functional changes:
 - Add automatic hand swap (client configurable feature)
   - Works when having a melee weapon and a skill use weapon in main and off hands
   - Attack key will swap the melee weapon to the main hand
