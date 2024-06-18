@@ -42,7 +42,7 @@ public abstract class SpellHotbarMinecraftClient {
     @Shadow public int attackCooldown;
     @Shadow @Nullable public Screen currentScreen;
     @Shadow @Nullable public abstract ClientPlayNetworkHandler getNetworkHandler();
-    
+
     @Nullable private WrappedKeybinding.Category spellHotbarHandle = null;
 
     @Inject(method = "handleInputEvents", at = @At(value = "HEAD"))
@@ -148,20 +148,24 @@ public abstract class SpellHotbarMinecraftClient {
 
     @Inject(method = "doItemUse", at = @At("HEAD"), cancellable = true)
     private void doItemUse_autoSwap_HEAD(CallbackInfo ci) {
-        if(autoSwap(false)) {
-            itemUseCooldown = autoSwapCooldown;
-            attackCooldown = autoSwapCooldown;
-            ci.cancel();
+        if (SpellEngineClient.config.autoSwapHands) {
+            if (autoSwap(false)) {
+                itemUseCooldown = autoSwapCooldown;
+                attackCooldown = autoSwapCooldown;
+                ci.cancel();
+            }
         }
     }
 
     @Inject(method = "doAttack", at = @At("HEAD"), cancellable = true)
     private void doAttack_autoSwap_HEAD(CallbackInfoReturnable<Boolean> cir) {
-        if(autoSwap(true)) {
-            itemUseCooldown = autoSwapCooldown;
-            attackCooldown = autoSwapCooldown;
-            cir.setReturnValue(false);
-            cir.cancel();
+        if (SpellEngineClient.config.autoSwapHands) {
+            if (autoSwap(true)) {
+                itemUseCooldown = autoSwapCooldown;
+                attackCooldown = autoSwapCooldown;
+                cir.setReturnValue(false);
+                cir.cancel();
+            }
         }
     }
 
