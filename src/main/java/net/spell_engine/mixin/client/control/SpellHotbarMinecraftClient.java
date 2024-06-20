@@ -143,7 +143,7 @@ public abstract class SpellHotbarMinecraftClient {
     }
 
     @Inject(method = "doItemUse", at = @At("HEAD"), cancellable = true)
-    private void doItemUse_autoSwap_HEAD(CallbackInfo ci) {
+    private void doItemUse_HEAD_autoSwap(CallbackInfo ci) {
         if (SpellEngineClient.config.autoSwapHands) {
             if (AutoSwapHelper.autoSwapForSpells()) {
                 itemUseCooldown = SpellEngineMod.config.auto_swap_cooldown;
@@ -154,7 +154,7 @@ public abstract class SpellHotbarMinecraftClient {
     }
 
     @Inject(method = "doAttack", at = @At("HEAD"), cancellable = true)
-    private void doAttack_autoSwap_HEAD(CallbackInfoReturnable<Boolean> cir) {
+    private void doAttack_HEAD_autoSwap(CallbackInfoReturnable<Boolean> cir) {
         if (SpellEngineClient.config.autoSwapHands) {
             if (AutoSwapHelper.autoSwapForAttack()) {
                 itemUseCooldown = SpellEngineMod.config.auto_swap_cooldown;;
