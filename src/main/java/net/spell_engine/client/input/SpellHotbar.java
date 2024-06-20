@@ -206,7 +206,7 @@ public class SpellHotbar {
     }
 
     @Nullable public Handle handle(ClientPlayerEntity player, List<Slot> slots, GameOptions options) {
-        if (handledThisTick != null || skipHandling) { return null; }
+        if (handledThisTick != null || skipHandling || player.isSpectator()) { return null; }
         if (Keybindings.bypass_spell_hotbar.isPressed()
                 || (SpellEngineClient.config.sneakingByPassSpellHotbar && options.sneakKey.isPressed())) {
             return null;

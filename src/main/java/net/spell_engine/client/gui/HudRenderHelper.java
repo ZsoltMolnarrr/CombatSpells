@@ -41,7 +41,8 @@ public class HudRenderHelper {
         MinecraftClient client = MinecraftClient.getInstance();
         ClientPlayerEntity player = client.player;
 
-        if (player == null && !config) {
+        if ((player == null || player.isSpectator())
+                && !config) {
             return;
         }
 

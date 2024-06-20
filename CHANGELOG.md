@@ -2,6 +2,7 @@
 
 Functional changes:
 - Improve automatic hand swap feature
+- Hide Spell Hotbar when player is in Spectator mode
 
 # 0.15.2
 
