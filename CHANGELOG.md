@@ -1,3 +1,8 @@
+# 0.15.4
+
+API Changes:
+- Add throw related player animations
+
 # 0.15.3
 
 Functional changes:
