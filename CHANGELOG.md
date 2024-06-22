@@ -2,6 +2,7 @@
 
 API Changes:
 - Add throw related player animations
+- Make rage buff particles translucent
 
 # 0.15.3
 

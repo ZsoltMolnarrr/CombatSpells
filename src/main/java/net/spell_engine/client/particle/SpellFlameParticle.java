@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 @Environment(value= EnvType.CLIENT)
 public class SpellFlameParticle extends AbstractSlowingParticle {
     boolean glow = true;
+    boolean translucent = false;
     private SpriteProvider spriteProviderForAnimation = null;
 
     public SpellFlameParticle(ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
@@ -20,7 +21,9 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
 
     @Override
     public ParticleTextureSheet getType() {
-        return ParticleTextureSheet.PARTICLE_SHEET_LIT;
+        return translucent
+                ? ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT
+                : ParticleTextureSheet.PARTICLE_SHEET_LIT;
     }
 
     @Override
@@ -288,6 +291,7 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
             float j = clientWorld.random.nextFloat() * 0.5F + 0.35F;
             particle.setColor(color.red() * j, color.green() * j, color.blue() * j);
             particle.maxAge = 16;
+            particle.translucent = true;
             return particle;
         }
     }
@@ -316,6 +320,8 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
             particle.velocityMultiplier = 0.6F;
             particle.scale = 0.4F;
             particle.maxAge = 40;
+            particle.alpha = 0.9F;
+            particle.translucent = true;
             return particle;
         }
     }
