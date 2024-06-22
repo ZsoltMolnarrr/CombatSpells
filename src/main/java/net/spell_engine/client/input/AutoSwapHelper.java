@@ -1,8 +1,9 @@
 package net.spell_engine.client.input;
 
+import net.fabric_extras.ranged_weapon.api.EntityAttributes_RangedWeapon;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -30,7 +31,7 @@ public class AutoSwapHelper {
             return false;
         }
 
-        if (!isWeapon(mainHand) && isWeapon(offHand)) {
+        if (!isMeleeWeapon(mainHand) && isMeleeWeapon(offHand)) {
             swapHeldItems();
             return true;
         } else {
@@ -47,7 +48,8 @@ public class AutoSwapHelper {
         if (mainHand.isEmpty()
                 || offHand.isEmpty()
                 || isUsable(mainHand)
-                || isPlaceable(mainHand)){
+                || !isAnyWeapon(mainHand)
+                || !isAnyWeapon(offHand)) {
             return false;
         }
 
@@ -78,9 +80,20 @@ public class AutoSwapHelper {
         return itemStack.getUseAction() != UseAction.NONE;
     }
 
-    public static boolean isWeapon(ItemStack itemStack) {
+    public static boolean isMeleeWeapon(ItemStack itemStack) {
         return itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(EntityAttributes.GENERIC_ATTACK_DAMAGE)
                 && itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(EntityAttributes.GENERIC_ATTACK_SPEED);
+    }
+
+    public static boolean isAnyWeapon(ItemStack itemStack) {
+        if (isMeleeWeapon(itemStack)) {
+            return true;
+        }
+        if (FabricLoader.getInstance().isModLoaded("ranged_weapon_api")
+                && itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(EntityAttributes_RangedWeapon.DAMAGE.attribute)) {
+            return true;
+        }
+        return false;
     }
 
 //    public static boolean isWeapon(ItemStack itemStack) {

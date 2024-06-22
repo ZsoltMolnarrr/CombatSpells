@@ -1,5 +1,8 @@
 # 0.15.4
 
+Functional changes:
+- Improve automatic hand swap feature
+
 API Changes:
 - Add throw related player animations
 - Make rage buff particles translucent
