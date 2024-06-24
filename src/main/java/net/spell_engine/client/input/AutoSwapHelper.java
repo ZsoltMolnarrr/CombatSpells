@@ -26,6 +26,7 @@ public class AutoSwapHelper {
         if (mainHand.isEmpty()
                 || offHand.isEmpty()
                 || isPlaceable(mainHand)
+                || !isAnyWeapon(mainHand)
                 || !(hasSpells(mainHand) || isUsable(mainHand))
         ) {
             return false;
