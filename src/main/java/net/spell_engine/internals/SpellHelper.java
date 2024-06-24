@@ -2,7 +2,6 @@ package net.spell_engine.internals;
 
 import com.google.common.base.Suppliers;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
@@ -31,6 +30,7 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.SpellEvents;
 import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.compat.QuiverCompat;
+import net.spell_engine.compat.TrinketsCompat;
 import net.spell_engine.entity.ConfigurableKnockback;
 import net.spell_engine.entity.SpellCloud;
 import net.spell_engine.entity.SpellProjectile;
@@ -39,6 +39,7 @@ import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.AnimationHelper;
+import net.spell_engine.utils.ItemCooldownManagerExtension;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_power.api.SpellSchool;
@@ -323,8 +324,24 @@ public class SpellHelper {
 
     public static void imposeCooldown(PlayerEntity player, Identifier spellId, Spell spell, float progress) {
         var duration = cooldownToSet(player, spell, progress);
+        var durationTicks = Math.round(duration * 20F);
         if (duration > 0) {
-            ((SpellCasterEntity) player).getCooldownManager().set(spellId, Math.round(duration * 20F));
+            ((SpellCasterEntity) player).getCooldownManager().set(spellId, durationTicks);
+        }
+        if (SpellEngineMod.config.spell_book_cooldown_lock) {
+            var spellBook = TrinketsCompat.getSpellBookStack(player);
+            if (!spellBook.isEmpty()) {
+                var spellBookItem = spellBook.getItem();
+                var container = SpellContainerHelper.containerFromItemStack(spellBook);
+                if (SpellContainerHelper.contains(container, spellId)) {
+                    var itemCooldowns = player.getItemCooldownManager();
+                    var durationLeft = ((ItemCooldownManagerExtension)itemCooldowns).SE_getLastCooldownDuration(spellBookItem)
+                            * itemCooldowns.getCooldownProgress(spellBookItem, 0);
+                    if (durationTicks > durationLeft) {
+                        itemCooldowns.set(spellBookItem, durationTicks);
+                    }
+                }
+            }
         }
     }
 

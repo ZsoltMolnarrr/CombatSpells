@@ -23,6 +23,8 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     public boolean spell_cost_durability_allowed = true;
     @Comment("The time in ticks of global cooldown to apply to all instant cast spells when casted.")
     public int spell_instant_cast_gcd = 0;
+    @Comment("Players cannot unequip a spell book, if one of the spells in it is on cooldown.")
+    public boolean spell_book_cooldown_lock = true;
     @Comment("If set true, a Fireball doesn't collide with an ally, a healing projectile doesn't collide with an enemy")
     public boolean projectiles_pass_thru_irrelevant_targets = true;
     @Comment("Spell book creation level requirement")

@@ -23,6 +23,7 @@
     "effect.StatusEffectRemoveOnHit",
     "effect.StatusEffectSynchronized",
     "entity.EntityCollision",
+    "entity.ItemCooldownManagerMixin",
     "entity.LivingEntityAccessor",
     "entity.LivingEntityEvents",
     "entity.LivingEntityKnockback",

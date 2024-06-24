@@ -122,6 +122,10 @@ public class SpellContainerHelper {
         return null;
     }
 
+    public static boolean contains(SpellContainer container, Identifier spellId) {
+        return container != null && container.spell_ids.contains(spellId.toString());
+    }
+
     public static void addContainerToItemStack(SpellContainer container, ItemStack itemStack) {
         if (itemStack.isEmpty()) {
             return;

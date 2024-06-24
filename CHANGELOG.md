@@ -1,3 +1,8 @@
+# 0.15.5
+
+Functional changes:
+- Disable class switching during cooldowns
+
 # 0.15.4
 
 Functional changes:
