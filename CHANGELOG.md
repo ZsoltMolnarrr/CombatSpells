@@ -2,6 +2,7 @@
 
 Functional changes:
 - Disable class switching during cooldowns
+- Add spellbook equip sound
 
 # 0.15.4
 

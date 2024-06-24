@@ -5,10 +5,14 @@ import dev.emi.trinkets.api.TrinketItem;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class SpellBookTrinketItem extends TrinketItem implements SpellBookItem {
     private final Identifier poolId;
+
+    public static final Identifier EQUIP_SOUND_ID = new Identifier("spell_engine", "spellbook_equip");
+    public static final SoundEvent EQUIP_SOUND = SoundEvent.of(EQUIP_SOUND_ID);
 
     public SpellBookTrinketItem(Identifier poolId, Settings settings) {
         super(settings);
@@ -32,5 +36,16 @@ public class SpellBookTrinketItem extends TrinketItem implements SpellBookItem {
             isOnCooldown = player.getItemCooldownManager().isCoolingDown(stack.getItem());
         }
         return super.canUnequip(stack, slot, entity) && !isOnCooldown;
+    }
+
+    @Override
+    public void onEquip(ItemStack stack, SlotReference slot, LivingEntity entity) {
+        super.onEquip(stack, slot, entity);
+
+        if (entity.getWorld().isClient() // Play sound only on client
+                && entity.age > 100      // Avoid playing sound on entering world / dimension
+        ) {
+            entity.playSound(EQUIP_SOUND, 1.0F, 1.0F);
+        }
     }
 }
