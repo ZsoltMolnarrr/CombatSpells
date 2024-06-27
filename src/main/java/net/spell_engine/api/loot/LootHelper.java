@@ -75,9 +75,13 @@ public class LootHelper {
         }
         if (pool == null) { return; }
 
-        var chance = pool.rolls > 0 ? pool.rolls : 1F;
+        var rolls = pool.rolls > 0 ? pool.rolls : 1F;
         LootPool.Builder lootPoolBuilder = LootPool.builder();
-        lootPoolBuilder.rolls(BinomialLootNumberProvider.create(1, chance));
+
+
+        var attempts = Math.ceil(rolls);
+        var chance = pool.rolls / attempts;
+        lootPoolBuilder.rolls(BinomialLootNumberProvider.create((int) attempts, (float) chance));
         lootPoolBuilder.bonusRolls(ConstantLootNumberProvider.create(pool.bonus_rolls));
         for (var injectEntry: pool.entries) {
             var entryId = injectEntry.id;
