@@ -100,7 +100,7 @@ public class LootHelper {
                     for (var itemId: itemList) {
                         var item = Registries.ITEM.get(new Identifier(itemId));
                         if (item == null) {
-                            System.out.println("XXX Item not found: " + itemId);
+                            // System.out.println("XXX Item not found: " + itemId);
                             continue; }
 //                            System.out.println("XXX Creating item entry: " + item.getName());
                         var entry = ItemEntry.builder(item)
