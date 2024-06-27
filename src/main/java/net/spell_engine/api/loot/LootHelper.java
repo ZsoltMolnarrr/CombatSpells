@@ -4,65 +4,139 @@ import net.minecraft.item.Item;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.loot.entry.LeafEntry;
 import net.minecraft.loot.entry.TagEntry;
 import net.minecraft.loot.function.EnchantWithLevelsLootFunction;
 import net.minecraft.loot.provider.number.BinomialLootNumberProvider;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.spell_engine.rpg_series.RPGSeriesCore;
+import net.tinyconfig.ConfigManager;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 public class LootHelper {
-    public static void configure(Identifier id, LootTable.Builder tableBuilder, LootConfig config, HashMap<String, Item> entries) {
-        var groups = config.loot_tables.get(id.toString());
-        if (groups != null) {
-            for(var groupName: groups) {
-                var group = config.item_groups.get(groupName);
-                if (group == null || group.ids.isEmpty() || group.weight <= 0) { continue; }
-                var chance = group.chance > 0 ? group.chance : 1F;
-                LootPool.Builder lootPoolBuilder = LootPool.builder();
-                lootPoolBuilder.rolls(BinomialLootNumberProvider.create(1, chance));
-                lootPoolBuilder.bonusRolls(ConstantLootNumberProvider.create(group.bonus_roll));
-                for (var entryId: group.ids) {
-                    if (entryId == null || entryId.isEmpty()) { continue; }
 
-                    if (entryId.startsWith("#")) {
-                        var tagId = new Identifier(entryId.substring(1));
-                        TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, tagId);
-                        if (tag == null) { continue; }
-                        var entry = TagEntry.expandBuilder(tag)
-                                .weight(group.weight);
+    public static ConfigManager<TagCache> TAG_CACHE = new ConfigManager<>
+            ("tag_cache", new TagCache())
+            .builder()
+            .setDirectory(RPGSeriesCore.NAMESPACE)
+            .sanitize(true)
+            .build();
 
-                        if (group.enchant != null && group.enchant.isValid()) {
-                            var enchantFunction = EnchantWithLevelsLootFunction.builder(UniformLootNumberProvider.create(group.enchant.min_power, group.enchant.max_power));
-                            if (group.enchant.allow_treasure) {
-                                enchantFunction.allowTreasureEnchantments();
-                            }
-                            entry.apply(enchantFunction);
-                        }
-                        lootPoolBuilder.with(entry);
-                    } else {
-                        var item = entries.get(entryId);
-                        if (item == null) { continue; }
+    public static class TagCache {
+        public HashMap<String, List<String>> cache = new HashMap<>();
+    }
+
+    public static void updateTagCache(LootConfigV2 lootConfig) {
+        var updatedTags = new HashSet<String>();
+        for (var entry: lootConfig.injectors.entrySet()) {
+            var tableId = entry.getKey();
+            var pool = entry.getValue();
+            for (var itemInjectorEntry: pool.entries) {
+                var id = itemInjectorEntry.id;
+                if (id != null && id.startsWith("#")) {
+                    System.out.println("XXX Updating tag: " + id);
+                    var tagString = id.substring(1);
+                    if (updatedTags.contains(tagString)) {
+                        continue;
+                    }
+                    var tagId = new Identifier(tagString);
+                    TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, tagId);
+                    var itemList = new ArrayList<String>();
+                    Registries.ITEM.iterateEntries(tag).forEach((itemEntry) -> {
+                        var itemId = itemEntry.getKey().get().getValue();
+                        itemList.add(itemId.toString());
+                    });
+                    LootHelper.TAG_CACHE.value.cache.put(tagString, itemList);
+                    updatedTags.add(tagString);
+                }
+            }
+        }
+        LootHelper.TAG_CACHE.save();
+    }
+
+    public static void configureV2(Identifier id, LootTable.Builder tableBuilder, LootConfigV2 config, HashMap<String, Item> entries) {
+        var pool = config.injectors.get(id.toString());
+        if (pool == null) { return; }
+
+        var chance = pool.rolls > 0 ? pool.rolls : 1F;
+        LootPool.Builder lootPoolBuilder = LootPool.builder();
+        lootPoolBuilder.rolls(BinomialLootNumberProvider.create(1, chance));
+        lootPoolBuilder.bonusRolls(ConstantLootNumberProvider.create(pool.bonus_rolls));
+        for (var injectEntry: pool.entries) {
+            var entryId = injectEntry.id;
+            var weight = injectEntry.weight;
+            var enchant = injectEntry.enchant;
+            if (entryId == null || entryId.isEmpty()) { continue; }
+
+            if (entryId.startsWith("#")) {
+
+                var tagString = entryId.substring(1);
+
+                var itemList = TAG_CACHE.value.cache.get(tagString);
+//                    System.out.println("XXX Checking tag: " + entryId + " itemList: " + itemList);
+                if (itemList != null && !itemList.isEmpty()) {
+//                        System.out.println("XXX Resolving from tag cache: " + tagString);
+                    for (var itemId: itemList) {
+                        var item = Registries.ITEM.get(new Identifier(itemId));
+                        if (item == null) {
+                            System.out.println("XXX Item not found: " + itemId);
+                            continue; }
+//                            System.out.println("XXX Creating item entry: " + item.getName());
                         var entry = ItemEntry.builder(item)
-                                .weight(group.weight);
-
-                        if (group.enchant != null && group.enchant.isValid()) {
-                            var enchantFunction = EnchantWithLevelsLootFunction.builder(UniformLootNumberProvider.create(group.enchant.min_power, group.enchant.max_power));
-                            if (group.enchant.allow_treasure) {
+                                .weight(weight);
+                        if (enchant != null && enchant.isValid()) {
+                            var enchantFunction = EnchantWithLevelsLootFunction.builder(UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
+                            if (enchant.allow_treasure) {
                                 enchantFunction.allowTreasureEnchantments();
                             }
                             entry.apply(enchantFunction);
                         }
                         lootPoolBuilder.with(entry);
                     }
+                } else {
+                    var tagId = new Identifier(tagString);
+                    TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, tagId);
+
+                    if (tag == null) {
+                        continue;
+                    }
+                    var entry = TagEntry.expandBuilder(tag)
+                            .weight(weight);
+
+                    if (enchant != null && enchant.isValid()) {
+                        var enchantFunction = EnchantWithLevelsLootFunction.builder(UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
+                        if (enchant.allow_treasure) {
+                            enchantFunction.allowTreasureEnchantments();
+                        }
+                        entry.apply(enchantFunction);
+                    }
+                    lootPoolBuilder.with(entry);
                 }
-                tableBuilder.pool(lootPoolBuilder.build());
+            } else {
+                var item = entries.get(entryId);
+                if (item == null) { continue; }
+                var entry = ItemEntry.builder(item)
+                        .weight(weight);
+
+                if (enchant != null && enchant.isValid()) {
+                    var enchantFunction = EnchantWithLevelsLootFunction.builder(UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
+                    if (enchant.allow_treasure) {
+                        enchantFunction.allowTreasureEnchantments();
+                    }
+                    entry.apply(enchantFunction);
+                }
+                lootPoolBuilder.with(entry);
             }
         }
+        tableBuilder.pool(lootPoolBuilder.build());
     }
 }

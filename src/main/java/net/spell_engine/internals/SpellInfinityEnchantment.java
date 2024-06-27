@@ -19,6 +19,7 @@ public class SpellInfinityEnchantment extends Enchantment {
 
     public static boolean itemStackHasSpell(ItemStack stack) {
         var object = (Object)stack;
+        // stack.isIn(SpellEngineMod.SPELL_CASTER_ITEM_STACK);
         if (object instanceof SpellCasterItemStack casterItemStack) {
             var container = casterItemStack.getSpellContainer();
             return container != null && container.isValid() && container.content == SpellContainer.ContentType.MAGIC;

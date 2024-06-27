@@ -1,3 +1,8 @@
+# 0.15.6
+
+Functional changes:
+- Reworked loot injection system, now able to spawn enchanted loot from tags
+
 # 0.15.5
 
 Functional changes:

@@ -1,15 +1,14 @@
 package net.spell_engine.rpg_series.config;
 
 import net.spell_engine.api.loot.LootConfig;
+import net.spell_engine.api.loot.LootConfigV2;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Defaults {
 
-    public final static LootConfig lootConfig;
+    public final static LootConfigV2 lootConfig;
 
     private static String armors(int tier) {
         return "#rpg_series:tier_" + tier + "_armors";
@@ -24,103 +23,108 @@ public class Defaults {
     }
 
     static {
-        lootConfig = new LootConfig();
-        lootConfig.item_groups.put("golden_weapons", new LootConfig.ItemGroup(
-                List.of("#rpg_series:golden_weapons"),
-                1
-        ).chance(0.3F));
-        lootConfig.item_groups.put("weapons_tier_0", new LootConfig.ItemGroup(
-                List.of(weapons(0)),
-                0.25F,
-                0F,
-                1
-        ).chance(0.3F));
-        lootConfig.item_groups.put("weapons_tier_1", new LootConfig.ItemGroup(
-                List.of(weapons(1)),
-                1
-        ).chance(0.3F));
-        lootConfig.item_groups.put("weapons_tier_2", new LootConfig.ItemGroup(
-                List.of(weapons(2)),
-                1
-        ).chance(0.3F));
-        lootConfig.item_groups.put("weapons_tier_3", new LootConfig.ItemGroup(
-                List.of(weapons(3)),
-                1
-        ).chance(0.3F));
-        lootConfig.item_groups.put("weapons_tier_4", new LootConfig.ItemGroup(
-                List.of(weapons(4)),
-                1
-        ).chance(0.5F));
-        lootConfig.item_groups.put("weapons_tier_1_enchanted", new LootConfig.ItemGroup(
-                List.of(weapons(1)),
-                1
-        ).chance(0.3F).enchant());
-        lootConfig.item_groups.put("weapons_tier_2_enchanted", new LootConfig.ItemGroup(
-                List.of(weapons(2)),
-                1
-        ).chance(0.3F).enchant());
 
-        lootConfig.item_groups.put("armors_tier_1", new LootConfig.ItemGroup(
-                List.of(armors(1)),
-                1
-        ).chance(0.25F));
-        lootConfig.item_groups.put("armors_tier_1_enchanted", new LootConfig.ItemGroup(
-                List.of(armors(1)),
-                1
-        ).chance(0.25F).enchant());
+        var WG = "#rpg_series:golden_weapons";
+        var W0 = "#rpg_series:tier_0_weapons";
+        var W1 = "#rpg_series:tier_1_weapons";
+        var W2 = "#rpg_series:tier_2_weapons";
+        var W3 = "#rpg_series:tier_3_weapons";
+        var W4 = "#rpg_series:tier_4_weapons";
+        var W5 = "#rpg_series:tier_5_weapons";
+        var A1 = "#rpg_series:tier_1_armors";
+        var A2 = "#rpg_series:tier_2_armors";
+        var A3 = "#rpg_series:tier_3_armors";
 
-        lootConfig.item_groups.put("armors_tier_2", new LootConfig.ItemGroup(
-                List.of(armors(2)),
-                1
-        ).chance(0.5F));
-        lootConfig.item_groups.put("armors_tier_2_enchanted", new LootConfig.ItemGroup(
-                List.of(armors(2)),
-                1
-        ).chance(0.5F).enchant());
-
-
-        List.of("minecraft:chests/ruined_portal")
-                .forEach(id -> lootConfig.loot_tables.put(id, List.of("golden_weapons")));
+        // Vanilla loot table injectors
+        lootConfig = new LootConfigV2();
+        var injectors = lootConfig.injectors;
+        injectors.put("minecraft:chests/ruined_portal", new LootConfigV2.Pool()
+                .rolls(2)
+                .add(WG)
+                .add(WG, true)
+        );
 
         List.of("minecraft:chests/abandoned_mineshaft",
-                        "minecraft:chests/igloo_chest",
-                        "minecraft:chests/shipwreck_supply",
-                        "minecraft:chests/spawn_bonus_chest")
-                .forEach(id -> lootConfig.loot_tables.put(id, List.of("weapons_tier_0")));
+                "minecraft:chests/igloo_chest",
+                "minecraft:chests/shipwreck_supply",
+                "minecraft:chests/spawn_bonus_chest").
+                forEach(id -> injectors.put(id, new LootConfigV2.Pool()
+                        .rolls(0.5)
+                        .add(W0)
+                ));
+
 
         List.of("minecraft:chests/bastion_bridge",
-                        "minecraft:chests/simple_dungeon",
-                        "minecraft:chests/stronghold_crossing")
-                .forEach(id -> lootConfig.loot_tables.put(id, List.of("weapons_tier_1")));
+                "minecraft:chests/simple_dungeon",
+                "minecraft:chests/stronghold_crossing",
+                "minecraft:chests/buried_treasure")
+                .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
+                        .rolls(0.5)
+                        .add(W1)
+                ));
 
         List.of("minecraft:chests/shipwreck_treasure")
-                .forEach(id -> lootConfig.loot_tables.put(id, List.of("armors_tier_1")));
+                .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
+                        .rolls(0.5)
+                        .add(A1)
+                ));
 
         List.of("minecraft:chests/stronghold_crossing",
-                        "minecraft:chests/desert_pyramid",
-                        "minecraft:chests/underwater_ruin_small",
-                        "minecraft:chests/jungle_temple",
-                        "minecraft:chests/pillager_outpost",
-                        "minecraft:chests/woodland_mansion")
-                .forEach(id -> lootConfig.loot_tables.put(id, List.of("weapons_tier_1_enchanted", "armors_tier_1_enchanted")));
+                "minecraft:chests/desert_pyramid",
+                "minecraft:chests/underwater_ruin_small",
+                "minecraft:chests/jungle_temple",
+                "minecraft:chests/pillager_outpost",
+                "minecraft:chests/woodland_mansion")
+                .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
+                        .rolls(0.5)
+                        .add(W1, true)
+                        .add(A1, true)
+                ));
 
         List.of("minecraft:chests/nether_bridge",
-                        "minecraft:chests/underwater_ruin_big")
-                .forEach(id -> lootConfig.loot_tables.put(id, List.of("weapons_tier_2")));
+                "minecraft:chests/underwater_ruin_big")
+                .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
+                        .rolls(0.5)
+                        .add(W2)
+                ));
 
-        List.of("minecraft:chests/bastion_treasure",
-                        "minecraft:chests/ancient_city",
-                        "minecraft:chests/stronghold_library")
-                .forEach(id -> lootConfig.loot_tables.put(id, List.of("armors_tier_2")));
+        List.of("minecraft:chests/bastion_other")
+                .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
+                        .rolls(0.5)
+                        .add(W1, true)
+                ));
 
-        List.of("minecraft:chests/bastion_treasure")
-                .forEach(id -> lootConfig.loot_tables.put(id, List.of("weapons_tier_3")));
+        injectors.put("minecraft:chests/bastion_treasure", new LootConfigV2.Pool()
+                .rolls(1)
+                .bonus_rolls(0)
+                .add(A2, true)
+                .add(W3, true)
+        );
 
-        List.of("minecraft:chests/end_city_treasure"
-                        )
-                .forEach(id -> lootConfig.loot_tables.put(id, List.of("weapons_tier_4", "armors_tier_2")));
+        List.of("minecraft:chests/nether_bridge",
+                "minecraft:chests/underwater_ruin_big")
+                .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
+                        .rolls(0.5)
+                        .add(W2)
+                ));
 
+        List.of("minecraft:chests/ancient_city",
+                "minecraft:chests/stronghold_library")
+                .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
+                        .rolls(0.5)
+                        .add(A2, true)
+                ));
+
+        List.of("minecraft:chests/end_city_treasure")
+                .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
+                        .rolls(1)
+                        .bonus_rolls(0)
+                        .add(W4, true)
+                        .add(A2, true)
+                        .add(A3, true)
+                ));
     }
+
 
     @SafeVarargs
     private static <T> List<T> joinLists(List<T>... lists) {
