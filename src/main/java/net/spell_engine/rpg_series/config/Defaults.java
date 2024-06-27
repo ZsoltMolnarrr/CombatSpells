@@ -206,9 +206,9 @@ public class Defaults {
 
         injectors.put("bosses_of_mass_destruction:chests/obsidilith", new LootConfigV2.Pool()
                 .rolls(2)
-                .add(W2, true)
-                .add(A2, true)
-                .add(X3)
+                .add(W4, true)
+                .add(A3, true)
+                .add(X4)
         );
 
         // MOD CHESTS
