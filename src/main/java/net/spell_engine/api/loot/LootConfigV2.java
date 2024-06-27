@@ -7,6 +7,7 @@ import java.util.List;
 
 public class LootConfigV2 {
     public LinkedHashMap<String, Pool> injectors = new LinkedHashMap<>();
+    public LinkedHashMap<String, Pool> regex_injectors = new LinkedHashMap<>();
 
     public static class Pool {
         public float rolls = 1F;

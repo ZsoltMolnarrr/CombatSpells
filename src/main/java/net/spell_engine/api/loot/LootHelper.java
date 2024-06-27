@@ -63,7 +63,16 @@ public class LootHelper {
     }
 
     public static void configureV2(Identifier id, LootTable.Builder tableBuilder, LootConfigV2 config, HashMap<String, Item> entries) {
-        var pool = config.injectors.get(id.toString());
+        var tableId = id.toString();
+        var pool = config.injectors.get(tableId);
+        if (pool == null) {
+            for (var regex: config.regex_injectors.keySet()) {
+                if (tableId.matches(regex)) {
+                    pool = config.regex_injectors.get(regex);
+                    break;
+                }
+            }
+        }
         if (pool == null) { return; }
 
         var chance = pool.rolls > 0 ? pool.rolls : 1F;

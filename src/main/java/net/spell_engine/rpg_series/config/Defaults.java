@@ -40,9 +40,12 @@ public class Defaults {
         var X3 = "#rpg_series:tier_3_accessories";
         var X4 = "#rpg_series:tier_4_accessories";
 
-        // Vanilla loot table injectors
         lootConfig = new LootConfigV2();
         var injectors = lootConfig.injectors;
+        var regexInjectors = lootConfig.regex_injectors;
+
+        // Vanilla loot table injectors
+
         injectors.put("minecraft:chests/ruined_portal", new LootConfigV2.Pool()
                 .rolls(2)
                 .add(WG)
@@ -137,11 +140,574 @@ public class Defaults {
                         .add(A3, true)
                         .add(X4)
                 ));
-    }
+
+        // Graveyard mod
+
+        injectors.put("graveyard:chests/great_crypt_loot", new LootConfigV2.Pool()
+                .rolls(1)
+                .add(A2, true)
+                .add(W2, true)
+                .add(X2)
+        );
+
+        injectors.put("graveyard:chests/crypt_loot", new LootConfigV2.Pool()
+                .rolls(0.2)
+                .add(W1, true)
+        );
+
+        injectors.put("graveyard:chests/small_loot", new LootConfigV2.Pool()
+                .rolls(1)
+                .add(W1)
+                .add(A1)
+        );
+
+        injectors.put("graveyard:chests/medium_loot", new LootConfigV2.Pool()
+                .rolls(1)
+                .add(W1, true)
+                .add(A1, true)
+        );
+
+        injectors.put("graveyard:chests/large_loot", new LootConfigV2.Pool()
+                .rolls(1)
+                .add(A2, true)
+                .add(W2, true)
+                .add(X2)
+        );
+
+        // Illager Invasion mod
+//        emi_loot:/chest_loot/illagerinvasion/chests/illager_fort_tower
+//        W1 W1E
+        injectors.put("illagerinvasion:chests/illager_fort_tower", new LootConfigV2.Pool()
+                .rolls(1)
+                .add(W1)
+                .add(W1, true)
+        );
+
+        // YUNG Better Dungeons mod
+
+        injectors.put("betterdungeons:skeleton_dungeon/chests/common", new LootConfigV2.Pool()
+                .add(W1, true)
+        );
+
+        injectors.put("betterdungeons:zombie_dungeon/chests/common", new LootConfigV2.Pool()
+                .add(W0)
+                .add(W1)
+                .add(W2)
+                .add(A1)
+                .add(X1)
+        );
+
+        injectors.put("betterdungeons:small_nether_dungeon/chests/common", new LootConfigV2.Pool()
+                .add(WG)
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+
+        injectors.put("betterdungeons:zombie_dungeon/chests/special", new LootConfigV2.Pool()
+                .add(W0)
+                .add(W1)
+                .add(W2)
+                .add(A1)
+                .add(X1)
+        );
+
+        injectors.put("betterdungeons:zombie_dungeon/chests/tombstone", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W2, true)
+                .add(X2)
+        );
+
+        // YUNG Better Strongholds mod
+
+        injectors.put("betterstrongholds:chests/cmd_yung", new LootConfigV2.Pool()
+                .add(W2, true)
+        );
+
+        injectors.put("betterstrongholds:chests/armoury", new LootConfigV2.Pool()
+                .rolls(4)
+                .add(W0)
+                .add(W1)
+                .add(W1, true)
+                .add(W2)
+                .add(W2, true)
+                .add(A1)
+                .add(A1, true)
+                .add(A2)
+                .add(A2, true)
+        );
+
+        injectors.put("betterstrongholds:chests/crypt", new LootConfigV2.Pool()
+                .add(W1)
+                .add(X1)
+        );
+
+        // YUNG Better Desert Temples mod
+
+        injectors.put("betterdeserttemples:chests/wardrobe", new LootConfigV2.Pool()
+                .add(A1, true)
+        );
+
+        injectors.put("betterdeserttemples:chests/tomb_pharaoh", new LootConfigV2.Pool()
+                .add(WG, 2, false)
+                .add(X2)
+        );
+
+        injectors.put("betterdeserttemples:chests/pharaoh_hidden", new LootConfigV2.Pool()
+                .add(WG, 2, false)
+                .add(X2)
+        );
+
+        // YUNG Better Nether Fortress mod
+
+        injectors.put("betterfortresses:chests/keep", new LootConfigV2.Pool()
+                .add(W0)
+                .add(WG)
+                .add(X1)
+        );
+
+        // Philip's Ruins mod
+
+        injectors.put("philipsruins:chest/lost_soul_city_loot", new LootConfigV2.Pool()
+                .add(A2)
+                .add(A2, true)
+                .add(X2)
+        );
+
+        injectors.put("philipsruins:chest/desert_pyramid_loot", new LootConfigV2.Pool()
+                .add(A1)
+                .add(A1, true)
+                .add(X1)
+        );
+
+        injectors.put("philipsruins:chest/badlands_dungeon_loot_high", new LootConfigV2.Pool()
+                .add(W1)
+                .add(A1)
+                .add(X2)
+        );
+
+        injectors.put("philipsruins:chest/level_three_ruins_loot", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(W2)
+                .add(A1)
+                .add(X1)
+        );
+
+        injectors.put("philipsruins:chest/ocean_ruins_loot", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(W2)
+                .add(X1)
+        );
+
+        injectors.put("philipsruins:chest/ocean_ruin_fortress", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+
+        injectors.put("philipsruins:chest/nether_lava_ruins_loot", new LootConfigV2.Pool()
+                .add(A3, true)
+                .add(X3)
+        );
+
+        injectors.put("philipsruins:chest/badlands_dungeon_loot_low", new LootConfigV2.Pool()
+                .add(A1)
+                .add(X1)
+        );
+
+        injectors.put("philipsruins:chest/end_ruins_loot", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(W2, true)
+                .add(W4)
+                .add(A2, true)
+                .add(X2)
+                .add(X4)
+        );
+
+        injectors.put("philipsruins:chest/level_one_ruins_loot", new LootConfigV2.Pool()
+                .add(W0)
+                .add(A1)
+                .add(X1)
+        );
+
+        injectors.put("philipsruins:chest/bone_dungeon_loot", new LootConfigV2.Pool()
+                .add(W0)
+                .add(W1, 3, false)
+                .add(W2)
+                .add(W2, true)
+                .add(A1)
+                .add(A1, true)
+                .add(A2)
+                .add(X1)
+                .add(X2)
+        );
+
+        injectors.put("philipsruins:chest/ruin_loot", new LootConfigV2.Pool()
+                .add(W1)
+                .add(A1)
+                .add(X1)
+        );
+
+        injectors.put("philipsruins:chest/ancient_ruins_loot", new LootConfigV2.Pool()
+                .add(A2)
+                .add(X2)
+        );
+
+        // Awesome Dungeons mod
+
+        injectors.put("awesomedungeonnether:chests/awesome_dungeon", new LootConfigV2.Pool()
+                .add(W1)
+                .add(X1)
+        );
+
+        injectors.put("awesomedungeonocean:chests/awesome_dungeon", new LootConfigV2.Pool()
+                .add(W1)
+                .add(X1)
+        );
+
+        injectors.put("awesomedungeonend:chests/awesome_dungeon", new LootConfigV2.Pool()
+                .add(W3, true)
+                .add(A2, true)
+                .add(X2)
+        );
+
+        injectors.put("awesomedungeon:chests/awesome_dungeon", new LootConfigV2.Pool()
+                .add(W1)
+                .add(X1)
+        );
+
+        // Structory mod
+
+        injectors.put("structory:outcast/bandit/desert_copper", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W1, true)
+        );
+
+        injectors.put("structory:outcast/generic/bandit", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W1, true)
+        );
+
+        injectors.put("structory:outcast/mine/loot", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(X1)
+        );
+
+        injectors.put("structory:outcast/settlement", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W1, true)
+                .add(X1)
+        );
+
+        injectors.put("structory:outcast/generic/miner", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W1, true)
+                .add(X1)
+        );
+
+        injectors.put("structory:outcast/bandit/desert", new LootConfigV2.Pool()
+                .add(W1)
+        );
+
+        injectors.put("structory:outcast/farm_ruin", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W0, true)
+                .add(W1, true)
+        );
+
+        injectors.put("structory:outcast/ruin/ruin", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W1, true)
+        );
+
+        // Kaisyn?? mod
+
+        injectors.put("kaisyn:village/exclusives/village_piglin_house", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(WG)
+                .add(W1, true)
+                .add(X1)
+        );
+
+        injectors.put("kaisyn:outpost/common/armory", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(W1)
+                .add(A1)
+        );
+
+        injectors.put("kaisyn:village/exclusives/village_piglin_barrel", new LootConfigV2.Pool()
+                .rolls(0.2)
+                .add(WG)
+        );
+
+        // Terralith mod
+
+        injectors.put("terralith:underground/chest", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(A1, true)
+                .add(X1)
+        );
+
+        injectors.put("terralith:spire/common", new LootConfigV2.Pool()
+                .add(WG)
+                .add(W1, true)
+                .add(X1)
+        );
+
+        injectors.put("terralith:underground/chest", new LootConfigV2.Pool()
+                .add(WG)
+        );
+
+        injectors.put("terralith:spire/junk", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W0)
+                .add(X1)
+        );
+
+        injectors.put("terralith:ruin/glacial/main_cs", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W0)
+        );
+
+        injectors.put("terralith:spire/treasure", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .bonus_rolls(0)
+                .add(W2, true)
+                .add(A2, true)
+                .add(X2)
+        );
+
+        injectors.put("terralith:desert_outpost", new LootConfigV2.Pool()
+                .add(W1)
+        );
+
+        injectors.put("terralith:ruin/glacial/junk", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W0)
+                .add(X1)
+        );
+
+        // BetterNether mod
+
+        injectors.put("betternether:chests/wither_tower_bonus", new LootConfigV2.Pool()
+                .add(W4)
+                .add(A3)
+                .add(X3)
+        );
+
+        injectors.put("betternether:chests/city_surprise", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W4)
+                .add(X3)
+        );
+
+        // BetterEnd mod
+
+        injectors.put("betterend:chests/shadow_forest", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W3)
+                .add(X3)
+        );
+
+        injectors.put("betterend:chests/umbrella_jungle", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W3)
+        );
+
+        injectors.put("betterend:chests/foggy_mushroomland", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W3)
+        );
+
+        injectors.put("betterend:chests/biome", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W3)
+        );
 
 
-    @SafeVarargs
-    private static <T> List<T> joinLists(List<T>... lists) {
-        return Arrays.stream(lists).flatMap(Collection::stream).collect(Collectors.toList());
+        // Dungeons Arise mod
+
+        regexInjectors.put("^dungeons_arise:chests.*barrels$", new LootConfigV2.Pool()
+                .rolls(0.25)
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+        regexInjectors.put("^dungeons_arise:chests.*normal$", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+
+        injectors.put("dungeons_arise:chests/thornborn_towers/thornborn_towers_top_treasure", new LootConfigV2.Pool()
+                .add(W1)
+                .add(A1, true)
+                .add(X1)
+        );
+        injectors.put("dungeons_arise_seven_seas:chests/victory_frigate/victory_frigate_treasure", new LootConfigV2.Pool()
+                .add(A2, true)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/infested_temple/infested_temple_top_treasure", new LootConfigV2.Pool()
+                .add(W2, true)
+                .add(A2, true)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/illager_windmill/illager_windmill_treasure", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+        injectors.put("dungeons_arise:chests/bandit_towers/bandit_towers_treasure", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(A1, true)
+                .add(A2)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/ceryneian_hind/ceryneian_hind_treasure", new LootConfigV2.Pool()
+                .add(W2, true)
+                .add(A2)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/small_blimp/small_blimp_treasure", new LootConfigV2.Pool()
+                .add(A1, true)
+                .add(W1, true)
+                .add(X1)
+        );
+        injectors.put("dungeons_arise:chests/heavenly_conqueror/heavenly_conqueror_treasure", new LootConfigV2.Pool()
+                .add(WG)
+                .add(A2, true)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/aviary/aviary_treasure", new LootConfigV2.Pool()
+                .add(WG)
+                .add(W2)
+                .add(A2)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/illager_corsair/illager_corsair_treasure", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+        injectors.put("dungeons_arise:chests/typhon/typhon_treasure", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+        injectors.put("dungeons_arise_seven_seas:chests/corsair_corvette/corsair_corvette_treasure", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+        injectors.put("dungeons_arise_seven_seas:chests/small_yacht/small_yacht_treasure", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+        injectors.put("dungeons_arise:chests/mushroom_house/mushroom_house_treasure", new LootConfigV2.Pool()
+                .add(W0)
+                .add(W1)
+                .add(W1, true)
+                .add(A1)
+                .add(A1, true)
+        );
+        injectors.put("dungeons_arise:chests/jungle_tree_house/jungle_tree_house_treasure", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(A1)
+                .add(X1)
+        );
+        injectors.put("dungeons_arise:chests/illager_galley/illager_galley_treasure", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+        injectors.put("dungeons_arise:chests/undead_pirate_ship/undead_pirate_ship_treasure", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+        injectors.put("dungeons_arise:chests/heavenly_challenger/heavenly_challenger_treasure", new LootConfigV2.Pool()
+                .add(WG)
+                .add(W2, true)
+                .add(W3)
+                .add(A2, true)
+                .add(A3, true)
+                .add(X2)
+                .add(X3)
+        );
+        injectors.put("dungeons_arise:chests/heavenly_rider/heavenly_rider_treasure", new LootConfigV2.Pool()
+                .add(WG)
+                .add(A2, true)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/illager_fort/illager_fort_treasure", new LootConfigV2.Pool()
+                .add(W1)
+                .add(A2, true)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/keep_kayra/keep_kayra_treasure", new LootConfigV2.Pool()
+                .add(W2)
+                .add(W2, true)
+                .add(A2, true)
+                .add(A3)
+                .add(X2)
+                .add(X3)
+        );
+        injectors.put("dungeons_arise_seven_seas:chests/pirate_junk/pirate_junk_treasure", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(A1, true)
+                .add(A2)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/mushroom_mines/mushroom_mines_treasure", new LootConfigV2.Pool()
+                .add(A1, true)
+                .add(A2, true)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/mines_treasure_medium", new LootConfigV2.Pool()
+                .add(W1, true)
+                .add(A1, true)
+                .add(A2, true)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/keep_kayra/keep_kayra_library_treasure", new LootConfigV2.Pool()
+                .add(W2, true)
+                .add(A2, true)
+                .add(A3)
+                .add(X2)
+                .add(X3)
+        );
+        injectors.put("dungeons_arise:chests/mining_system/mining_system_treasure", new LootConfigV2.Pool()
+                .add(A1, true)
+                .add(A2, true)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/shiraz_palace/shiraz_palace_treasure", new LootConfigV2.Pool()
+                .add(W3, true)
+                .add(A2, true)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/foundry/foundry_treasure", new LootConfigV2.Pool()
+                .add(A2)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/keep_kayra/keep_kayra_garden_treasure", new LootConfigV2.Pool()
+                .add(W2, true)
+                .add(A2, true)
+                .add(A3)
+                .add(X2)
+                .add(X3)
+        );
+        injectors.put("dungeons_arise:chests/plague_asylum/plague_asylum_treasure", new LootConfigV2.Pool()
+                .add(A2, true)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise_seven_seas:chests/unicorn_galleon/unicorn_galleon_treasure", new LootConfigV2.Pool()
+                .add(A1, true)
+                .add(A2, true)
+                .add(X2)
+        );
     }
 }
