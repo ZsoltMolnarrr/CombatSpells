@@ -108,8 +108,7 @@ public class Defaults {
                 ));
 
         injectors.put("minecraft:chests/bastion_treasure", new LootConfigV2.Pool()
-                .rolls(1)
-                .bonus_rolls(0)
+                .rolls(2)
                 .add(A2, true)
                 .add(W3, true)
                 .add(X3)
@@ -126,7 +125,7 @@ public class Defaults {
         List.of("minecraft:chests/ancient_city",
                 "minecraft:chests/stronghold_library")
                 .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
-                        .rolls(0.5)
+                        .rolls(0.8)
                         .add(A2, true)
                         .add(X2, 2, false)
                 ));
@@ -140,6 +139,79 @@ public class Defaults {
                         .add(A3, true)
                         .add(X4)
                 ));
+
+        // BOSSES
+
+        // Vanilla bosses
+
+        injectors.put("minecraft:entities/ender_dragon", new LootConfigV2.Pool()
+                .rolls(3)
+                .add(W3, true)
+                .add(A3, true)
+                .add(X4)
+        );
+
+        injectors.put("minecraft:entities/wither", new LootConfigV2.Pool()
+                .rolls(2)
+                .add(W3, true)
+                .add(A3, true)
+                .add(X3)
+        );
+
+        injectors.put("minecraft:entities/warden", new LootConfigV2.Pool()
+                .rolls(2)
+                .add(W2, true)
+                .add(A2, true)
+                .add(X2)
+        );
+
+        // MineCells bosses
+
+        injectors.put("minecells:entities/conjunctivius", new LootConfigV2.Pool()
+                .rolls(2)
+                .add(W2, true)
+                .add(A2, true)
+                .add(X4)
+        );
+
+        injectors.put("minecells:entities/concierge", new LootConfigV2.Pool()
+                .rolls(2)
+                .add(W2, true)
+                .add(A2, true)
+                .add(X4)
+        );
+
+        // Bosses of Mass Destruction mod
+
+        injectors.put("bosses_of_mass_destruction:entities/lich", new LootConfigV2.Pool()
+                .rolls(2)
+                .add(W2, true)
+                .add(A2, true)
+                .add(X2)
+        );
+
+        injectors.put("bosses_of_mass_destruction:entities/void_blossom", new LootConfigV2.Pool()
+                .rolls(2)
+                .add(W2, true)
+                .add(A2, true)
+                .add(X2)
+        );
+
+        injectors.put("bosses_of_mass_destruction:chests/gauntlet", new LootConfigV2.Pool()
+                .rolls(2)
+                .add(W2, true)
+                .add(A2, true)
+                .add(X3)
+        );
+
+        injectors.put("bosses_of_mass_destruction:chests/obsidilith", new LootConfigV2.Pool()
+                .rolls(2)
+                .add(W2, true)
+                .add(A2, true)
+                .add(X3)
+        );
+
+        // MOD CHESTS
 
         // Graveyard mod
 
@@ -175,10 +247,9 @@ public class Defaults {
         );
 
         // Illager Invasion mod
-//        emi_loot:/chest_loot/illagerinvasion/chests/illager_fort_tower
-//        W1 W1E
+
         injectors.put("illagerinvasion:chests/illager_fort_tower", new LootConfigV2.Pool()
-                .rolls(1)
+                .rolls(0.5)
                 .add(W1)
                 .add(W1, true)
         );
@@ -186,10 +257,12 @@ public class Defaults {
         // YUNG Better Dungeons mod
 
         injectors.put("betterdungeons:skeleton_dungeon/chests/common", new LootConfigV2.Pool()
+                .rolls(0.5)
                 .add(W1, true)
         );
 
         injectors.put("betterdungeons:zombie_dungeon/chests/common", new LootConfigV2.Pool()
+                .rolls(0.5)
                 .add(W0)
                 .add(W1)
                 .add(W2)
@@ -198,6 +271,7 @@ public class Defaults {
         );
 
         injectors.put("betterdungeons:small_nether_dungeon/chests/common", new LootConfigV2.Pool()
+                .rolls(0.5)
                 .add(WG)
                 .add(W1, true)
                 .add(A1, true)
@@ -205,6 +279,7 @@ public class Defaults {
         );
 
         injectors.put("betterdungeons:zombie_dungeon/chests/special", new LootConfigV2.Pool()
+                .rolls(0.5)
                 .add(W0)
                 .add(W1)
                 .add(W2)
@@ -225,7 +300,7 @@ public class Defaults {
         );
 
         injectors.put("betterstrongholds:chests/armoury", new LootConfigV2.Pool()
-                .rolls(4)
+                .rolls(3)
                 .add(W0)
                 .add(W1)
                 .add(W1, true)
@@ -245,6 +320,7 @@ public class Defaults {
         // YUNG Better Desert Temples mod
 
         injectors.put("betterdeserttemples:chests/wardrobe", new LootConfigV2.Pool()
+                .rolls(0.5)
                 .add(A1, true)
         );
 
@@ -261,6 +337,7 @@ public class Defaults {
         // YUNG Better Nether Fortress mod
 
         injectors.put("betterfortresses:chests/keep", new LootConfigV2.Pool()
+                .rolls(0.25)
                 .add(W0)
                 .add(WG)
                 .add(X1)
@@ -528,13 +605,13 @@ public class Defaults {
         // Dungeons Arise mod
 
         regexInjectors.put("^dungeons_arise:chests.*barrels$", new LootConfigV2.Pool()
-                .rolls(0.25)
+                .rolls(0.2)
                 .add(W1, true)
                 .add(A1, true)
                 .add(X1)
         );
         regexInjectors.put("^dungeons_arise:chests.*normal$", new LootConfigV2.Pool()
-                .rolls(0.5)
+                .rolls(0.35)
                 .add(W1, true)
                 .add(A1, true)
                 .add(X1)
@@ -685,6 +762,7 @@ public class Defaults {
                 .add(X2)
         );
         injectors.put("dungeons_arise:chests/shiraz_palace/shiraz_palace_treasure", new LootConfigV2.Pool()
+                .rolls(2)
                 .add(W3, true)
                 .add(A2, true)
                 .add(X2)
@@ -708,6 +786,20 @@ public class Defaults {
                 .add(A1, true)
                 .add(A2, true)
                 .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/shiraz_palace/shiraz_palace_library", new LootConfigV2.Pool()
+                .rolls(0.5)
+                .add(A1)
+                .add(A2)
+                .add(X2)
+        );
+        injectors.put("dungeons_arise:chests/shiraz_palace/shiraz_palace_elite", new LootConfigV2.Pool()
+                .rolls(2)
+                .add(W2, true)
+                .add(A2, true)
+                .add(A3)
+                .add(X2)
+                .add(X3)
         );
     }
 }
