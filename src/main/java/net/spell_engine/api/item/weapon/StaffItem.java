@@ -13,12 +13,14 @@ import net.minecraft.item.ToolMaterial;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.spell_engine.api.item.ConfigurableAttributes;
+import net.spell_engine.internals.SpellInfinityEnchantment;
 
 public class StaffItem extends ToolItem implements ConfigurableAttributes {
     private Multimap<EntityAttribute, EntityAttributeModifier> attributes;
 
     public StaffItem(ToolMaterial material, Settings settings) {
         super(material, settings);
+        SpellInfinityEnchantment.ALLOWED_ITEMS.add(this);
     }
 
     public void setAttributes(Multimap<EntityAttribute, EntityAttributeModifier> attributes) {

@@ -61,22 +61,23 @@ public class SpellEngineMod {
         EnchantmentRestriction.permit(Enchantments.KNOCKBACK, itemStack -> itemStack.getItem() instanceof StaffItem);
         EnchantmentRestriction.permit(Enchantments.LOOTING, itemStack -> itemStack.getItem() instanceof StaffItem);
         EnchantmentRestriction.permit(Enchantments.FIRE_ASPECT, itemStack -> itemStack.getItem() instanceof StaffItem);
-        EnchantmentRestriction.prohibit(Enchantments_SpellPowerMechanics.HASTE, itemStack -> {
-            var item = itemStack.getItem();
-            EquipmentSlot slot;
-            if (item instanceof ArmorItem armorItem) {
-                slot = armorItem.getSlotType();
-            } else {
-                slot = EquipmentSlot.MAINHAND;
-            }
-            var empty = SpellPowerEnchanting.relevantSchools(itemStack, slot).isEmpty();
-            return empty;
-        });
 
-        SpellPowerEnchanting.allowForWeapon(itemStack -> {
-            var container = SpellContainerHelper.containerFromItemStack(itemStack);
-            return container != null && container.isValid() && container.content != SpellContainer.ContentType.ARCHERY;
-        });
+//        EnchantmentRestriction.prohibit(Enchantments_SpellPowerMechanics.HASTE, itemStack -> {
+//            var item = itemStack.getItem();
+//            EquipmentSlot slot;
+//            if (item instanceof ArmorItem armorItem) {
+//                slot = armorItem.getSlotType();
+//            } else {
+//                slot = EquipmentSlot.MAINHAND;
+//            }
+//            var empty = SpellPowerEnchanting.relevantSchools(itemStack, slot).isEmpty();
+//            return empty;
+//        });
+//
+//        SpellPowerEnchanting.allowForWeapon(itemStack -> {
+//            var container = SpellContainerHelper.containerFromItemStack(itemStack);
+//            return container != null && container.isValid() && container.content != SpellContainer.ContentType.ARCHERY;
+//        });
 
         QuiverCompat.init();
         ExternalSpellSchools.initialize();

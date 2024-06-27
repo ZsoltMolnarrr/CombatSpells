@@ -4,10 +4,15 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.enchantment.MendingEnchantment;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
-import net.spell_engine.api.spell.SpellContainer;
 import net.tinyconfig.models.EnchantmentConfig;
+
+import java.util.HashSet;
 
 public class SpellInfinityEnchantment extends Enchantment {
     public EnchantmentConfig config;
@@ -17,14 +22,11 @@ public class SpellInfinityEnchantment extends Enchantment {
         this.config = config;
     }
 
-    public static boolean itemStackHasSpell(ItemStack stack) {
-        var object = (Object)stack;
-        // stack.isIn(SpellEngineMod.SPELL_CASTER_ITEM_STACK);
-        if (object instanceof SpellCasterItemStack casterItemStack) {
-            var container = casterItemStack.getSpellContainer();
-            return container != null && container.isValid() && container.content == SpellContainer.ContentType.MAGIC;
-        }
-        return false;
+    public static final Identifier tagId = new Identifier(SpellEngineMod.ID, "enchant_spell_infinity");
+    public static final HashSet<Item> ALLOWED_ITEMS = new HashSet<>();
+
+    public static boolean isEligible(ItemStack stack) {
+        return ALLOWED_ITEMS.contains(stack.getItem()) || stack.isIn(TagKey.of(RegistryKeys.ITEM, tagId));
     }
 
     // MARK: Cost

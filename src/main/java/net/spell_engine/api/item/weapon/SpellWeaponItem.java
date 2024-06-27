@@ -9,12 +9,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolMaterial;
 import net.spell_engine.api.item.ConfigurableAttributes;
+import net.spell_engine.internals.SpellInfinityEnchantment;
 
 public class SpellWeaponItem extends SwordItem implements ConfigurableAttributes {
     private Multimap<EntityAttribute, EntityAttributeModifier> attributes;
 
     public SpellWeaponItem(ToolMaterial material, Settings settings) {
         this(material, 1,2.4F, settings);
+        SpellInfinityEnchantment.ALLOWED_ITEMS.add(this);
     }
 
     public SpellWeaponItem(ToolMaterial material, int attackDamage, float attackSpeed, Settings settings) {

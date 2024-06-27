@@ -2,6 +2,7 @@
 
 Functional changes:
 - Reworked loot injection system, now able to spawn enchanted loot from tags
+- Update Spell Infinity custom application condition, custom items can now be enabled by adding to `spell_engine:enchant_spell_infinity` tag
 
 # 0.15.5
 

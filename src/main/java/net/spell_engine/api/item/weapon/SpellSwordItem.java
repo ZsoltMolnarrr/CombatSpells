@@ -5,10 +5,12 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.registry.tag.BlockTags;
+import net.spell_engine.internals.SpellInfinityEnchantment;
 
 public class SpellSwordItem extends SpellWeaponItem {
     public SpellSwordItem(ToolMaterial material, Settings settings) {
         super(material, settings);
+        SpellInfinityEnchantment.ALLOWED_ITEMS.add(this);
     }
 
     @Override

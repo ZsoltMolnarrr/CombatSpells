@@ -2,7 +2,6 @@ package net.spell_engine.api.enchantment;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.config.EnchantmentsConfig;
@@ -27,7 +26,7 @@ public class Enchantments_SpellEngine {
         all = new HashMap<>();
         all.put(infinityId, INFINITY);
 
-        EnchantmentRestriction.prohibit(INFINITY, itemStack -> !SpellEngineMod.config.spell_cost_item_allowed || !SpellInfinityEnchantment.itemStackHasSpell(itemStack));
+        EnchantmentRestriction.prohibit(INFINITY, itemStack -> !SpellEngineMod.config.spell_cost_item_allowed || !SpellInfinityEnchantment.isEligible(itemStack));
     }
 
     private static EnchantmentsConfig config() {
