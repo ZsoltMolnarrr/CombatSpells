@@ -15,7 +15,6 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.spell_engine.rpg_series.RPGSeriesCore;
 import net.tinyconfig.ConfigManager;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +42,7 @@ public class LootHelper {
             for (var itemInjectorEntry: pool.entries) {
                 var id = itemInjectorEntry.id;
                 if (id != null && id.startsWith("#")) {
-                    System.out.println("XXX Updating tag: " + id);
+                    // System.out.println("XXX Updating tag: " + id);
                     var tagString = id.substring(1);
                     if (updatedTags.contains(tagString)) {
                         continue;

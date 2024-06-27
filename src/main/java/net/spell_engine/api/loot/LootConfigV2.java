@@ -61,7 +61,13 @@ public class LootConfigV2 {
             return add(id, false);
         }
         public Pool add(String id, boolean enchant) {
+            return add(id, 0, enchant);
+        }
+        public Pool add(String id, int weight, boolean enchant) {
             Entry entry = new Entry(id);
+            if (weight > 0) {
+                entry.weight = weight;
+            }
             if (enchant) {
                 entry.enchant();
             }

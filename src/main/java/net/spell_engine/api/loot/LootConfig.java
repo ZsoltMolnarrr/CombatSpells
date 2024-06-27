@@ -3,6 +3,7 @@ package net.spell_engine.api.loot;
 import java.util.HashMap;
 import java.util.List;
 
+@Deprecated
 public class LootConfig {
     public HashMap<String, ItemGroup> item_groups = new HashMap<>();
     public static class ItemGroup { public ItemGroup() { }

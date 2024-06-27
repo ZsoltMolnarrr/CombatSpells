@@ -34,6 +34,11 @@ public class Defaults {
         var A1 = "#rpg_series:tier_1_armors";
         var A2 = "#rpg_series:tier_2_armors";
         var A3 = "#rpg_series:tier_3_armors";
+        var X0 = "#rpg_series:tier_0_accessories";
+        var X1 = "#rpg_series:tier_1_accessories";
+        var X2 = "#rpg_series:tier_2_accessories";
+        var X3 = "#rpg_series:tier_3_accessories";
+        var X4 = "#rpg_series:tier_4_accessories";
 
         // Vanilla loot table injectors
         lootConfig = new LootConfigV2();
@@ -51,6 +56,7 @@ public class Defaults {
                 forEach(id -> injectors.put(id, new LootConfigV2.Pool()
                         .rolls(0.5)
                         .add(W0)
+                        .add(X0)
                 ));
 
 
@@ -61,6 +67,7 @@ public class Defaults {
                 .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
                         .rolls(0.5)
                         .add(W1)
+                        .add(X2)
                 ));
 
         List.of("minecraft:chests/shipwreck_treasure")
@@ -79,6 +86,7 @@ public class Defaults {
                         .rolls(0.5)
                         .add(W1, true)
                         .add(A1, true)
+                        .add(X1, true)
                 ));
 
         List.of("minecraft:chests/nether_bridge",
@@ -86,12 +94,14 @@ public class Defaults {
                 .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
                         .rolls(0.5)
                         .add(W2)
+                        .add(X2)
                 ));
 
         List.of("minecraft:chests/bastion_other")
                 .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
                         .rolls(0.5)
                         .add(W1, true)
+                        .add(X3)
                 ));
 
         injectors.put("minecraft:chests/bastion_treasure", new LootConfigV2.Pool()
@@ -99,13 +109,15 @@ public class Defaults {
                 .bonus_rolls(0)
                 .add(A2, true)
                 .add(W3, true)
+                .add(X3)
         );
 
         List.of("minecraft:chests/nether_bridge",
                 "minecraft:chests/underwater_ruin_big")
                 .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
-                        .rolls(0.5)
+                        .rolls(0.75)
                         .add(W2)
+                        .add(X2)
                 ));
 
         List.of("minecraft:chests/ancient_city",
@@ -113,6 +125,7 @@ public class Defaults {
                 .forEach(id -> injectors.put(id, new LootConfigV2.Pool()
                         .rolls(0.5)
                         .add(A2, true)
+                        .add(X2, 2, false)
                 ));
 
         List.of("minecraft:chests/end_city_treasure")
@@ -122,6 +135,7 @@ public class Defaults {
                         .add(W4, true)
                         .add(A2, true)
                         .add(A3, true)
+                        .add(X4)
                 ));
     }
 
