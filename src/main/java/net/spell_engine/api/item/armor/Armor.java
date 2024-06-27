@@ -53,6 +53,10 @@ public class Armor {
             return pieces().stream().map(piece -> idOf(piece).toString()).toList();
         }
 
+        /**
+         * No longer does anything, since this behaviour is tag based
+         */
+        @Deprecated
         public Set<A> allowSpellPowerEnchanting(boolean allow) {
             this.allowSpellPowerEnchanting = allow;
             return this;
@@ -61,9 +65,6 @@ public class Armor {
         public void register(RegistryKey<ItemGroup> itemGroupKey) {
             for (var piece: pieces()) {
                 Registry.register(Registries.ITEM, idOf(piece), piece);
-                if (this.allowSpellPowerEnchanting) {
-                    SpellPowerEnchanting.registerArmor(piece);
-                }
             }
             ItemGroupEvents.modifyEntriesEvent(itemGroupKey).register(content -> {
                 for(var piece: pieces()) {
