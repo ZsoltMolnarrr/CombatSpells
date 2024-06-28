@@ -32,7 +32,7 @@
   "spell.tooltip.ammo": "필요한 아이템: {item}",
   "spell.tooltip.ammo.plural": "필요한 아이템: {item} (x{count})",
   "spell.tooltip.hold_for_details": "(세부 정보을 보려면 %1$s을(를) 누르세요)",
-  "spell.tooltip.spell_binding_tip": "(주문 연결대를 사용하여 주문 추가)",
+  "spell.tooltip.spell_binding_tip": "(주문 부여대를 사용하여 주문 추가)",
 
   "gui.spell_engine.config_menu": "주문 엔진 설정",
   "gui.spell_engine.close": "닫기",
@@ -108,20 +108,20 @@
   "text.autoconfig.spell_engine.option.client.filterInvalidTargets.@Tooltip": "적대적인 주문으로 아군을, 유용한 주문으로 적을 대상으로 하는 것을 방지합니다.",
   "text.autoconfig.spell_engine.option.client.alwaysShowFullTooltip": "항상 전체 주문 도구 설명 표시",
   "text.autoconfig.spell_engine.option.client.alwaysShowFullTooltip.@Tooltip": "버튼을 누르지 않고도 아이템 도구 설명에 모든 주문 세부 정보를 표시합니다.",
-  "text.autoconfig.spell_engine.option.client.showSpellBindingTooltip": "주문 연결 힌트",
-  "text.autoconfig.spell_engine.option.client.showSpellBindingTooltip.@Tooltip": "빈 스태프의 도구 설명에 주문 연결대 힌트를 표시합니다.",
+  "text.autoconfig.spell_engine.option.client.showSpellBindingTooltip": "주문 부여 힌트",
+  "text.autoconfig.spell_engine.option.client.showSpellBindingTooltip.@Tooltip": "빈 스태프의 도구 설명에 주문 부여대 힌트를 표시합니다.",
   "text.autoconfig.spell_engine.option.client.showSpellCastErrors": "주문 시전 오류 메시지",
   "text.autoconfig.spell_engine.option.client.showSpellCastErrors.@Tooltip": "주문 시전 시도 실패에 대한 오류 메시지를 HUD에 표시합니다.",
   "text.autoconfig.spell_engine.option.client.shoulderSurfingAdaptiveWhileUse": "주문 시 어깨 서핑 적응형 커서",
   "text.autoconfig.spell_engine.option.client.shoulderSurfingAdaptiveWhileUse.@Tooltip": "주문 시전 아이템에 대해 주문 시전 중에만 어깨 서핑 적응형 커서를 허용합니다.",
 
-  "gui.spell_engine.spell_binding": "주문 연결",
-  "gui.spell_engine.spell_binding.title": "주문 연결",
-  "block.spell_engine.spell_binding": "주문 연결대",
+  "gui.spell_engine.spell_binding": "주문 부여",
+  "gui.spell_engine.spell_binding.title": "주문 부여",
+  "block.spell_engine.spell_binding": "주문 부여대",
   "block.spell_engine.spell_binding.description": "주문서를 만들고 채우기 위해 사용됩니다.",
-  "gui.spell_engine.spell_binding.already_bound": "이미 연결된 주문",
+  "gui.spell_engine.spell_binding.already_bound": "이미 부여된 주문",
   "gui.spell_engine.spell_binding.no_more_slots": "주문 슬롯 없음",
-  "gui.spell_engine.spell_binding.available": "주문 연결",
+  "gui.spell_engine.spell_binding.available": "주문 부여",
   "gui.spell_engine.spell_binding.level_req_fail": "레벨 요구 사항: %s",
 
   "advancements.rpg_series.root.title": "주문",
@@ -130,8 +130,8 @@
   "advancements.rpg_series.enchant_spell_infinity.description": "마법 부여대에서 무한 주문 마법 부여를 획득하세요",
   "advancements.rpg_series.rune_crafter.title": "눈물과 램프",
   "advancements.rpg_series.rune_crafter.description": "룬 제작 제단을 사용하여 두 배의 룬을 획득하세요",
-  "advancements.rpg_series.spellbinder.title": "주문 연결하는 자",
-  "advancements.rpg_series.spellbinder.description": "적합한 마법 무기에 주문을 연결하세요",
+  "advancements.rpg_series.spellbinder.title": "주문을 부여하는 자",
+  "advancements.rpg_series.spellbinder.description": "적합한 마법 무기에 주문을 부여하세요",
   "advancements.rpg_series.classes.title": "당신의 길을 선택하세요",
-  "advancements.rpg_series.classes.description": "주문 연결대를 방문하여 첫 번째 주문서를 만드세요!"
+  "advancements.rpg_series.classes.description": "주문 부여대를 방문하여 첫 번째 주문서를 만드세요!"
 }
