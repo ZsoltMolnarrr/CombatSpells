@@ -1,3 +1,8 @@
+# 0.15.7
+
+API Changes:
+- Extend item config attribute resolution
+
 # 0.15.6
 
 Functional changes:
