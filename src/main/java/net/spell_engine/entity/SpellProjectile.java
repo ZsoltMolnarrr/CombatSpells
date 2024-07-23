@@ -626,9 +626,10 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
             try {
                 var gson = new Gson();
                 this.spellId = new Identifier(nbt.getString(NBT_SPELL_ID));
-                var recordReader = new GsonBuilder()
-                        .registerTypeAdapterFactory(new RecordsWithGson.RecordTypeAdapterFactory())
-                        .create();
+//                var recordReader = new GsonBuilder()
+//                        .registerTypeAdapterFactory(new RecordsWithGson.RecordTypeAdapterFactory())
+//                        .create();
+                var recordReader = gson;
                 this.context = recordReader.fromJson(nbt.getString(NBT_IMPACT_CONTEXT), SpellHelper.ImpactContext.class);
                 this.perks = gson.fromJson(nbt.getString(NBT_PERKS), Spell.ProjectileData.Perks.class);
                 if (nbt.contains(NBT_ITEM_MODEL_ID, NbtElement.STRING_TYPE)) {
