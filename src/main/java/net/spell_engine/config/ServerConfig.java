@@ -28,7 +28,7 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     @Comment("If set true, a Fireball doesn't collide with an ally, a healing projectile doesn't collide with an enemy")
     public boolean projectiles_pass_thru_irrelevant_targets = true;
     @Comment("Spell book creation level requirement")
-    public int spell_book_binding_level_requirement = 3;
+    public int spell_book_binding_level_requirement = 1;
     @Comment("Spell book creation level cost")
     public int spell_book_binding_level_cost = 1;
     @Comment("Should the player be able to cast spells from the offhand spell book?")

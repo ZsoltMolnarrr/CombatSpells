@@ -1,3 +1,7 @@
+# 0.15.8
+
+- Reduce spell book creation level requirement
+
 # 0.15.7
 
 API Changes:
