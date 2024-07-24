@@ -1,6 +1,8 @@
 # 0.15.8
 
 - Reduce spell book creation level requirement
+- Attempt to fix deseralization crash #62
+- Fix Arcane Blast targeting allies
 
 # 0.15.7
 
