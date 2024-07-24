@@ -1,8 +1,10 @@
 # 0.15.8
 
+Functional changes:
 - Reduce spell book creation level requirement
 - Attempt to fix deseralization crash #62
 - Fix Arcane Blast targeting allies
+- Fix stuck casting sounds
 
 # 0.15.7
 

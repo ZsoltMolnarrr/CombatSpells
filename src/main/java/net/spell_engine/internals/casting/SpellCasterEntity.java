@@ -17,4 +17,8 @@ public interface SpellCasterEntity {
     boolean isBeaming();
     @Nullable
     Spell.Release.Target.Beam getBeam();
+
+    default boolean isCastingSpell() {
+        return getSpellCastProcess() != null;
+    }
 }
