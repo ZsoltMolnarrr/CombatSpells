@@ -1,11 +1,9 @@
 package net.spell_engine.api.spell;
 
-import com.google.gson.annotations.JsonAdapter;
 import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_power.api.SpellPower;
 import net.spell_power.api.SpellSchool;
-import net.spell_power.api.SpellSchools;
 import org.jetbrains.annotations.Nullable;
 
 public class Spell {

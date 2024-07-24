@@ -218,7 +218,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                         return false;
                     }
                     var spellId = spellIdOptional.get();
-                    var binding = SpellBinding.State.of(spellId, weaponStack, cost, requiredLevel);
+                    var binding = SpellBinding.State.of(spellId, weaponStack, requiredLevel, cost, cost);
                     if (binding.state == SpellBinding.State.ApplyState.INVALID) {
                         return false;
                     }

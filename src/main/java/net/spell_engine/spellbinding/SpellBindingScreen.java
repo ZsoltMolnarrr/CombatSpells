@@ -250,7 +250,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                             continue;
                         }
                         var id = spellId.get();
-                        SpellBinding.State bindingState = SpellBinding.State.of(id, itemStack, cost, requirement);
+                        SpellBinding.State bindingState = SpellBinding.State.of(id, itemStack, requirement, cost, cost);
                         boolean isDetailsPublic = powered || bindingState.state == SpellBinding.State.ApplyState.ALREADY_APPLIED;
                         boolean isEnabled = powered && bindingState.readyToApply(player, lapisCount);
                         var text = Text.translatable(SpellTooltip.spellTranslationKey(id));
