@@ -31,12 +31,14 @@ public class SpellBinding {
         if (itemStack.getItem() == Items.BOOK) {
             var books = SpellBooks.sorted();
             var offers = new ArrayList<Offer>();
-            for (int i = 0; i < books.size(); ++i) {
-                offers.add(new Offer(
-                        i + BOOK_OFFSET,
-                        SpellEngineMod.config.spell_book_binding_level_cost,
-                        SpellEngineMod.config.spell_book_binding_level_requirement,
-                        true));
+            if (SpellEngineMod.config.spell_book_creation_enabled) {
+                for (int i = 0; i < books.size(); ++i) {
+                    offers.add(new Offer(
+                            i + BOOK_OFFSET,
+                            SpellEngineMod.config.spell_book_creation_cost,
+                            SpellEngineMod.config.spell_book_creation_requirement,
+                            true));
+                }
             }
             return new OfferResult(Mode.BOOK, offers);
         }

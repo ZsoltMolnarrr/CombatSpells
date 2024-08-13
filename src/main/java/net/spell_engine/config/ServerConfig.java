@@ -25,14 +25,20 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     public int spell_instant_cast_gcd = 0;
     @Comment("Players cannot unequip a spell book, if one of the spells in it is on cooldown.")
     public boolean spell_book_cooldown_lock = true;
-    @Comment("If set true, a Fireball doesn't collide with an ally, a healing projectile doesn't collide with an enemy")
-    public boolean projectiles_pass_thru_irrelevant_targets = true;
-    @Comment("Spell book creation level requirement")
-    public int spell_book_binding_level_requirement = 1;
+    @Comment("Players can use the Spell Binding Table to create spell books.")
+    public boolean spell_book_creation_enabled = true;
     @Comment("Spell book creation level cost")
-    public int spell_book_binding_level_cost = 1;
+    public int spell_book_creation_cost = 1;
+    @Comment("Spell book creation level requirement")
+    public int spell_book_creation_requirement = 1;
+    @Comment("Spell binding level cost multiplier")
+    public int spell_binding_level_cost_multiplier = 1;
+    @Comment("Spell binding lapis lazuli cost multiplier")
+    public int spell_binding_lapis_cost_multiplier = 1;
     @Comment("Should the player be able to cast spells from the offhand spell book?")
     public boolean spell_book_offhand = false;
+    @Comment("If set true, a Fireball doesn't collide with an ally, a healing projectile doesn't collide with an enemy")
+    public boolean projectiles_pass_thru_irrelevant_targets = true;
     @Comment("Auto swap Bow & Spear cooldown ticks to apply for attack and itemUse")
     public int auto_swap_cooldown = 5;
     @Comment("Apply `Spell Casting from Spell Book` capability to anything that subclasses Sword")

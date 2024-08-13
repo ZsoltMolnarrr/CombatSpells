@@ -1,3 +1,8 @@
+# 0.15.9
+
+Functional changes:
+- Add `spell_book_creation_enabled` config option to disable spell book creation at the Spell Binding Table
+
 # 0.15.8
 
 Functional changes:
