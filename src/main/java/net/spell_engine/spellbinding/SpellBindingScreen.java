@@ -124,17 +124,20 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                             tooltip.add(Text.translatable("gui.spell_engine.spell_binding.available")
                                     .formatted(Formatting.GREEN));
                         } else {
-                            if (!button.binding.requirements.metRequiredLevel(player)) {
+                            var hasRequiredLevels = button.binding.requirements.metRequiredLevel(player);
+                            if (button.binding.requirements.requiredLevel() > 0) {
                                 tooltip.add(Text.translatable("gui.spell_engine.spell_binding.level_req_fail",
                                                 button.binding.requirements.requiredLevel())
-                                        .formatted(Formatting.RED));
-                            } else {
-                                var lapisCost = button.binding.requirements.lapisCost();
+                                        .formatted(hasRequiredLevels ? Formatting.GRAY : Formatting.RED));
+                            }
+                            var lapisCost = button.binding.requirements.lapisCost();
+                            if (lapisCost > 0) {
                                 var hasEnoughLapis = button.binding.requirements.hasEnoughLapis(lapisCount);
                                 MutableText lapis = lapisCost == 1 ? Text.translatable("container.enchant.lapis.one") : Text.translatable("container.enchant.lapis.many", lapisCost);
                                 tooltip.add(lapis.formatted(hasEnoughLapis ? Formatting.GRAY : Formatting.RED));
-
-                                var levelCost = button.binding.requirements.levelCost();
+                            }
+                            var levelCost = button.binding.requirements.levelCost();
+                            if (levelCost > 0) {
                                 var hasEnoughLevels = button.binding.requirements.hasEnoughLevelsToSpend(player);
                                 MutableText levels = levelCost == 1 ? Text.translatable("container.enchant.level.one") : Text.translatable("container.enchant.level.many", levelCost);
                                 tooltip.add(levels.formatted(hasEnoughLevels ? Formatting.GRAY : Formatting.RED));

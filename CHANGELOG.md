@@ -1,7 +1,10 @@
 # 0.15.9
 
 Functional changes:
+- Spell Binding Table spell entries now have more clear requirement and cost information
 - Add `spell_book_creation_enabled` config option to disable spell book creation at the Spell Binding Table
+- Add `spell_binding_level_cost_multiplier` config option
+- Add `spell_binding_lapis_cost_multiplier` config option
 
 # 0.15.8
 

@@ -102,17 +102,20 @@ public class SpellBinding {
             }
         }
 
-        public static State of(int spellId, ItemStack itemStack, int cost, int requiredLevel, int lapisCost) {
+        public static State of(int spellId, ItemStack itemStack, int levelCost, int requiredLevel, int lapisCost) {
             var validId = SpellRegistry.fromRawSpellId(spellId);
             if (validId.isEmpty()) {
                 return new State(ApplyState.INVALID, null);
             }
-            return State.of(validId.get(), itemStack, cost, requiredLevel, lapisCost);
+            return State.of(validId.get(), itemStack, levelCost, requiredLevel, lapisCost);
         }
 
         public static State of(Identifier spellId, ItemStack itemStack, int requiredLevel, int levelCost, int lapisCost) {
             var container = SpellContainerHelper.containerFromItemStack(itemStack);
-            var requirements = new Requirements(lapisCost, levelCost, requiredLevel);
+            var requirements = new Requirements(
+                    lapisCost * SpellEngineMod.config.spell_binding_lapis_cost_multiplier,
+                    levelCost * SpellEngineMod.config.spell_binding_level_cost_multiplier,
+                    requiredLevel);
             if (container == null) {
                 return new State(ApplyState.INVALID, requirements);
             }
