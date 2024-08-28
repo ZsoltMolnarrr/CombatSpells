@@ -1,6 +1,8 @@
 # 0.15.10
 
+Functional changes:
 - Improve auto swap feature to consider tools #71
+- Client side configurable tooltip of "Casts spells from equipped Spell Book" 
 
 # 0.15.9
 

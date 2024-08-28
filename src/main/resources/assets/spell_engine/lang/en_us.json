@@ -110,6 +110,8 @@
   "text.autoconfig.spell_engine.option.client.alwaysShowFullTooltip.@Tooltip" : "Show all spell details on item tooltips, without having to press a button",
   "text.autoconfig.spell_engine.option.client.showSpellBindingTooltip" : "Spell Binding hint",
   "text.autoconfig.spell_engine.option.client.showSpellBindingTooltip.@Tooltip" : "Show Spell Binding Table hint to tooltip of empty staves",
+  "text.autoconfig.spell_engine.option.client.showSpellBookSuppportTooltip" : "Spell Book support hint",
+  "text.autoconfig.spell_engine.option.client.showSpellBookSuppportTooltip.@Tooltip" : "Weapons tooltips show `Casts spells from equipped Spell Book`",
   "text.autoconfig.spell_engine.option.client.showSpellCastErrors" : "Spell cast error messages",
   "text.autoconfig.spell_engine.option.client.showSpellCastErrors.@Tooltip" : "Show error message on HUD about the failure of spell cast attempts",
   "text.autoconfig.spell_engine.option.client.shoulderSurfingAdaptiveWhileUse" : "Shoulder Surfing bow-like behaviour",

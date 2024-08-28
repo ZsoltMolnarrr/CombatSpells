@@ -47,7 +47,7 @@ public class SpellTooltip {
         if ((Object)itemStack instanceof SpellCasterItemStack stack) {
             var container = stack.getSpellContainer();
             if(container != null && container.isValid()) {
-                if (container.is_proxy) {
+                if (container.is_proxy && config.showSpellBookSuppportTooltip) {
                     switch (container.content) {
                         case MAGIC -> {
                             lines.add(Text.translatable("spell.tooltip.host.proxy.spell")
