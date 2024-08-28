@@ -1,3 +1,7 @@
+# 0.15.10
+
+- Improve auto swap feature to consider tools #71
+
 # 0.15.9
 
 Functional changes:
