@@ -24,7 +24,7 @@ public class SpellBindingCriteria extends AbstractCriterion<SpellBindingCriteria
         }
         element = obj.get("spell_pool");
         if (element != null) {
-            condition.spellPool = new Identifier(element.getAsString());
+            condition.spellPool = Identifier.of(element.getAsString());
         }
         return condition;
     }

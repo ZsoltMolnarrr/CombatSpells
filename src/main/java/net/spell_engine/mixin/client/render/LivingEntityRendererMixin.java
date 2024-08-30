@@ -94,7 +94,7 @@ public class LivingEntityRendererMixin {
 
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(absoluteTime * 2.25F - 45.0F));
 
-        var texture = new Identifier(beam.texture_id);
+        var texture = Identifier.of(beam.texture_id);
         var color = beam.color_rgba;
         var red = (color >> 24) & 255;
         var green = (color >> 16) & 255;

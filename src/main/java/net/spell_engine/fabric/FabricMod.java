@@ -19,7 +19,7 @@ public class FabricMod implements ModInitializer {
     static {
         SpellProjectile.ENTITY_TYPE = Registry.register(
                 Registries.ENTITY_TYPE,
-                new Identifier(SpellEngineMod.ID, "spell_projectile"),
+                Identifier.of(SpellEngineMod.ID, "spell_projectile"),
                 FabricEntityTypeBuilder.<SpellProjectile>create(SpawnGroup.MISC, SpellProjectile::new)
                         .dimensions(EntityDimensions.fixed(0.25F, 0.25F)) // dimensions in Minecraft units of the render
                         .fireImmune()
@@ -29,7 +29,7 @@ public class FabricMod implements ModInitializer {
         );
         SpellCloud.ENTITY_TYPE = Registry.register(
                 Registries.ENTITY_TYPE,
-                new Identifier(SpellEngineMod.ID, "spell_area_effect"),
+                Identifier.of(SpellEngineMod.ID, "spell_area_effect"),
                 FabricEntityTypeBuilder.<SpellCloud>create(SpawnGroup.MISC, SpellCloud::new)
                         .dimensions(EntityDimensions.changing(6F, 0.5F)) // dimensions in Minecraft units of the render
                         .fireImmune()

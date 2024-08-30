@@ -46,7 +46,7 @@ public class SoundHelper {
 
     public static void registerSounds() {
         for (var soundKey: soundKeys) {
-            var soundId = new Identifier(SpellEngineMod.ID, soundKey);
+            var soundId = Identifier.of(SpellEngineMod.ID, soundKey);
             var customTravelDistance = soundDistances.get(soundKey);
             var soundEvent = (customTravelDistance == null)
                     ? SoundEvent.of(soundId)
@@ -61,7 +61,7 @@ public class SoundHelper {
             return;
         }
         try {
-            var soundEvent = Registries.SOUND_EVENT.get(new Identifier(sound.id()));
+            var soundEvent = Registries.SOUND_EVENT.get(Identifier.of(sound.id()));
             playSoundEvent(world, entity, soundEvent, sound.volume(), sound.randomizedPitch());
         } catch (Exception e) {
             System.err.println("Failed to play sound: " + sound.id());

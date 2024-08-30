@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 public class SpellContainerHelper {
     public static Identifier getPoolId(SpellContainer container) {
         if (container != null && container.pool != null) {
-            return new Identifier(container.pool);
+            return Identifier.of(container.pool);
         }
         return null;
     }
 
     public static SpellPool getPool(SpellContainer container) {
         if (container != null && container.pool != null) {
-            var id = new Identifier(container.pool);
+            var id = Identifier.of(container.pool);
             return SpellRegistry.spellPool(id);
         }
         return SpellPool.empty;
@@ -58,7 +58,7 @@ public class SpellContainerHelper {
 
         var spells = new ArrayList<SpellInfo>();
         for (var idString : spellIds) {
-            var id = new Identifier(idString);
+            var id = Identifier.of(idString);
             var spell = SpellRegistry.getSpell(id);
             if (spell != null) {
                 spells.add(new SpellInfo(spell, id));
@@ -140,7 +140,7 @@ public class SpellContainerHelper {
         if (container == null || !container.isUsable()) {
             return null;
         }
-        return new Identifier(container.spellId(selectedIndex));
+        return Identifier.of(container.spellId(selectedIndex));
     }
 
     public static SpellContainer addSpell(Identifier spellId, SpellContainer container) {
@@ -150,7 +150,7 @@ public class SpellContainerHelper {
         // Creating a map just for the sake of sorting
         HashMap<Identifier, Spell> spells = new HashMap<>();
         for (var idString : spellIds) {
-            var id = new Identifier(idString);
+            var id = Identifier.of(idString);
             var spell = SpellRegistry.getSpell(id);
             if (spell != null) {
                 spells.put(id, spell);

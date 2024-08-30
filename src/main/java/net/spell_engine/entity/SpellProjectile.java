@@ -135,7 +135,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
 
     private void updateItemModel(String idString) {
         if (idString != null && !idString.isEmpty()) {
-            itemModelId = new Identifier(this.getDataTracker().get(ITEM_MODEL_ID));
+            itemModelId = Identifier.of(this.getDataTracker().get(ITEM_MODEL_ID));
             itemStackModel = Registries.ITEM.get(itemModelId).getDefaultStack();
         }
     }
@@ -588,7 +588,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
     public ItemStack getStack() {
         var data = projectileData();
         if (data != null && data.client_data != null && data.client_data.model != null) {
-            return Registries.ITEM.get(new Identifier(data.client_data.model.model_id)).getDefaultStack();
+            return Registries.ITEM.get(Identifier.of(data.client_data.model.model_id)).getDefaultStack();
         }
         return ItemStack.EMPTY;
     }
@@ -625,7 +625,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         if (nbt.contains(NBT_SPELL_ID, NbtElement.STRING_TYPE)) {
             try {
                 var gson = new Gson();
-                this.spellId = new Identifier(nbt.getString(NBT_SPELL_ID));
+                this.spellId = Identifier.of(nbt.getString(NBT_SPELL_ID));
 //                var recordReader = new GsonBuilder()
 //                        .registerTypeAdapterFactory(new RecordsWithGson.RecordTypeAdapterFactory())
 //                        .create();

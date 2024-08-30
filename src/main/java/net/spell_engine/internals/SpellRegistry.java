@@ -64,7 +64,7 @@ public class SpellRegistry {
                         .toString().replace(directory + "/", "");
                 id = id.substring(0, id.lastIndexOf('.'));
                 Validator.validate(container);
-                parsed.put(new Identifier(id), new SpellEntry(container, rawId++));
+                parsed.put(Identifier.of(id), new SpellEntry(container, rawId++));
                 // System.out.println("loaded spell - id: " + id +  " spell: " + gson.toJson(container));
             } catch (Exception e) {
                 System.err.println("Spell Engine: Failed to parse spell: " + identifier + " | Reason: " + e.getMessage());
@@ -90,7 +90,7 @@ public class SpellRegistry {
                 var id = identifier
                         .toString().replace(directory + "/", "");
                 id = id.substring(0, id.lastIndexOf('.'));
-                parsed.put(new Identifier(id), pool);
+                parsed.put(Identifier.of(id), pool);
                 // System.out.println("loaded pool - " + id +  " ids: " + pool.spell_ids);
             } catch (Exception e) {
                 System.err.println("Spell Engine: Failed to parse spell pool: " + identifier + " | Reason: " + e.getMessage());
@@ -120,7 +120,7 @@ public class SpellRegistry {
                 var id = identifier
                         .toString().replace(directory + "/", "");
                 id = id.substring(0, id.lastIndexOf('.'));
-                parsed.put(new Identifier(id), container);
+                parsed.put(Identifier.of(id), container);
                 // System.out.println("loaded assignment - id: " + id +  " assignment: " + container.spell);
             } catch (Exception e) {
                 System.err.println("Spell Engine: Failed to parse spell_assignment: " + identifier + " | Reason: " + e.getMessage());
@@ -168,7 +168,7 @@ public class SpellRegistry {
         return pool != null ? pool : SpellPool.empty;
     }
 
-    public static PacketByteBuf encoded = PacketByteBufs.create();
+    public static List<String> encoded = List.of();
 
     public static class SyncFormat { public SyncFormat() { }
         public Map<String, SpellEntry> spells = new HashMap<>();
@@ -197,34 +197,29 @@ public class SpellRegistry {
         for (int i = 0; i < json.length(); i += chunkSize) {
             chunks.add(json.substring(i, Math.min(json.length(), i + chunkSize)));
         }
-        buffer.writeInt(chunks.size());
-        for (var chunk: chunks) {
-            buffer.writeString(chunk);
-        }
 
-        System.out.println("Encoded SpellRegistry size (with package overhead): " + buffer.readableBytes()
+        System.out.println("Encoded SpellRegistry size (with package overhead): " + "???"
                 + " bytes (in " + chunks.size() + " string chunks with the size of "  + chunkSize + ")");
 
-        encoded = buffer;
+        encoded = chunks;
     }
 
-    public static void decodeContent(PacketByteBuf buffer) {
-        var chunkCount = buffer.readInt();
+    public static void decodeContent(List<String> chunks) {
         String json = "";
-        for (int i = 0; i < chunkCount; ++i) {
-            json = json.concat(buffer.readString());
+        for (var chunk: chunks) {
+            json = json.concat(chunk);
         }
         var gson = new Gson();
         SyncFormat sync = gson.fromJson(json, SyncFormat.class);
         spells.clear();
         sync.spells.forEach((key, value) -> {
-            spells.put(new Identifier(key), value);
+            spells.put(Identifier.of(key), value);
         });
         sync.pools.forEach((key, value) -> {
-            pools.put(new Identifier(key), SpellPool.fromSync(value));
+            pools.put(Identifier.of(key), SpellPool.fromSync(value));
         });
         sync.containers.forEach((key, value) -> {
-            containers.put(new Identifier(key), value);
+            containers.put(Identifier.of(key), value);
         });
         spellsUpdated();
     }

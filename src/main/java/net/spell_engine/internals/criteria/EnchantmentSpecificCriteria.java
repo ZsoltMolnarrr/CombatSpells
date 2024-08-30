@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 
 public class EnchantmentSpecificCriteria extends AbstractCriterion<EnchantmentSpecificCriteria.Condition> {
-    public static final Identifier ID = new Identifier(SpellEngineMod.ID, "enchant_specific");
+    public static final Identifier ID = Identifier.of(SpellEngineMod.ID, "enchant_specific");
     public static final EnchantmentSpecificCriteria INSTANCE = new EnchantmentSpecificCriteria();
     private static final String enchant_id_key = "enchant_id";
 

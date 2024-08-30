@@ -93,7 +93,7 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
                 lastCastSound = null;
             }
             if (castSound != null && soundId != null && !soundId.isEmpty()) {
-                var id = new Identifier(soundId);
+                var id = Identifier.of(soundId);
                 var sound = new SpellCastingSound(this, id, castSound.volume(), castSound.randomizedPitch());
                 MinecraftClient.getInstance().getSoundManager().play(sound);
                 lastCastSound = sound;

@@ -33,7 +33,7 @@ import java.util.Objects;
 
 public class SpellHotbar {
     public static SpellHotbar INSTANCE = new SpellHotbar();
-    private static final Identifier offhandUseSpellId = new Identifier(SpellEngineMod.ID, "use_offhand_item");
+    private static final Identifier offhandUseSpellId = Identifier.of(SpellEngineMod.ID, "use_offhand_item");
 
     private static KeyBinding deadKey = new KeyBinding(
             "keybindings." + SpellEngineMod.ID + ".dead",
@@ -76,7 +76,7 @@ public class SpellHotbar {
             var spellIds = container.spell_ids;
             var spellInfoList = spellIds.stream()
                     .map(idString -> {
-                        var id = new Identifier(idString);
+                        var id = Identifier.of(idString);
                         var spell = SpellRegistry.getSpell(id);
                         if (spell == null) {
                             return null;

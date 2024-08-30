@@ -68,7 +68,7 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
         if (nbt.contains(NBT_KEY_SPELL_ID)) {
             var string = nbt.getString(NBT_KEY_SPELL_ID);
             if (string != null && !string.isEmpty()) {
-                spellId = new Identifier(nbt.getString(NBT_KEY_SPELL_ID));
+                spellId = Identifier.of(nbt.getString(NBT_KEY_SPELL_ID));
             }
         }
     }

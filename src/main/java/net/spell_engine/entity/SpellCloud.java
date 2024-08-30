@@ -121,7 +121,7 @@ public class SpellCloud extends Entity implements Ownable {
         super.onTrackedDataSet(data);
         var rawSpellId = this.getDataTracker().get(SPELL_ID_TRACKER);
         if (rawSpellId != null && !rawSpellId.isEmpty()) {
-            this.spellId = new Identifier(rawSpellId);
+            this.spellId = Identifier.of(rawSpellId);
         }
         this.dataIndex = this.getDataTracker().get(DATA_INDEX_TRACKER);
         this.calculateDimensions();
@@ -146,7 +146,7 @@ public class SpellCloud extends Entity implements Ownable {
     protected void readCustomDataFromNbt(NbtCompound nbt) {
         this.age = nbt.getInt(NBTKey.AGE.key);
         this.timeToLive = nbt.getInt(NBTKey.TIME_TO_LIVE.key);
-        this.spellId = new Identifier(nbt.getString(NBTKey.SPELL_ID.key));
+        this.spellId = Identifier.of(nbt.getString(NBTKey.SPELL_ID.key));
         this.dataIndex = nbt.getInt(NBTKey.DATA_INDEX.key);
     }
 
@@ -182,7 +182,7 @@ public class SpellCloud extends Entity implements Ownable {
             }
             var presence_sound = cloudData.presence_sound;
             if (!presenceSoundFired && presence_sound != null) {
-                var soundEvent = SoundEvent.of(new Identifier(presence_sound.id()));
+                var soundEvent = SoundEvent.of(Identifier.of(presence_sound.id()));
                 ((SoundPlayerWorld)world).playSoundFromEntity(this, soundEvent, SoundCategory.PLAYERS,
                         presence_sound.volume(),
                         presence_sound.randomizedPitch());

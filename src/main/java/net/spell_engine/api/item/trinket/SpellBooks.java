@@ -53,7 +53,7 @@ public class SpellBooks {
     }
 
     public static Identifier itemIdFor(Identifier poolId) {
-        return new Identifier(poolId.getNamespace(), poolId.getPath() + "_spell_book");
+        return Identifier.of(poolId.getNamespace(), poolId.getPath() + "_spell_book");
     }
 
     public static void register(SpellBookItem spellBook) {

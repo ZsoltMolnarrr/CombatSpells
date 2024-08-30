@@ -38,7 +38,7 @@ public record SpellPool(List<Identifier> spellIds, List<SpellSchool> schools, bo
         var schools = new LinkedHashSet<SpellSchool>();
         if (json.spell_ids != null) {
             for (var idString: json.spell_ids) {
-                var id = new Identifier(idString);
+                var id = Identifier.of(idString);
                 var spell = spells.get(id);
                 if(spell != null) {
                     spellsIds.add(id);

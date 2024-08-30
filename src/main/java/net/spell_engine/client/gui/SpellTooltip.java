@@ -93,7 +93,7 @@ public class SpellTooltip {
                                 ((KeyBindingAccessor) keybinding).fabric_getBoundKey().getCode())
                         );
                 for (int i = 0; i < container.spell_ids.size(); i++) {
-                    var spellId = new Identifier(container.spell_ids.get(i));
+                    var spellId = Identifier.of(container.spell_ids.get(i));
                     var info = spellInfo(spellId, player, itemStack, showDetails);
                     if (!info.isEmpty()) {
                         if (i > 0 && showDetails) {
@@ -278,7 +278,7 @@ public class SpellTooltip {
             showItemCost = config.spell_cost_item_allowed;
         }
         if (showItemCost && spell.cost != null && spell.cost.item_id != null && !spell.cost.item_id.isEmpty()) {
-            var item = Registries.ITEM.get(new Identifier(spell.cost.item_id));
+            var item = Registries.ITEM.get(Identifier.of(spell.cost.item_id));
             if (item != Items.AIR) {
                 var ammoKey = keyWithPlural("spell.tooltip.ammo", 1); // Add variable ammo count later
                 var itemName = I18n.translate(item.getTranslationKey());

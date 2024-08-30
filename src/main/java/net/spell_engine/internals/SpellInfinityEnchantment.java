@@ -22,7 +22,7 @@ public class SpellInfinityEnchantment extends Enchantment {
         this.config = config;
     }
 
-    public static final Identifier tagId = new Identifier(SpellEngineMod.ID, "enchant_spell_infinity");
+    public static final Identifier tagId = Identifier.of(SpellEngineMod.ID, "enchant_spell_infinity");
     public static final HashSet<Item> ALLOWED_ITEMS = new HashSet<>();
 
     public static boolean isEligible(ItemStack stack) {

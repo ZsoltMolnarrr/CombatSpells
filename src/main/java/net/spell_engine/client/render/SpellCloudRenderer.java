@@ -44,7 +44,7 @@ public class SpellCloudRenderer<T extends SpellCloud> extends EntityRenderer<T> 
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(absoluteTime * renderData.rotate_degrees_per_tick));
         matrixStack.scale(renderData.scale, renderData.scale, renderData.scale);
         if (renderData.model_id != null && !renderData.model_id.isEmpty()) {
-            var modelId = new Identifier(renderData.model_id);
+            var modelId = Identifier.of(renderData.model_id);
             CustomModels.render(SpellModelHelper.LAYERS.get(renderData.light_emission), itemRenderer, modelId, matrixStack, vertexConsumers, light, entity.getId());
         }
 

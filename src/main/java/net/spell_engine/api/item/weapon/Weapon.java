@@ -47,7 +47,7 @@ public class Weapon {
         }
 
         public Identifier id() {
-            return new Identifier(namespace, name);
+            return Identifier.of(namespace, name);
         }
 
         public Entry attribute(ItemConfig.Attribute attribute) {
@@ -187,7 +187,7 @@ public class Weapon {
                 continue;
             }
             try {
-                var attributeId = new Identifier(attribute.id);
+                var attributeId = Identifier.of(attribute.id);
                 var entityAttribute = AttributeResolver.get(attributeId);
                 var uuid = (attributeId.equals(attackDamageId) || attributeId.equals(projectileDamageId))
                         ? ItemAccessor.ATTACK_DAMAGE_MODIFIER_ID()
@@ -206,8 +206,8 @@ public class Weapon {
     }
 
     private static final UUID miscWeaponAttributeUUID = UUID.fromString("c102cb57-a7b8-4a98-8c6e-2cd7b70b74c1");
-    private static final Identifier attackDamageId = new Identifier("generic.attack_damage");
-    private static final Identifier projectileDamageId = new Identifier("projectile_damage", "generic");
+    private static final Identifier attackDamageId = Identifier.of("generic.attack_damage");
+    private static final Identifier projectileDamageId = Identifier.of("projectile_damage", "generic");
     private static abstract class ItemAccessor extends Item {
         public ItemAccessor(Settings settings) { super(settings); }
         public static UUID ATTACK_DAMAGE_MODIFIER_ID() { return ATTACK_DAMAGE_MODIFIER_ID; }

@@ -98,7 +98,7 @@ public class ParticleHelper {
 
     public static void play(World world, long time, Vec3d origin, float width, float yaw, float pitch, ParticleBatch batch) {
         try {
-            var id = new Identifier(batch.particle_id);
+            var id = Identifier.of(batch.particle_id);
             var particle = (ParticleEffect) Registries.PARTICLE_TYPE.get(id);
             var count = batch.count;
             if (batch.count < 1) {
@@ -142,7 +142,7 @@ public class ParticleHelper {
                 }
             }
 
-            var id = new Identifier(batch.particle_id);
+            var id = Identifier.of(batch.particle_id);
             var particle = (ParticleEffect) Registries.PARTICLE_TYPE.get(id);
             var count = batch.count;
             if (batch.count < 1) {

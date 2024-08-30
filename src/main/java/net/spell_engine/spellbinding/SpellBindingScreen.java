@@ -30,7 +30,7 @@ import java.util.List;
 
 @Environment(value= EnvType.CLIENT)
 public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier(SpellEngineMod.ID, "textures/gui/" + SpellBinding.name + ".png");
+    private static final Identifier TEXTURE = Identifier.of(SpellEngineMod.ID, "textures/gui/" + SpellBinding.name + ".png");
 
     private ItemStack stack;
 
@@ -228,7 +228,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
     }
 
 
-    private static final Identifier RUNES_FONT_ID = new Identifier("minecraft", "alt");
+    private static final Identifier RUNES_FONT_ID = Identifier.of("minecraft", "alt");
     private static final Style RUNE_STYLE = Style.EMPTY.withFont(RUNES_FONT_ID);
 
     private void updateButtons(int originX, int originY) {

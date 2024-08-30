@@ -73,7 +73,7 @@ public class HudRenderHelper {
                     return new SpellHotBarWidget.SpellViewModel(
                             useItem ? null : SpellRender.iconTexture(info.id()),
                             useItem ? SpellHotbar.expectedUseStack(player) : null,
-                            cooldownManager.getCooldownProgress(new Identifier(info.id().toString()), tickDelta),
+                            cooldownManager.getCooldownProgress(Identifier.of(info.id().toString()), tickDelta),
                             SpellHotBarWidget.KeyBindingViewModel.from(slot.getKeyBinding(client.options)),
                             slot.modifier() != null ? SpellHotBarWidget.KeyBindingViewModel.from(slot.modifier()) : null);
                 }).collect(Collectors.toList());
@@ -177,12 +177,12 @@ public class HudRenderHelper {
         private static final int textureWidth = 182;
         private static final int textureHeight = 10;
         private static final int barHeight = textureHeight / 2;
-        private static final Identifier CAST_BAR = new Identifier(SpellEngineMod.ID, "textures/hud/castbar.png");
+        private static final Identifier CAST_BAR = Identifier.of(SpellEngineMod.ID, "textures/hud/castbar.png");
         private static final int spellIconSize = 16;
 
         public record ViewModel(int color, float progress, float castDuration, Identifier iconTexture, boolean allowTickDelta, boolean reverse) {
             public static ViewModel mock() {
-                return new ViewModel(0xFF3300, 0.5F, 1, SpellRender.iconTexture(new Identifier("spell_engine", "dummy_spell")), false, false);
+                return new ViewModel(0xFF3300, 0.5F, 1, SpellRender.iconTexture(Identifier.of("spell_engine", "dummy_spell")), false, false);
             }
         }
 
@@ -264,8 +264,8 @@ public class HudRenderHelper {
 
     public class SpellHotBarWidget {
         public static Rect lastRendered;
-        private static final TextureFile WIDGETS = new TextureFile(new Identifier("textures/gui/widgets.png"), 256, 256);
-        private static final TextureFile ACCESSORIES = new TextureFile(new Identifier(SpellEngineMod.ID, "textures/hud/hotbar_accessories.png"), 32, 16);
+        private static final TextureFile WIDGETS = new TextureFile(Identifier.of("textures/gui/widgets.png"), 256, 256);
+        private static final TextureFile ACCESSORIES = new TextureFile(Identifier.of(SpellEngineMod.ID, "textures/hud/hotbar_accessories.png"), 32, 16);
         private static final int slotHeight = 22;
         private static final int slotWidth = 20;
 
@@ -326,9 +326,9 @@ public class HudRenderHelper {
             public static ViewModel mock() {
                 return new ViewModel(
                         List.of(
-                                new SpellViewModel(SpellRender.iconTexture(new Identifier(SpellEngineMod.ID, "dummy_spell")), null, 0, new KeyBindingViewModel("1", null), null),
-                                new SpellViewModel(SpellRender.iconTexture(new Identifier(SpellEngineMod.ID, "dummy_spell")), null, 0, new KeyBindingViewModel("2", null), null),
-                                new SpellViewModel(SpellRender.iconTexture(new Identifier(SpellEngineMod.ID, "dummy_spell")), null, 0, new KeyBindingViewModel("3", null), null)
+                                new SpellViewModel(SpellRender.iconTexture(Identifier.of(SpellEngineMod.ID, "dummy_spell")), null, 0, new KeyBindingViewModel("1", null), null),
+                                new SpellViewModel(SpellRender.iconTexture(Identifier.of(SpellEngineMod.ID, "dummy_spell")), null, 0, new KeyBindingViewModel("2", null), null),
+                                new SpellViewModel(SpellRender.iconTexture(Identifier.of(SpellEngineMod.ID, "dummy_spell")), null, 0, new KeyBindingViewModel("3", null), null)
                         )
                 );
             }

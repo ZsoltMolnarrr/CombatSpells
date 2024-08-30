@@ -29,7 +29,7 @@ public class TrinketsCompat {
         enabled = FabricLoader.getInstance().isModLoaded("trinkets");
 
         if (enabled) {
-            TrinketsApi.registerTrinketPredicate(new Identifier(SpellEngineMod.ID, "spell_book"), (itemStack, slotReference, livingEntity) -> {
+            TrinketsApi.registerTrinketPredicate(Identifier.of(SpellEngineMod.ID, "spell_book"), (itemStack, slotReference, livingEntity) -> {
                 if (itemStack.getItem() instanceof SpellBookTrinketItem) {
                     return TriState.TRUE;
                 }

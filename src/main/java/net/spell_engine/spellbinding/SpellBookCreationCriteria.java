@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 
 public class SpellBookCreationCriteria extends AbstractCriterion<SpellBookCreationCriteria.Condition> {
-    public static final Identifier ID = new Identifier(SpellEngineMod.ID, "spell_book_creation");
+    public static final Identifier ID = Identifier.of(SpellEngineMod.ID, "spell_book_creation");
     public static final SpellBookCreationCriteria INSTANCE = new SpellBookCreationCriteria();
 
     @Override
@@ -21,7 +21,7 @@ public class SpellBookCreationCriteria extends AbstractCriterion<SpellBookCreati
         var condition = new Condition();
         var element = obj.get("spell_pool");
         if (element != null) {
-            condition.spellPool = new Identifier(element.getAsString());
+            condition.spellPool = Identifier.of(element.getAsString());
         }
         return condition;
     }

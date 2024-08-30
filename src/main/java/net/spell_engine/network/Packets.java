@@ -1,13 +1,16 @@
 package net.spell_engine.network;
 
 import com.google.gson.Gson;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.ParticleBatch;
 import net.spell_engine.config.ServerConfig;
+import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.casting.SpellCast;
 
 import java.util.ArrayList;
@@ -15,11 +18,16 @@ import java.util.List;
 
 public class Packets {
 
-    public record SpellCastSync(Identifier spellId, float speed, int length) {
-        public static Identifier ID = new Identifier(SpellEngineMod.ID, "cast_sync");
+    public record SpellCastSync(Identifier spellId, float speed, int length) implements CustomPayload {
+        public static Identifier ID = Identifier.of(SpellEngineMod.ID, "cast_sync");
+        public static final CustomPayload.Id<SpellCastSync> PACKET_ID = new CustomPayload.Id<>(ID);
+        public static final PacketCodec<RegistryByteBuf, SpellCastSync> CODEC = PacketCodec.of(SpellCastSync::write, SpellCastSync::read);
+        @Override
+        public Id<? extends CustomPayload> getId() {
+            return PACKET_ID;
+        }
 
-        public PacketByteBuf write() {
-            PacketByteBuf buffer = PacketByteBufs.create();
+        public void write(RegistryByteBuf buffer) {
             if (spellId == null) {
                 buffer.writeString("");
             } else {
@@ -27,13 +35,13 @@ public class Packets {
             }
             buffer.writeFloat(speed);
             buffer.writeInt(length);
-            return buffer;
         }
-        public static SpellCastSync read(PacketByteBuf buffer) {
+
+        public static SpellCastSync read(RegistryByteBuf buffer) {
             var string = buffer.readString();
             Identifier spellId = null;
             if (!string.isEmpty()) {
-                spellId = new Identifier(string);
+                spellId = Identifier.of(string);
             }
             var speed = buffer.readFloat();
             var length = buffer.readInt();
@@ -41,54 +49,69 @@ public class Packets {
         }
     }
 
-    public record SpellRequest(SpellCast.Action action, Identifier spellId, float progress, int[] targets) {
-        public static Identifier ID = new Identifier(SpellEngineMod.ID, "release_request");
+    public record SpellRequest(SpellCast.Action action, Identifier spellId, float progress, int[] targets) implements CustomPayload {
+        public static Identifier ID = Identifier.of(SpellEngineMod.ID, "release_request");
+        public static final CustomPayload.Id<SpellRequest> PACKET_ID = new CustomPayload.Id<>(ID);
+        public static final PacketCodec<RegistryByteBuf, SpellRequest> CODEC = PacketCodec.of(SpellRequest::write, SpellRequest::read);
+        @Override
+        public Id<? extends CustomPayload> getId() {
+            return PACKET_ID;
+        }
 
-        public PacketByteBuf write() {
-            PacketByteBuf buffer = PacketByteBufs.create();
+        public void write(RegistryByteBuf buffer) {
             buffer.writeEnumConstant(action);
             buffer.writeString(spellId.toString());
             buffer.writeFloat(progress);
             buffer.writeIntArray(targets);
-            return buffer;
         }
-        public static SpellRequest read(PacketByteBuf buffer) {
+
+        public static SpellRequest read(RegistryByteBuf buffer) {
             var action = buffer.readEnumConstant(SpellCast.Action.class);
-            var spellId = new Identifier(buffer.readString());
+            var spellId = Identifier.of(buffer.readString());
             var progress = buffer.readFloat();
             var targets = buffer.readIntArray();
             return new SpellRequest(action, spellId, progress, targets);
         }
     }
 
-    public record SpellCooldown(Identifier spellId, int duration) {
-        public static Identifier ID = new Identifier(SpellEngineMod.ID, "spell_cooldown");
-        public PacketByteBuf write() {
-            PacketByteBuf buffer = PacketByteBufs.create();
-            buffer.writeString(spellId.toString());
-            buffer.writeInt(duration);
-            return buffer;
+    public record SpellCooldown(Identifier spellId, int duration) implements CustomPayload {
+        public static Identifier ID = Identifier.of(SpellEngineMod.ID, "spell_cooldown");
+        public static final CustomPayload.Id<SpellCooldown> PACKET_ID = new CustomPayload.Id<>(ID);
+        public static final PacketCodec<RegistryByteBuf, SpellCooldown> CODEC = PacketCodec.of(SpellCooldown::write, SpellCooldown::read);
+        @Override
+        public Id<? extends CustomPayload> getId() {
+            return PACKET_ID;
         }
 
-        public static SpellCooldown read(PacketByteBuf buffer) {
-            var spellId = new Identifier(buffer.readString());
+        public void write(RegistryByteBuf buffer) {
+            buffer.writeString(spellId.toString());
+            buffer.writeInt(duration);
+        }
+
+        public static SpellCooldown read(RegistryByteBuf buffer) {
+            var spellId = Identifier.of(buffer.readString());
             int duration = buffer.readInt();
             return new SpellCooldown(spellId, duration);
         }
     }
 
-    public record SpellAnimation(int playerId, SpellCast.Animation type, String name, float speed) {
-        public static Identifier ID = new Identifier(SpellEngineMod.ID, "spell_animation");
-        public PacketByteBuf write() {
-            PacketByteBuf buffer = PacketByteBufs.create();
+    public record SpellAnimation(int playerId, SpellCast.Animation type, String name, float speed) implements CustomPayload {
+        public static Identifier ID = Identifier.of(SpellEngineMod.ID, "spell_animation");
+        public static final CustomPayload.Id<SpellAnimation> PACKET_ID = new CustomPayload.Id<>(ID);
+        public static final PacketCodec<RegistryByteBuf, SpellAnimation> CODEC = PacketCodec.of(SpellAnimation::write, SpellAnimation::read);
+        @Override
+        public Id<? extends CustomPayload> getId() {
+            return PACKET_ID;
+        }
+
+        public void write(RegistryByteBuf buffer) {
             buffer.writeInt(playerId);
             buffer.writeInt(type.ordinal());
             buffer.writeString(name);
             buffer.writeFloat(speed);
-            return buffer;
         }
 
-        public static SpellAnimation read(PacketByteBuf buffer) {
+        public static SpellAnimation read(RegistryByteBuf buffer) {
             int playerId = buffer.readInt();
             var type = SpellCast.Animation.values()[buffer.readInt()];
             var name = buffer.readString();
@@ -97,13 +120,20 @@ public class Packets {
         }
     }
 
-    public record ParticleBatches(SourceType sourceType, List<Spawn> spawns) {
+    public record ParticleBatches(SourceType sourceType, float countMultiplier, List<Spawn> spawns) implements CustomPayload {
+        public static Identifier ID = Identifier.of(SpellEngineMod.ID, "particle_effects");
+        public static final CustomPayload.Id<ParticleBatches> PACKET_ID = new CustomPayload.Id<>(ID);
+        public static final PacketCodec<RegistryByteBuf, ParticleBatches> CODEC = PacketCodec.of(ParticleBatches::write, ParticleBatches::read);
+        @Override
+        public Id<? extends CustomPayload> getId() {
+            return PACKET_ID;
+        }
+
         public enum SourceType { ENTITY, COORDINATE }
         public record Spawn(int sourceEntityId, float yaw, float pitch, Vec3d sourceLocation, ParticleBatch batch) { }
 
-        public static Identifier ID = new Identifier(SpellEngineMod.ID, "particle_effects");
-        public PacketByteBuf write(float countMultiplier) {
-            PacketByteBuf buffer = PacketByteBufs.create();
+
+        public void write(RegistryByteBuf buffer) {
             buffer.writeInt(sourceType.ordinal());
             buffer.writeInt(spawns.size());
             for (var spawn: spawns) {
@@ -115,7 +145,6 @@ public class Packets {
                 buffer.writeDouble(spawn.sourceLocation.z);
                 write(spawn.batch, buffer, countMultiplier);
             }
-            return buffer;
         }
 
         private static void write(ParticleBatch batch, PacketByteBuf buffer, float countMultiplier) {
@@ -134,7 +163,7 @@ public class Packets {
             buffer.writeBoolean(batch.invert);
         }
 
-        private static ParticleBatch readBatch(PacketByteBuf buffer) {
+        private static ParticleBatch readBatch(RegistryByteBuf buffer) {
             return new ParticleBatch(
                     buffer.readString(),
                     ParticleBatch.Shape.values()[buffer.readInt()],
@@ -152,7 +181,7 @@ public class Packets {
             );
         }
 
-        public static ParticleBatches read(PacketByteBuf buffer) {
+        public static ParticleBatches read(RegistryByteBuf buffer) {
             var sourceType = SourceType.values()[buffer.readInt()];
             var spawnCount = buffer.readInt();
             var spawns = new ArrayList<Spawn>();
@@ -165,30 +194,78 @@ public class Packets {
                         readBatch(buffer)
                 ));
             }
-            return new ParticleBatches(sourceType, spawns);
+            return new ParticleBatches(sourceType, 1, spawns);
         }
     }
 
-    public static class SpellRegistrySync {
-        public static Identifier ID = new Identifier(SpellEngineMod.ID, "spell_registry_sync");
-    }
+    public record ConfigSync(ServerConfig config) implements CustomPayload {
+        public static Identifier ID = Identifier.of(SpellEngineMod.ID, "config_sync");
+        public static final CustomPayload.Id<ConfigSync> PACKET_ID = new CustomPayload.Id<>(ID);
+        public static final PacketCodec<PacketByteBuf, ConfigSync> CODEC = PacketCodec.of(ConfigSync::write, ConfigSync::read);
+        @Override
+        public Id<? extends CustomPayload> getId() {
+            return PACKET_ID;
+        }
 
-    public static class ConfigSync {
-        public static Identifier ID = new Identifier(SpellEngineMod.ID, "config_sync");
+        private static final Gson gson = new Gson();
 
-        public static PacketByteBuf write(ServerConfig config) {
-            var gson = new Gson();
-            var json = gson.toJson(config);
-            var buffer = PacketByteBufs.create();
+        public void write(PacketByteBuf buffer) {
+            var json = gson.toJson(this.config);
             buffer.writeString(json);
-            return buffer;
         }
 
-        public static ServerConfig read(PacketByteBuf buffer) {
+        public static ConfigSync read(PacketByteBuf buffer) {
             var gson = new Gson();
             var json = buffer.readString();
             var config = gson.fromJson(json, ServerConfig.class);
-            return config;
+            return new ConfigSync(config);
+        }
+    }
+
+    public record SpellRegistrySync(List<String> chunks) implements CustomPayload {
+        public static Identifier ID = Identifier.of(SpellEngineMod.ID, "spell_registry_sync");
+        public static final CustomPayload.Id<SpellRegistrySync> PACKET_ID = new CustomPayload.Id<>(ID);
+        public static final PacketCodec<PacketByteBuf, SpellRegistrySync> CODEC = PacketCodec.of(SpellRegistrySync::write, SpellRegistrySync::read);
+
+        private void write(PacketByteBuf buffer) {
+            buffer.writeInt(chunks.size());
+            for (var chunk: chunks) {
+                buffer.writeString(chunk);
+            }
+        }
+
+        private static SpellRegistrySync read(PacketByteBuf buffer) {
+            var chunkCount = buffer.readInt();
+            var chunks = new ArrayList<String>();
+            for (int i = 0; i < chunkCount; ++i) {
+                chunks.add(buffer.readString());
+            }
+            return new SpellRegistrySync(chunks);
+        }
+
+        @Override
+        public Id<? extends CustomPayload> getId() {
+            return PACKET_ID;
+        }
+    }
+
+    public record Ack(String code) implements CustomPayload {
+        public static Identifier ID = Identifier.of(SpellEngineMod.ID, "ack");
+        public static final CustomPayload.Id<Ack> PACKET_ID = new CustomPayload.Id<>(ID);
+        public static final PacketCodec<PacketByteBuf, Ack> CODEC = PacketCodec.of(Ack::write, Ack::read);
+
+        public void write(PacketByteBuf buffer) {
+            buffer.writeString(code);
+        }
+
+        public static Ack read(PacketByteBuf buffer) {
+            var code = buffer.readString();
+            return new Ack(code);
+        }
+
+        @Override
+        public Id<? extends CustomPayload> getId() {
+            return PACKET_ID;
         }
     }
 }

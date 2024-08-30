@@ -46,7 +46,7 @@ public class Armor {
 
         public Identifier idOf(ArmorItem piece) {
             var name = piece.getMaterial().getName() + "_" + piece.getSlotType().getName();
-            return new Identifier(namespace, name);
+            return Identifier.of(namespace, name);
         }
 
         public List<String> idStrings() {
@@ -245,7 +245,7 @@ public class Armor {
         }
         for (var attribute: piece.attributes) {
             try {
-                var entityAttribute = AttributeResolver.get(new Identifier(attribute.id));
+                var entityAttribute = AttributeResolver.get(Identifier.of(attribute.id));
                 builder.put(entityAttribute,
                         new EntityAttributeModifier(
                                 uuid,

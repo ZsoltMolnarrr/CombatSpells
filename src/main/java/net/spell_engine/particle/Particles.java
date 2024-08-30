@@ -24,7 +24,7 @@ public class Particles {
         public final DefaultParticleType particleType = Particles.createSimple();
         public boolean usesCustomTexture = false;
         public ParticleEntry(String name) {
-            this.id =  new Identifier(SpellEngineMod.ID, name);
+            this.id =  Identifier.of(SpellEngineMod.ID, name);
         }
         public ParticleEntry customTexture() {
             this.usesCustomTexture = true;

@@ -47,7 +47,7 @@ public class LootHelper {
                     if (updatedTags.contains(tagString)) {
                         continue;
                     }
-                    var tagId = new Identifier(tagString);
+                    var tagId = Identifier.of(tagString);
                     TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, tagId);
                     var itemList = new ArrayList<String>();
                     Registries.ITEM.iterateEntries(tag).forEach((itemEntry) -> {
@@ -98,7 +98,7 @@ public class LootHelper {
                 if (itemList != null && !itemList.isEmpty()) {
 //                        System.out.println("XXX Resolving from tag cache: " + tagString);
                     for (var itemId: itemList) {
-                        var item = Registries.ITEM.get(new Identifier(itemId));
+                        var item = Registries.ITEM.get(Identifier.of(itemId));
                         if (item == null) {
                             // System.out.println("XXX Item not found: " + itemId);
                             continue; }
@@ -115,7 +115,7 @@ public class LootHelper {
                         lootPoolBuilder.with(entry);
                     }
                 } else {
-                    var tagId = new Identifier(tagString);
+                    var tagId = Identifier.of(tagString);
                     TagKey<Item> tag = TagKey.of(RegistryKeys.ITEM, tagId);
 
                     if (tag == null) {

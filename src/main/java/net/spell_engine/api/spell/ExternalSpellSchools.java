@@ -22,12 +22,12 @@ public class ExternalSpellSchools {
     }
 
     public static final SpellSchool PHYSICAL_MELEE = new SpellSchool(SpellSchool.Archetype.MELEE,
-            new Identifier(SpellPowerMod.ID, "physical_melee"),
+            Identifier.of(SpellPowerMod.ID, "physical_melee"),
             0xb3b3b3,
             DamageTypes.PLAYER_ATTACK,
             EntityAttributes.GENERIC_ATTACK_DAMAGE);
     public static final SpellSchool PHYSICAL_RANGED = new SpellSchool(SpellSchool.Archetype.ARCHERY,
-            new Identifier(SpellPowerMod.ID, "physical_ranged"),
+            Identifier.of(SpellPowerMod.ID, "physical_ranged"),
             0x805e4d,
             DamageTypes.ARROW,
             rangedDamageAttribute() // Extra compatibility for the absence of `ranged_weapon_api`

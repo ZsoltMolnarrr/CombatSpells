@@ -185,7 +185,7 @@ Register your own model, like this:
 
 ```
 CustomModels.registerModelIds(List.of(
-    new Identifier(MOD_ID, "MY_PROJECTILE_NAME")
+    Identifier.of(MOD_ID, "MY_PROJECTILE_NAME")
 ));
 ```
 
@@ -204,7 +204,7 @@ Create a renderer, implementing `CustomModelStatusEffect.Renderer`, and register
 Example (Frost Shield, renders a big block around to player):
 ```
 public class FrostShieldRenderer implements CustomModelStatusEffect.Renderer {
-    public static final Identifier modelId_base = new Identifier(WizardsMod.ID, "frost_shield_base");
+    public static final Identifier modelId_base = Identifier.of(WizardsMod.ID, "frost_shield_base");
     private static final RenderLayer BASE_RENDER_LAYER = RenderLayer.getTranslucentMovingBlock();
     @Override
     public void renderEffect(int amplifier, LivingEntity livingEntity, float delta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumers, int light) {

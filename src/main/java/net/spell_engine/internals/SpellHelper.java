@@ -80,7 +80,7 @@ public class SpellHelper {
         boolean ignoreAmmo = player.getAbilities().creativeMode
                 || !SpellEngineMod.config.spell_cost_item_allowed;
         if (!ignoreAmmo && spell.cost.item_id != null && !spell.cost.item_id.isEmpty()) {
-            var id = new Identifier(spell.cost.item_id);
+            var id = Identifier.of(spell.cost.item_id);
             var needsArrow = id.getPath().contains("arrow");
             var hasInfinity = needsArrow
                     ? EnchantmentHelper.getLevel(Enchantments.INFINITY, itemStack) > 0
@@ -311,7 +311,7 @@ public class SpellHelper {
                 }
                 // Status effect
                 if (spell.cost.effect_id != null) {
-                    var effect = Registries.STATUS_EFFECT.get(new Identifier(spell.cost.effect_id));
+                    var effect = Registries.STATUS_EFFECT.get(Identifier.of(spell.cost.effect_id));
                     player.removeStatusEffect(effect);
                 }
                 if (CombatEvents.SPELL_CAST.isListened()) {
@@ -718,7 +718,7 @@ public class SpellHelper {
                 case STATUS_EFFECT -> {
                     var data = impact.action.status_effect;
                     if (target instanceof LivingEntity livingTarget) {
-                        var id = new Identifier(data.effect_id);
+                        var id = Identifier.of(data.effect_id);
                         var effect = Registries.STATUS_EFFECT.get(id);
                         if(!underApplyLimit(power, livingTarget, school, data.apply_limit)) {
                             return false;
@@ -762,7 +762,7 @@ public class SpellHelper {
                     }
 
                     for(var data: spawns) {
-                        var id = new Identifier(data.entity_type_id);
+                        var id = Identifier.of(data.entity_type_id);
                         var type = Registries.ENTITY_TYPE.get(id);
 
                         var entity = (Entity)type.create(world);
@@ -871,7 +871,7 @@ public class SpellHelper {
         for (var cloud: clouds) {
             SpellCloud entity;
             if (cloud.entity_type_id != null) {
-                var id = new Identifier(cloud.entity_type_id);
+                var id = Identifier.of(cloud.entity_type_id);
                 var type = Registries.ENTITY_TYPE.get(id);
                 entity = (SpellCloud) type.create(world);
             } else {
@@ -970,7 +970,7 @@ public class SpellHelper {
             }
             case STATUS_EFFECT -> {
                 var data = action.status_effect;
-                var id = new Identifier(data.effect_id);
+                var id = Identifier.of(data.effect_id);
                 var effect = Registries.STATUS_EFFECT.get(id);
                 return effect.isBeneficial() ? TargetHelper.Intent.HELPFUL : TargetHelper.Intent.HARMFUL;
             }

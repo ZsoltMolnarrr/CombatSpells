@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 public class SpellBookTrinketItem extends TrinketItem implements SpellBookItem {
     private final Identifier poolId;
 
-    public static final Identifier EQUIP_SOUND_ID = new Identifier("spell_engine", "spellbook_equip");
+    public static final Identifier EQUIP_SOUND_ID = Identifier.of("spell_engine", "spellbook_equip");
     public static final SoundEvent EQUIP_SOUND = SoundEvent.of(EQUIP_SOUND_ID);
 
     public SpellBookTrinketItem(Identifier poolId, Settings settings) {

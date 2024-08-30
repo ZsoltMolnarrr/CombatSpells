@@ -11,7 +11,7 @@ import net.spell_engine.SpellEngineMod;
 
 public class CustomButton extends ButtonWidget {
 
-    private static final Identifier BUTTONS_TEXTURE = new Identifier(SpellEngineMod.ID, "textures/gui/buttons.png");
+    private static final Identifier BUTTONS_TEXTURE = Identifier.of(SpellEngineMod.ID, "textures/gui/buttons.png");
     private int u;
     private int v;
     private int stateOffsetY;

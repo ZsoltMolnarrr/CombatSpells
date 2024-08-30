@@ -191,7 +191,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
         return itemStack;
     }
 
-    public static Identifier soundId = new Identifier(SpellEngineMod.ID, "bind_spell");
+    public static Identifier soundId = Identifier.of(SpellEngineMod.ID, "bind_spell");
     public static SoundEvent soundEvent = SoundEvent.of(soundId);
 
     @Override
@@ -256,7 +256,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                     if (container == null || !container.isValid() || container.pool == null) {
                         return false;
                     }
-                    var poolId = new Identifier(container.pool);
+                    var poolId = Identifier.of(container.pool);
                     var binding = SpellBinding.State.forBook(cost, requiredLevel);
                     if (binding.state == SpellBinding.State.ApplyState.INVALID) {
                         return false;
