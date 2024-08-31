@@ -295,10 +295,7 @@ public class SpellHotbar {
         }
         if (!Objects.equals(idToSync, lastSyncedSpellId)) {
             // System.out.println("Syncing item use skill: " + idToSync);
-            ClientPlayNetworking.send(
-                    Packets.SpellCastSync.ID,
-                    new Packets.SpellCastSync(idToSync, 1, 1000).write()
-            );
+            ClientPlayNetworking.send(new Packets.SpellCastSync(idToSync, 1, 1000));
             lastSyncedSpellId = idToSync;
         }
     }

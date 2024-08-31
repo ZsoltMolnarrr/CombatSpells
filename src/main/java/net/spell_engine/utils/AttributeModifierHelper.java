@@ -25,4 +25,14 @@ public class AttributeModifierHelper {
         modifiersMap.put(attribute, modifier);
         return modifiersMap;
     }
+
+    public static boolean hasModifier(ItemStack itemStack, RegistryEntry<EntityAttribute> attribute) {
+        var modifiers = itemStack.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
+        for (var entry : modifiers.modifiers()) {
+            if (entry.attribute().equals(attribute)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

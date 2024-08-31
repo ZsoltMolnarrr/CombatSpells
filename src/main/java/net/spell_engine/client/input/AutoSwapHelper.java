@@ -15,6 +15,7 @@ import net.minecraft.util.math.Direction;
 import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.compat.TrinketsCompat;
 import net.spell_engine.internals.SpellContainerHelper;
+import net.spell_engine.utils.AttributeModifierHelper;
 import org.jetbrains.annotations.Nullable;
 
 public class AutoSwapHelper {
@@ -83,8 +84,8 @@ public class AutoSwapHelper {
     }
 
     public static boolean isMeleeWeapon(ItemStack itemStack) {
-        return itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(EntityAttributes.GENERIC_ATTACK_DAMAGE)
-                && itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(EntityAttributes.GENERIC_ATTACK_SPEED);
+        return AttributeModifierHelper.hasModifier(itemStack, EntityAttributes.GENERIC_ATTACK_DAMAGE)
+                && AttributeModifierHelper.hasModifier(itemStack, EntityAttributes.GENERIC_ATTACK_SPEED);
     }
 
     public static boolean isAnyWeapon(ItemStack itemStack) {
@@ -92,33 +93,11 @@ public class AutoSwapHelper {
             return true;
         }
         if (FabricLoader.getInstance().isModLoaded("ranged_weapon_api")
-                && itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).containsKey(EntityAttributes_RangedWeapon.DAMAGE.attribute)) {
+                && AttributeModifierHelper.hasModifier(itemStack, EntityAttributes_RangedWeapon.DAMAGE.entry)) {
             return true;
         }
         return false;
     }
-
-//    public static boolean isWeapon(ItemStack itemStack) {
-//        var attackModifiers = itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).get(EntityAttributes.GENERIC_ATTACK_DAMAGE);
-//        for (var modifier : attackModifiers) {
-//            if (modifier.getValue() != baseline(modifier.getOperation())) {
-//                System.out.println("isWeapon damage: " + itemStack + " " + modifier.getValue() + " " + baseline(modifier.getOperation()));
-//                return true;
-//            }
-//        }
-//        var speedModifiers = itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND).get(EntityAttributes.GENERIC_ATTACK_SPEED);
-//        for (var modifier : speedModifiers) {
-//            if (modifier.getValue() != baseline(modifier.getOperation())) {
-//                System.out.println("isWeapon speed : " + itemStack + " " + modifier.getValue() + " " + baseline(modifier.getOperation()));
-//                return true;
-//            }
-//        }
-//        System.out.println("isWeapon: " + itemStack + " false");
-//        return false;
-//    }
-//    private static float baseline(EntityAttributeModifier.Operation operation) {
-//        return operation == EntityAttributeModifier.Operation.MULTIPLY_TOTAL ? 1.0F : 0.0F;
-//    }
 
     @Nullable
     private static SpellContainer.ContentType spellContentType(ItemStack itemStack) {
