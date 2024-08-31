@@ -14,7 +14,7 @@ public class AnimationHelper {
         if (name == null || name.isEmpty()) {
             return;
         }
-        var packet = new Packets.SpellAnimation(animatedPlayer.getId(), type, name, speed).write();
+        var packet = new Packets.SpellAnimation(animatedPlayer.getId(), type, name, speed);
         if (animatedPlayer instanceof ServerPlayerEntity serverPlayer) {
             sendPacketToPlayer(serverPlayer, packet);
         }
@@ -23,10 +23,10 @@ public class AnimationHelper {
         });
     }
 
-    private static void sendPacketToPlayer(ServerPlayerEntity serverPlayer, PacketByteBuf packet) {
+    private static void sendPacketToPlayer(ServerPlayerEntity serverPlayer, Packets.SpellAnimation packet) {
         try {
             if (ServerPlayNetworking.canSend(serverPlayer, Packets.SpellAnimation.ID)) {
-                ServerPlayNetworking.send(serverPlayer, Packets.SpellAnimation.ID, packet);
+                ServerPlayNetworking.send(serverPlayer, packet);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,16 +1,15 @@
 package net.spell_engine.internals.criteria;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.advancement.criterion.AbstractCriterionConditions;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
+import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
+
+import java.util.Optional;
 
 public class EnchantmentSpecificCriteria extends AbstractCriterion<EnchantmentSpecificCriteria.Condition> {
     public static final Identifier ID = Identifier.of(SpellEngineMod.ID, "enchant_specific");
@@ -18,37 +17,37 @@ public class EnchantmentSpecificCriteria extends AbstractCriterion<EnchantmentSp
     private static final String enchant_id_key = "enchant_id";
 
     @Override
-    protected Condition conditionsFromJson(JsonObject obj, LootContextPredicate playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        JsonElement element = obj.get(enchant_id_key);
-        return new EnchantmentSpecificCriteria.Condition(element.getAsString());
+    public Codec<EnchantmentSpecificCriteria.Condition> getConditionsCodec() {
+        return EnchantmentSpecificCriteria.Condition.CODEC;
     }
 
-    @Override
-    public Identifier getId() {
-        return ID;
+    public void trigger(ServerPlayerEntity player, Identifier spellPoolId) {
+        trigger(player, condition -> {
+            return condition.matches(spellPoolId);
+        });
     }
 
-    public void trigger(ServerPlayerEntity player, String enchantId) {
-        trigger(player, condition -> condition.test(enchantId));
-    }
+    public record Condition(Optional<LootContextPredicate> player, Optional<String> enchant_id) implements AbstractCriterion.Conditions {
+        public static final Codec<EnchantmentSpecificCriteria.Condition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                                EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("player").forGetter(EnchantmentSpecificCriteria.Condition::player),
+                                Codec.optionalField("enchant_id", Codec.STRING, true).forGetter(EnchantmentSpecificCriteria.Condition::enchant_id)
+                        )
+                        .apply(instance, EnchantmentSpecificCriteria.Condition::new)
+        );
 
-    public static class Condition extends AbstractCriterionConditions {
-        String enchantId;
-
-        public Condition(String enchantId) {
-            super(ID, LootContextPredicate.EMPTY);
-            this.enchantId = enchantId;
+        public boolean matches(Identifier id) {
+            var poolMatches = true;
+            if (enchant_id.isPresent()) {
+                poolMatches = enchant_id.get().equals(id.toString());
+            }
+            return poolMatches;
         }
 
-        public boolean test(String enchantId) {
-            return this.enchantId.equals(enchantId);
+        public Optional<LootContextPredicate> player() {
+            return this.player;
         }
 
-        @Override
-        public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
-            JsonObject jsonObject = super.toJson(predicateSerializer);
-            jsonObject.add(enchant_id_key, new JsonPrimitive(enchantId));
-            return jsonObject;
+        public  Optional<String> enchant_id() {
+            return this.enchant_id;
         }
-    }
-}
+    }}

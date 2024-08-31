@@ -1,70 +1,61 @@
 package net.spell_engine.spellbinding;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.advancement.criterion.AbstractCriterionConditions;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
+import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+
+import java.util.Optional;
 
 public class SpellBindingCriteria extends AbstractCriterion<SpellBindingCriteria.Condition> {
     public static final Identifier ID = SpellBinding.ID;
     public static final SpellBindingCriteria INSTANCE = new SpellBindingCriteria();
 
     @Override
-    protected Condition conditionsFromJson(JsonObject obj, LootContextPredicate playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        var condition = new Condition();
-        JsonElement element = obj.get("complete");
-        if (element != null) {
-            condition.complete = element.getAsBoolean();
-        }
-        element = obj.get("spell_pool");
-        if (element != null) {
-            condition.spellPool = Identifier.of(element.getAsString());
-        }
-        return condition;
-    }
-
-    @Override
-    public Identifier getId() {
-        return SpellBinding.ID;
+    public Codec<SpellBindingCriteria.Condition> getConditionsCodec() {
+        return Condition.CODEC;
     }
 
     public void trigger(ServerPlayerEntity player, Identifier spellPoolId, boolean isComplete) {
         trigger(player, condition -> {
-            return condition.test(spellPoolId, isComplete);
+            return condition.matches(spellPoolId, isComplete);
         });
     }
 
-    public static class Condition extends AbstractCriterionConditions {
-        // Trigger only when the entire pool has been bound to the item
-        boolean complete = false;
-        Identifier spellPool = null;
-        public Condition() {
-            super(SpellBinding.ID, LootContextPredicate.EMPTY);
-        }
+    public record Condition(Optional<LootContextPredicate> player, Optional<String> spell_pool, Optional<Boolean> complete) implements AbstractCriterion.Conditions {
+        public static final Codec<SpellBindingCriteria.Condition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("player").forGetter(SpellBindingCriteria.Condition::player),
+                Codec.optionalField("spell_pool", Codec.STRING, true).forGetter(SpellBindingCriteria.Condition::spell_pool),
+                Codec.optionalField("complete", Codec.BOOL, true).forGetter(SpellBindingCriteria.Condition::complete)
+            )
+            .apply(instance, SpellBindingCriteria.Condition::new)
+		);
 
-        public boolean test(Identifier usedSpellPool, boolean isComplete) {
+        public boolean matches(Identifier usedSpellPool, boolean isComplete) {
             var poolMatches = true;
-            if (spellPool != null) {
-                poolMatches = spellPool.equals(usedSpellPool);
+            if (spell_pool.isPresent()) {
+                poolMatches = spell_pool.get().equals(usedSpellPool.toString());
             }
-            var completeMatches = this.complete == isComplete;
-            return poolMatches && completeMatches;
+            if (complete.isPresent()) {
+                poolMatches = poolMatches && (complete.get() == isComplete);
+            }
+            return poolMatches;
         }
 
-        @Override
-        public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
-            JsonObject jsonObject = super.toJson(predicateSerializer);
-            jsonObject.add("complete", new JsonPrimitive(complete) );
-            if (spellPool != null) {
-                jsonObject.add("spell_pool", new JsonPrimitive(spellPool.toString()));
-            }
-            return jsonObject;
+
+        public Optional<LootContextPredicate> player() {
+            return this.player;
+        }
+
+        public  Optional<String> spell_pool() {
+            return this.spell_pool;
+        }
+
+        public Optional<Boolean> complete() {
+            return this.complete;
         }
     }
 }

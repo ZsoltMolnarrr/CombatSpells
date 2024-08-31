@@ -98,8 +98,8 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        delta = this.client.getTickDelta();
-        this.renderBackground(context);
+        // delta = this.client.getTickDelta();
+        this.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
         this.drawMouseoverTooltip(context, mouseX, mouseY);
         var player = MinecraftClient.getInstance().player;

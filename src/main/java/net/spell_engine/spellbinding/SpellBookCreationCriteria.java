@@ -1,67 +1,53 @@
 package net.spell_engine.spellbinding;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancement.criterion.AbstractCriterion;
-import net.minecraft.advancement.criterion.AbstractCriterionConditions;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateDeserializer;
-import net.minecraft.predicate.entity.AdvancementEntityPredicateSerializer;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.entity.LootContextPredicate;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 
+import java.util.Optional;
+
 public class SpellBookCreationCriteria extends AbstractCriterion<SpellBookCreationCriteria.Condition> {
     public static final Identifier ID = Identifier.of(SpellEngineMod.ID, "spell_book_creation");
     public static final SpellBookCreationCriteria INSTANCE = new SpellBookCreationCriteria();
 
     @Override
-    protected Condition conditionsFromJson(JsonObject obj, LootContextPredicate playerPredicate, AdvancementEntityPredicateDeserializer predicateDeserializer) {
-        var condition = new Condition();
-        var element = obj.get("spell_pool");
-        if (element != null) {
-            condition.spellPool = Identifier.of(element.getAsString());
-        }
-        return condition;
-    }
-
-    @Override
-    public Identifier getId() {
-        return ID;
+    public Codec<SpellBookCreationCriteria.Condition> getConditionsCodec() {
+        return SpellBookCreationCriteria.Condition.CODEC;
     }
 
     public void trigger(ServerPlayerEntity player, Identifier spellPoolId) {
         trigger(player, condition -> {
-            return condition.test(spellPoolId);
+            return condition.matches(spellPoolId);
         });
     }
 
-    public static class Condition extends AbstractCriterionConditions {
-        Identifier spellPool = null;
-        public Condition() {
-            super(ID, LootContextPredicate.EMPTY);
+    public record Condition(Optional<LootContextPredicate> player, Optional<String> spell_pool) implements AbstractCriterion.Conditions {
+        public static final Codec<SpellBookCreationCriteria.Condition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                                EntityPredicate.LOOT_CONTEXT_PREDICATE_CODEC.optionalFieldOf("player").forGetter(SpellBookCreationCriteria.Condition::player),
+                                Codec.optionalField("spell_pool", Codec.STRING, true).forGetter(SpellBookCreationCriteria.Condition::spell_pool)
+                        )
+                        .apply(instance, SpellBookCreationCriteria.Condition::new)
+        );
+
+        public boolean matches(Identifier id) {
+            var poolMatches = true;
+            if (spell_pool.isPresent()) {
+                poolMatches = spell_pool.get().equals(id.toString());
+            }
+            return poolMatches;
         }
 
-        public boolean test(Identifier usedSpellPool) {
-            if (spellPool != null) {
-                if (spellPool.equals(usedSpellPool)) {
-                    return true;
-                }
-                return false;
-            } else {
-                // No conditions, just fire trigger
-                return true;
-            }
+        public Optional<LootContextPredicate> player() {
+            return this.player;
         }
 
-        @Override
-        public JsonObject toJson(AdvancementEntityPredicateSerializer predicateSerializer) {
-            JsonObject jsonObject = super.toJson(predicateSerializer);
-            if (spellPool != null) {
-                jsonObject.add("spell_pool", new JsonPrimitive(spellPool.toString()));
-            }
-            return jsonObject;
+        public  Optional<String> spell_pool() {
+            return this.spell_pool;
         }
     }
 }

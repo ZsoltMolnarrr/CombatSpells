@@ -1,16 +1,17 @@
 package net.spell_engine.spellbinding;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandlerContext;
@@ -31,10 +32,15 @@ import java.util.List;
 
 public class SpellBindingBlock extends BlockWithEntity {
     public static SpellBindingBlock INSTANCE = new SpellBindingBlock(FabricBlockSettings.create().hardness(4F).nonOpaque());
-    public static final BlockItem ITEM = new BlockItem(INSTANCE, new FabricItemSettings());
+    public static final BlockItem ITEM = new BlockItem(INSTANCE, new Item.Settings());
 
     protected static final VoxelShape SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0);
     public static final List<BlockPos> BOOKSHELF_OFFSETS = BlockPos.stream(-2, 0, -2, 2, 1, 2).filter(pos -> Math.abs(pos.getX()) == 2 || Math.abs(pos.getZ()) == 2).map(BlockPos::toImmutable).toList();
+
+    public static final MapCodec<SpellBindingBlock> CODEC = createCodec(SpellBindingBlock::new);
+    public MapCodec<SpellBindingBlock> getCodec() {
+        return CODEC;
+    }
 
     public SpellBindingBlock(AbstractBlock.Settings settings) {
         super(settings);
@@ -76,10 +82,9 @@ public class SpellBindingBlock extends BlockWithEntity {
     @Override
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return world.isClient ? SpellBindingBlock.checkType(type, SpellBindingBlockEntity.ENTITY_TYPE, SpellBindingBlockEntity::tick) : null;
+        return world.isClient ? validateTicker(type, SpellBindingBlockEntity.ENTITY_TYPE, SpellBindingBlockEntity::tick) : null;
     }
 
-    @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (world.isClient) {
             return ActionResult.SUCCESS;
@@ -103,13 +108,13 @@ public class SpellBindingBlock extends BlockWithEntity {
     }
 
     @Override
-    public boolean canPathfindThrough(BlockState state, BlockView world, BlockPos pos, NavigationType type) {
+    protected boolean canPathfindThrough(BlockState state, NavigationType type) {
         return false;
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
-        super.appendTooltip(stack, world, tooltip, options);
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
+        super.appendTooltip(stack, context, tooltip, options);
         tooltip.add(Text
                 .translatable("block.spell_engine.spell_binding.description")
                 .formatted(Formatting.GRAY)
