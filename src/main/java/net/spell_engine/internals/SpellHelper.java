@@ -38,10 +38,7 @@ import net.spell_engine.internals.arrow.ArrowHelper;
 import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.particle.ParticleHelper;
-import net.spell_engine.utils.AnimationHelper;
-import net.spell_engine.utils.ItemCooldownManagerExtension;
-import net.spell_engine.utils.SoundHelper;
-import net.spell_engine.utils.TargetHelper;
+import net.spell_engine.utils.*;
 import net.spell_power.api.SpellSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
@@ -82,12 +79,12 @@ public class SpellHelper {
         if (!ignoreAmmo && spell.cost.item_id != null && !spell.cost.item_id.isEmpty()) {
             var id = Identifier.of(spell.cost.item_id);
             var needsArrow = id.getPath().contains("arrow");
-            var hasInfinity = needsArrow
-                    ? EnchantmentHelper.getLevel(Enchantments.INFINITY, itemStack) > 0
-                    : EnchantmentHelper.getLevel(Enchantments_SpellEngine.INFINITY, itemStack) > 0;
-            if (hasInfinity) {
-                return new AmmoResult(satisfied, ammo);
-            }
+//            var hasInfinity = needsArrow
+//                    ? EnchantmentHelper.getLevel(Enchantments.INFINITY, itemStack) > 0
+//                    : EnchantmentHelper.getLevel(Enchantments_SpellEngine.INFINITY, itemStack) > 0;
+//            if (hasInfinity) {
+//                return new AmmoResult(satisfied, ammo);
+//            }
             var ammoItem = Registries.ITEM.get(id);
             if(ammoItem != null) {
                 ammo = ammoItem.getDefaultStack();
@@ -291,10 +288,7 @@ public class SpellHelper {
                 player.addExhaustion(spell.cost.exhaust * SpellEngineMod.config.spell_cost_exhaust_multiplier);
                 // Durability
                 if (SpellEngineMod.config.spell_cost_durability_allowed && spell.cost.durability > 0) {
-                    itemStack.damage(spell.cost.durability, player, (playerObj) -> {
-                        playerObj.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
-                        playerObj.sendEquipmentBreakStatus(EquipmentSlot.OFFHAND);
-                    });
+                    itemStack.damage(spell.cost.durability, player, EquipmentSlot.MAINHAND);
                 }
                 // Item
                 if (ammoResult.ammo != null && spell.cost.consume_item) {
@@ -311,8 +305,10 @@ public class SpellHelper {
                 }
                 // Status effect
                 if (spell.cost.effect_id != null) {
-                    var effect = Registries.STATUS_EFFECT.get(Identifier.of(spell.cost.effect_id));
-                    player.removeStatusEffect(effect);
+                    var effect = Registries.STATUS_EFFECT.getEntry(Identifier.of(spell.cost.effect_id));
+                    if (effect.isPresent()) {
+                        player.removeStatusEffect(effect.get());
+                    }
                 }
                 if (CombatEvents.SPELL_CAST.isListened()) {
                     var args = new CombatEvents.SpellCast.Args(player, spellInfo, targets, action, progress);
@@ -397,7 +393,7 @@ public class SpellHelper {
         var velocity = mutableLaunchProperties.velocity;
         var divergence = projectileData.divergence;
         if (data.inherit_shooter_velocity) {
-            projectile.setVelocity(caster, caster.getPitch(), caster.getYaw(), caster.getRoll(), velocity, divergence);
+            projectile.setVelocity(caster, caster.getPitch(), caster.getYaw(), 0, velocity, divergence);
         } else {
             var look = caster.getRotationVector().normalize();
             projectile.setVelocity(look.x, look.y, look.z, velocity, divergence);
@@ -719,7 +715,11 @@ public class SpellHelper {
                     var data = impact.action.status_effect;
                     if (target instanceof LivingEntity livingTarget) {
                         var id = Identifier.of(data.effect_id);
-                        var effect = Registries.STATUS_EFFECT.get(id);
+                        var effectQuery = Registries.STATUS_EFFECT.getEntry(id);
+                        if (effectQuery.isEmpty()) {
+                            return false;
+                        }
+                        var effect = effectQuery.get();
                         if(!underApplyLimit(power, livingTarget, school, data.apply_limit)) {
                             return false;
                         }
@@ -831,7 +831,7 @@ public class SpellHelper {
                                 serverPlayer.teleport(serverWorld, destination.x, destination.y, destination.z, applyRotation, serverPlayer.getPitch());
                                 // teleportedEntity.teleport(destination.x, destination.y, destination.z, new HashSet<>(), applyRotation, 0);
                             } else {
-                                teleportedEntity.teleport(destination.x, destination.y, destination.z);
+                                teleportedEntity.teleport(destination.x, destination.y, destination.z, false);
                             }
                             success = true;
 
@@ -1000,8 +1000,9 @@ public class SpellHelper {
 
         boolean forSpellBook = itemStack.getItem() instanceof SpellBookItem;
         var replaceAttributes = (caster.getMainHandStack() != itemStack && !forSpellBook);
-        var heldAttributes = caster.getMainHandStack().getAttributeModifiers(EquipmentSlot.MAINHAND);
-        var itemAttributes = itemStack.getAttributeModifiers(EquipmentSlot.MAINHAND);
+
+        var heldAttributes = AttributeModifierHelper.modifierMultimap(caster.getMainHandStack());
+        var itemAttributes = AttributeModifierHelper.modifierMultimap(itemStack);
         if (replaceAttributes) {
             caster.getAttributes().removeModifiers(heldAttributes);
             caster.getAttributes().addTemporaryModifiers(itemAttributes);

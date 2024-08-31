@@ -8,7 +8,12 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.render.entity.EmptyEntityRenderer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.text.Text;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.gui.HudRenderHelper;
 import net.spell_engine.client.gui.SpellTooltip;
@@ -21,16 +26,18 @@ import net.spell_engine.entity.SpellCloud;
 import net.spell_engine.entity.SpellProjectile;
 import net.spell_engine.particle.Particles;
 
+import java.util.List;
+
 public class FabricClientMod implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         SpellEngineClient.initialize();
         registerKeyBindings();
 
-        HudRenderCallback.EVENT.register((DrawContext context, float tickDelta) -> {
-            HudRenderHelper.render(context, tickDelta);
+        HudRenderCallback.EVENT.register((context, tickCounter) -> {
+            HudRenderHelper.render(context, tickCounter.getTickDelta(true));
         });
-        ItemTooltipCallback.EVENT.register((itemStack, context, lines) -> {
+        ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, tooltipType, lines) -> {
             SpellTooltip.addSpellInfo(itemStack, lines);
         });
         EntityRendererRegistry.register(SpellProjectile.ENTITY_TYPE, SpellProjectileRenderer::new);

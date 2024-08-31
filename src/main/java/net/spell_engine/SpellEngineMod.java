@@ -11,7 +11,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.spell_engine.api.spell.ExternalSpellSchools;
 import net.spell_engine.compat.QuiverCompat;
-import net.spell_engine.config.EnchantmentsConfig;
 import net.spell_engine.config.ServerConfig;
 import net.spell_engine.config.ServerConfigWrapper;
 import net.spell_engine.internals.SpellRegistry;
@@ -30,17 +29,9 @@ public class SpellEngineMod {
 
     public static ServerConfig config;
 
-    public static ConfigManager<EnchantmentsConfig> enchantmentConfig = new ConfigManager<EnchantmentsConfig>
-            ("enchantments", new EnchantmentsConfig())
-            .builder()
-            .setDirectory(ID)
-            .sanitize(true)
-            .build();
-
     public static void init() {
         AutoConfig.register(ServerConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
         config = AutoConfig.getConfigHolder(ServerConfigWrapper.class).getConfig().server;
-        enchantmentConfig.refresh();
 
         SpellRegistry.initialize();
         ServerNetwork.initializeHandlers();

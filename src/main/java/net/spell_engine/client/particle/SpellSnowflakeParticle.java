@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.spell_engine.client.util.Color;
 import net.spell_power.api.SpellSchool;
 import net.spell_power.api.SpellSchools;
@@ -31,7 +31,7 @@ public class SpellSnowflakeParticle extends SnowflakeParticle {
     }
 
     @Environment(value=EnvType.CLIENT)
-    public static class FrostFactory implements ParticleFactory<DefaultParticleType> {
+    public static class FrostFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public FrostFactory(SpriteProvider spriteProvider) {
@@ -41,7 +41,7 @@ public class SpellSnowflakeParticle extends SnowflakeParticle {
         public static Color color = Color.from(SpellSchools.FROST.color);
 
         @Override
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellSnowflakeParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
             particle.setColor(color.red(), color.green(), color.red());
             particle.alpha = 0.75F;
@@ -50,7 +50,7 @@ public class SpellSnowflakeParticle extends SnowflakeParticle {
     }
 
     @Environment(value=EnvType.CLIENT)
-    public static class HolyFactory implements ParticleFactory<DefaultParticleType> {
+    public static class HolyFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public HolyFactory(SpriteProvider spriteProvider) {
@@ -60,7 +60,7 @@ public class SpellSnowflakeParticle extends SnowflakeParticle {
         public static Color color = Color.from(0xffffcc);
 
         @Override
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellSnowflakeParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
             particle.setColor(color.red(), color.green(), color.red());
             particle.alpha = 0.75F;
@@ -69,7 +69,7 @@ public class SpellSnowflakeParticle extends SnowflakeParticle {
     }
 
     @Environment(value=EnvType.CLIENT)
-    public static class DrippingBloodFactory implements ParticleFactory<DefaultParticleType> {
+    public static class DrippingBloodFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public DrippingBloodFactory(SpriteProvider spriteProvider) {
@@ -78,7 +78,7 @@ public class SpellSnowflakeParticle extends SnowflakeParticle {
         public static Color color = Color.from(0xb30000);
 
         @Override
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellSnowflakeParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
             particle.setColor(0.35F, 0, 0);
             particle.alpha = 1F;
@@ -91,7 +91,7 @@ public class SpellSnowflakeParticle extends SnowflakeParticle {
     }
 
     @Environment(value=EnvType.CLIENT)
-    public static class RootsFactory implements ParticleFactory<DefaultParticleType> {
+    public static class RootsFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public RootsFactory(SpriteProvider spriteProvider) {
@@ -101,7 +101,7 @@ public class SpellSnowflakeParticle extends SnowflakeParticle {
         public static Color color = Color.from(SpellSchools.FROST.color);
 
         @Override
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellSnowflakeParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
             particle.setColor(1, 1, 1);
             particle.alpha = 1F;

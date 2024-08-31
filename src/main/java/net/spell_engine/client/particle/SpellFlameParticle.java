@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.spell_engine.client.util.Color;
 import net.spell_power.api.SpellSchools;
 import org.jetbrains.annotations.Nullable;
@@ -56,14 +56,14 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class FlameFactory implements ParticleFactory<DefaultParticleType> {
+    public static class FlameFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public FlameFactory(SpriteProvider spriteProvider) {
             this.spriteProvider = spriteProvider;
         }
 
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
             particle.setSprite(this.spriteProvider);
             return particle;
@@ -71,14 +71,14 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class AnimatedFlameFactory implements ParticleFactory<DefaultParticleType> {
+    public static class AnimatedFlameFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public AnimatedFlameFactory(SpriteProvider spriteProvider) {
             this.spriteProvider = spriteProvider;
         }
 
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
             particle.setSprite(this.spriteProvider);
             particle.spriteProviderForAnimation = this.spriteProvider;
@@ -87,7 +87,7 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class ColoredAnimatedFactory implements ParticleFactory<DefaultParticleType> {
+    public static class ColoredAnimatedFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
         private final Color color;
         private final float scale;
@@ -100,7 +100,7 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
             this.scale = scale;
         }
 
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
             particle.setSprite(this.spriteProvider);
             particle.spriteProviderForAnimation = this.spriteProvider;
@@ -130,14 +130,14 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class SmokeFactory implements ParticleFactory<DefaultParticleType> {
+    public static class SmokeFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public SmokeFactory(SpriteProvider spriteProvider) {
             this.spriteProvider = spriteProvider;
         }
 
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
             particle.setSprite(this.spriteProvider);
             particle.setColor(1F, 1F, 1F);
@@ -151,14 +151,14 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class WeaknessSmokeFactory implements ParticleFactory<DefaultParticleType> {
+    public static class WeaknessSmokeFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
         public Color color = Color.from(0x993333);
         public WeaknessSmokeFactory(SpriteProvider spriteProvider) {
             this.spriteProvider = spriteProvider;
         }
 
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
             particle.setSprite(this.spriteProvider);
             float j = clientWorld.random.nextFloat() * 0.5F + 0.35F;
@@ -173,14 +173,14 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class MediumFlameFactory implements ParticleFactory<DefaultParticleType> {
+    public static class MediumFlameFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public MediumFlameFactory(SpriteProvider spriteProvider) {
             this.spriteProvider = spriteProvider;
         }
 
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
             particle.setSprite(this.spriteProvider);
             particle.spriteProviderForAnimation = this.spriteProvider;
@@ -191,7 +191,7 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class FrostShard implements ParticleFactory<DefaultParticleType> {
+    public static class FrostShard implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public FrostShard(SpriteProvider spriteProvider) {
@@ -200,7 +200,7 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
 
         public static Color color = Color.FROST;
 
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
             particle.setSprite(this.spriteProvider);
             float j = clientWorld.random.nextFloat() * 0.5F + 0.35F;
@@ -211,7 +211,7 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
         }
     }
 
-    public static class ColorableFactory implements ParticleFactory<DefaultParticleType> {
+    public static class ColorableFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
         public Color color = Color.from(0xffffff);
 
@@ -222,7 +222,7 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
             particle.setSprite(this.spriteProvider);
             float j = clientWorld.random.nextFloat() * 0.5F + 0.35F;
@@ -266,15 +266,15 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
             super(spriteProvider);
         }
         @Override
-        public @Nullable Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
-            var particle = (SpellFlameParticle)super.createParticle(defaultParticleType, clientWorld, d, e, f, g, h, i);
+        public @Nullable Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+            var particle = (SpellFlameParticle)super.createParticle(SimpleParticleType, clientWorld, d, e, f, g, h, i);
             particle.velocityMultiplier = 0.8F;
             return particle;
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public static class BuffFactory implements ParticleFactory<DefaultParticleType> {
+    public static class BuffFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
         public Color color = Color.from(0xffffff);
 
@@ -285,7 +285,7 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
             particle.setSprite(this.spriteProvider);
             float j = clientWorld.random.nextFloat() * 0.5F + 0.35F;
@@ -304,7 +304,7 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
     }
 
     @Environment(EnvType.CLIENT)
-    public static class PopupSignFactory implements ParticleFactory<DefaultParticleType> {
+    public static class PopupSignFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
         public Color color = Color.from(0xffffff);
         public PopupSignFactory(SpriteProvider spriteProvider, Color color) {
@@ -313,7 +313,7 @@ public class SpellFlameParticle extends AbstractSlowingParticle {
         }
 
         @Override
-        public @Nullable Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public @Nullable Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellFlameParticle(clientWorld, d, e, f, g, h, i);
             particle.setSprite(this.spriteProvider);
             particle.setColor(color.red(), color.green(), color.blue());

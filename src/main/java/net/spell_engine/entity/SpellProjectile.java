@@ -644,11 +644,11 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
     // MARK: DataTracker (client-server sync)
 
     @Override
-    protected void initDataTracker() {
-        this.getDataTracker().startTracking(CLIENT_DATA, "");
-        this.getDataTracker().startTracking(TARGET_ID, 0);
-        this.getDataTracker().startTracking(BEHAVIOUR, Behaviour.FLY.toString());
-        this.getDataTracker().startTracking(ITEM_MODEL_ID, "");
+    protected void initDataTracker(DataTracker.Builder builder) {
+        builder.add(CLIENT_DATA, "");
+        builder.add(TARGET_ID, 0);
+        builder.add(BEHAVIOUR, Behaviour.FLY.toString());
+        builder.add(ITEM_MODEL_ID, "");
     }
 
     private static final TrackedData<String> BEHAVIOUR;

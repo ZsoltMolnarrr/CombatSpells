@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.random.Random;
 import net.spell_engine.client.util.Color;
 import net.spell_power.api.SpellSchool;
@@ -45,7 +45,7 @@ public class GenericSpellParticle extends SpriteBillboardParticle  {
     // MARK: Factories
 
     @Environment(EnvType.CLIENT)
-    static class SpellFactory implements ParticleFactory<DefaultParticleType> {
+    static class SpellFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
         public final Color color;
 
@@ -54,7 +54,7 @@ public class GenericSpellParticle extends SpriteBillboardParticle  {
             this.color = color;
         }
 
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var spellParticle = new GenericSpellParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
             float j = clientWorld.random.nextFloat() * 0.5F + 0.35F;
             // 0xff66ff
@@ -66,21 +66,21 @@ public class GenericSpellParticle extends SpriteBillboardParticle  {
 
 
     @Environment(EnvType.CLIENT)
-    public static class ArcaneSpellFactory extends SpellFactory implements ParticleFactory<DefaultParticleType> {
+    public static class ArcaneSpellFactory extends SpellFactory implements ParticleFactory<SimpleParticleType> {
         public ArcaneSpellFactory(SpriteProvider spriteProvider) {
             super(spriteProvider, Color.from(SpellSchools.ARCANE.color));
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public static class HolySpellFactory extends SpellFactory implements ParticleFactory<DefaultParticleType> {
+    public static class HolySpellFactory extends SpellFactory implements ParticleFactory<SimpleParticleType> {
         public HolySpellFactory(SpriteProvider spriteProvider) {
             super(spriteProvider, Color.from(0xffffcc));
         }
     }
 
     @Environment(EnvType.CLIENT)
-    public static class ArcaneSparkFactory implements ParticleFactory<DefaultParticleType> {
+    public static class ArcaneSparkFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
 
         public ArcaneSparkFactory(SpriteProvider spriteProvider) {
@@ -89,7 +89,7 @@ public class GenericSpellParticle extends SpriteBillboardParticle  {
 
         public static Color color = Color.from(SpellSchools.ARCANE.color);
 
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var spellParticle = new GenericSpellParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider);
             float j = clientWorld.random.nextFloat() * 0.5F + 0.35F;
             // 0xff66ff

@@ -1,7 +1,7 @@
 package net.spell_engine.rpg_series;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.spell_engine.api.loot.LootConfigV2;
 import net.spell_engine.api.loot.LootHelper;
 import net.spell_engine.rpg_series.config.Defaults;
@@ -24,8 +24,8 @@ public class RPGSeriesCore {
     public static void initialize() {
         lootConfig.refresh();
         LootHelper.TAG_CACHE.refresh();
-        LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
-            LootHelper.configureV2(id, tableBuilder, lootConfig.value, new HashMap<>());
+        LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
+            LootHelper.configureV2(key.getValue(), tableBuilder, lootConfig.value, new HashMap<>());
         });
         ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
             LootHelper.updateTagCache(lootConfig.value);

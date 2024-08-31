@@ -42,7 +42,6 @@ public class FabricMod implements ModInitializer {
     @Override
     public void onInitialize() {
         SpellEngineMod.init();
-        SpellEngineMod.registerEnchantments();
         SpellEngineMod.registerSpellBinding();
         SoundHelper.registerSounds();
 
@@ -53,7 +52,7 @@ public class FabricMod implements ModInitializer {
             if (amount > 0 && attacker != null) {
                 for (var instance : entity.getStatusEffects()) {
                     var effect = instance.getEffectType();
-                    if (RemoveOnHit.shouldRemoveOnDirectHit(effect)) {
+                    if (RemoveOnHit.shouldRemoveOnDirectHit(effect.value())) {
                         entity.removeStatusEffect(effect);
                         break;
                     }

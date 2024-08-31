@@ -111,10 +111,10 @@ public class SpellCloud extends Entity implements Ownable {
     private static final TrackedData<Float> RADIUS_TRACKER = DataTracker.registerData(SpellCloud.class, TrackedDataHandlerRegistry.FLOAT);
 
     @Override
-    protected void initDataTracker() {
-        this.getDataTracker().startTracking(SPELL_ID_TRACKER, "");
-        this.getDataTracker().startTracking(DATA_INDEX_TRACKER, this.dataIndex);
-        this.getDataTracker().startTracking(RADIUS_TRACKER, 0F);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        builder.add(SPELL_ID_TRACKER, "");
+        builder.add(DATA_INDEX_TRACKER, this.dataIndex);
+        builder.add(RADIUS_TRACKER, 0F);
     }
 
     public void onTrackedDataSet(TrackedData<?> data) {

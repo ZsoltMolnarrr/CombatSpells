@@ -1,6 +1,6 @@
 package net.spell_engine.particle;
 
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -10,18 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Particles {
-    private static class Helper extends DefaultParticleType {
+    private static class Helper extends SimpleParticleType {
         protected Helper(boolean alwaysShow) {
             super(alwaysShow);
         }
     }
-    private static DefaultParticleType createSimple() {
+    private static SimpleParticleType createSimple() {
         return new Helper(false);
     }
 
     public static class ParticleEntry {
         public final Identifier id;
-        public final DefaultParticleType particleType = Particles.createSimple();
+        public final SimpleParticleType particleType = createSimple();
         public boolean usesCustomTexture = false;
         public ParticleEntry(String name) {
             this.id =  Identifier.of(SpellEngineMod.ID, name);

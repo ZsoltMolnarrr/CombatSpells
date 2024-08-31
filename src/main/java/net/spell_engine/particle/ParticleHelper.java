@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -60,23 +59,17 @@ public class ParticleHelper {
                     trackedEntity.getPitch(),
                     sourceLocation, batch));
         }
-        var packet = new Packets.ParticleBatches(sourceType, spawns).write(countMultiplier);
+        var packet = new Packets.ParticleBatches(sourceType, countMultiplier, spawns);
         if (trackedEntity instanceof ServerPlayerEntity serverPlayer) {
-            sendWrittenBatchesToPlayer(serverPlayer, packet);
+            if (ServerPlayNetworking.canSend(serverPlayer, Packets.ParticleBatches.ID)) {
+                ServerPlayNetworking.send(serverPlayer, packet);
+            }
         }
         trackers.forEach(serverPlayer -> {
-            sendWrittenBatchesToPlayer(serverPlayer, packet);
-        });
-    }
-
-    private static void sendWrittenBatchesToPlayer(ServerPlayerEntity serverPlayer, PacketByteBuf packet) {
-        try {
             if (ServerPlayNetworking.canSend(serverPlayer, Packets.ParticleBatches.ID)) {
-                ServerPlayNetworking.send(serverPlayer, Packets.ParticleBatches.ID, packet);
+                ServerPlayNetworking.send(serverPlayer, packet);
             }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+        });
     }
 
     public static void play(World world, Entity source, ParticleBatch[] batches) {

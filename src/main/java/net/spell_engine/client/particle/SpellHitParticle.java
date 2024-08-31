@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.particle.SimpleParticleType;
 import net.spell_engine.client.util.Color;
 import net.spell_power.api.SpellSchool;
 import net.spell_power.api.SpellSchools;
@@ -38,7 +38,7 @@ public class SpellHitParticle extends SpriteBillboardParticle {
         return 255;
     }
 
-    public static class GenericFactory implements ParticleFactory<DefaultParticleType> {
+    public static class GenericFactory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
         public final Color color;
 
@@ -47,7 +47,7 @@ public class SpellHitParticle extends SpriteBillboardParticle {
             this.color = color;
         }
 
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
             var particle = new SpellHitParticle(clientWorld, d, e, f, g, h, i);
             particle.setSprite(this.spriteProvider);
             float j = clientWorld.random.nextFloat() * 0.5F + 0.35F;

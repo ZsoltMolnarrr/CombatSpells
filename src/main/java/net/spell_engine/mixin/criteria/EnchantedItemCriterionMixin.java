@@ -20,7 +20,7 @@ public class EnchantedItemCriterionMixin {
             var enchantment = entry.getKey();
             var id = Registries.ENCHANTMENT.getId(enchantment);
             if (id != null) {
-                EnchantmentSpecificCriteria.INSTANCE.trigger(player, id.toString());
+                EnchantmentSpecificCriteria.INSTANCE.trigger(player, id);
             }
         }
     }
