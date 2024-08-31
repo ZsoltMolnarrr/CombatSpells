@@ -73,7 +73,7 @@ public record SpellPool(List<Identifier> spellIds, List<SpellSchool> schools, bo
 
     public static SpellPool fromSync(SyncFormat json) {
         return new SpellPool(
-                json.spell_ids.stream().map(Identifier::new).toList(),
+                json.spell_ids.stream().map(Identifier::of).toList(),
                 json.schools.stream().map(SpellSchools::getSchool).toList(),
                 json.craftable
                 );
