@@ -23,7 +23,7 @@ public class ItemConfig { public ItemConfig() { }
             return new Attribute(
                     attributeId.toString(),
                     value,
-                    EntityAttributeModifier.Operation.ADDITION
+                    EntityAttributeModifier.Operation.ADD_VALUE
             );
         }
 
@@ -31,7 +31,7 @@ public class ItemConfig { public ItemConfig() { }
             return new Attribute(
                     attributeId.toString(),
                     value,
-                    EntityAttributeModifier.Operation.MULTIPLY_BASE
+                    EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE
             );
         }
 
@@ -41,7 +41,7 @@ public class ItemConfig { public ItemConfig() { }
                 spellAttributes.add(new Attribute(
                         attributeId.toString(),
                         value,
-                        EntityAttributeModifier.Operation.ADDITION
+                        EntityAttributeModifier.Operation.ADD_VALUE
                     )
                 );
             }

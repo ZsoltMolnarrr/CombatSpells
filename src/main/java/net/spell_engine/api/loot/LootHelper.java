@@ -11,6 +11,7 @@ import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.spell_engine.rpg_series.RPGSeriesCore;
@@ -62,7 +63,7 @@ public class LootHelper {
         LootHelper.TAG_CACHE.save();
     }
 
-    public static void configureV2(Identifier id, LootTable.Builder tableBuilder, LootConfigV2 config, HashMap<String, Item> entries) {
+    public static void configureV2(RegistryWrapper.WrapperLookup registries, Identifier id, LootTable.Builder tableBuilder, LootConfigV2 config, HashMap<String, Item> entries) {
         var tableId = id.toString();
         var pool = config.injectors.get(tableId);
         if (pool == null) {
@@ -106,10 +107,10 @@ public class LootHelper {
                         var entry = ItemEntry.builder(item)
                                 .weight(weight);
                         if (enchant != null && enchant.isValid()) {
-                            var enchantFunction = EnchantWithLevelsLootFunction.builder(UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
-                            if (enchant.allow_treasure) {
-                                enchantFunction.allowTreasureEnchantments();
-                            }
+                            var enchantFunction = EnchantWithLevelsLootFunction.builder(registries, UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
+//                            if (enchant.allow_treasure) {
+//                                enchantFunction.allowTreasureEnchantments();
+//                            }
                             entry.apply(enchantFunction);
                         }
                         lootPoolBuilder.with(entry);
@@ -125,10 +126,10 @@ public class LootHelper {
                             .weight(weight);
 
                     if (enchant != null && enchant.isValid()) {
-                        var enchantFunction = EnchantWithLevelsLootFunction.builder(UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
-                        if (enchant.allow_treasure) {
-                            enchantFunction.allowTreasureEnchantments();
-                        }
+                        var enchantFunction = EnchantWithLevelsLootFunction.builder(registries, UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
+//                        if (enchant.allow_treasure) {
+//                            enchantFunction.allowTreasureEnchantments();
+//                        }
                         entry.apply(enchantFunction);
                     }
                     lootPoolBuilder.with(entry);
@@ -140,10 +141,10 @@ public class LootHelper {
                         .weight(weight);
 
                 if (enchant != null && enchant.isValid()) {
-                    var enchantFunction = EnchantWithLevelsLootFunction.builder(UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
-                    if (enchant.allow_treasure) {
-                        enchantFunction.allowTreasureEnchantments();
-                    }
+                    var enchantFunction = EnchantWithLevelsLootFunction.builder(registries, UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
+//                    if (enchant.allow_treasure) {
+//                        enchantFunction.allowTreasureEnchantments();
+//                    }
                     entry.apply(enchantFunction);
                 }
                 lootPoolBuilder.with(entry);

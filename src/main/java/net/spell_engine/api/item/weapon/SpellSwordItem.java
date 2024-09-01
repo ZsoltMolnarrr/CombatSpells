@@ -1,29 +1,9 @@
 package net.spell_engine.api.item.weapon;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
-import net.minecraft.registry.tag.BlockTags;
-import net.spell_engine.internals.SpellInfinityEnchantment;
 
 public class SpellSwordItem extends SpellWeaponItem {
     public SpellSwordItem(ToolMaterial material, Settings settings) {
         super(material, settings);
-        SpellInfinityEnchantment.ALLOWED_ITEMS.add(this);
-    }
-
-    @Override
-    public float getMiningSpeedMultiplier(ItemStack stack, BlockState state) {
-        if (state.isOf(Blocks.COBWEB)) {
-            return 15.0F;
-        } else {
-            return state.isIn(BlockTags.SWORD_EFFICIENT) ? 1.5F : 1.0F;
-        }
-    }
-
-    @Override
-    public boolean isSuitableFor(BlockState state) {
-        return state.isOf(Blocks.COBWEB);
     }
 }

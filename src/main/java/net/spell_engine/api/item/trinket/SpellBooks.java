@@ -1,6 +1,5 @@
 package net.spell_engine.api.item.trinket;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -42,11 +41,11 @@ public class SpellBooks {
         SpellBookItem book = null;
         TrinketsCompat.init();
         if (TrinketsCompat.isEnabled()) {
-            book = new SpellBookTrinketItem(poolId, new FabricItemSettings().maxCount(1));
+            book = new SpellBookTrinketItem(poolId, new Item.Settings().maxCount(1));
         }
         // TODO: Add support for Curios
         else {
-            book = new SpellBookVanillaItem(poolId, new FabricItemSettings().maxCount(1));
+            book = new SpellBookVanillaItem(poolId, new Item.Settings().maxCount(1));
         }
         all.add(book);
         return book;

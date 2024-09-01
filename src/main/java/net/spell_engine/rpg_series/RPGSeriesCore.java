@@ -25,7 +25,7 @@ public class RPGSeriesCore {
         lootConfig.refresh();
         LootHelper.TAG_CACHE.refresh();
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
-            LootHelper.configureV2(key.getValue(), tableBuilder, lootConfig.value, new HashMap<>());
+            LootHelper.configureV2(registries, key.getValue(), tableBuilder, lootConfig.value, new HashMap<>());
         });
         ServerLifecycleEvents.SERVER_STARTED.register((server) -> {
             LootHelper.updateTagCache(lootConfig.value);

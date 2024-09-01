@@ -1,10 +1,11 @@
 package net.spell_engine.api.item.weapon;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.block.Block;
+import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.component.type.AttributeModifiersComponent;
+import net.minecraft.component.type.ToolComponent;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.Item;
@@ -15,33 +16,36 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
-import net.spell_engine.api.item.AttributeResolver;
-import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.ItemConfig;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 public class Weapon {
+
+    public interface Factory {
+        Item create(Item.Settings settings);
+    }
+
     public static final class Entry {
         private final String namespace;
         private final String name;
         private final CustomMaterial material;
-        private final Item item;
+        private final Factory factory;
+        @Nullable private Item registeredItem;
         private final ItemConfig.Weapon defaults;
         private @Nullable String requiredMod;
 
-        public Entry(String namespace, String name, CustomMaterial material, Item item, ItemConfig.Weapon defaults, @Nullable String requiredMod) {
+        public Entry(String namespace, String name, CustomMaterial material, Factory factory, ItemConfig.Weapon defaults, @Nullable String requiredMod) {
             this.namespace = namespace;
             this.name = name;
             this.material = material;
-            this.item = item;
+            this.factory = factory;
             this.defaults = defaults;
             this.requiredMod = requiredMod;
         }
@@ -75,16 +79,18 @@ public class Weapon {
             return material;
         }
 
-        public Item item() {
+        public Item create(Item.Settings settings) {
+            var item = factory.create(settings);
+            registeredItem = item;
             return item;
+        }
+
+        @Nullable public Item item() {
+            return registeredItem;
         }
 
         public ItemConfig.Weapon defaults() {
             return defaults;
-        }
-
-        public @Nullable String requiredMod() {
-            return requiredMod;
         }
     }
 
@@ -93,15 +99,15 @@ public class Weapon {
     public static class CustomMaterial implements ToolMaterial {
         public static CustomMaterial matching(ToolMaterials vanillaMaterial, Supplier<Ingredient> repairIngredient) {
             var material = new CustomMaterial();
-            material.miningLevel = vanillaMaterial.getMiningLevel();
             material.durability = vanillaMaterial.getDurability();
             material.miningSpeed = vanillaMaterial.getMiningSpeedMultiplier();
             material.enchantability = vanillaMaterial.getEnchantability();
             material.ingredient = new Lazy(repairIngredient);
+            material.inverseTag = vanillaMaterial.getInverseTag();
             return material;
         }
 
-        private int miningLevel = 0;
+        private TagKey<Block> inverseTag;
         private int durability = 0;
         private float miningSpeed = 0;
         private int enchantability = 0;
@@ -123,8 +129,8 @@ public class Weapon {
         }
 
         @Override
-        public int getMiningLevel() {
-            return miningLevel;
+        public TagKey<Block> getInverseTag() {
+            return inverseTag;
         }
 
         @Override
@@ -135,6 +141,11 @@ public class Weapon {
         @Override
         public Ingredient getRepairIngredient() {
             return (Ingredient)this.ingredient.get();
+        }
+
+        @Override
+        public ToolComponent createComponent(TagKey<Block> tag) {
+            return ToolMaterial.super.createComponent(tag);
         }
     }
 
@@ -148,8 +159,10 @@ public class Weapon {
                 configs.put(entry.name(), config);
             }
             if (!entry.isRequiredModInstalled()) { continue; }
-            var item = entry.item();
-            ((ConfigurableAttributes)item).setAttributes(attributesFrom(config));
+            var item = entry.create(
+                    new Item.Settings()
+                            .attributeModifiers(attributesFrom(config))
+            );
             Registry.register(Registries.ITEM, entry.id(), item);
         }
         ItemGroupEvents.modifyEntriesEvent(itemGroupKey).register(content -> {
@@ -159,58 +172,57 @@ public class Weapon {
         });
     }
 
-    public static Multimap<EntityAttribute, EntityAttributeModifier> attributesFrom(ItemConfig.Weapon config) {
-        ImmutableMultimap.Builder<EntityAttribute, EntityAttributeModifier> builder = ImmutableMultimap.builder();
-        builder.put(EntityAttributes.GENERIC_ATTACK_DAMAGE,
+    public static AttributeModifiersComponent attributesFrom(ItemConfig.Weapon config) {
+        AttributeModifiersComponent.Builder builder = AttributeModifiersComponent.builder();
+        builder.add(EntityAttributes.GENERIC_ATTACK_DAMAGE,
                 new EntityAttributeModifier(
-                        ItemAccessor.ATTACK_DAMAGE_MODIFIER_ID(),
-                        "Weapon modifier",
+                        Item.BASE_ATTACK_DAMAGE_MODIFIER_ID,
                         config.attack_damage,
-                        EntityAttributeModifier.Operation.ADDITION));
-        builder.put(EntityAttributes.GENERIC_ATTACK_SPEED,
+                        EntityAttributeModifier.Operation.ADD_VALUE),
+                AttributeModifierSlot.MAINHAND);
+        builder.add(EntityAttributes.GENERIC_ATTACK_SPEED,
                 new EntityAttributeModifier(
-                        ItemAccessor.ATTACK_SPEED_MODIFIER_ID(),
-                        "Weapon modifier",
+                        Item.BASE_ATTACK_SPEED_MODIFIER_ID,
                         config.attack_speed,
-                        EntityAttributeModifier.Operation.ADDITION));
-        var attributes = attributesFrom(config.attributes);
-        for(var entry: attributes.entrySet()) {
-            builder.put(entry.getKey(), entry.getValue());
-        }
-        return builder.build();
-    }
-
-    public static Map<EntityAttribute, EntityAttributeModifier> attributesFrom(List<ItemConfig.Attribute> attributes) {
-        LinkedHashMap<EntityAttribute, EntityAttributeModifier> resolvedAttributes = new LinkedHashMap<>();
-        for(var attribute: attributes) {
-            if (attribute.value == 0) {
-                continue;
-            }
+                        EntityAttributeModifier.Operation.ADD_VALUE),
+                AttributeModifierSlot.MAINHAND);
+        for(var attribute: config.attributes) {
             try {
                 var attributeId = Identifier.of(attribute.id);
-                var entityAttribute = AttributeResolver.get(attributeId);
-                var uuid = (attributeId.equals(attackDamageId) || attributeId.equals(projectileDamageId))
-                        ? ItemAccessor.ATTACK_DAMAGE_MODIFIER_ID()
-                        : miscWeaponAttributeUUID;
-                resolvedAttributes.put(entityAttribute,
+                var entityAttribute = Registries.ATTRIBUTE.getEntry(attributeId).get();
+                builder.add(entityAttribute,
                         new EntityAttributeModifier(
-                                uuid,
-                                "Weapon modifier",
+                                equipmentBonusId,
                                 attribute.value,
-                                attribute.operation));
+                                attribute.operation),
+                        AttributeModifierSlot.MAINHAND);
             } catch (Exception e) {
                 System.err.println("Failed to add item attribute modifier: " + e.getMessage());
             }
         }
-        return resolvedAttributes;
+        return builder.build();
     }
 
-    private static final UUID miscWeaponAttributeUUID = UUID.fromString("c102cb57-a7b8-4a98-8c6e-2cd7b70b74c1");
+    public static AttributeModifiersComponent attributesFrom(List<ItemConfig.Attribute> attributes) {
+        AttributeModifiersComponent.Builder builder = AttributeModifiersComponent.builder();
+        for(var attribute: attributes) {
+            try {
+                var attributeId = Identifier.of(attribute.id);
+                var entityAttribute = Registries.ATTRIBUTE.getEntry(attributeId).get();
+                builder.add(entityAttribute,
+                        new EntityAttributeModifier(
+                                equipmentBonusId,
+                                attribute.value,
+                                attribute.operation),
+                        AttributeModifierSlot.MAINHAND);
+            } catch (Exception e) {
+                System.err.println("Failed to add item attribute modifier: " + e.getMessage());
+            }
+        }
+        return builder.build();
+    }
+
+    private static final Identifier equipmentBonusId = Identifier.of("equipment_bonus");
     private static final Identifier attackDamageId = Identifier.of("generic.attack_damage");
     private static final Identifier projectileDamageId = Identifier.of("projectile_damage", "generic");
-    private static abstract class ItemAccessor extends Item {
-        public ItemAccessor(Settings settings) { super(settings); }
-        public static UUID ATTACK_DAMAGE_MODIFIER_ID() { return ATTACK_DAMAGE_MODIFIER_ID; }
-        public static UUID ATTACK_SPEED_MODIFIER_ID() { return ATTACK_SPEED_MODIFIER_ID; }
-    }
 }

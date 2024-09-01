@@ -12,45 +12,26 @@ import net.minecraft.item.ToolItem;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.spell_engine.api.item.ConfigurableAttributes;
-import net.spell_engine.internals.SpellInfinityEnchantment;
 
-public class StaffItem extends ToolItem implements ConfigurableAttributes {
+public class StaffItem extends ToolItem {
     private Multimap<EntityAttribute, EntityAttributeModifier> attributes;
 
     public StaffItem(ToolMaterial material, Settings settings) {
         super(material, settings);
-        SpellInfinityEnchantment.ALLOWED_ITEMS.add(this);
     }
 
-    public void setAttributes(Multimap<EntityAttribute, EntityAttributeModifier> attributes) {
-        this.attributes = attributes;
-    }
-
+    @Override
     public boolean canMine(BlockState state, World world, BlockPos pos, PlayerEntity miner) {
         return !miner.isCreative();
     }
 
+    @Override
     public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        stack.damage(2, attacker, (e) -> {
-            e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
-        });
         return true;
     }
 
-    public boolean postMine(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity miner) {
-        if (state.getHardness(world, pos) != 0.0F) {
-            stack.damage(2, miner, (e) -> {
-                e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND);
-            });
-        }
-        return true;
-    }
-
-    public Multimap<EntityAttribute, EntityAttributeModifier> getAttributeModifiers(EquipmentSlot slot) {
-        if (attributes == null) {
-            return super.getAttributeModifiers(slot);
-        }
-        return slot == EquipmentSlot.MAINHAND ? attributes : super.getAttributeModifiers(slot);
+    @Override
+    public void postDamageEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        stack.damage(1, attacker, EquipmentSlot.MAINHAND);
     }
 }
