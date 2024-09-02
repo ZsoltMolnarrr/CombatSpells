@@ -31,8 +31,8 @@ public class PlayerEntityMixin implements SpellCasterEntity {
     private static final Gson syncGson = new Gson();
 
     @Inject(method = "initDataTracker", at = @At("TAIL"))
-    private void initDataTracker_TAIL_SpellEngine_SyncEffects(CallbackInfo ci) {
-        player().getDataTracker().startTracking(SPELL_ENGINE_SPELL_PROGRESS, "");
+    private void initDataTracker_TAIL_SpellEngine_SyncEffects(DataTracker.Builder builder, CallbackInfo ci) {
+        builder.add(SPELL_ENGINE_SPELL_PROGRESS, "");
     }
 
     private SpellCast.Process synchronizedSpellCastProcess = null;

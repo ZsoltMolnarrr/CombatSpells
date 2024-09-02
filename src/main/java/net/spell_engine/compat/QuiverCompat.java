@@ -13,36 +13,36 @@ public class QuiverCompat {
     }
 
     public static boolean hasArrow(Item item, PlayerEntity shooter) {
-        if (enabled) {
-            var quiver = QuiverItem.getQuiver(shooter);
-            if (!quiver.isEmpty()) {
-                var data = QuiverItem.getQuiverData(quiver);
-                if (data != null) {
-                    var selected = data.getSelected(itemStack -> itemStack.isOf(item));
-                    if (!selected.isEmpty()) {
-                        return true;
-                    }
-                }
-            }
-        }
+//        if (enabled) {
+//            var quiver = QuiverItem.getQuiver(shooter);
+//            if (!quiver.isEmpty()) {
+//                var data = QuiverItem.getQuiverData(quiver);
+//                if (data != null) {
+//                    var selected = data.getSelected(itemStack -> itemStack.isOf(item));
+//                    if (!selected.isEmpty()) {
+//                        return true;
+//                    }
+//                }
+//            }
+//        }
         return false;
     }
 
     public static boolean consumeArrow(Item item, PlayerEntity shooter) {
-        if (enabled) {
-            var quiver = QuiverItem.getQuiver(shooter);
-            if (!quiver.isEmpty()) {
-                var data = QuiverItem.getQuiverData(quiver);
-                if (data != null) {
-                    var selected = data.getSelected(itemStack -> itemStack.isOf(item));
-                    if (selected.isEmpty()) {
-                        return false;
-                    }
-                    data.consumeArrow();
-                    return true;
-                }
-            }
-        }
+//        if (enabled) {
+//            var quiver = QuiverItem.getQuiver(shooter);
+//            if (!quiver.isEmpty()) {
+//                var data = QuiverItem.getQuiverData(quiver);
+//                if (data != null) {
+//                    var selected = data.getSelected(itemStack -> itemStack.isOf(item));
+//                    if (selected.isEmpty()) {
+//                        return false;
+//                    }
+//                    data.consumeArrow();
+//                    return true;
+//                }
+//            }
+//        }
         return false;
     }
 }

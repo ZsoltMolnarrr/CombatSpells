@@ -84,10 +84,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
                 speed = newValue.speed();
                 length = newValue.length();
             }
-            ClientPlayNetworking.send(
-                    Packets.SpellCastSync.ID,
-                    new Packets.SpellCastSync(id, speed, length).write()
-            );
+            ClientPlayNetworking.send(new Packets.SpellCastSync(id, speed, length));
         }
     }
 
@@ -160,9 +157,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             if (SpellHelper.isChanneled(process.spell())) {
                 var player = player();
                 var progress = process.progress(player.getWorld().getTime());
-                ClientPlayNetworking.send(
-                        Packets.SpellRequest.ID,
-                        new Packets.SpellRequest(SpellCast.Action.RELEASE, process.id(), progress.ratio(), new int[]{}).write());
+                ClientPlayNetworking.send(new Packets.SpellRequest(SpellCast.Action.RELEASE, process.id(), progress.ratio(), new int[]{}));
             }
         }
 
@@ -233,9 +228,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             case SELF, SHOOT_ARROW -> {
             }
         }
-        ClientPlayNetworking.send(
-                Packets.SpellRequest.ID,
-                new Packets.SpellRequest(action, spellId, progress.ratio(), targetIDs).write());
+        ClientPlayNetworking.send(new Packets.SpellRequest(action, spellId, progress.ratio(), targetIDs));
         switch (action) {
             case CHANNEL -> {
                 if (progress.ratio() >= 1) {

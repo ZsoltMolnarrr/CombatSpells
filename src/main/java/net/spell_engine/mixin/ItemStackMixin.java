@@ -30,11 +30,12 @@ public abstract class ItemStackMixin implements SpellCasterItemStack {
 
     @Nullable
     private SpellContainer spellContainerFromNBT() {
-        var itemStack = itemStack();
-        if (!itemStack.hasNbt()) {
-            return null;
-        }
-        return SpellContainerHelper.fromNBT(itemStack.getNbt());
+//        var itemStack = itemStack();
+//        if (!itemStack.hasNbt()) {
+//            return null;
+//        }
+//        return SpellContainerHelper.fromNBT(itemStack.getNbt());
+        return null;
     }
 
     @Nullable

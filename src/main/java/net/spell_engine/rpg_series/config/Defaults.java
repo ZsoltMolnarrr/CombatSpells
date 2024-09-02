@@ -1,10 +1,8 @@
 package net.spell_engine.rpg_series.config;
 
-import net.spell_engine.api.loot.LootConfig;
 import net.spell_engine.api.loot.LootConfigV2;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Defaults {
 

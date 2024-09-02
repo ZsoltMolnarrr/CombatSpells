@@ -21,7 +21,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityImmunity;
-import net.spell_engine.api.enchantment.Enchantments_SpellEngine;
 import net.spell_engine.api.entity.SpellSpawnedEntity;
 import net.spell_engine.api.event.CombatEvents;
 import net.spell_engine.api.item.trinket.SpellBookItem;

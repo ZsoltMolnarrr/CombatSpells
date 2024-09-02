@@ -130,9 +130,9 @@ public class SpellContainerHelper {
         if (itemStack.isEmpty()) {
             return;
         }
-        var nbt = itemStack.getOrCreateNbt();
-        var nbtContainer = SpellContainerHelper.toNBT(container);
-        nbt.put(SpellContainerHelper.NBT_KEY_CONTAINER, nbtContainer);
+//        var nbt = itemStack.getOrCreateNbt();
+//        var nbtContainer = SpellContainerHelper.toNBT(container);
+//        nbt.put(SpellContainerHelper.NBT_KEY_CONTAINER, nbtContainer);
     }
 
     @Nullable
@@ -175,8 +175,8 @@ public class SpellContainerHelper {
         }
         var modifiedContainer = addSpell(spellId, container);
         var nbtContainer = SpellContainerHelper.toNBT(modifiedContainer);
-        var nbt = itemStack.getOrCreateNbt();
-        nbt.put(SpellContainerHelper.NBT_KEY_CONTAINER, nbtContainer);
+//        var nbt = itemStack.getOrCreateNbt();
+//        nbt.put(SpellContainerHelper.NBT_KEY_CONTAINER, nbtContainer);
     }
 
     public static final Comparator<Map.Entry<Identifier, Spell>> spellSorter = (spell1, spell2) -> {

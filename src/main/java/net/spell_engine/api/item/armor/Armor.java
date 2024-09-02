@@ -73,12 +73,12 @@ public class Armor {
         }
     }
 
-    public record Entry(ArmorMaterial material, Armor.Set armorSet, ItemConfig.ArmorSet defaults) {
+    public record Entry(RegistryEntry<ArmorMaterial> material, Armor.Set armorSet, ItemConfig.ArmorSet defaults) {
         public String name() {
             return armorSet.name;
         }
 
-        public <T extends ArmorItem> Entry bundle(Function<ArmorMaterial, Armor.Set<T>> factory) {
+        public <T extends ArmorItem> Entry bundle(Function<RegistryEntry<ArmorMaterial>, Armor.Set<T>> factory) {
             var armorSet = factory.apply(material);
             return new Entry(material, armorSet, defaults);
         }

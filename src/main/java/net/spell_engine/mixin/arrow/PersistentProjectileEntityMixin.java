@@ -77,8 +77,8 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
 
     private static final TrackedData<Integer> SPELL_ID_TRACKER = DataTracker.registerData(PersistentProjectileEntity.class, TrackedDataHandlerRegistry.INTEGER);
     @Inject(method = "initDataTracker", at = @At("TAIL"))
-    private void initDataTracker_TAIL_SpellEngine(CallbackInfo ci) {
-        arrow().getDataTracker().startTracking(SPELL_ID_TRACKER, 0);
+    private void initDataTracker_TAIL_SpellEngine(DataTracker.Builder builder, CallbackInfo ci) {
+        builder.add(SPELL_ID_TRACKER, 0);
     }
 
     // MARK: Tick

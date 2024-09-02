@@ -15,10 +15,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class EnchantedItemCriterionMixin {
     @Inject(method = "trigger", at = @At("HEAD"))
     private void trigger_HEAD_SpellEngine(ServerPlayerEntity player, ItemStack stack, int levels, CallbackInfo ci) {
-        var enchants = EnchantmentHelper.get(stack);
-        for(var entry: enchants.entrySet()) {
-            var enchantment = entry.getKey();
-            var id = Registries.ENCHANTMENT.getId(enchantment);
+        var enchants = EnchantmentHelper.getEnchantments(stack);
+        for(var entry: enchants.getEnchantments()) {
+            var id = entry.getKey().get().getValue();
             if (id != null) {
                 EnchantmentSpecificCriteria.INSTANCE.trigger(player, id);
             }

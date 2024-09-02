@@ -69,15 +69,13 @@ public class SpellCooldownManager {
 
     protected void cooldownSet(Identifier spell, int duration) {
         if (owner instanceof ServerPlayerEntity serverPlayer) {
-            ServerPlayNetworking.send(serverPlayer, Packets.SpellCooldown.ID,
-                    new Packets.SpellCooldown(spell, duration).write());
+            ServerPlayNetworking.send(serverPlayer, new Packets.SpellCooldown(spell, duration));
         }
     }
 
     protected void cooldownCleared(Identifier spell) {
         if (owner instanceof ServerPlayerEntity serverPlayer) {
-            ServerPlayNetworking.send(serverPlayer, Packets.SpellCooldown.ID,
-                    new Packets.SpellCooldown(spell, 0).write());
+            ServerPlayNetworking.send(serverPlayer, new Packets.SpellCooldown(spell, 0));
         }
     }
 

@@ -36,8 +36,8 @@ public abstract class LivingEntityStatusEffectSync extends Entity implements Syn
     }
 
     @Inject(method = "initDataTracker", at = @At("TAIL"))
-    private void initDataTracker_TAIL_SpellEngine_SyncEffects(CallbackInfo ci) {
-        dataTracker.startTracking(SPELL_ENGINE_SYNCED_EFFECTS, "");
+    private void initDataTracker_TAIL_SpellEngine_SyncEffects(DataTracker.Builder builder, CallbackInfo ci) {
+        builder.add(SPELL_ENGINE_SYNCED_EFFECTS, "");
     }
 
     /**
