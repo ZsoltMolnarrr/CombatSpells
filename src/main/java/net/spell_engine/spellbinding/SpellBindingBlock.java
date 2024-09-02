@@ -1,7 +1,6 @@
 package net.spell_engine.spellbinding;
 
 import com.mojang.serialization.MapCodec;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
@@ -19,7 +18,6 @@ import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
@@ -31,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class SpellBindingBlock extends BlockWithEntity {
-    public static SpellBindingBlock INSTANCE = new SpellBindingBlock(FabricBlockSettings.create().hardness(4F).nonOpaque());
+    public static SpellBindingBlock INSTANCE = new SpellBindingBlock(AbstractBlock.Settings.create().hardness(4F).nonOpaque());
     public static final BlockItem ITEM = new BlockItem(INSTANCE, new Item.Settings());
 
     protected static final VoxelShape SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 12.0, 16.0);
@@ -85,7 +83,7 @@ public class SpellBindingBlock extends BlockWithEntity {
         return world.isClient ? validateTicker(type, SpellBindingBlockEntity.ENTITY_TYPE, SpellBindingBlockEntity::tick) : null;
     }
 
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (world.isClient) {
             return ActionResult.SUCCESS;
         }
