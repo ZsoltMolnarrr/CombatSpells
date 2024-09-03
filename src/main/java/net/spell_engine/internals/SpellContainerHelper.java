@@ -8,10 +8,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
-import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellContainer;
-import net.spell_engine.api.spell.SpellInfo;
-import net.spell_engine.api.spell.SpellPool;
+import net.spell_engine.api.spell.*;
 import net.spell_engine.compat.TrinketsCompat;
 import org.jetbrains.annotations.Nullable;
 
@@ -130,9 +127,7 @@ public class SpellContainerHelper {
         if (itemStack.isEmpty()) {
             return;
         }
-//        var nbt = itemStack.getOrCreateNbt();
-//        var nbtContainer = SpellContainerHelper.toNBT(container);
-//        nbt.put(SpellContainerHelper.NBT_KEY_CONTAINER, nbtContainer);
+        itemStack.set(SpellDataComponents.SPELL_CONTAINER, container);
     }
 
     @Nullable
@@ -174,9 +169,7 @@ public class SpellContainerHelper {
             return;
         }
         var modifiedContainer = addSpell(spellId, container);
-        var nbtContainer = SpellContainerHelper.toNBT(modifiedContainer);
-//        var nbt = itemStack.getOrCreateNbt();
-//        nbt.put(SpellContainerHelper.NBT_KEY_CONTAINER, nbtContainer);
+        itemStack.set(SpellDataComponents.SPELL_CONTAINER, modifiedContainer);
     }
 
     public static final Comparator<Map.Entry<Identifier, Spell>> spellSorter = (spell1, spell2) -> {
@@ -201,76 +194,5 @@ public class SpellContainerHelper {
     public static boolean hasUsableContainer(ItemStack itemStack) {
         var container = containerFromItemStack(itemStack);
         return container != null && (container.isUsable() || container.is_proxy);
-    }
-
-    // MARK: NBT Codec
-    public static final String NBT_KEY_CONTAINER = "spell_container";
-    public static final String NBT_KEY_CONTENT_TYPE = "spell_container";
-    private static final String NBT_KEY_PROXY = "is_proxy";
-    private static final String NBT_KEY_POOL = "pool";
-    private static final String NBT_KEY_MAX_SPELL_COUNT = "max_spell_count";
-    private static final String NBT_KEY_SPELL_IDS = "spell_ids";
-
-    public static NbtCompound toNBT(SpellContainer container) {
-        var object = new NbtCompound();
-        if (container.is_proxy) {
-            object.putBoolean(NBT_KEY_PROXY, container.is_proxy);
-        }
-        if (container.pool != null) {
-            object.putString(NBT_KEY_POOL, container.pool);
-        }
-        if (container.max_spell_count != 0) {
-            object.putInt(NBT_KEY_MAX_SPELL_COUNT, container.max_spell_count);
-        }
-        if (container.spell_ids.size() > 0) {
-            var spellList = new NbtList();
-            for (var spellId : container.spell_ids) {
-                var element = NbtString.of(spellId);
-                spellList.add(element);
-            }
-            object.put(NBT_KEY_SPELL_IDS, spellList);
-        }
-        if (container.content != SpellContainer.ContentType.MAGIC) {
-            object.putString(NBT_KEY_CONTENT_TYPE, container.content.toString());
-        }
-        return object;
-    }
-
-    public static SpellContainer fromNBT(NbtCompound nbt) {
-        var nbtContainer = nbt.getCompound(NBT_KEY_CONTAINER);
-        if (nbtContainer == null || nbtContainer.isEmpty()) {
-            return null;
-        }
-        try {
-            boolean is_proxy = false;
-            if (nbtContainer.contains(NBT_KEY_PROXY)) {
-                is_proxy = nbtContainer.getBoolean(NBT_KEY_PROXY);
-            }
-            String pool = null;
-            if (nbtContainer.contains(NBT_KEY_POOL)) {
-                pool = nbtContainer.getString(NBT_KEY_POOL);
-            }
-            var max_spell_count = 0;
-            if (nbtContainer.contains(NBT_KEY_MAX_SPELL_COUNT)) {
-                max_spell_count = nbtContainer.getInt(NBT_KEY_MAX_SPELL_COUNT);
-            }
-            var spellIds = new ArrayList<String>();
-            if (nbtContainer.contains(NBT_KEY_SPELL_IDS)) {
-                var spellList = nbtContainer.getList(NBT_KEY_SPELL_IDS, NbtElement.STRING_TYPE);
-                for (int i = 0; i < spellList.size(); i++) {
-                    spellIds.add(spellList.getString(i));
-                }
-            }
-            SpellContainer.ContentType contentType = null;
-            if (nbtContainer.contains(NBT_KEY_CONTENT_TYPE)) {
-                var contentTypeString = nbtContainer.getString(NBT_KEY_CONTENT_TYPE);
-                contentType = SpellContainer.ContentType.valueOf(contentTypeString);
-            }
-            // System.out.println("Returning NBT parsed container" + new SpellContainer(is_proxy, pool, max_spell_count, spellIds));
-            return new SpellContainer(contentType, is_proxy, pool, max_spell_count, spellIds);
-        } catch (Exception e) {
-            System.err.println("Failed to decode spell container from NBT: " + e.getMessage());
-        }
-        return null;
     }
 }

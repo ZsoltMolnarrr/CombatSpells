@@ -1,19 +1,24 @@
 package net.spell_engine.mixin;
 
+import net.minecraft.component.ComponentMapImpl;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.spell_engine.api.spell.SpellContainer;
+import net.spell_engine.api.spell.SpellDataComponents;
 import net.spell_engine.internals.SpellCasterItemStack;
 import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellRegistry;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements SpellCasterItemStack {
     @Shadow public abstract Item getItem();
+
+    @Shadow @Final private ComponentMapImpl components;
 
     private ItemStack itemStack() {
         return (ItemStack) ((Object)this);
@@ -30,12 +35,7 @@ public abstract class ItemStackMixin implements SpellCasterItemStack {
 
     @Nullable
     private SpellContainer spellContainerFromNBT() {
-//        var itemStack = itemStack();
-//        if (!itemStack.hasNbt()) {
-//            return null;
-//        }
-//        return SpellContainerHelper.fromNBT(itemStack.getNbt());
-        return null;
+        return components.get(SpellDataComponents.SPELL_CONTAINER);
     }
 
     @Nullable

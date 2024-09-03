@@ -28,7 +28,8 @@
     "entity.LivingEntityEvents",
     "entity.LivingEntityKnockback",
     "entity.PlayerEntityMixin",
-    "item.ArmorMaterialLayerAccessor"
+    "item.ArmorMaterialLayerAccessor",
+    "registry.DataComponentTypesMixin"
   ],
   "client": [
     "client.AbstractClientPlayerEntityMixin",
