@@ -9,6 +9,7 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
 import net.spell_engine.api.effect.Synchronized;
 import org.spongepowered.asm.mixin.Final;
@@ -24,9 +25,7 @@ import java.util.Map;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityStatusEffectSync extends Entity implements Synchronized.Provider {
-    @Shadow
-    @Final
-    private Map<StatusEffect, StatusEffectInstance> activeStatusEffects;
+    @Shadow @Final private Map<RegistryEntry<StatusEffect>, StatusEffectInstance> activeStatusEffects;
 
     private final ArrayList<Synchronized.Effect> SpellEngine_syncedStatusEffects = new ArrayList();
     private static final TrackedData<String> SPELL_ENGINE_SYNCED_EFFECTS = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.STRING);
@@ -62,9 +61,9 @@ public abstract class LivingEntityStatusEffectSync extends Entity implements Syn
         StringBuilder builder = new StringBuilder();
         int i = 0;
         for (var entry : activeStatusEffects.entrySet()) {
-            var effect = entry.getKey();
+            var effect = entry.getKey().value();
             if (((Synchronized)effect).shouldSynchronize()) {
-                int id = Registries.STATUS_EFFECT.getRawId(entry.getKey());
+                int id = Registries.STATUS_EFFECT.getRawId(effect);
                 int amplifier = entry.getValue().getAmplifier();
                 if (i > 0) {
                     builder.append("-");

@@ -2,6 +2,7 @@ package net.spell_engine.api.effect;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.spell_engine.client.gui.HudMessages;
 
 import java.util.Collection;
@@ -51,10 +52,10 @@ public record EntityActionsAllowed(
         void updateEntityActionsAllowed();
     }
 
-    public static EntityActionsAllowed fromEffects(Collection<StatusEffect> effects) {
+    public static EntityActionsAllowed fromEffects(Collection<RegistryEntry<StatusEffect>> effects) {
         var initial = EntityActionsAllowed.ANY;
         var limiters = effects.stream()
-                .map(effect -> ((ActionImpairing)effect).actionsAllowed())
+                .map(effect -> ((ActionImpairing)effect.value()).actionsAllowed())
                 .filter(Objects::nonNull)
                 .toList();
         if (limiters.size() == 0) {

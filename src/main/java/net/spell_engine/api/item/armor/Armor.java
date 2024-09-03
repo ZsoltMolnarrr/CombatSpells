@@ -7,6 +7,7 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -15,6 +16,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.ItemConfig;
+import net.spell_engine.mixin.item.ArmorMaterialLayerAccessor;
 
 import java.util.*;
 import java.util.function.Function;
@@ -22,6 +24,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Armor {
+
+    public static Identifier getLayerId(ArmorMaterial.Layer layer) {
+        return ((ArmorMaterialLayerAccessor) (Object)layer).getId();
+    }
 
     public static class CustomItem extends ArmorItem implements ConfigurableAttributes {
         private AttributeModifiersComponent attributeModifiers = AttributeModifiersComponent.builder().build();
@@ -33,6 +39,11 @@ public class Armor {
         @Override
         public void setAttributes(AttributeModifiersComponent attributeModifiers) {
             this.attributeModifiers = attributeModifiers;
+        }
+
+        @Override
+        public AttributeModifiersComponent getAttributeModifiers() {
+            return this.attributeModifiers;
         }
     }
 
@@ -71,9 +82,31 @@ public class Armor {
                 }
             });
         }
+
+        public interface ItemFactory<T extends ArmorItem> {
+            T create(RegistryEntry<ArmorMaterial> material, ArmorItem.Type slot, Item.Settings settings);
+        }
     }
 
     public record Entry(RegistryEntry<ArmorMaterial> material, Armor.Set armorSet, ItemConfig.ArmorSet defaults) {
+        public static Entry create(RegistryEntry<ArmorMaterial> material, Identifier id, int durability, Set.ItemFactory factory, ItemConfig.ArmorSet defaults) {
+            var set = new Armor.Set(id.getNamespace(), id.getPath(),
+                    factory.create(material, ArmorItem.Type.HELMET, new Item.Settings()
+                            .maxDamage(ArmorItem.Type.HELMET.getMaxDamage(durability))
+                    ),
+                    factory.create(material, ArmorItem.Type.CHESTPLATE, new Item.Settings()
+                            .maxDamage(ArmorItem.Type.CHESTPLATE.getMaxDamage(durability))
+                    ),
+                    factory.create(material, ArmorItem.Type.LEGGINGS, new Item.Settings()
+                            .maxDamage(ArmorItem.Type.LEGGINGS.getMaxDamage(durability))
+                    ),
+                    factory.create(material, ArmorItem.Type.BOOTS, new Item.Settings()
+                            .maxDamage(ArmorItem.Type.BOOTS.getMaxDamage(durability))
+                    )
+            );
+            return new Entry(material, set, defaults);
+        }
+
         public String name() {
             return armorSet.name;
         }

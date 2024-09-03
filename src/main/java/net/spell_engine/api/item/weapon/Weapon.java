@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 public class Weapon {
 
     public interface Factory {
-        Item create(Item.Settings settings);
+        Item create(ToolMaterial material, Item.Settings settings);
     }
 
     public static final class Entry {
@@ -79,8 +79,8 @@ public class Weapon {
             return material;
         }
 
-        public Item create(Item.Settings settings) {
-            var item = factory.create(settings);
+        public Item create(ToolMaterial material, Item.Settings settings) {
+            var item = factory.create(material, settings);
             registeredItem = item;
             return item;
         }
@@ -160,8 +160,9 @@ public class Weapon {
             }
             if (!entry.isRequiredModInstalled()) { continue; }
             var item = entry.create(
+                    entry.material,
                     new Item.Settings()
-                            .attributeModifiers(attributesFrom(config))
+                        .attributeModifiers(attributesFrom(config))
             );
             Registry.register(Registries.ITEM, entry.id(), item);
         }
