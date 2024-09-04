@@ -264,8 +264,7 @@ public class HudRenderHelper {
 
     public class SpellHotBarWidget {
         public static Rect lastRendered;
-        private static final TextureFile WIDGETS = new TextureFile(Identifier.of("textures/gui/widgets.png"), 256, 256);
-        private static final TextureFile ACCESSORIES = new TextureFile(Identifier.of(SpellEngineMod.ID, "textures/hud/hotbar_accessories.png"), 32, 16);
+        private static final TextureFile HOTBAR = new TextureFile(Identifier.of("textures/gui/sprites/hud/hotbar.png"), 182, 22);
         private static final int slotHeight = 22;
         private static final int slotWidth = 20;
 
@@ -363,12 +362,12 @@ public class HudRenderHelper {
 
             // Background
             context.setShaderColor(1.0f, 1.0f, 1.0f, barOpacity);
-            context.drawTexture(WIDGETS.id(), (int) (origin.x), (int) (origin.y), 0, 0, slotWidth / 2, slotHeight, WIDGETS.width(), WIDGETS.height());
+            context.drawTexture(HOTBAR.id(), (int) (origin.x), (int) (origin.y), 0, 0, slotWidth / 2, slotHeight, HOTBAR.width(), HOTBAR.height());
             int middleElements = viewModel.spells.size() - 1;
             for (int i = 0; i < middleElements; i++) {
-                context.drawTexture(WIDGETS.id(), (int) (origin.x) + (slotWidth / 2) + (i * slotWidth), (int) (origin.y), slotWidth / 2, 0, slotWidth, slotHeight, WIDGETS.width(), WIDGETS.height());
+                context.drawTexture(HOTBAR.id(), (int) (origin.x) + (slotWidth / 2) + (i * slotWidth), (int) (origin.y), slotWidth / 2, 0, slotWidth, slotHeight, HOTBAR.width(), HOTBAR.height());
             }
-            context.drawTexture(WIDGETS.id(), (int) (origin.x) + (slotWidth / 2) + (middleElements * slotWidth), (int) (origin.y), 170, 0, (slotHeight / 2) + 1, slotHeight, WIDGETS.width(), WIDGETS.height());
+            context.drawTexture(HOTBAR.id(), (int) (origin.x) + (slotWidth / 2) + (middleElements * slotWidth), (int) (origin.y), 170, 0, (slotHeight / 2) + 1, slotHeight, HOTBAR.width(), HOTBAR.height());
 
             // Icons
             context.setShaderColor(1.0f, 1.0f, 1.0f, 1.0F);

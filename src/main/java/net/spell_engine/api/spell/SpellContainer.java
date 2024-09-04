@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record SpellContainer(ContentType content, boolean is_proxy, String pool, int max_spell_count, List<String> spell_ids) {
+    public enum ContentType {
+        MAGIC, ARCHERY;
+        public static Codec<ContentType> CODEC = Codec.STRING.xmap(ContentType::valueOf, ContentType::name);
+    }
 
     public static final Codec<SpellContainer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ContentType.CODEC.optionalFieldOf("content", ContentType.MAGIC).forGetter(x -> x.content),
@@ -15,11 +19,6 @@ public record SpellContainer(ContentType content, boolean is_proxy, String pool,
             Codec.INT.optionalFieldOf("max_spell_count", 0).forGetter(x -> x.max_spell_count),
             Codec.STRING.listOf().optionalFieldOf("spell_ids", List.of()).forGetter(x -> x.spell_ids)
     ).apply(instance, SpellContainer::new));
-
-    public enum ContentType {
-        MAGIC, ARCHERY;
-        public static Codec<ContentType> CODEC = Codec.STRING.xmap(ContentType::valueOf, ContentType::name);
-    }
 
     // Canonical constructor with default values, to avoid null values
     public SpellContainer(ContentType content, boolean is_proxy, String pool, int max_spell_count, List<String> spell_ids) {
