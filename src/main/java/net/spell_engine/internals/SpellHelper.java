@@ -12,6 +12,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -69,21 +70,28 @@ public class SpellHelper {
         return SpellCast.Attempt.success();
     }
 
+    private static final Identifier SPELL_INFINITY = Identifier.of(SpellEngineMod.ID, "spell_infinity");
     public record AmmoResult(boolean satisfied, ItemStack ammo) { }
     public static AmmoResult ammoForSpell(PlayerEntity player, Spell spell, ItemStack itemStack) {
         boolean satisfied = true;
         ItemStack ammo = null;
+        var hasInfinity = false;
         boolean ignoreAmmo = player.getAbilities().creativeMode
                 || !SpellEngineMod.config.spell_cost_item_allowed;
         if (!ignoreAmmo && spell.cost.item_id != null && !spell.cost.item_id.isEmpty()) {
             var id = Identifier.of(spell.cost.item_id);
             var needsArrow = id.getPath().contains("arrow");
-//            var hasInfinity = needsArrow
-//                    ? EnchantmentHelper.getLevel(Enchantments.INFINITY, itemStack) > 0
-//                    : EnchantmentHelper.getLevel(Enchantments_SpellEngine.INFINITY, itemStack) > 0;
-//            if (hasInfinity) {
-//                return new AmmoResult(satisfied, ammo);
-//            }
+
+            var enchantmentQuery = needsArrow
+                    ? player.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.INFINITY)
+                    : player.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(SPELL_INFINITY);
+            if (enchantmentQuery.isPresent()) {
+                hasInfinity = EnchantmentHelper.getLevel(enchantmentQuery.get(), itemStack) > 0;
+            }
+
+            if (hasInfinity) {
+                return new AmmoResult(satisfied, ammo);
+            }
             var ammoItem = Registries.ITEM.get(id);
             if(ammoItem != null) {
                 ammo = ammoItem.getDefaultStack();
