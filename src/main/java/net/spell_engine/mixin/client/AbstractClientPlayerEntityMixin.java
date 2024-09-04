@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.Optional;
 
 @Mixin(AbstractClientPlayerEntity.class)
-public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity implements AnimatablePlayer {
+public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity implements AnimatablePlayer, SpellCastingSound.Listener {
     public AbstractClientPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
         super(world, pos, yaw, gameProfile);
     }
@@ -95,11 +95,17 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
             if (castSound != null && soundId != null && !soundId.isEmpty()) {
                 var id = Identifier.of(soundId);
                 var sound = new SpellCastingSound(this, id, castSound.volume(), castSound.randomizedPitch());
+                sound.listener = this;
                 MinecraftClient.getInstance().getSoundManager().play(sound);
                 lastCastSound = sound;
             }
         }
         lastCastSoundId = soundId;
+    }
+
+    public void onSpellCastingSoundDone() {
+        lastCastSound = null;
+        lastCastSoundId = null;
     }
 
     private AdjustmentModifier createPitchAdjustment_SpellEngine() {
