@@ -47,8 +47,8 @@ public class SpellTooltip {
         if ((Object)itemStack instanceof SpellCasterItemStack stack) {
             var container = stack.getSpellContainer();
             if(container != null && container.isValid()) {
-                if (container.is_proxy && config.showSpellBookSuppportTooltip) {
-                    switch (container.content) {
+                if (container.is_proxy() && config.showSpellBookSuppportTooltip) {
+                    switch (container.content()) {
                         case MAGIC -> {
                             lines.add(Text.translatable("spell.tooltip.host.proxy.spell")
                                     .formatted(Formatting.GRAY));
@@ -60,20 +60,20 @@ public class SpellTooltip {
                     }
                 }
 
-                if (container.spell_ids.size() > 0 || container.pool != null) {
-                    if (container.pool == null) {
-                        lines.add(Text.translatable(container.is_proxy ? "spell.tooltip.host.additional" : "spell.tooltip.host.pre_loaded")
+                if (container.spell_ids().size() > 0 || container.pool() != null) {
+                    if (container.pool() == null) {
+                        lines.add(Text.translatable(container.is_proxy() ? "spell.tooltip.host.additional" : "spell.tooltip.host.pre_loaded")
                                 .formatted(Formatting.GRAY));
                     } else {
                         String limit = "";
-                        if (container.max_spell_count > 0) {
+                        if (container.max_spell_count() > 0) {
                             limit = I18n.translate("spell.tooltip.host.limit")
-                                    .replace(placeholder("current"), "" + container.spell_ids.size())
-                                    .replace(placeholder("max"), "" + container.max_spell_count);
+                                    .replace(placeholder("current"), "" + container.spell_ids().size())
+                                    .replace(placeholder("max"), "" + container.max_spell_count());
                         }
 
                         var key = "spell.tooltip.host.list.spell";
-                        switch (container.content) {
+                        switch (container.content()) {
                             case MAGIC -> {
                                 key = "spell.tooltip.host.list.spell";
                             }
@@ -92,8 +92,8 @@ public class SpellTooltip {
                                 MinecraftClient.getInstance().getWindow().getHandle(),
                                 ((KeyBindingAccessor) keybinding).fabric_getBoundKey().getCode())
                         );
-                for (int i = 0; i < container.spell_ids.size(); i++) {
-                    var spellId = Identifier.of(container.spell_ids.get(i));
+                for (int i = 0; i < container.spell_ids().size(); i++) {
+                    var spellId = Identifier.of(container.spell_ids().get(i));
                     var info = spellInfo(spellId, player, itemStack, showDetails);
                     if (!info.isEmpty()) {
                         if (i > 0 && showDetails) {
@@ -103,12 +103,12 @@ public class SpellTooltip {
                     }
                 }
                 if (!showDetails) {
-                    if (!keybinding.isUnbound() && container.spell_ids.size() > 0) {
+                    if (!keybinding.isUnbound() && container.spell_ids().size() > 0) {
                         lines.add(Text.translatable("spell.tooltip.hold_for_details",
                                         keybinding.getBoundKeyLocalizedText())
                                 .formatted(Formatting.GRAY));
                     }
-                    if (config.showSpellBindingTooltip && container.pool != null) {
+                    if (config.showSpellBindingTooltip && container.pool() != null) {
                         lines.add(Text.translatable("spell.tooltip.spell_binding_tip")
                                 .formatted(Formatting.GRAY));
                     }

@@ -119,10 +119,10 @@ public class SpellBinding {
             if (container == null) {
                 return new State(ApplyState.INVALID, requirements);
             }
-            if (container.spell_ids.contains(spellId.toString())) {
+            if (container.spell_ids().contains(spellId.toString())) {
                 return new State(ApplyState.ALREADY_APPLIED, requirements);
             }
-            if (container.max_spell_count > 0 && container.spell_ids.size() >= container.max_spell_count) {
+            if (container.max_spell_count() > 0 && container.spell_ids().size() >= container.max_spell_count()) {
                 return new State(ApplyState.NO_MORE_SLOT, requirements);
             }
             return new State(ApplyState.APPLICABLE, requirements);

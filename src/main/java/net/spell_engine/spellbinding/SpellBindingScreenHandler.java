@@ -240,7 +240,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                             var poolId = SpellContainerHelper.getPoolId(container);
                             if (poolId != null) {
                                 var pool = SpellContainerHelper.getPool(container);
-                                var isComplete = container.spell_ids.size() == pool.spellIds().size();
+                                var isComplete = container.spell_ids().size() == pool.spellIds().size();
                                 SpellBindingCriteria.INSTANCE.trigger(serverPlayer, poolId, isComplete);
                                 System.out.println("Triggering advancement SpellBindingCriteria.INSTANCE spell_pool: " + poolId + " isComplete: " + isComplete);
                             } else {
@@ -253,10 +253,10 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                     var item = SpellBooks.sorted().get(rawId - SpellBinding.BOOK_OFFSET);
                     var itemStack = ((Item)item).getDefaultStack(); // Upcast to `Item` to make sure this line is remapped for other devs
                     var container = SpellContainerHelper.containerFromItemStack(itemStack);
-                    if (container == null || !container.isValid() || container.pool == null) {
+                    if (container == null || !container.isValid() || container.pool() == null) {
                         return false;
                     }
-                    var poolId = Identifier.of(container.pool);
+                    var poolId = Identifier.of(container.pool());
                     var binding = SpellBinding.State.forBook(cost, requiredLevel);
                     if (binding.state == SpellBinding.State.ApplyState.INVALID) {
                         return false;

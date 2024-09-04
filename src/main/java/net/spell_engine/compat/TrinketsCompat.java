@@ -51,12 +51,12 @@ public class TrinketsCompat {
 
         var component = TrinketsApi.getTrinketComponent(player);
 
-        if (component.isEmpty() || proxyContainer == null || !proxyContainer.is_proxy) {
+        if (component.isEmpty() || proxyContainer == null || !proxyContainer.is_proxy()) {
             return Collections.emptyList();
         }
 
         var trinketComponent = component.get();
-        var allowedContent = proxyContainer.content;
+        var allowedContent = proxyContainer.content();
         var items = new LinkedHashSet<ItemStack>();
         var spellBookSlot = trinketComponent.getInventory().get("charm").get("spell_book");
 
@@ -68,13 +68,13 @@ public class TrinketsCompat {
 
         // Extract spell IDs from the containers
         // Using LinkedHashSet to preserve order and remove duplicates
-        var collectedSpellIds = new LinkedHashSet<>(proxyContainer.spell_ids);
+        var collectedSpellIds = new LinkedHashSet<>(proxyContainer.spell_ids());
         for (ItemStack stack : items) {
             if (stack.isEmpty()) continue;
 
             var container = SpellContainerHelper.containerFromItemStack(stack);
-            if (container != null && container.isValid() && container.content == allowedContent) {
-                collectedSpellIds.addAll(container.spell_ids);
+            if (container != null && container.isValid() && container.content() == allowedContent) {
+                collectedSpellIds.addAll(container.spell_ids());
             }
         }
 

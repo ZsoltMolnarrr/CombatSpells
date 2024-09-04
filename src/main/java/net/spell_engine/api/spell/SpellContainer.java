@@ -2,17 +2,11 @@ package net.spell_engine.api.spell;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.component.type.ContainerLootComponent;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-// FIXME: TO RECORD
-public class SpellContainer { public SpellContainer() { }
+public record SpellContainer(ContentType content, boolean is_proxy, String pool, int max_spell_count, List<String> spell_ids) {
 
     public static final Codec<SpellContainer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ContentType.CODEC.optionalFieldOf("content", ContentType.MAGIC).forGetter(x -> x.content),
@@ -27,20 +21,13 @@ public class SpellContainer { public SpellContainer() { }
         public static Codec<ContentType> CODEC = Codec.STRING.xmap(ContentType::valueOf, ContentType::name);
     }
 
-    public ContentType content = ContentType.MAGIC;
-    public boolean is_proxy = false;
-    public int max_spell_count = 0;
-    public String pool;
-    public List<String> spell_ids = List.of();
-
-    public SpellContainer(@Nullable ContentType content, boolean is_proxy, String pool, int max_spell_count, List<String> spell_ids) {
+    // Canonical constructor with default values, to avoid null values
+    public SpellContainer(ContentType content, boolean is_proxy, String pool, int max_spell_count, List<String> spell_ids) {
+        this.content = content != null ? content : ContentType.MAGIC;
         this.is_proxy = is_proxy;
-        if (content != null) {
-            this.content = content;
-        }
-        this.pool = pool;
+        this.pool = pool != null ? pool : "";
         this.max_spell_count = max_spell_count;
-        this.spell_ids = spell_ids;
+        this.spell_ids = spell_ids != null ? spell_ids : List.of();
     }
 
     // MARK: Helpers
@@ -75,5 +62,9 @@ public class SpellContainer { public SpellContainer() { }
 
     public SpellContainer copy() {
         return new SpellContainer(content, is_proxy, pool, max_spell_count, new ArrayList<>(spell_ids));
+    }
+
+    public SpellContainer copyWith(List<String> spell_ids) {
+        return new SpellContainer(content, is_proxy, pool, max_spell_count, spell_ids);
     }
 }

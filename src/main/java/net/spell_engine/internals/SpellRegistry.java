@@ -121,7 +121,7 @@ public class SpellRegistry {
                         .toString().replace(directory + "/", "");
                 id = id.substring(0, id.lastIndexOf('.'));
                 parsed.put(Identifier.of(id), container);
-                // System.out.println("loaded assignment - id: " + id +  " assignment: " + container.spell);
+                System.out.println("loaded assignment - id: " + id +  " assignment: " + container);
             } catch (Exception e) {
                 System.err.println("Spell Engine: Failed to parse spell_assignment: " + identifier + " | Reason: " + e.getMessage());
             }

@@ -73,7 +73,7 @@ public class SpellHotbar {
 
         if (!(held.getItem() instanceof SpellBookItem) // Disable hotbar directly for spell books
                 && container != null) {
-            var spellIds = container.spell_ids;
+            var spellIds = container.spell_ids();
             var spellInfoList = spellIds.stream()
                     .map(idString -> {
                         var id = Identifier.of(idString);
@@ -96,7 +96,7 @@ public class SpellHotbar {
             }
 
             // boolean allowUseKeyForCastable = skillForUseKey == null || container.content == SpellContainer.ContentType.ARCHERY;
-            if (skillForUseKey != null || container.content == SpellContainer.ContentType.ARCHERY) { // Don't allow use key for castables
+            if (skillForUseKey != null || container.content() == SpellContainer.ContentType.ARCHERY) { // Don't allow use key for castables
                 // Filtering out assignable keybindings for Archery content
                 // So item use can stay intact
                 allBindings = allBindings.stream()

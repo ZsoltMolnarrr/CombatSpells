@@ -2,10 +2,6 @@ package net.spell_engine.internals;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.*;
@@ -17,15 +13,15 @@ import java.util.stream.Collectors;
 
 public class SpellContainerHelper {
     public static Identifier getPoolId(SpellContainer container) {
-        if (container != null && container.pool != null) {
-            return Identifier.of(container.pool);
+        if (container != null && container.pool() != null) {
+            return Identifier.of(container.pool());
         }
         return null;
     }
 
     public static SpellPool getPool(SpellContainer container) {
-        if (container != null && container.pool != null) {
-            var id = Identifier.of(container.pool);
+        if (container != null && container.pool() != null) {
+            var id = Identifier.of(container.pool());
             return SpellRegistry.spellPool(id);
         }
         return SpellPool.empty;
@@ -37,18 +33,18 @@ public class SpellContainerHelper {
     }
 
     public static SpellContainer getEquipped(SpellContainer proxyContainer, PlayerEntity player) {
-        if (proxyContainer == null || !proxyContainer.is_proxy) {
+        if (proxyContainer == null || !proxyContainer.is_proxy()) {
             return proxyContainer;
         }
 
         // Using LinkedHashSet to preserve order and remove duplicates
-        var spellIds = new LinkedHashSet<>(proxyContainer.spell_ids);
+        var spellIds = new LinkedHashSet<>(proxyContainer.spell_ids());
 
         if (TrinketsCompat.isEnabled()) {
             spellIds.addAll(TrinketsCompat.getEquippedSpells(proxyContainer, player));
         }
         if (SpellEngineMod.config.spell_book_offhand) {
-            if (isOffhandContainerValid(player, proxyContainer.content)) {
+            if (isOffhandContainerValid(player, proxyContainer.content())) {
                 spellIds.addAll(getOffhandSpellIds(player));
             }
         }
@@ -79,13 +75,13 @@ public class SpellContainerHelper {
         }
         spellIds.removeAll(toRemove);
 
-        return new SpellContainer(proxyContainer.content, false, null, 0, new ArrayList<>(spellIds));
+        return new SpellContainer(proxyContainer.content(), false, null, 0, new ArrayList<>(spellIds));
     }
 
     private static boolean isOffhandContainerValid(PlayerEntity player, SpellContainer.ContentType allowedContent) {
         ItemStack offhandItemStack = getOffhandItemStack(player);
         SpellContainer container = containerFromItemStack(offhandItemStack);
-        return container != null && container.isValid() && container.content == allowedContent;
+        return container != null && container.isValid() && container.content() == allowedContent;
     }
 
     private static List<String> getOffhandSpellIds(PlayerEntity player) {
@@ -93,7 +89,7 @@ public class SpellContainerHelper {
         SpellContainer container = containerFromItemStack(offhandItemStack);
         if (container == null) return Collections.emptyList();
 
-        return container.spell_ids;
+        return container.spell_ids();
     }
 
     /**
@@ -120,7 +116,7 @@ public class SpellContainerHelper {
     }
 
     public static boolean contains(SpellContainer container, Identifier spellId) {
-        return container != null && container.spell_ids.contains(spellId.toString());
+        return container != null && container.spell_ids().contains(spellId.toString());
     }
 
     public static void addContainerToItemStack(SpellContainer container, ItemStack itemStack) {
@@ -139,7 +135,7 @@ public class SpellContainerHelper {
     }
 
     public static SpellContainer addSpell(Identifier spellId, SpellContainer container) {
-        var spellIds = new ArrayList<String>(container.spell_ids);
+        var spellIds = new ArrayList<String>(container.spell_ids());
         spellIds.add(spellId.toString());
 
         // Creating a map just for the sake of sorting
@@ -156,10 +152,7 @@ public class SpellContainerHelper {
                 .map(entry -> entry.getKey().toString())
                 .collect(Collectors.toList());
 
-        var newContainer = container.copy();
-        newContainer.spell_ids = sortedSpellIds;
-
-        return newContainer;
+        return container.copyWith(sortedSpellIds);
     }
 
     public static void addSpell(Identifier spellId, ItemStack itemStack) {
@@ -188,11 +181,11 @@ public class SpellContainerHelper {
 
     public static boolean hasBindableContainer(ItemStack itemStack) {
         var container = containerFromItemStack(itemStack);
-        return container != null && container.pool != null && !container.pool.isEmpty();
+        return container != null && container.pool() != null && !container.pool().isEmpty();
     }
 
     public static boolean hasUsableContainer(ItemStack itemStack) {
         var container = containerFromItemStack(itemStack);
-        return container != null && (container.isUsable() || container.is_proxy);
+        return container != null && (container.isUsable() || container.is_proxy());
     }
 }
