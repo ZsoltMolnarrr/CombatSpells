@@ -23,10 +23,7 @@ public class Spell {
         public int level_requirement_per_tier = 10;
     }
 
-    public enum Mode {
-        CAST,
-        ITEM_USE
-    }
+    public enum Mode { CAST, ITEM_USE }
     public Mode mode = Mode.CAST;
 
     public Cast cast = new Cast();

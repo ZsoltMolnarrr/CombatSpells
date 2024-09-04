@@ -16,9 +16,10 @@ Data driven API
 - ✍️ Spells defined in JSON format
 - ⚙️ Spells have a set of different mechanical behaviours:
     - Cast options: duration, mode of release (charged or channeled)
-    - Targeting mode: Area, Beam, Cursor, Projectile
-    - Impact actions: Damage, Heal, StatusEffect
+    - Targeting mode: Area, Beam, Cursor, Projectile, Meteor
+    - Impact actions: Damage, Heal, StatusEffect, Teleport, Spawn
     - Cost: exhaust (hunger), item (runes), cooldown (time), durability, consume effects
+    - Support for various archery skills
 
 Fancy audio and visuals
 - 🔈 Spells have sound effects: at the start of casting, while casting, at release, at impact
@@ -30,6 +31,30 @@ In game features
 - 🔧 Spell selection and casting is visible on the HUD (fully player configurable)
 - 😌 QoL features included (such as automatic spell cast release)
 - ⛓️ Add spells to eligible weapons using the Spell Binding Table
+- 💰 Loot table injection
+
+
+# 📦️ Content
+
+This mod is primarily a batch of tools (APIs) for developers, but it comes with very little content.
+
+### Spell Binding Table block
+
+- ID: `spell_engine:spell_binding`
+- Use it to create spell books, and bind spells to them
+
+### Spell Infinity enchantment
+
+- ID: `spell_engine:spell_infinity`
+- Effect: negates spell cast rune cost 
+- Applicable: for items under the item tag `spell_engine:enchantable/spell_infinity`
+
+### Spell Book slot
+
+- Implemented with Trinkets mod
+- Adds a special inventory slot for players, where a spell book can be equipped
+- ID: `spell_engine:charm/spell_book`
+
 
 # 🔧 Configuration
 
