@@ -1,3 +1,15 @@
+# 1.0.0
+
+- Update to Minecraft 1.21.1
+
+Functional changes:
+- Player scale increasing spell range
+- Add Spell Projectile safeguards against crashing
+
+API Changes:
+- Add DataComponent for Spell Container
+- Spell Container is now immutable as record
+
 # 0.15.10
 
 Functional changes:

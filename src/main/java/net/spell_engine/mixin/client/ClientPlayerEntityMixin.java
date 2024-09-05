@@ -272,6 +272,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         boolean fallbackToPreviousTargets = false;
         var targetingMode = SpellHelper.selectionTargetingMode(currentSpell);
         var targetType = currentSpell.release.target.type;
+        var range = currentSpell.range  * player().getScale();
 
         Predicate<Entity> selectionPredicate = (target) -> {
             boolean intentAllows = false;
@@ -286,18 +287,18 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         };
         switch (targetType) {
             case AREA -> {
-                targets = TargetHelper.targetsFromArea(caster, currentSpell.range, currentSpell.release.target.area, selectionPredicate);
+                targets = TargetHelper.targetsFromArea(caster, range, currentSpell.release.target.area, selectionPredicate);
                 var area = currentSpell.release.target.area;
                 if (area != null && area.include_caster) {
                     targets.add(caster);
                 }
             }
             case BEAM -> {
-                targets = TargetHelper.targetsFromRaycast(caster, currentSpell.range, selectionPredicate);
+                targets = TargetHelper.targetsFromRaycast(caster, range, selectionPredicate);
             }
             case CURSOR, PROJECTILE, METEOR -> {
                 fallbackToPreviousTargets = targetType != Spell.Release.Target.Type.PROJECTILE; // All of these except `PROJECTILE`
-                var target = TargetHelper.targetFromRaycast(caster, currentSpell.range, selectionPredicate);
+                var target = TargetHelper.targetFromRaycast(caster, range, selectionPredicate);
                 if (target != null) {
                     targets = List.of(target);
                 } else {

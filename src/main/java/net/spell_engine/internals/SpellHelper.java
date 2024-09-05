@@ -240,7 +240,7 @@ public class SpellHelper {
                         case AREA -> {
                             var center = player.getPos().add(0, player.getHeight() / 2F, 0);
                             var area = spell.release.target.area;
-                            applyAreaImpact(world, player, targets, spell.range, area, spellInfo, context.position(center), true);
+                            applyAreaImpact(world, player, targets, spell.range * player.getScale(), area, spellInfo, context.position(center), true);
                         }
                         case BEAM -> {
                             beamImpact(world, player, targets, spellInfo, context);
@@ -849,7 +849,7 @@ public class SpellHelper {
             }
             if (success) {
                 if (impact.particles != null) {
-                    ParticleHelper.sendBatches(target, impact.particles, (float) particleMultiplier, trackers);
+                    ParticleHelper.sendBatches(target, impact.particles, (float) particleMultiplier * caster.getScale(), trackers);
                 }
                 if (impact.sound != null) {
                     SoundHelper.playSound(world, target, impact.sound);

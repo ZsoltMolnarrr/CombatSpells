@@ -1,7 +1,6 @@
 package net.spell_engine.entity;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -32,7 +31,6 @@ import net.spell_engine.client.render.FlyingSpellEntity;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.particle.ParticleHelper;
-import net.spell_engine.utils.RecordsWithGson;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_engine.utils.VectorHelper;
@@ -43,7 +41,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
-
 
 public class SpellProjectile extends ProjectileEntity implements FlyingSpellEntity {
     public static EntityType<SpellProjectile> ENTITY_TYPE;
