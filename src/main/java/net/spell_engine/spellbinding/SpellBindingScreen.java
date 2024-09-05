@@ -81,12 +81,12 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (!isPagingEnabled()) {
            return false;
         } else {
-            for (int i = 0; i < Math.abs(amount); i++) {
-                if (amount > 0) {
+            for (int i = 0; i < Math.abs(verticalAmount); i++) {
+                if (verticalAmount > 0) {
                     pageUp();
                 } else {
                     pageDown();
