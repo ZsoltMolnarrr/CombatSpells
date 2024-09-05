@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.SpellContainer;
@@ -38,13 +39,15 @@ public class SpellRegistry {
     }
 
     public static void initialize() {
-        ServerLifecycleEvents.SERVER_STARTED.register((minecraftServer) -> {
-            loadSpells(minecraftServer.getResourceManager());
-            loadPools(minecraftServer.getResourceManager());
-            loadContainers(minecraftServer.getResourceManager());
-            WeaponCompatibility.initialize();
-            encodeContent();
-        });
+        ServerLifecycleEvents.SERVER_STARTING.register(SpellRegistry::load);
+    }
+
+    private static void load(MinecraftServer minecraftServer) {
+        loadSpells(minecraftServer.getResourceManager());
+        loadPools(minecraftServer.getResourceManager());
+        loadContainers(minecraftServer.getResourceManager());
+        WeaponCompatibility.initialize();
+        encodeContent();
     }
 
     public static void loadSpells(ResourceManager resourceManager) {
@@ -121,7 +124,7 @@ public class SpellRegistry {
                         .toString().replace(directory + "/", "");
                 id = id.substring(0, id.lastIndexOf('.'));
                 parsed.put(Identifier.of(id), container);
-                // System.out.println("loaded assignment - id: " + id +  " assignment: " + container);
+                // System.out.println("loaded assignment - id: " + id +  " assignment: " + contaisner);
             } catch (Exception e) {
                 System.err.println("Spell Engine: Failed to parse spell_assignment: " + identifier + " | Reason: " + e.getMessage());
             }
