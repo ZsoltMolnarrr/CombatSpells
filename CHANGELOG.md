@@ -7,6 +7,7 @@ Functional changes:
 - Add Spell Projectile safeguards against crashing
 
 API Changes:
+- BREAKING! Asset directory for animations have been renamed from `spell_animations` to `player_animations`
 - Add DataComponent for Spell Container
 - Spell Container is now immutable as record
 
