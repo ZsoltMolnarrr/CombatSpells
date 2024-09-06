@@ -10,6 +10,7 @@ API Changes:
 - BREAKING! Asset directory for animations have been renamed from `spell_animations` to `player_animations`
 - Add DataComponent for Spell Container
 - Spell Container is now immutable as record
+- Add Spell Projectile launch sound
 
 # 0.15.10
 

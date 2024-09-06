@@ -283,6 +283,8 @@ public class Spell {
         public int extra_launch_count = 0;
         /// How many ticks after launch additional projectiles are spawned
         public int extra_launch_delay = 2;
+        /// The sound to play on launch
+        @Nullable public Sound sound;
 
         public LaunchProperties velocity(float value) {
             this.velocity = value;
@@ -293,6 +295,7 @@ public class Spell {
             copy.velocity = this.velocity;
             copy.extra_launch_count = this.extra_launch_count;
             copy.extra_launch_delay = this.extra_launch_delay;
+            copy.sound = this.sound != null ? this.sound.copy() : null;
             return copy;
         }
     }

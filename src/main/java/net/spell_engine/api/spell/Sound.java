@@ -95,4 +95,12 @@ public final class Sound {
                 : this.pitch();
         return pitch;
     }
+
+    public Sound copy() {
+        var copy = new Sound(this.id);
+        copy.volume = this.volume;
+        copy.pitch = this.pitch;
+        copy.randomness = this.randomness;
+        return copy;
+    }
 }

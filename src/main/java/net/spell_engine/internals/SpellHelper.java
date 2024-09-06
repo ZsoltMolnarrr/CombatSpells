@@ -410,6 +410,7 @@ public class SpellHelper {
         projectile.setYaw(caster.getYaw());
 
         world.spawnEntity(projectile);
+        SoundHelper.playSound(world, projectile, mutableLaunchProperties.sound);
 
         if (sequenceIndex == 0 && mutableLaunchProperties.extra_launch_count > 0) {
             for (int i = 0; i < mutableLaunchProperties.extra_launch_count; i++) {
