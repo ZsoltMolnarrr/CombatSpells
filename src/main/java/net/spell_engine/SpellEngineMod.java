@@ -3,19 +3,15 @@ package net.spell_engine;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
-import net.fabricmc.fabric.api.item.v1.EnchantingContext;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemGroups;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.spell_engine.api.item.weapon.StaffItem;
 import net.spell_engine.api.spell.ExternalSpellSchools;
 import net.spell_engine.compat.QuiverCompat;
@@ -27,7 +23,6 @@ import net.spell_engine.network.ServerNetwork;
 import net.spell_engine.particle.Particles;
 import net.spell_engine.rpg_series.RPGSeriesCore;
 import net.spell_engine.spellbinding.*;
-import net.tinyconfig.ConfigManager;
 
 import java.util.Set;
 

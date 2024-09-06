@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "spell_engine:spell_binding"
+      "id": "spell_engine:spell_binding"
     },
     "title": {
       "translate": "advancements.rpg_series.root.title"
