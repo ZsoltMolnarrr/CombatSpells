@@ -66,6 +66,11 @@ public class SpellContainerHelper {
                 for (var other : spells) {
                     if (spell.id().equals(other.id())) continue;
                     if (tag.equals(other.spell().group)) {
+                        if (spell.spell().learn.tier == other.spell().learn.tier) {
+                            if (spell.spell().rank > other.spell().rank) {
+                                toRemove.add(other.id().toString());
+                            }
+                        }
                         if (spell.spell().learn.tier > other.spell().learn.tier) {
                             toRemove.add(other.id().toString());
                         }

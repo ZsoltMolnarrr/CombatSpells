@@ -15,6 +15,8 @@ public class Spell {
     // Spells with the same group override each other, prioritized by tier
     // For primary spells (such as hard bound spells of weapons, and first spells of spell books) the recommended group is "primary"
     @Nullable public String group;
+    // The rank of the spell, used to determine which spell to use when multiple spells with the same `group` are available
+    public int rank = 1;
 
     public Learn learn = new Learn();
     public static class Learn { public Learn() {}
