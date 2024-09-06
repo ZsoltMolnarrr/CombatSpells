@@ -386,7 +386,12 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                     this.kill();
                     return;
                 }
-                var performed = SpellHelper.projectileImpact(caster, this, target, this.getSpellInfo(), context.position(entityHitResult.getPos()));
+
+                var prevProjectilePos = new Vec3d(this.prevX, this.prevY, this.prevZ);
+                var hitVector = entityHitResult.getPos().subtract(prevProjectilePos).normalize().multiply(this.getWidth() * 0.5F);
+                var hitPosition = entityHitResult.getPos().subtract(hitVector);
+
+                var performed = SpellHelper.projectileImpact(caster, this, target, this.getSpellInfo(), context.position(hitPosition));
                 if (performed) {
                     chainReactionFrom(target);
                     if (ricochetFrom(target, caster)) {
