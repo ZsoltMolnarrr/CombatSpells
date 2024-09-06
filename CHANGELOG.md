@@ -5,6 +5,7 @@
 Functional changes:
 - Player scale increasing spell range
 - Add Spell Projectile safeguards against crashing
+- Improve SpellBook tooltips
 
 API Changes:
 - BREAKING! Asset directory for animations have been renamed from `spell_animations` to `player_animations`

@@ -60,7 +60,7 @@ public class SpellTooltip {
                     }
                 }
 
-                if (container.spell_ids().size() > 0 || container.pool() != null) {
+                if (!container.spell_ids().isEmpty()) {
                     if (container.pool() == null) {
                         lines.add(Text.translatable(container.is_proxy() ? "spell.tooltip.host.additional" : "spell.tooltip.host.pre_loaded")
                                 .formatted(Formatting.GRAY));
@@ -108,7 +108,7 @@ public class SpellTooltip {
                                         keybinding.getBoundKeyLocalizedText())
                                 .formatted(Formatting.GRAY));
                     }
-                    if (config.showSpellBindingTooltip && container.pool() != null) {
+                    if (config.showSpellBindingTooltip && container.pool() != null && container.spell_ids().isEmpty()) {
                         lines.add(Text.translatable("spell.tooltip.spell_binding_tip")
                                 .formatted(Formatting.GRAY));
                     }
@@ -135,7 +135,10 @@ public class SpellTooltip {
                         .formatted(Formatting.GRAY);
             }
         }
-        lines.add(name);
+        lines.add(
+                Text.literal(details ? "" : " ")
+                        .append(name)
+        );
 
         if(!details) {
             return lines;
