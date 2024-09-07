@@ -25,10 +25,6 @@ import java.util.stream.Stream;
 
 public class Armor {
 
-    public static Identifier getLayerId(ArmorMaterial.Layer layer) {
-        return ((ArmorMaterialLayerAccessor) (Object)layer).getId();
-    }
-
     public static class CustomItem extends ArmorItem implements ConfigurableAttributes {
         private AttributeModifiersComponent attributeModifiers = AttributeModifiersComponent.builder().build();
         public final RegistryEntry<ArmorMaterial> customMaterial;
@@ -46,6 +42,11 @@ public class Armor {
         @Override
         public AttributeModifiersComponent getAttributeModifiers() {
             return this.attributeModifiers;
+        }
+
+        public Identifier getFirstLayerId() {
+            var fristLayer = customMaterial.value().layers().getFirst();
+            return ((ArmorMaterialLayerAccessor) (Object)fristLayer).getId();
         }
     }
 
