@@ -36,10 +36,19 @@ public class ArrowHelper {
     public static void shootArrow(World world, LivingEntity shooter, SpellInfo spellInfo, SpellHelper.ImpactContext context, int sequenceIndex) {
         boolean isCreative = shooter instanceof PlayerEntity && ((PlayerEntity)shooter).getAbilities().creativeMode;
 
-//        var spell = spellInfo.spell();
-//        var shoot_arrow = spell.release.target.shoot_arrow;
-//        if (shoot_arrow != null) {
-//            var launchProperties = shoot_arrow.launch_properties.copy();
+        var spell = spellInfo.spell();
+        var shoot_arrow = spell.release.target.shoot_arrow;
+        if (shoot_arrow != null) {
+            var launchProperties = shoot_arrow.launch_properties.copy();
+
+            // Save as active spell
+
+            // Call weapon.shootAll
+            // Apply arrowperks in mixin
+
+            // Unsave active spell
+
+
 //
 //            var player = (PlayerEntity)shooter;
 //            var infinity = !shoot_arrow.consume_arrow || player.isCreative() || EnchantmentHelper.getLevel(Enchantments.INFINITY, player.getMainHandStack()) > 0;
@@ -64,20 +73,20 @@ public class ArrowHelper {
 //                SpellEvents.ARROW_FIRED.invoke((listener) -> listener.onArrowLaunch(
 //                        new SpellEvents.ArrowLaunchEvent(projectile, shooter, spellInfo, context, sequenceIndex)));
 //            }
-//            var extra_launch = launchProperties.extra_launch_count;
-//            if (sequenceIndex == 0 && extra_launch > 0) {
-//                for (int i = 0; i < extra_launch; i++) {
-//                    var ticks = (i + 1) * launchProperties.extra_launch_delay;
-//                    var nextSequenceIndex = i + 1;
-//                    ((WorldScheduler)world).schedule(ticks, () -> {
-//                        if (shooter == null || !shooter.isAlive()) {
-//                            return;
-//                        }
-//                        shootArrow(world, shooter, spellInfo, context, nextSequenceIndex);
-//                    });
-//                }
-//            }
-//        }
+            var extra_launch = launchProperties.extra_launch_count;
+            if (sequenceIndex == 0 && extra_launch > 0) {
+                for (int i = 0; i < extra_launch; i++) {
+                    var ticks = (i + 1) * launchProperties.extra_launch_delay;
+                    var nextSequenceIndex = i + 1;
+                    ((WorldScheduler)world).schedule(ticks, () -> {
+                        if (shooter == null || !shooter.isAlive()) {
+                            return;
+                        }
+                        shootArrow(world, shooter, spellInfo, context, nextSequenceIndex);
+                    });
+                }
+            }
+        }
     }
 
     public static boolean tryConsumeItem(PlayerEntity player, Item item) {
