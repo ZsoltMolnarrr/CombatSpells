@@ -31,9 +31,11 @@ public class Armor {
 
     public static class CustomItem extends ArmorItem implements ConfigurableAttributes {
         private AttributeModifiersComponent attributeModifiers = AttributeModifiersComponent.builder().build();
+        public final RegistryEntry<ArmorMaterial> customMaterial;
 
         public CustomItem(RegistryEntry<ArmorMaterial> material, Type slot, Settings settings) {
             super(material, slot, settings);
+            this.customMaterial = material;
         }
 
         @Override
