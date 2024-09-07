@@ -1,11 +1,10 @@
 package net.spell_engine.api.loot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class LootConfigV2 {
+public class LootConfig {
     public LinkedHashMap<String, Pool> injectors = new LinkedHashMap<>();
     public LinkedHashMap<String, Pool> regex_injectors = new LinkedHashMap<>();
 
@@ -77,7 +76,7 @@ public class LootConfigV2 {
         }
     }
 
-    public static LootConfigV2 constrainValues(LootConfigV2 config) {
+    public static LootConfig constrainValues(LootConfig config) {
         if (config.injectors != null) {
             for (var entry: config.injectors.entrySet()) {
                 var pool = entry.getValue();

@@ -35,7 +35,7 @@ public class LootHelper {
         public HashMap<String, List<String>> cache = new HashMap<>();
     }
 
-    public static void updateTagCache(LootConfigV2 lootConfig) {
+    public static void updateTagCache(LootConfig lootConfig) {
         var updatedTags = new HashSet<String>();
         for (var entry: lootConfig.injectors.entrySet()) {
             var tableId = entry.getKey();
@@ -63,7 +63,7 @@ public class LootHelper {
         LootHelper.TAG_CACHE.save();
     }
 
-    public static void configureV2(RegistryWrapper.WrapperLookup registries, Identifier id, LootTable.Builder tableBuilder, LootConfigV2 config, HashMap<String, Item> entries) {
+    public static void configureV2(RegistryWrapper.WrapperLookup registries, Identifier id, LootTable.Builder tableBuilder, LootConfig config, HashMap<String, Item> entries) {
         var tableId = id.toString();
         var pool = config.injectors.get(tableId);
         if (pool == null) {
