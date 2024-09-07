@@ -11,7 +11,6 @@ import net.minecraft.item.BowItem;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.registry.Registries;
 import net.spell_engine.SpellEngineMod;
-import net.spell_engine.client.animation.AnimationRegistry;
 import net.spell_engine.client.compatibility.ShaderCompatibility;
 import net.spell_engine.client.render.ModelPredicateHelper;
 import net.spell_engine.client.render.SpellBindingBlockEntityRenderer;
@@ -42,8 +41,6 @@ public class SpellEngineClient {
         ClientNetwork.initializeHandlers();
 
         ClientLifecycleEvents.CLIENT_STARTED.register((client) -> {
-            var resourceManager = MinecraftClient.getInstance().getResourceManager();
-            AnimationRegistry.load(resourceManager);
             injectRangedWeaponModelPredicates();
         });
 

@@ -9,6 +9,7 @@ import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.Ease;
 import dev.kosmx.playerAnim.core.util.Vec3f;
 import dev.kosmx.playerAnim.impl.IAnimatedPlayer;
+import dev.kosmx.playerAnim.minecraftApi.PlayerAnimationRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -167,7 +168,8 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
         try {
             var stack = spellAnimationStackFor(type);
             if (name != null && !name.isEmpty()) {
-                var animation = AnimationRegistry.animations.get(name);
+                var id = Identifier.of(name);
+                var animation = (KeyframeAnimation) PlayerAnimationRegistry.getAnimation(id);
                 var copy = animation.mutableCopy();
                 updateAnimationByCurrentActivity_SpellEngine(copy);
                 copy.torso.fullyEnablePart(true);
