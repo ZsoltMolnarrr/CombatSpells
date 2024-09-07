@@ -14,20 +14,16 @@ import net.spell_engine.particle.ParticleHelper;
 
 public class ClientNetwork {
     public static void initializeHandlers() {
-        PayloadTypeRegistry.configurationS2C().register(Packets.ConfigSync.PACKET_ID, Packets.ConfigSync.CODEC);
         ClientConfigurationNetworking.registerGlobalReceiver(Packets.ConfigSync.PACKET_ID, (packet, context) -> {
             SpellEngineMod.config = packet.config();
             context.responseSender().sendPacket(new Packets.Ack(ServerNetwork.ConfigurationTask.name));
         });
-        
-        PayloadTypeRegistry.configurationS2C().register(Packets.SpellRegistrySync.PACKET_ID, Packets.SpellRegistrySync.CODEC);
+
         ClientConfigurationNetworking.registerGlobalReceiver(Packets.SpellRegistrySync.PACKET_ID, (packet, context) -> {
             SpellRegistry.decodeContent(packet.chunks());
             context.responseSender().sendPacket(new Packets.Ack(ServerNetwork.SpellRegistrySyncTask.name));
         });
 
-
-        PayloadTypeRegistry.playS2C().register(Packets.ParticleBatches.PACKET_ID, Packets.ParticleBatches.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Packets.ParticleBatches.PACKET_ID, (packet, context) -> {
             var client = context.client();
             var instructions = ParticleHelper.convertToInstructions(client.world, packet);
@@ -38,7 +34,6 @@ public class ClientNetwork {
             });
         });
 
-        PayloadTypeRegistry.playS2C().register(Packets.SpellAnimation.PACKET_ID, Packets.SpellAnimation.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Packets.SpellAnimation.PACKET_ID, (packet, context) -> {
             var client = context.client();
             client.execute(() -> {

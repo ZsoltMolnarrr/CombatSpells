@@ -20,6 +20,13 @@ import java.util.function.Consumer;
 
 public class ServerNetwork {
     public static void initializeHandlers() {
+
+        // Config stage
+
+        PayloadTypeRegistry.configurationS2C().register(Packets.ConfigSync.PACKET_ID, Packets.ConfigSync.CODEC);
+        PayloadTypeRegistry.configurationS2C().register(Packets.SpellRegistrySync.PACKET_ID, Packets.SpellRegistrySync.CODEC);
+        PayloadTypeRegistry.configurationC2S().register(Packets.Ack.PACKET_ID, Packets.Ack.CODEC);
+
         ServerConfigurationConnectionEvents.CONFIGURE.register((handler, server) -> {
             // This if block is required! Otherwise the client gets stuck in connection screen
             // if the client cannot handle the packet.
@@ -41,7 +48,7 @@ public class ServerNetwork {
                 handler.disconnect(Text.literal("Network configuration task not supported: " + SpellRegistrySyncTask.name));
             }
         });
-        PayloadTypeRegistry.configurationC2S().register(Packets.Ack.PACKET_ID, Packets.Ack.CODEC);
+
         ServerConfigurationNetworking.registerGlobalReceiver(Packets.Ack.PACKET_ID, (packet, context) -> {
             // Warning: if you do not call completeTask, the client gets stuck!
             if (packet.code().equals(ConfigurationTask.name)) {
@@ -52,7 +59,13 @@ public class ServerNetwork {
             }
         });
 
+        // Play stage
+
         PayloadTypeRegistry.playC2S().register(Packets.SpellCastSync.PACKET_ID, Packets.SpellCastSync.CODEC);
+        PayloadTypeRegistry.playC2S().register(Packets.SpellRequest.PACKET_ID, Packets.SpellRequest.CODEC);
+        PayloadTypeRegistry.playS2C().register(Packets.ParticleBatches.PACKET_ID, Packets.ParticleBatches.CODEC);
+        PayloadTypeRegistry.playS2C().register(Packets.SpellAnimation.PACKET_ID, Packets.SpellAnimation.CODEC);
+
         ServerPlayNetworking.registerGlobalReceiver(Packets.SpellCastSync.PACKET_ID, (packet, context) -> {
             var server = context.server();
             var player = context.player();
@@ -72,7 +85,7 @@ public class ServerNetwork {
             });
         });
 
-        PayloadTypeRegistry.playC2S().register(Packets.SpellRequest.PACKET_ID, Packets.SpellRequest.CODEC);
+
         ServerPlayNetworking.registerGlobalReceiver(Packets.SpellRequest.PACKET_ID, (packet, context) -> {
             var server = context.server();
             var player = context.player();
