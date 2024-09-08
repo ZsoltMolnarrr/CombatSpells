@@ -48,7 +48,6 @@ public class ServerNetwork {
                 handler.disconnect(Text.literal("Network configuration task not supported: " + SpellRegistrySyncTask.name));
             }
         });
-
         ServerConfigurationNetworking.registerGlobalReceiver(Packets.Ack.PACKET_ID, (packet, context) -> {
             // Warning: if you do not call completeTask, the client gets stuck!
             if (packet.code().equals(ConfigurationTask.name)) {
@@ -84,7 +83,6 @@ public class ServerNetwork {
                 }
             });
         });
-
 
         ServerPlayNetworking.registerGlobalReceiver(Packets.SpellRequest.PACKET_ID, (packet, context) -> {
             var server = context.server();
