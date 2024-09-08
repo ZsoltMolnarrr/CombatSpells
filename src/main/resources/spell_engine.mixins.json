@@ -28,6 +28,7 @@
     "entity.LivingEntityKnockback",
     "entity.PlayerEntityMixin",
     "item.ArmorMaterialLayerAccessor",
+    "item.RangedWeaponAccessor",
     "registry.DataComponentTypesMixin"
   ],
   "client": [

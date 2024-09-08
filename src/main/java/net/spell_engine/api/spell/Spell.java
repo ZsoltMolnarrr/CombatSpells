@@ -152,7 +152,7 @@ public class Spell {
             public ShootArrow shoot_arrow;
             public static class ShootArrow { public ShootArrow() { }
                 public boolean consume_arrow = true;
-                public float damage_multiplier = 1F;
+                public float divergence = 5F;
                 public boolean arrow_critical_strike = true;
                 /// Launch properties of the arrow
                 /// (vanilla default velocity for crossbows is 3.15)

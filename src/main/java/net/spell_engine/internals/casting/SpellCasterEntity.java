@@ -1,7 +1,7 @@
 package net.spell_engine.internals.casting;
 
-import net.minecraft.util.Identifier;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.internals.SpellCooldownManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +13,10 @@ public interface SpellCasterEntity {
 
     Spell getCurrentSpell(); // Used by Better Combat compatibility
     float getCurrentCastingSpeed();
+
+    // Used for Archery
+    void setTemporaryActiveSpell(@Nullable SpellInfo spellInfo);
+    @Nullable SpellInfo getTemporaryActiveSpell();
 
     boolean isBeaming();
     @Nullable

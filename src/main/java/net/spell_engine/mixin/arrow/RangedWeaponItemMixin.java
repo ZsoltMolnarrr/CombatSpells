@@ -14,6 +14,7 @@ import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
+import net.spell_engine.internals.casting.SpellCasterEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -27,13 +28,21 @@ public class RangedWeaponItemMixin {
         var projectile = original.call(instance, world, shooter, weaponStack, projectileStack, critical);
         if (shooter instanceof PlayerEntity player
                 && projectile instanceof ArrowExtension arrow) {
-            var container = SpellContainerHelper.getEquipped(weaponStack, player);
-            for (var idString : container.spell_ids()) {
-                var id = Identifier.of(idString);
-                var spell = SpellRegistry.getSpell(id);
-                if (spell != null && spell.mode == Spell.Mode.ITEM_USE && spell.arrow_perks != null) {
-                    var info = new SpellInfo(spell, id);
+            var caster = (SpellCasterEntity) player;
+            if (caster.getTemporaryActiveSpell() != null) {
+                var info = caster.getTemporaryActiveSpell();
+                if (info.spell().arrow_perks != null) {
                     arrow.applyArrowPerks(info);
+                }
+            } else {
+                var container = SpellContainerHelper.getEquipped(weaponStack, player);
+                for (var idString : container.spell_ids()) {
+                    var id = Identifier.of(idString);
+                    var spell = SpellRegistry.getSpell(id);
+                    if (spell != null && spell.mode == Spell.Mode.ITEM_USE && spell.arrow_perks != null) {
+                        var info = new SpellInfo(spell, id);
+                        arrow.applyArrowPerks(info);
+                    }
                 }
             }
         }

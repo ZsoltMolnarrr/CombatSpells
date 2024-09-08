@@ -6,6 +6,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.client.animation.AnimatablePlayer;
 import net.spell_engine.internals.*;
 import net.spell_engine.internals.casting.SpellCast;
@@ -62,6 +63,16 @@ public class PlayerEntityMixin implements SpellCasterEntity {
             return process.speed();
         }
         return 1F; // Fallback value
+    }
+
+    private SpellInfo temporaryActiveSpell = null;
+    @Override
+    public void setTemporaryActiveSpell(@Nullable SpellInfo spellInfo) {
+        temporaryActiveSpell = spellInfo;
+    }
+    @Override
+    @Nullable public SpellInfo getTemporaryActiveSpell() {
+        return temporaryActiveSpell;
     }
 
     @Override
