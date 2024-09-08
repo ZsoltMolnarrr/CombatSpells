@@ -7,6 +7,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.MiningToolItem;
 import net.minecraft.item.ToolItem;
 import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.util.UseAction;
@@ -80,7 +81,7 @@ public class AutoSwapHelper {
     }
 
     public static boolean isUsable(ItemStack itemStack) {
-        return itemStack.getUseAction() != UseAction.NONE || itemStack.getItem() instanceof ToolItem;
+        return itemStack.getUseAction() != UseAction.NONE || itemStack.getItem() instanceof MiningToolItem;
     }
 
     public static boolean isMeleeWeapon(ItemStack itemStack) {
