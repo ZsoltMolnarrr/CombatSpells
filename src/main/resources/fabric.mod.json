@@ -33,8 +33,8 @@
     "spell_engine.mixins.json"
   ],
   "depends": {
-    "minecraft": ">=1.20.0",
-    "fabricloader": ">=0.14.10",
+    "minecraft": ">=${minecraft_compat_version}",
+    "fabricloader": ">=${fabric_loader_version}",
     "fabric": ">=${fabric_api_version}",
     "cloth-config": ">=${cloth_config_version}",
     "playeranimator": ">=1.9.0",
