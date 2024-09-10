@@ -1,6 +1,7 @@
 # 1.0.3
 
-- Add loot table injections to: Trial Chambers chests, Stronghold Corridor 
+- Add loot table injections to: Trial Chambers chests, Stronghold Corridor
+- Disable right-click interaction while actively casting spells
 - Allow running on 1.21
 
 # 1.0.2

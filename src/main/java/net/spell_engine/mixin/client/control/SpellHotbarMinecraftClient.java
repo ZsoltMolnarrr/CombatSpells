@@ -136,6 +136,10 @@ public abstract class SpellHotbarMinecraftClient {
 
     @Inject(method = "doItemUse", at = @At("HEAD"), cancellable = true)
     private void doItemUse_HEAD_autoSwap(CallbackInfo ci) {
+        if (((SpellCasterClient)player).isCastingSpell()) {
+            ci.cancel();
+            return;
+        }
         if (SpellEngineClient.config.autoSwapHands) {
             if (AutoSwapHelper.autoSwapForSpells()) {
                 itemUseCooldown = SpellEngineMod.config.auto_swap_cooldown;
