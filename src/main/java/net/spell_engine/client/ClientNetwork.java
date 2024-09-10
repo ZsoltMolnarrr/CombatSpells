@@ -44,7 +44,6 @@ public class ClientNetwork {
             });
         });
 
-        PayloadTypeRegistry.playS2C().register(Packets.SpellCooldown.PACKET_ID, Packets.SpellCooldown.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(Packets.SpellCooldown.PACKET_ID, (packet, context) -> {
             var client = context.client();
             client.execute(() -> {

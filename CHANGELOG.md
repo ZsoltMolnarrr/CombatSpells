@@ -1,3 +1,7 @@
+# 1.0.2
+
+- Fix spell cooldowns causing disconnects on dedicated servers
+
 # 1.0.1
 
 - Fix Spell binding table crafting
