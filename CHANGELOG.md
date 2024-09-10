@@ -1,5 +1,6 @@
 # 1.0.3
 
+- Improve spell Beam rendering (no longer casts shadows, no longer conflicting with other transparent blocks, such as water)
 - Add loot table injections to: Trial Chambers chests, Stronghold Corridor
 - Disable right-click interaction while actively casting spells
 - Allow running on 1.21
