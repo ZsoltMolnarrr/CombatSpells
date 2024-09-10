@@ -50,14 +50,14 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
 
     @Comment("""
             Relations determine which cases the effect of a player casted spell can effect a target.
-            +----------------+-----------+---------------+----------+----------+--------+
-            |                | FRIENDLY  | SEMI_FRIENDLY | NEUTRAL  | HOSTILE  | MIXED  |
-            +----------------+-----------+---------------+----------+----------+--------+
-            | DIRECT DAMAGE  | 🚫        | ✅            | ✅       | ✅       | ✅    |
-            | AREA DAMAGE    | 🚫        | 🚫            | 🚫       | ✅       | ✅    |
-            | DIRECT HEALING | ✅        | ✅            | ✅       | 🚫       | ✅    |
-            | AREA HEALING   | ✅        | ✅            | 🚫       | 🚫       | ✅    |
-            +----------------+-----------+---------------+----------+----------+--------+
+            +----------------+-------+----------+----------+----------+--------+
+            |                | ALLY  | FRIENDLY | NEUTRAL  | HOSTILE  | MIXED  |
+            +----------------+-------+----------+----------+----------+--------+
+            | DIRECT DAMAGE  | 🚫    | ✅       | ✅       | ✅       | ✅    |
+            | AREA DAMAGE    | 🚫    | 🚫       | 🚫       | ✅       | ✅    |
+            | DIRECT HEALING | ✅    | ✅       | ✅       | 🚫       | ✅    |
+            | AREA HEALING   | ✅    | ✅       | 🚫       | 🚫       | ✅    |
+            +----------------+-------+----------+----------+----------+--------+
             
             The various relation related configs are being checked in the following order:
             - `player_relations`
@@ -67,10 +67,10 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
             (The first relation to be found for the target will be applied.)
             """)
     public LinkedHashMap<String, TargetHelper.Relation> player_relations = new LinkedHashMap<>() {{
-        put("minecraft:player", TargetHelper.Relation.SEMI_FRIENDLY);
-        put("minecraft:villager", TargetHelper.Relation.SEMI_FRIENDLY);
+        put("minecraft:player", TargetHelper.Relation.FRIENDLY);
+        put("minecraft:villager", TargetHelper.Relation.FRIENDLY);
         put("minecraft:iron_golem", TargetHelper.Relation.NEUTRAL);
-        put("guardvillagers:guard", TargetHelper.Relation.SEMI_FRIENDLY);
+        put("guardvillagers:guard", TargetHelper.Relation.FRIENDLY);
     }};
 
     @Comment("Relation to unspecified entities those are instance of PassiveEntity(Yarn)")

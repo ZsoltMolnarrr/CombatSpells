@@ -38,7 +38,7 @@ public class TargetHelper {
         DIRECT, AREA
     }
     public enum Relation {
-        FRIENDLY, SEMI_FRIENDLY, NEUTRAL, HOSTILE, MIXED;
+        ALLY, FRIENDLY, NEUTRAL, HOSTILE, MIXED;
 
         public static Relation coalesce(Relation value, Relation fallback) {
             if (value != null) {
@@ -50,7 +50,7 @@ public class TargetHelper {
 
     public static Relation getRelation(LivingEntity attacker, Entity target) {
         if (attacker == target) {
-            return Relation.FRIENDLY;
+            return Relation.ALLY;
         }
         var casterTeam = attacker.getScoreboardTeam();
         var targetTeam = target.getScoreboardTeam();
@@ -78,13 +78,15 @@ public class TargetHelper {
             }
             return Relation.coalesce(config.player_relation_to_other, Relation.HOSTILE);
         } else {
-            return attacker.isTeammate(target) ? Relation.FRIENDLY : Relation.HOSTILE;
+            return attacker.isTeammate(target)
+                    ? (casterTeam.isFriendlyFireAllowed() ? Relation.FRIENDLY : Relation.ALLY)
+                    : Relation.HOSTILE;
         }
     }
 
     // Make sure this complies with comment in `ServerConfig`
     private static final boolean[][] TABLE_OF_ULTIMATE_JUSTICE = {
-            // FRIENDLY SEMI_FRIENDLY   NEUTRAL HOSTILE MIXED
+            // ALLY     FRIENDLY        NEUTRAL HOSTILE MIXED
             { false,    true,           true,   true,   true }, // Direct Damage
             { false,    false,          false,  true,   true }, // Area Damage
             { true,     true,           true,   false,  true }, // Direct Healing
@@ -104,10 +106,10 @@ public class TargetHelper {
 
         int column = 0;
         switch (relation) {
-            case FRIENDLY -> {
+            case ALLY -> {
                 column = 0;
             }
-            case SEMI_FRIENDLY -> {
+            case FRIENDLY -> {
                 column = 1;
             }
             case NEUTRAL -> {
