@@ -1,3 +1,8 @@
+# 1.0.3
+
+- Add loot table injections to: Trial Chambers chests, Stronghold Corridor 
+- Allow running on 1.21
+
 # 1.0.2
 
 - Fix spell cooldowns causing disconnects on dedicated servers

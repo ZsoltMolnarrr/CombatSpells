@@ -63,6 +63,7 @@ public class Defaults {
 
         List.of("minecraft:chests/bastion_bridge",
                 "minecraft:chests/simple_dungeon",
+                "minecraft:chests/stronghold_corridor",
                 "minecraft:chests/stronghold_crossing",
                 "minecraft:chests/buried_treasure")
                 .forEach(id -> injectors.put(id, new LootConfig.Pool()
@@ -135,6 +136,38 @@ public class Defaults {
                         .add(W4, true)
                         .add(A2, true)
                         .add(A3, true)
+                        .add(X4)
+                ));
+
+        List.of("minecraft:chests/trial_chambers/corridor",
+                        "minecraft:chests/trial_chambers/entrance")
+                .forEach(id -> injectors.put(id, new LootConfig.Pool()
+                        .rolls(0.5)
+                        .add(W0)
+                ));
+
+        List.of("minecraft:chests/trial_chambers/reward_ominous_common",
+                        "minecraft:chests/trial_chambers/reward_common")
+                .forEach(id -> injectors.put(id, new LootConfig.Pool()
+                        .rolls(0.5)
+                        .add(W1)
+                        .add(A1)
+                ));
+
+        List.of("minecraft:chests/trial_chambers/reward_ominous_rare",
+                        "minecraft:chests/trial_chambers/reward_rare")
+                .forEach(id -> injectors.put(id, new LootConfig.Pool()
+                        .rolls(1)
+                        .add(W2, true)
+                        .add(A2, true)
+                        .add(X2)
+                ));
+
+        List.of("minecraft:chests/trial_chambers/reward_ominous_unique",
+                        "minecraft:chests/trial_chambers/reward_unique")
+                .forEach(id -> injectors.put(id, new LootConfig.Pool()
+                        .rolls(1)
+                        .add(W3, true)
                         .add(X4)
                 ));
 

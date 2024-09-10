@@ -26,7 +26,6 @@ public class LootConfig {
             public Entry(String id) {
                 this.id = id;
             }
-
             public int weight = 1;
 
             public Enchant enchant = null;
