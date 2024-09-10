@@ -1,3 +1,7 @@
+# 1.0.4
+
+- Lower Fabric API version requirement
+
 # 1.0.3
 
 - Improve spell Beam rendering (no longer casts shadows, no longer conflicting with other transparent blocks, such as water)
