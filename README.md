@@ -53,7 +53,7 @@ This mod is primarily a batch of tools (APIs) for developers, but it comes with 
 
 - Implemented with Trinkets mod
 - Adds a special inventory slot for players, where a spell book can be equipped
-- ID: `spell_engine:charm/spell_book`
+- Trinket group: `charm spell_book`
 
 
 # 🔧 Configuration

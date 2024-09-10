@@ -1,3 +1,7 @@
+# 1.0.1
+
+- Fix Spell binding table crafting
+
 # 1.0.0
 
 - Update to Minecraft 1.21.1
