@@ -1,3 +1,7 @@
+# 1.0.5
+
+- Improve auto swap feature, to prioritize block interactions
+
 # 1.0.4
 
 - Lower Fabric API version requirement

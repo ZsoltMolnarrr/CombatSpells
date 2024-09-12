@@ -140,13 +140,17 @@ public abstract class SpellHotbarMinecraftClient {
             ci.cancel();
             return;
         }
-        if (SpellEngineClient.config.autoSwapHands) {
-            if (AutoSwapHelper.autoSwapForSpells()) {
-                itemUseCooldown = SpellEngineMod.config.auto_swap_cooldown;
-                attackCooldown = SpellEngineMod.config.auto_swap_cooldown;;
-                ci.cancel();
-            }
-        }
+
+        // Auto swap right click is handled instead in ClientPlayerInteractionManagerMixin
+        // to allow block interactions to be handled first
+
+//        if (SpellEngineClient.config.autoSwapHands) {
+//            if (AutoSwapHelper.autoSwapForSpells()) {
+//                itemUseCooldown = SpellEngineMod.config.auto_swap_cooldown;
+//                attackCooldown = SpellEngineMod.config.auto_swap_cooldown;;
+//                ci.cancel();
+//            }
+//        }
     }
 
     @Inject(method = "doAttack", at = @At("HEAD"), cancellable = true)
