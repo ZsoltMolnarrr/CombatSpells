@@ -71,6 +71,7 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
         put("minecraft:villager", TargetHelper.Relation.FRIENDLY);
         put("minecraft:iron_golem", TargetHelper.Relation.NEUTRAL);
         put("guardvillagers:guard", TargetHelper.Relation.FRIENDLY);
+        put("minecraft:cat", TargetHelper.Relation.FRIENDLY);
     }};
 
     @Comment("Relation to unspecified entities those are instance of PassiveEntity(Yarn)")
