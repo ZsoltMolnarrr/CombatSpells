@@ -7,7 +7,6 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -634,9 +633,6 @@ public class SpellHelper {
     private static final float knockbackDefaultStrength = 0.4F;
 
     private static boolean performImpact(World world, LivingEntity caster, Entity target, SpellInfo spellInfo, Spell.Impact impact, ImpactContext context, Collection<ServerPlayerEntity> trackers) {
-        if (target instanceof EnderDragonPart) {
-            target = ((EnderDragonPart) target).owner;
-        }
         if (!target.isAttackable()) {
             return false;
         }

@@ -98,9 +98,12 @@ public class ServerNetwork {
             world.getServer().executeSync(() -> {
                 List<Entity> targets = new ArrayList<>();
                 for (var targetId: packet.targets()) {
-                    var entity = world.getEntityById(targetId);
+                    // var entity = world.getEntityById(targetId);
+                    var entity = world.getDragonPart(targetId); // Retrieves `getEntityById` + dragon parts :)
                     if (entity != null) {
                         targets.add(entity);
+                    } else {
+                        System.err.println("Spell Engine: Trying to perform spell " + packet.spellId().toString() + " Entity not found: " + targetId);
                     }
                 }
                 SpellHelper.performSpell(world, player, packet.spellId(), targets, packet.action(), packet.progress());

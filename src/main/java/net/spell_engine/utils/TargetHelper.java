@@ -3,6 +3,7 @@ package net.spell_engine.utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Tameable;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.passive.PassiveEntity;
@@ -19,6 +20,7 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.compat.MultipartEntityCompat;
 import net.spell_engine.internals.Beam;
 import net.spell_engine.internals.casting.SpellCasterClient;
 import net.spell_engine.internals.SpellHelper;
@@ -52,6 +54,8 @@ public class TargetHelper {
         if (attacker == target) {
             return Relation.ALLY;
         }
+        target = MultipartEntityCompat.coalesce(target);
+
         var casterTeam = attacker.getScoreboardTeam();
         var targetTeam = target.getScoreboardTeam();
         if (target instanceof Tameable tameable) {
@@ -278,7 +282,18 @@ public class TargetHelper {
 
     public static boolean isTargetedByPlayer(Entity entity, PlayerEntity player) {
         if (entity.getWorld().isClient && player instanceof SpellCasterClient casterClient) {
-            return casterClient.getCurrentTargets().contains(entity);
+            var targets = casterClient.getCurrentTargets();
+            if (entity instanceof EnderDragonEntity dragon) {
+                // Targets contain any of the dragon's body parts
+                for (var part : dragon.getBodyParts()) {
+                    if (targets.contains(part)) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                return targets.contains(entity);
+            }
         }
         return false;
     }

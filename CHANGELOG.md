@@ -1,6 +1,8 @@
 # 1.0.5
 
+Functional changes:
 - Improve auto swap feature, to prioritize block interactions
+- Fix targeting Ender Dragon with spells #63
 
 # 1.0.4
 
