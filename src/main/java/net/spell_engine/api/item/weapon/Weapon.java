@@ -159,11 +159,13 @@ public class Weapon {
                 configs.put(entry.name(), config);
             }
             if (!entry.isRequiredModInstalled()) { continue; }
-            var item = entry.create(
-                    entry.material,
-                    new Item.Settings()
-                        .attributeModifiers(attributesFrom(config))
-            );
+
+            var settings = new Item.Settings()
+                    .attributeModifiers(attributesFrom(config));
+            if (entry.id().toString().contains("netherite")) {
+                settings.fireproof();
+            }
+            var item = entry.create(entry.material, settings);
             Registry.register(Registries.ITEM, entry.id(), item);
         }
         ItemGroupEvents.modifyEntriesEvent(itemGroupKey).register(content -> {
