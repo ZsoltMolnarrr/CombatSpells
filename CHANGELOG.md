@@ -1,3 +1,8 @@
+# 1.0.6
+
+Functional changes:
+- Netherite weapons get automatic fireproof setting
+
 # 1.0.5
 
 Functional changes:
