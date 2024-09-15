@@ -268,6 +268,7 @@ public class SpellHelper {
                         }
                         case METEOR -> {
                             var target = targets.stream().findFirst();
+                            // released = fallProjectile(world, player, target.orElse(null), targetLocation, spellInfo, context);
                             if (target.isPresent() || targetLocation != null) {
                                 fallProjectile(world, player, target.orElse(null), targetLocation, spellInfo, context);
                             } else {
@@ -427,22 +428,25 @@ public class SpellHelper {
         }
     }
 
-    public static void fallProjectile(World world, LivingEntity caster, Entity target, @Nullable Vec3d targetLocation, SpellInfo spellInfo, ImpactContext context) {
-        fallProjectile(world, caster, target, targetLocation, spellInfo, context, 0);
+    public static boolean fallProjectile(World world, LivingEntity caster, Entity target, @Nullable Vec3d targetLocation, SpellInfo spellInfo, ImpactContext context) {
+        return fallProjectile(world, caster, target, targetLocation, spellInfo, context, 0);
     }
 
-    public static void fallProjectile(World world, LivingEntity caster, Entity target, @Nullable Vec3d targetLocation, SpellInfo spellInfo, ImpactContext context, int sequenceIndex) {
+    public static boolean fallProjectile(World world, LivingEntity caster, Entity target, @Nullable Vec3d targetLocation, SpellInfo spellInfo, ImpactContext context, int sequenceIndex) {
         if (world.isClient) {
-            return;
+            return false;
         }
 
         Vec3d targetPosition = (target != null) ? target.getPos() : targetLocation;
         if (targetPosition == null) {
-            return;
+            return false;
         }
 
         var spell = spellInfo.spell();
         var meteor = spell.release.target.meteor;
+        if (meteor.requires_entity && target == null) {
+            return false;
+        }
         var height = meteor.launch_height;
         var launchPoint = targetPosition.add(0, height, 0);
         var data = spell.release.target.meteor;
@@ -495,6 +499,7 @@ public class SpellHelper {
                 });
             }
         }
+        return true;
     }
 
     private static boolean launchSequenceEligible(int index, int rule) {

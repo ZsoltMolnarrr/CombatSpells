@@ -136,6 +136,8 @@ public class Spell {
 
             public Meteor meteor;
             public static class Meteor { public Meteor() { }
+                /// Determines whether the it can be casted on the ground, without a targeted entity
+                public boolean requires_entity = false;
                 /// How high the falling projectile is launched from compared to the position of the target
                 public float launch_height = 10;
                 public int offset_requires_sequence = 1;

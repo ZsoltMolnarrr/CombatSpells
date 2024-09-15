@@ -330,7 +330,10 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             }
         }
 
-        if (targetType == Spell.Release.Target.Type.METEOR && targets.isEmpty()) {
+        if (targetType == Spell.Release.Target.Type.METEOR
+                && targets.isEmpty()
+                && currentSpell.release.target.meteor != null
+                && !currentSpell.release.target.meteor.requires_entity) {
             location = TargetHelper.locationFromRayCast(caster, range);
         }
 
