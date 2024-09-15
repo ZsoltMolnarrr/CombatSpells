@@ -40,6 +40,11 @@ public class SpellContainerHelper {
         // Using LinkedHashSet to preserve order and remove duplicates
         var spellIds = new LinkedHashSet<>(proxyContainer.spell_ids());
 
+        SpellPool proxySpellPool = SpellPool.empty;
+        if (proxyContainer.proxy_pool() != null && !proxyContainer.proxy_pool().isEmpty()) {
+            proxySpellPool = SpellRegistry.spellPool(Identifier.of(proxyContainer.proxy_pool()));
+        }
+
         if (TrinketsCompat.isEnabled()) {
             spellIds.addAll(TrinketsCompat.getEquippedSpells(proxyContainer, player));
         }
@@ -75,12 +80,19 @@ public class SpellContainerHelper {
                             toRemove.add(other.id().toString());
                         }
                     }
+
+                    // remove spells not present in a non-empty proxySpellPool
+                    if (proxySpellPool != SpellPool.empty) {
+                        if (!proxySpellPool.spellIds().contains(other.id())) {
+                            toRemove.add(other.id().toString());
+                        }
+                    }
                 }
             }
         }
         spellIds.removeAll(toRemove);
 
-        return new SpellContainer(proxyContainer.content(), false, null, 0, new ArrayList<>(spellIds));
+        return new SpellContainer(proxyContainer.content(), false, null, null, 0, new ArrayList<>(spellIds));
     }
 
     private static boolean isOffhandContainerValid(PlayerEntity player, SpellContainer.ContentType allowedContent) {

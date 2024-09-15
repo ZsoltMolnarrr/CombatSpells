@@ -36,7 +36,7 @@ public class SpellBooks {
     }
 
     public static SpellBookItem create(Identifier poolId, SpellContainer.ContentType contentType) {
-        var container = new SpellContainer(contentType, false, poolId.toString(), 0, List.of());
+        var container = new SpellContainer(contentType, false, null, poolId.toString(), 0, List.of());
         SpellRegistry.book_containers.put(itemIdFor(poolId), container);
         SpellBookItem book = null;
         TrinketsCompat.init();
