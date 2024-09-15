@@ -38,9 +38,7 @@
     "fabric": ">=${fabric_api_version}",
     "cloth-config": ">=${cloth_config_version}",
     "playeranimator": ">=1.9.0",
-    "spell_power": ">=${spell_power_version}"
-  },
-  "recommends": {
+    "spell_power": ">=${spell_power_version}",
     "trinkets": "*"
   },
   "custom": {

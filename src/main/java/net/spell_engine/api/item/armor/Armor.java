@@ -16,6 +16,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.spell_engine.api.item.ConfigurableAttributes;
 import net.spell_engine.api.item.ItemConfig;
+import net.spell_engine.api.item.Tiers;
 import net.spell_engine.mixin.item.ArmorMaterialLayerAccessor;
 
 import java.util.*;
@@ -93,19 +94,29 @@ public class Armor {
 
     public record Entry(RegistryEntry<ArmorMaterial> material, Armor.Set armorSet, ItemConfig.ArmorSet defaults) {
         public static Entry create(RegistryEntry<ArmorMaterial> material, Identifier id, int durability, Set.ItemFactory factory, ItemConfig.ArmorSet defaults) {
+
+            var helmetSettings = new Item.Settings()
+                    .maxDamage(ArmorItem.Type.HELMET.getMaxDamage(durability));
+            var chestplateSettings = new Item.Settings()
+                    .maxDamage(ArmorItem.Type.CHESTPLATE.getMaxDamage(durability));
+            var leggingsSettings = new Item.Settings()
+                    .maxDamage(ArmorItem.Type.LEGGINGS.getMaxDamage(durability));
+            var bootsSettings = new Item.Settings()
+                    .maxDamage(ArmorItem.Type.BOOTS.getMaxDamage(durability));
+
+            var tier = Tiers.unsafe(id);
+            if (tier >= 3) {
+                helmetSettings.fireproof();
+                chestplateSettings.fireproof();
+                leggingsSettings.fireproof();
+                bootsSettings.fireproof();
+            }
+
             var set = new Armor.Set(id.getNamespace(), id.getPath(),
-                    factory.create(material, ArmorItem.Type.HELMET, new Item.Settings()
-                            .maxDamage(ArmorItem.Type.HELMET.getMaxDamage(durability))
-                    ),
-                    factory.create(material, ArmorItem.Type.CHESTPLATE, new Item.Settings()
-                            .maxDamage(ArmorItem.Type.CHESTPLATE.getMaxDamage(durability))
-                    ),
-                    factory.create(material, ArmorItem.Type.LEGGINGS, new Item.Settings()
-                            .maxDamage(ArmorItem.Type.LEGGINGS.getMaxDamage(durability))
-                    ),
-                    factory.create(material, ArmorItem.Type.BOOTS, new Item.Settings()
-                            .maxDamage(ArmorItem.Type.BOOTS.getMaxDamage(durability))
-                    )
+                    factory.create(material, ArmorItem.Type.HELMET, helmetSettings),
+                    factory.create(material, ArmorItem.Type.CHESTPLATE, chestplateSettings),
+                    factory.create(material, ArmorItem.Type.LEGGINGS, leggingsSettings),
+                    factory.create(material, ArmorItem.Type.BOOTS, bootsSettings)
             );
             return new Entry(material, set, defaults);
         }

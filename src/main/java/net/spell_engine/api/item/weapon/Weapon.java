@@ -20,6 +20,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
 import net.spell_engine.api.item.ItemConfig;
+import net.spell_engine.api.item.Tiers;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class Weapon {
         @Nullable private Item registeredItem;
         private final ItemConfig.Weapon defaults;
         private @Nullable String requiredMod;
+        private int tier = 0;
 
         public Entry(String namespace, String name, CustomMaterial material, Factory factory, ItemConfig.Weapon defaults, @Nullable String requiredMod) {
             this.namespace = namespace;
@@ -91,6 +93,11 @@ public class Weapon {
 
         public ItemConfig.Weapon defaults() {
             return defaults;
+        }
+
+        public Entry tier(int tier) {
+            this.tier = tier;
+            return this;
         }
     }
 
@@ -162,7 +169,8 @@ public class Weapon {
 
             var settings = new Item.Settings()
                     .attributeModifiers(attributesFrom(config));
-            if (entry.id().toString().contains("netherite")) {
+            var tier = Tiers.unsafe(entry.id());
+            if (tier >= 3) {
                 settings.fireproof();
             }
             var item = entry.create(entry.material, settings);

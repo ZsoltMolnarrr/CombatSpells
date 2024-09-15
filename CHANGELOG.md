@@ -1,8 +1,9 @@
 # 1.0.6
 
 Functional changes:
-- Netherite weapons get automatic fireproof setting
+- Netherite (and above) armor and weapons get automatic fireproof setting
 - Fix some tooltip issues
+- Make Trinkets mod required
 
 # 1.0.5
 
