@@ -108,7 +108,9 @@ public class SpellTooltip {
                                         keybinding.getBoundKeyLocalizedText())
                                 .formatted(Formatting.GRAY));
                     }
-                    if (config.showSpellBindingTooltip && container.pool() != null && container.spell_ids().isEmpty()) {
+                    if (config.showSpellBindingTooltip
+                            && container.pool() != null && !container.pool().isEmpty()
+                            && container.spell_ids().isEmpty()) {
                         lines.add(Text.translatable("spell.tooltip.spell_binding_tip")
                                 .formatted(Formatting.GRAY));
                     }

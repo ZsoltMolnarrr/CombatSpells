@@ -2,6 +2,7 @@
 
 Functional changes:
 - Netherite weapons get automatic fireproof setting
+- Fix some tooltip issues
 
 # 1.0.5
 
