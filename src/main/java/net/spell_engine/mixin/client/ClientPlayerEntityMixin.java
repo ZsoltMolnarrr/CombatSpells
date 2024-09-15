@@ -8,12 +8,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityActionsAllowed;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.SpellHotbar;
-import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.casting.SpellCast;
@@ -35,14 +35,14 @@ import java.util.function.Predicate;
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
     @Shadow @Final public ClientPlayNetworkHandler networkHandler;
-    private List<Entity> targets = List.of();
+    private TargetHelper.SpellTargetResult spellTarget = TargetHelper.SpellTargetResult.empty();
 
     private ClientPlayerEntity player() {
         return (ClientPlayerEntity) ((Object) this);
     }
 
     private Entity firstTarget() {
-        return targets.stream().findFirst().orElse(null);
+        return spellTarget.entities().stream().findFirst().orElse(null);
     }
 
     @Override
@@ -157,12 +157,12 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             if (SpellHelper.isChanneled(process.spell())) {
                 var player = player();
                 var progress = process.progress(player.getWorld().getTime());
-                ClientPlayNetworking.send(new Packets.SpellRequest(SpellCast.Action.RELEASE, process.id(), progress.ratio(), new int[]{}));
+                ClientPlayNetworking.send(new Packets.SpellRequest(SpellCast.Action.RELEASE, process.id(), progress.ratio(), new int[]{}, null));
             }
         }
 
         setSpellCastProcess(null, syncProcess);
-        targets = List.of();
+        spellTarget = TargetHelper.SpellTargetResult.empty();
     }
 
     private void updateSpellCast() {
@@ -178,7 +178,8 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
                 return;
             }
 
-            targets = findTargets(process.spell());
+            spellTarget = findTargets(process.spell());
+
             var spell = process.spell();
             var spellCastTicks = process.spellCastTicksSoFar(player.getWorld().getTime());
             if (SpellHelper.isChanneled(spell)) {
@@ -199,7 +200,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
                 }
             }
         } else {
-            targets = List.of();
+            spellTarget = TargetHelper.SpellTargetResult.empty();
         }
     }
 
@@ -209,6 +210,8 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         var player = player();
         var progress = process.progress(player.getWorld().getTime());
         var release = spell.release.target;
+        var targets = spellTarget.entities();
+        var location = spellTarget.location();
         int[] targetIDs = new int[]{};
         switch (release.type) {
             case PROJECTILE, CURSOR, METEOR -> {
@@ -228,7 +231,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             case SELF, SHOOT_ARROW -> {
             }
         }
-        ClientPlayNetworking.send(new Packets.SpellRequest(action, spellId, progress.ratio(), targetIDs));
+        ClientPlayNetworking.send(new Packets.SpellRequest(action, spellId, progress.ratio(), targetIDs, location));
         switch (action) {
             case CHANNEL -> {
                 if (progress.ratio() >= 1) {
@@ -242,6 +245,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
     }
 
     public List<Entity> getCurrentTargets() {
+        var targets = spellTarget.entities();
         if (targets == null) {
             return List.of();
         }
@@ -262,12 +266,13 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         return -1;
     }
 
-    private List<Entity> findTargets(Spell currentSpell) {
+    private TargetHelper.SpellTargetResult findTargets(Spell currentSpell) {
         var caster = player();
-        var previousTargets = this.targets;
+        var previousTargets = spellTarget.entities();
         List<Entity> targets = List.of();
+        Vec3d location = null;
         if (currentSpell == null || currentSpell.impact == null) {
-            return targets;
+            return new TargetHelper.SpellTargetResult(targets, location);
         }
         boolean fallbackToPreviousTargets = false;
         var targetingMode = SpellHelper.selectionTargetingMode(currentSpell);
@@ -325,7 +330,11 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             }
         }
 
-        return targets;
+        if (targetType == Spell.Release.Target.Type.METEOR && targets.isEmpty()) {
+            location = TargetHelper.locationFromRayCast(caster, range);
+        }
+
+        return new TargetHelper.SpellTargetResult(targets, location);
     }
 
     @Inject(method = "tick", at = @At("TAIL"))

@@ -11,6 +11,7 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.ParticleBatch;
 import net.spell_engine.config.ServerConfig;
 import net.spell_engine.internals.casting.SpellCast;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class Packets {
         }
     }
 
-    public record SpellRequest(SpellCast.Action action, Identifier spellId, float progress, int[] targets) implements CustomPayload {
+    public record SpellRequest(SpellCast.Action action, Identifier spellId, float progress, int[] targets, @Nullable Vec3d location) implements CustomPayload {
         public static Identifier ID = Identifier.of(SpellEngineMod.ID, "release_request");
         public static final CustomPayload.Id<SpellRequest> PACKET_ID = new CustomPayload.Id<>(ID);
         public static final PacketCodec<RegistryByteBuf, SpellRequest> CODEC = PacketCodec.of(SpellRequest::write, SpellRequest::read);
@@ -62,6 +63,15 @@ public class Packets {
             buffer.writeString(spellId.toString());
             buffer.writeFloat(progress);
             buffer.writeIntArray(targets);
+
+            if (location != null) {
+                buffer.writeBoolean(true);
+                buffer.writeDouble(location.x);
+                buffer.writeDouble(location.y);
+                buffer.writeDouble(location.z);
+            } else {
+                buffer.writeBoolean(false);
+            }
         }
 
         public static SpellRequest read(RegistryByteBuf buffer) {
@@ -69,7 +79,16 @@ public class Packets {
             var spellId = Identifier.of(buffer.readString());
             var progress = buffer.readFloat();
             var targets = buffer.readIntArray();
-            return new SpellRequest(action, spellId, progress, targets);
+
+            Vec3d location = null;
+            var hasLocation = buffer.readBoolean();
+            if (hasLocation) {
+                var x = buffer.readDouble();
+                var y = buffer.readDouble();
+                var z = buffer.readDouble();
+                location = new Vec3d(x, y, z);
+            }
+            return new SpellRequest(action, spellId, progress, targets, location);
         }
     }
 

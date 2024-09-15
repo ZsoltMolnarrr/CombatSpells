@@ -140,6 +140,25 @@ public class TargetHelper {
         }
     }
 
+    public record SpellTargetResult(List<Entity> entities, @Nullable Vec3d location) {
+        public static SpellTargetResult empty() {
+            return new SpellTargetResult(List.of(), null);
+        }
+    }
+
+    public static Vec3d locationFromRayCast(Entity caster, float range) {
+        Vec3d start = caster.getEyePos();
+        Vec3d look = caster.getRotationVec(1.0F)
+                .normalize()
+                .multiply(range);
+        Vec3d end = start.add(look);
+        var hit = raycastObstacle(caster, start, end);
+        if (hit.getType() == HitResult.Type.BLOCK) {
+            return hit.getPos();
+        }
+        return end;
+    }
+
     public static Entity targetFromRaycast(Entity caster, float range, Predicate<Entity> predicate) {
         Vec3d start = caster.getEyePos();
         Vec3d look = caster.getRotationVec(1.0F)
@@ -275,8 +294,12 @@ public class TargetHelper {
                 || raycastObstacleFree(attacker, origin, origin.add(distanceVector));
     }
 
+    private static BlockHitResult raycastObstacle(Entity entity, Vec3d start, Vec3d end) {
+        return entity.getWorld().raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
+    }
+
     private static boolean raycastObstacleFree(Entity entity, Vec3d start, Vec3d end) {
-        var hit = entity.getWorld().raycast(new RaycastContext(start, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
+        var hit = raycastObstacle(entity, start, end);
         return hit.getType() != HitResult.Type.BLOCK;
     }
 

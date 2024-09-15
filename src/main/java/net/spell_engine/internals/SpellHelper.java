@@ -182,7 +182,7 @@ public class SpellHelper {
         SoundHelper.playSound(player.getWorld(), player, spell.cast.start_sound);
     }
 
-    public static void performSpell(World world, PlayerEntity player, Identifier spellId, List<Entity> targets, SpellCast.Action action, float progress) {
+    public static void performSpell(World world, PlayerEntity player, Identifier spellId, TargetHelper.SpellTargetResult targetResult, SpellCast.Action action, float progress) {
         if (player.isSpectator()) { return; }
         var spell = SpellRegistry.getSpell(spellId);
         if (spell == null) {
@@ -194,6 +194,8 @@ public class SpellHelper {
         if (!attempt.isSuccess()) {
             return;
         }
+        var targets = targetResult.entities();
+        var targetLocation = targetResult.location();
         var castingSpeed = ((SpellCasterEntity)player).getCurrentCastingSpeed();
         // Normalized progress in 0 to 1
         progress = Math.max(Math.min(progress, 1F), 0F);
@@ -266,8 +268,8 @@ public class SpellHelper {
                         }
                         case METEOR -> {
                             var target = targets.stream().findFirst();
-                            if (target.isPresent()) {
-                                fallProjectile(world, player, target.get(), spellInfo, context);
+                            if (target.isPresent() || targetLocation != null) {
+                                fallProjectile(world, player, target.orElse(null), targetLocation, spellInfo, context);
                             } else {
                                 released = false;
                             }
@@ -425,19 +427,24 @@ public class SpellHelper {
         }
     }
 
-    public static void fallProjectile(World world, LivingEntity caster, Entity target, SpellInfo spellInfo, ImpactContext context) {
-        fallProjectile(world, caster, target, spellInfo, context, 0);
+    public static void fallProjectile(World world, LivingEntity caster, Entity target, @Nullable Vec3d targetLocation, SpellInfo spellInfo, ImpactContext context) {
+        fallProjectile(world, caster, target, targetLocation, spellInfo, context, 0);
     }
 
-    public static void fallProjectile(World world, LivingEntity caster, Entity target, SpellInfo spellInfo, ImpactContext context, int sequenceIndex) {
+    public static void fallProjectile(World world, LivingEntity caster, Entity target, @Nullable Vec3d targetLocation, SpellInfo spellInfo, ImpactContext context, int sequenceIndex) {
         if (world.isClient) {
+            return;
+        }
+
+        Vec3d targetPosition = (target != null) ? target.getPos() : targetLocation;
+        if (targetPosition == null) {
             return;
         }
 
         var spell = spellInfo.spell();
         var meteor = spell.release.target.meteor;
         var height = meteor.launch_height;
-        var launchPoint = target.getPos().add(0, height, 0);
+        var launchPoint = targetPosition.add(0, height, 0);
         var data = spell.release.target.meteor;
         var projectileData = data.projectile;
         var mutableLaunchProperties = data.launch_properties.copy();
@@ -484,7 +491,7 @@ public class SpellHelper {
                     if (caster == null || !caster.isAlive()) {
                         return;
                     }
-                    fallProjectile(world, caster, target, spellInfo, context, nextSequenceIndex);
+                    fallProjectile(world, caster, target, targetLocation, spellInfo, context, nextSequenceIndex);
                 });
             }
         }
