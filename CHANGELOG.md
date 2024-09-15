@@ -1,6 +1,7 @@
 # 1.0.6
 
 Functional changes:
+- Allow falling projectile (Meteor alike) spells to be casted on the ground
 - Netherite (and above) armor and weapons get automatic fireproof setting
 - Fix some tooltip issues
 - Make Trinkets mod required

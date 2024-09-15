@@ -268,8 +268,8 @@ public class SpellHelper {
                         }
                         case METEOR -> {
                             var target = targets.stream().findFirst();
-                            // released = fallProjectile(world, player, target.orElse(null), targetLocation, spellInfo, context);
                             if (target.isPresent() || targetLocation != null) {
+                                // Not setting `released` flag to allow channeling
                                 fallProjectile(world, player, target.orElse(null), targetLocation, spellInfo, context);
                             } else {
                                 released = false;
