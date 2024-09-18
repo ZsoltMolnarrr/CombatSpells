@@ -1,4 +1,4 @@
-# 1.0.6
+# 1.1.0
 
 Functional changes:
 - Allow falling projectile (Meteor alike) spells to be casted on the ground
@@ -6,6 +6,10 @@ Functional changes:
 - Fix some tooltip issues
 - Reinstate Trinkets mod requirement
 - Disable Dynamic Lights compat, to avoid crashing, as updated alternatives violate class path
+
+API Changes:
+- BREAKING, internal! - SpellHelper.performSpell expects SpellTargetResult instead List of entities
+- Add spell release type `METEOR` `requires_entity` field
 
 # 1.0.5
 
