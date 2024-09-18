@@ -1,3 +1,13 @@
+# 0.15.11
+
+Functional changes:
+- Fix targeting Ender Dragon with spells #63
+- Fix casting sound muting after failed cast attempt
+- Improve spell Beam rendering (no longer casts shadows, no longer conflicting with other transparent blocks, such as water)
+- Improve auto swap feature to consider tools #71
+- Improve spell projectile ricochet hit consistency
+- Improve spell projectile parsing and restoring stability
+
 # 0.15.10
 
 Functional changes:
