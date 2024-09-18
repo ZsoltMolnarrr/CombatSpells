@@ -5,6 +5,7 @@ Functional changes:
 - Netherite (and above) armor and weapons get automatic fireproof setting
 - Fix some tooltip issues
 - Make Trinkets mod required
+- Disable Dynamic Lights compat, to avoid crashing, as updated alternatives violate class path
 
 # 1.0.5
 
