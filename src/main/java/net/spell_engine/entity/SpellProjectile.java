@@ -446,6 +446,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
 
         // Set trajectory
         var newTarget = otherTargets.get(0);
+        this.setPosition(target.getPos().add(0, target.getHeight() * 0.5F, 0));
         this.setFollowedTarget(newTarget);
 
         var distanceVector = (newTarget.getPos().add(0, newTarget.getHeight() / 2F, 0))
