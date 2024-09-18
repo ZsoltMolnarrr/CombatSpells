@@ -8,6 +8,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.ItemStack;
@@ -35,6 +36,7 @@ import net.spell_engine.utils.RecordsWithGson;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_engine.utils.VectorHelper;
+import net.spell_power.api.SpellPower;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -378,6 +380,14 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                 var context = this.context;
                 if (context == null) {
                     context = new SpellHelper.ImpactContext();
+                    var spell = this.getSpell();
+                    if (getOwner() instanceof PlayerEntity player && spell != null)  {
+                        context.power(SpellPower.getSpellPower(spell.school, player));
+                    }
+                }
+                if (context.power() == null) {
+                    this.kill();
+                    return;
                 }
                 var performed = SpellHelper.projectileImpact(caster, this, target, this.getSpellInfo(), context.position(entityHitResult.getPos()));
                 if (performed) {
@@ -609,10 +619,11 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         this.kill();
     }
 
+    @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
         var gson = new Gson();
-        nbt.putString(NBT_SPELL_ID, gson.toJson(spellId));
+        nbt.putString(NBT_SPELL_ID, spellId.toString());
         nbt.putString(NBT_IMPACT_CONTEXT, gson.toJson(context));
         nbt.putString(NBT_PERKS, gson.toJson(this.perks));
         if (itemModelId != null) {
@@ -620,23 +631,21 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         }
     }
 
+    @Override
     public void readCustomDataFromNbt(NbtCompound nbt) {
         super.readCustomDataFromNbt(nbt);
         if (nbt.contains(NBT_SPELL_ID, NbtElement.STRING_TYPE)) {
             try {
                 var gson = new Gson();
                 this.spellId = new Identifier(nbt.getString(NBT_SPELL_ID));
-//                var recordReader = new GsonBuilder()
-//                        .registerTypeAdapterFactory(new RecordsWithGson.RecordTypeAdapterFactory())
-//                        .create();
-                var recordReader = gson;
-                this.context = recordReader.fromJson(nbt.getString(NBT_IMPACT_CONTEXT), SpellHelper.ImpactContext.class);
+                this.context = gson.fromJson(nbt.getString(NBT_IMPACT_CONTEXT), SpellHelper.ImpactContext.class);
                 this.perks = gson.fromJson(nbt.getString(NBT_PERKS), Spell.ProjectileData.Perks.class);
+
                 if (nbt.contains(NBT_ITEM_MODEL_ID, NbtElement.STRING_TYPE)) {
                     updateItemModel(nbt.getString(NBT_ITEM_MODEL_ID));
                 }
             } catch (Exception e) {
-                System.err.println("SpellProjectile - Failed to read spell data from NBT");
+                System.err.println("SpellProjectile - Failed to read spell data from NBT " + e.getMessage());
             }
         }
     }
