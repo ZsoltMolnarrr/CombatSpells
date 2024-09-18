@@ -144,6 +144,15 @@ public class TargetHelper {
         public static SpellTargetResult empty() {
             return new SpellTargetResult(List.of(), null);
         }
+        public static SpellTargetResult of(List<Entity> entities) {
+            return new SpellTargetResult(entities, null);
+        }
+        public static SpellTargetResult of(Entity entity) {
+            return new SpellTargetResult(List.of(entity), null);
+        }
+        public static SpellTargetResult of(Vec3d location) {
+            return new SpellTargetResult(List.of(), location);
+        }
     }
 
     public static Vec3d locationFromRayCast(Entity caster, float range) {
