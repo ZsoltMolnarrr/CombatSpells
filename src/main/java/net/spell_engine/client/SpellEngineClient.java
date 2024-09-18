@@ -13,6 +13,7 @@ import net.minecraft.registry.Registries;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.client.animation.AnimationRegistry;
 import net.spell_engine.client.compatibility.ShaderCompatibility;
+import net.spell_engine.client.render.BeamRenderer;
 import net.spell_engine.client.render.ModelPredicateHelper;
 import net.spell_engine.client.render.SpellBindingBlockEntityRenderer;
 import net.spell_engine.config.ClientConfig;
@@ -50,6 +51,7 @@ public class SpellEngineClient {
         HandledScreens.register(SpellBindingScreenHandler.HANDLER_TYPE, SpellBindingScreen::new);
         BlockEntityRendererFactories.register(SpellBindingBlockEntity.ENTITY_TYPE, SpellBindingBlockEntityRenderer::new);
         ShaderCompatibility.setup();
+        BeamRenderer.setup();
     }
 
     private static void injectRangedWeaponModelPredicates() {
