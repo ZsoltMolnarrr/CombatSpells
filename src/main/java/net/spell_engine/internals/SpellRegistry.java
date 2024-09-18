@@ -123,13 +123,8 @@ public class SpellRegistry {
                 var id = identifier
                         .toString().replace(directory + "/", "");
                 id = id.substring(0, id.lastIndexOf('.'));
-<<<<<<< HEAD
                 parsed.put(new Identifier(id), container);
                 // System.out.println("loaded assignment - id: " + id +  " assignment: " + container.spell);
-=======
-                parsed.put(Identifier.of(id), container);
-                // System.out.println("loaded assignment - id: " + id +  " assignment: " + contaisner);
->>>>>>> 6677eb2 (Improve spell projectile stability)
             } catch (Exception e) {
                 System.err.println("Spell Engine: Failed to parse spell_assignment: " + identifier + " | Reason: " + e.getMessage());
             }
