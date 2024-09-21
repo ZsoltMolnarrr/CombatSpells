@@ -1,3 +1,7 @@
+# 1.1.1
+
+- Improve safety of effect ID synchronization
+
 # 1.1.0
 
 Functional changes:

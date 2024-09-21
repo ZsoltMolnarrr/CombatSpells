@@ -85,7 +85,10 @@ public abstract class LivingEntityStatusEffectSync extends Entity implements Syn
             }
             int rawId = Integer.valueOf(components[0]);
             int amplifier = Integer.valueOf(components[1]);
-            effects.add(new Synchronized.Effect(Registries.STATUS_EFFECT.get(rawId), amplifier));
+            var statusEffect = Registries.STATUS_EFFECT.get(rawId);
+            if (statusEffect != null) {
+                effects.add(new Synchronized.Effect(statusEffect, amplifier));
+            }
         }
         return effects;
     }
