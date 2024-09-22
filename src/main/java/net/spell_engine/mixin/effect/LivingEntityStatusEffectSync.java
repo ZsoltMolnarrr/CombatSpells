@@ -15,6 +15,7 @@ import net.spell_engine.api.effect.Synchronized;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -51,10 +52,17 @@ public abstract class LivingEntityStatusEffectSync extends Entity implements Syn
         }
     }
 
-    @Inject(method = "tickStatusEffects", at = @At("TAIL"))
-    private void tickStatusEffects_TAIL_SpellEngine_SyncEffects(CallbackInfo ci) {
-        SpellEngine_syncedStatusEffects.clear();
-        SpellEngine_syncedStatusEffects.addAll(SpellEngine_decodeStatusEffects());
+//    @Inject(method = "tickStatusEffects", at = @At("TAIL"))
+//    private void tickStatusEffects_TAIL_SpellEngine_SyncEffects(CallbackInfo ci) {
+//        SpellEngine_syncedStatusEffects.clear();
+//        SpellEngine_syncedStatusEffects.addAll(SpellEngine_decodeStatusEffects());
+//    }
+    @Inject(method = "onTrackedDataSet", at = @At("TAIL"))
+    private void onTrackedDataSet_TAIL_SpellEngine_SyncEffects(TrackedData<?> data, CallbackInfo ci) {
+        if (SPELL_ENGINE_SYNCED_EFFECTS.equals(data)) {
+            SpellEngine_syncedStatusEffects.clear();
+            SpellEngine_syncedStatusEffects.addAll(SpellEngine_decodeStatusEffects());
+        }
     }
 
     private String SpellEngine_encodedStatusEffects() {
