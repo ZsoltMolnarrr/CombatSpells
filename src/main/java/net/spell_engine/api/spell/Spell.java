@@ -182,11 +182,13 @@ public class Spell {
             public static class Damage { public Damage() { }
                 public boolean bypass_iframes = true;
                 public float spell_power_coefficient = 1;
+                public float base_power = 0;
                 public float knockback = 1;
             }
             public Heal heal;
             public static class Heal { public Heal() { }
                 public float spell_power_coefficient = 1;
+                public float base_heal = 0;
             }
             public StatusEffect status_effect;
             public static class StatusEffect { public StatusEffect() { }

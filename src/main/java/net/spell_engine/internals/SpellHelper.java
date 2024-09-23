@@ -7,6 +7,7 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -41,6 +42,7 @@ import net.spell_engine.utils.*;
 import net.spell_power.api.SpellSchool;
 import net.spell_power.api.SpellDamageSource;
 import net.spell_power.api.SpellPower;
+import net.spell_power.internals.CrossFunctionalAttributes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -690,8 +692,24 @@ public class SpellHelper {
                         }
                         vulnerability = SpellPower.getVulnerability(livingEntity, school);
                     }
+                    if(damageData.base_power > 0) {
+                        var instance = ((CrossFunctionalAttributes.Provider )caster.getAttributeInstance(school.getAttributeEntry()));
+                        var added = damageData.base_power;
+                        if(instance != null) {
+                            var modifiersAdditional = ((CrossFunctionalAttributes.Provider) caster.getAttributeInstance(school.getAttributeEntry())).getModifiersByOperation_Cross(EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+                            var multiplier = 1D;
+                            for(var modifier : modifiersAdditional){
+                                multiplier += modifier.value();
+                            }
+                            var modifiersMultiplicative = ((CrossFunctionalAttributes.Provider) caster.getAttributeInstance(school.getAttributeEntry())).getModifiersByOperation_Cross(EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+                            for(var modifier : modifiersMultiplicative){
+                                multiplier *= 1+modifier.value();
+                            }
+                            added *= (float) multiplier;
+                        }
+                        power = new SpellPower.Result(school, power.baseValue() + added , power.criticalChance(), power.criticalDamage());
+                    }
                     var amount = power.randomValue(vulnerability);
-                    amount *= damageData.spell_power_coefficient;
                     amount *= context.total();
                     if (context.isChanneled()) {
                         amount *= SpellPower.getHaste(caster, school);
@@ -715,6 +733,23 @@ public class SpellHelper {
                 case HEAL -> {
                     if (target instanceof LivingEntity livingTarget) {
                         var healData = impact.action.heal;
+                        if(healData.base_heal > 0) {
+                            var instance = ((CrossFunctionalAttributes.Provider )caster.getAttributeInstance(school.getAttributeEntry()));
+                            var added = healData.base_heal;
+                            if(instance != null) {
+                                var modifiersAdditional = ((CrossFunctionalAttributes.Provider) caster.getAttributeInstance(school.getAttributeEntry())).getModifiersByOperation_Cross(EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+                                var multiplier = 1D;
+                                for(var modifier : modifiersAdditional){
+                                    multiplier += modifier.value();
+                                }
+                                var modifiersMultiplicative = ((CrossFunctionalAttributes.Provider) caster.getAttributeInstance(school.getAttributeEntry())).getModifiersByOperation_Cross(EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+                                for(var modifier : modifiersMultiplicative){
+                                    multiplier *=1+ modifier.value();
+                                }
+                                added *= (float) multiplier;
+                            }
+                            power = new SpellPower.Result(school, power.baseValue() + added , power.criticalChance(), power.criticalDamage());
+                        }
                         particleMultiplier = power.criticalDamage();
                         var amount = power.randomValue();
                         amount *= healData.spell_power_coefficient;
@@ -1033,13 +1068,47 @@ public class SpellHelper {
             switch (impact.action.type) {
                 case DAMAGE -> {
                     var damageData = impact.action.damage;
+                    if(damageData.base_power > 0){
+                        var instance = ((CrossFunctionalAttributes.Provider )caster.getAttributeInstance(school.getAttributeEntry()));
+                        var added = damageData.base_power;
+                        if(instance != null) {
+                            var modifiersAdditional = ((CrossFunctionalAttributes.Provider) caster.getAttributeInstance(school.getAttributeEntry())).getModifiersByOperation_Cross(EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+                            var multiplier = 1D;
+                            for(var modifier : modifiersAdditional){
+                                multiplier += modifier.value();
+                            }
+                            var modifiersMultiplicative = ((CrossFunctionalAttributes.Provider) caster.getAttributeInstance(school.getAttributeEntry())).getModifiersByOperation_Cross(EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+                            for(var modifier : modifiersMultiplicative){
+                                multiplier *= 1+modifier.value();
+                            }
+                            added *= (float) multiplier;
+                        }
+                        power = new SpellPower.Result(school,power.baseValue() + added,power.criticalChance(),power.criticalDamage());
+                    }
                     var damage = new EstimatedValue(power.nonCriticalValue(), power.forcedCriticalValue())
                             .multiply(damageData.spell_power_coefficient);
                     damageEffects.add(damage);
                 }
                 case HEAL -> {
                     var healData = impact.action.heal;
-                    var healing = new EstimatedValue(power.nonCriticalValue(), power.forcedCriticalValue())
+                    if(healData.base_heal > 0) {
+                        var instance = ((CrossFunctionalAttributes.Provider )caster.getAttributeInstance(school.getAttributeEntry()));
+                        var added = healData.base_heal;
+                        if(instance != null) {
+                            var modifiersAdditional = ((CrossFunctionalAttributes.Provider) caster.getAttributeInstance(school.getAttributeEntry())).getModifiersByOperation_Cross(EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+                            var multiplier = 1D;
+                            for(var modifier : modifiersAdditional){
+                                multiplier += modifier.value();
+                            }
+                            var modifiersMultiplicative = ((CrossFunctionalAttributes.Provider) caster.getAttributeInstance(school.getAttributeEntry())).getModifiersByOperation_Cross(EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+                            for(var modifier : modifiersMultiplicative){
+                                multiplier *= 1+modifier.value();
+                            }
+                            added *= (float) multiplier;
+                        }
+                        power = new SpellPower.Result(school, power.baseValue() + added, power.criticalChance(), power.criticalDamage());
+                    }
+                        var healing = new EstimatedValue(power.nonCriticalValue(), power.forcedCriticalValue())
                             .multiply(healData.spell_power_coefficient);
                     healEffects.add(healing);
                 }
