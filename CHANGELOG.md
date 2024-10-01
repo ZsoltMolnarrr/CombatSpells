@@ -1,3 +1,7 @@
+# 1.1.2
+
+- Improve safety of Spell Projectile persistence
+
 # 1.1.1
 
 - Improve safety of effect ID synchronization

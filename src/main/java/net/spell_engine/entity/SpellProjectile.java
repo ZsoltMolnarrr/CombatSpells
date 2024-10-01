@@ -622,12 +622,15 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         this.kill();
     }
 
+    private Gson gson = new Gson();
+
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
-        var gson = new Gson();
-        nbt.putString(NBT_SPELL_ID, spellId.toString());
-        nbt.putString(NBT_IMPACT_CONTEXT, gson.toJson(context));
+        if (this.spellId != null) {
+            nbt.putString(NBT_SPELL_ID, this.spellId.toString());
+        }
+        nbt.putString(NBT_IMPACT_CONTEXT, gson.toJson(this.context));
         nbt.putString(NBT_PERKS, gson.toJson(this.perks));
         if (itemModelId != null) {
             nbt.putString(NBT_ITEM_MODEL_ID, itemModelId.toString());
@@ -639,7 +642,6 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         super.readCustomDataFromNbt(nbt);
         if (nbt.contains(NBT_SPELL_ID, NbtElement.STRING_TYPE)) {
             try {
-                var gson = new Gson();
                 this.spellId = Identifier.of(nbt.getString(NBT_SPELL_ID));
                 this.context = gson.fromJson(nbt.getString(NBT_IMPACT_CONTEXT), SpellHelper.ImpactContext.class);
                 this.perks = gson.fromJson(nbt.getString(NBT_PERKS), Spell.ProjectileData.Perks.class);
