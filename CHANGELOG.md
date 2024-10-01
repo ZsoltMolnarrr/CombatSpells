@@ -1,6 +1,7 @@
 # 1.1.2
 
 - Improve safety of Spell Projectile persistence
+- Fix rare case where offhand item use was incorrectly shown on Spell Hotbar 
 
 # 1.1.1
 

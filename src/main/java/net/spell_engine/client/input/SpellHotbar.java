@@ -87,16 +87,18 @@ public class SpellHotbar {
                     .toList();
 
             // Try to find binding for UseKey first
-            SpellInfo skillForUseKey = null;
+            SpellInfo foundSkillForUseKey = null;
             for (var info: spellInfoList) {
                 if (info.spell().mode == Spell.Mode.ITEM_USE) {
+                    // Filter invalid item use
                     if (info.spell().item_use.requires_offhand_item && player.getOffHandStack().isEmpty()) { continue; }
-                    skillForUseKey = info;
+
+                    foundSkillForUseKey = info;
                 }
             }
 
-            // boolean allowUseKeyForCastable = skillForUseKey == null || container.content == SpellContainer.ContentType.ARCHERY;
-            if (skillForUseKey != null || container.content() == SpellContainer.ContentType.ARCHERY) { // Don't allow use key for castables
+            // boolean allowUseKeyForCastable = foundSkillForUseKey == null || container.content == SpellContainer.ContentType.ARCHERY;
+            if (foundSkillForUseKey != null || container.content() == SpellContainer.ContentType.ARCHERY) { // Don't allow use key for castables
                 // Filtering out assignable keybindings for Archery content
                 // So item use can stay intact
                 allBindings = allBindings.stream()
@@ -157,7 +159,11 @@ public class SpellHotbar {
         // Adding to the end of the list, so spell with UseKey get handled first
         if (SpellEngineClient.config.spellHotbarShowsOffhand) {
             var offHandStack = player.getOffHandStack();
-            if (!slots.isEmpty() && !offHandStack.isEmpty() && offHandStack.getUseAction() != UseAction.NONE) {
+            var itemUseAssignedAlready = false;
+            if (onUseKey != null) {
+                itemUseAssignedAlready = onUseKey.castMode == SpellCast.Mode.ITEM_USE;
+            }
+            if (!itemUseAssignedAlready && !slots.isEmpty() && !offHandStack.isEmpty() && offHandStack.getUseAction() != UseAction.NONE) {
                 var keyBinding = new WrappedKeybinding(options.useKey, WrappedKeybinding.VanillaAlternative.USE_KEY);
                 var spellId = offhandUseSpellId;
                 var spell = SpellRegistry.getSpell(spellId);
