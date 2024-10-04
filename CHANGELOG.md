@@ -1,3 +1,7 @@
+# 1.1.3
+
+- Fix rendering on hidden HUD (Fabric API related)
+
 # 1.1.2
 
 - Improve safety of Spell Projectile persistence

@@ -82,7 +82,7 @@ public class CustomLayers extends RenderLayer {
     public static RenderLayer spellObject(LightEmission lightEmission) {
         switch (lightEmission) {
             case RADIATE, GLOW:
-                return spellObject(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, lightEmission, false);
+                return spellObject(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, lightEmission, true);
             case NONE:
                 break;
         }

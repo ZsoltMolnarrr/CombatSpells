@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.MinecraftClient;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.gui.HudRenderHelper;
 import net.spell_engine.client.gui.SpellTooltip;
@@ -26,7 +27,9 @@ public class FabricClientMod implements ClientModInitializer {
         registerKeyBindings();
 
         HudRenderCallback.EVENT.register((context, tickCounter) -> {
-            HudRenderHelper.render(context, tickCounter.getTickDelta(true));
+            if (!MinecraftClient.getInstance().options.hudHidden) {
+                HudRenderHelper.render(context, tickCounter.getTickDelta(true));
+            }
         });
         ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, tooltipType, lines) -> {
             SpellTooltip.addSpellInfo(itemStack, lines);
