@@ -1,6 +1,7 @@
 # 1.1.3
 
 - Fix rendering on hidden HUD (Fabric API related)
+- Fix spamming console with advancement info
 
 # 1.1.2
 
