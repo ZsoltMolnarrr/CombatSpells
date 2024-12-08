@@ -70,6 +70,9 @@ public class ModelPredicateHelper {
             return;
         }
         var existingPredicate = itemSpecific.get(id);
+        if (existingPredicate == null) {
+            return;
+        }
         ModelPredicateProviderRegistry.register(item, id, (stack, world, entity, seed) -> {
             if (customPredicate != null) {
                 var result = customPredicate.call(stack, world, entity, seed);
