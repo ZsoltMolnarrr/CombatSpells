@@ -318,7 +318,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
                 && targets.isEmpty()) {
             targets = previousTargets.stream()
                     .filter(entity -> {
-                        return TargetHelper.isInLineOfSight(caster, entity);
+                        return TargetHelper.isInLineOfSight(caster, entity) && !entity.isRemoved();
                     })
                     .toList();
         }
