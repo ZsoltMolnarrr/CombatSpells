@@ -56,4 +56,6 @@ public class ClientConfig implements ConfigData {
     public boolean showSpellCastErrors = true;
     @ConfigEntry.Gui.Tooltip
     public boolean shoulderSurfingAdaptiveWhileUse = true;
+    @ConfigEntry.Gui.Tooltip
+    public TriStateConfig firstPersonAnimations = TriStateConfig.AUTO;
 }

@@ -4,13 +4,13 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.item.BowItem;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.registry.Registries;
 import net.spell_engine.SpellEngineMod;
+import net.spell_engine.client.compatibility.FirstPersonAnimationCompatibility;
 import net.spell_engine.client.compatibility.ShaderCompatibility;
 import net.spell_engine.client.render.BeamRenderer;
 import net.spell_engine.client.render.ModelPredicateHelper;
@@ -47,6 +47,7 @@ public class SpellEngineClient {
 
         HandledScreens.register(SpellBindingScreenHandler.HANDLER_TYPE, SpellBindingScreen::new);
         BlockEntityRendererFactories.register(SpellBindingBlockEntity.ENTITY_TYPE, SpellBindingBlockEntityRenderer::new);
+        FirstPersonAnimationCompatibility.setup();
         ShaderCompatibility.setup();
         BeamRenderer.setup();
     }

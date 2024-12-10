@@ -14,7 +14,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.spell_engine.api.item.weapon.StaffItem;
 import net.spell_engine.api.spell.ExternalSpellSchools;
-import net.spell_engine.compat.QuiverCompat;
 import net.spell_engine.config.ServerConfig;
 import net.spell_engine.config.ServerConfigWrapper;
 import net.spell_engine.internals.SpellRegistry;
@@ -52,7 +51,6 @@ public class SpellEngineMod {
             return TriState.DEFAULT;
         });
 
-        QuiverCompat.init();
         ExternalSpellSchools.initialize();
         RPGSeriesCore.initialize();
     }
