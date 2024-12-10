@@ -3,12 +3,12 @@ package net.spell_engine.client.compatibility;
 import dev.kosmx.playerAnim.api.firstPerson.FirstPersonMode;
 import net.fabricmc.loader.api.FabricLoader;
 import net.spell_engine.client.SpellEngineClient;
-import net.spell_engine.config.TriStateConfig;
+import net.spell_engine.config.TriStateAuto;
 
 public class FirstPersonAnimationCompatibility {
     private static boolean isCameraModPresent = false;
 
-    public static void setup() {
+    static void initialize() {
         var cameraMods = new String[] {
             "firstperson", "realcamera"
         };
@@ -22,9 +22,9 @@ public class FirstPersonAnimationCompatibility {
 
     public static FirstPersonMode firstPersonMode() {
         switch (SpellEngineClient.config.firstPersonAnimations) {
-            case TriStateConfig.ON:
+            case TriStateAuto.YES:
                 return FirstPersonMode.THIRD_PERSON_MODEL;
-            case TriStateConfig.OFF:
+            case TriStateAuto.NO:
                 return FirstPersonMode.NONE;
             default:
                 return isCameraModPresent ? FirstPersonMode.NONE : FirstPersonMode.THIRD_PERSON_MODEL;

@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 public class ShaderCompatibility {
     private static Supplier<Boolean> shaderPackInUse = () -> false;
-    public static void setup() {
+    static void initialize() {
         if (FabricLoader.getInstance().isModLoaded("iris")) {
             shaderPackInUse = () -> IrisApi.getInstance().isShaderPackInUse();
         }

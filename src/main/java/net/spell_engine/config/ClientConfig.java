@@ -57,5 +57,5 @@ public class ClientConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public boolean shoulderSurfingAdaptiveWhileUse = true;
     @ConfigEntry.Gui.Tooltip
-    public TriStateConfig firstPersonAnimations = TriStateConfig.AUTO;
+    public TriStateAuto firstPersonAnimations = TriStateAuto.AUTO;
 }
