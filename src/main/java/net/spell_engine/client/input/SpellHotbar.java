@@ -63,7 +63,9 @@ public class SpellHotbar {
         var useKey = ((KeybindingAccessor) options.useKey).getBoundKey();
         var useKeyBinding = new WrappedKeybinding(options.useKey, WrappedKeybinding.VanillaAlternative.USE_KEY);
 
-        if (mergedContainer != null && !mergedContainer.spell_ids().isEmpty()) {
+        if (mergedContainer != null
+                && !mergedContainer.spell_ids().isEmpty()
+                && !(held.getItem() instanceof SpellBookItem)) { // Specifically disable casting directly from spell books
             var itemUseExpectation = expectedUseStack(player);
             if (itemUseExpectation != null)  {
                 onUseKey = new Slot(null, SpellCast.Mode.ITEM_USE, itemUseExpectation.itemStack, useKeyBinding, null);
