@@ -48,15 +48,15 @@ public class Keybindings {
     public static class Wrapped {
         public static List<WrappedKeybinding> all() {
             return List.of(
-                    new WrappedKeybinding(Keybindings.spell_hotbar_1, SpellEngineClient.config.spellHotbar_1_defer),
-                    new WrappedKeybinding(Keybindings.spell_hotbar_2, SpellEngineClient.config.spellHotbar_2_defer),
-                    new WrappedKeybinding(Keybindings.spell_hotbar_3, SpellEngineClient.config.spellHotbar_3_defer),
-                    new WrappedKeybinding(Keybindings.spell_hotbar_4, SpellEngineClient.config.spellHotbar_4_defer),
-                    new WrappedKeybinding(Keybindings.spell_hotbar_5, SpellEngineClient.config.spellHotbar_5_defer),
-                    new WrappedKeybinding(Keybindings.spell_hotbar_6, SpellEngineClient.config.spellHotbar_6_defer),
-                    new WrappedKeybinding(Keybindings.spell_hotbar_7, SpellEngineClient.config.spellHotbar_7_defer),
-                    new WrappedKeybinding(Keybindings.spell_hotbar_8, SpellEngineClient.config.spellHotbar_8_defer),
-                    new WrappedKeybinding(Keybindings.spell_hotbar_9, SpellEngineClient.config.spellHotbar_9_defer)
+                    new WrappedKeybinding(Keybindings.spell_hotbar_1, SpellEngineClient.config.spell_hotbar_1_defer),
+                    new WrappedKeybinding(Keybindings.spell_hotbar_2, SpellEngineClient.config.spell_hotbar_2_defer),
+                    new WrappedKeybinding(Keybindings.spell_hotbar_3, SpellEngineClient.config.spell_hotbar_3_defer),
+                    new WrappedKeybinding(Keybindings.spell_hotbar_4, SpellEngineClient.config.spell_hotbar_4_defer),
+                    new WrappedKeybinding(Keybindings.spell_hotbar_5, SpellEngineClient.config.spell_hotbar_5_defer),
+                    new WrappedKeybinding(Keybindings.spell_hotbar_6, SpellEngineClient.config.spell_hotbar_6_defer),
+                    new WrappedKeybinding(Keybindings.spell_hotbar_7, SpellEngineClient.config.spell_hotbar_7_defer),
+                    new WrappedKeybinding(Keybindings.spell_hotbar_8, SpellEngineClient.config.spell_hotbar_8_defer),
+                    new WrappedKeybinding(Keybindings.spell_hotbar_9, SpellEngineClient.config.spell_hotbar_9_defer)
             );
         }
     }

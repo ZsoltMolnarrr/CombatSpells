@@ -15,26 +15,27 @@ public class ClientConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public boolean autoSwapHands = true;
     @ConfigEntry.Gui.Tooltip
-    public boolean spellHotbarShowsOffhand = true;
+    public boolean spellHotbarHidesOffhand = true;
     @ConfigEntry.Gui.Tooltip
-    @Nullable
-    public WrappedKeybinding.VanillaAlternative spellHotbar_1_defer = WrappedKeybinding.VanillaAlternative.USE_KEY;
+    public boolean spellHotbarUseKey = true;
     @ConfigEntry.Gui.Tooltip
-    public WrappedKeybinding.VanillaAlternative spellHotbar_2_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_2;
+    public WrappedKeybinding.VanillaAlternative spell_hotbar_1_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_1;
     @ConfigEntry.Gui.Tooltip
-    public WrappedKeybinding.VanillaAlternative spellHotbar_3_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_3;
+    public WrappedKeybinding.VanillaAlternative spell_hotbar_2_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_2;
     @ConfigEntry.Gui.Tooltip
-    public WrappedKeybinding.VanillaAlternative spellHotbar_4_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_4;
+    public WrappedKeybinding.VanillaAlternative spell_hotbar_3_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_3;
     @ConfigEntry.Gui.Tooltip
-    public WrappedKeybinding.VanillaAlternative spellHotbar_5_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_5;
+    public WrappedKeybinding.VanillaAlternative spell_hotbar_4_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_4;
     @ConfigEntry.Gui.Tooltip
-    public WrappedKeybinding.VanillaAlternative spellHotbar_6_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_6;
+    public WrappedKeybinding.VanillaAlternative spell_hotbar_5_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_5;
     @ConfigEntry.Gui.Tooltip
-    public WrappedKeybinding.VanillaAlternative spellHotbar_7_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_7;
+    public WrappedKeybinding.VanillaAlternative spell_hotbar_6_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_6;
     @ConfigEntry.Gui.Tooltip
-    public WrappedKeybinding.VanillaAlternative spellHotbar_8_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_8;
+    public WrappedKeybinding.VanillaAlternative spell_hotbar_7_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_7;
     @ConfigEntry.Gui.Tooltip
-    public WrappedKeybinding.VanillaAlternative spellHotbar_9_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_9;
+    public WrappedKeybinding.VanillaAlternative spell_hotbar_8_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_8;
+    @ConfigEntry.Gui.Tooltip
+    public WrappedKeybinding.VanillaAlternative spell_hotbar_9_defer = WrappedKeybinding.VanillaAlternative.HOTBAR_KEY_9;
 
     @ConfigEntry.Gui.Tooltip
     public boolean sneakingByPassSpellHotbar = false;

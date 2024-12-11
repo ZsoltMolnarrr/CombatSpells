@@ -69,11 +69,15 @@ public class HudRenderHelper {
                 var cooldownManager = caster.getCooldownManager();
                 var spells = SpellHotbar.INSTANCE.slots.stream().map(slot -> {
                     var info = slot.spell();
-                    var useItem = slot.spell().spell().item_use.shows_item_as_icon;
+                    var itemStack = slot.itemStack();
+                    var useItem = itemStack != null;
+                    var cooldownProgress = useItem
+                            ? player.getItemCooldownManager().getCooldownProgress(itemStack.getItem(), tickDelta)
+                            : cooldownManager.getCooldownProgress(Identifier.of(info.id().toString()), tickDelta);
                     return new SpellHotBarWidget.SpellViewModel(
                             useItem ? null : SpellRender.iconTexture(info.id()),
-                            useItem ? SpellHotbar.expectedUseStack(player) : null,
-                            cooldownManager.getCooldownProgress(Identifier.of(info.id().toString()), tickDelta),
+                            useItem ? itemStack : null,
+                            cooldownProgress,
                             SpellHotBarWidget.KeyBindingViewModel.from(slot.getKeyBinding(client.options)),
                             slot.modifier() != null ? SpellHotBarWidget.KeyBindingViewModel.from(slot.modifier()) : null);
                 }).collect(Collectors.toList());

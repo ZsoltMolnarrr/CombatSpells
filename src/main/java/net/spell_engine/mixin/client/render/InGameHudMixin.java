@@ -17,7 +17,7 @@ public class InGameHudMixin {
             // Mixin parameters
             PlayerEntity player, Operation<ItemStack> original
     ) {
-        if (SpellEngineClient.config.spellHotbarShowsOffhand && SpellHotbar.INSTANCE.showsOffHandUse) {
+        if (SpellEngineClient.config.spellHotbarHidesOffhand && SpellHotbar.INSTANCE.isShowingItemUse()) {
             return ItemStack.EMPTY;
         } else {
             return original.call(player);
