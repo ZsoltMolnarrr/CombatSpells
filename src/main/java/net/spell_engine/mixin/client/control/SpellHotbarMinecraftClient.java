@@ -62,6 +62,10 @@ public abstract class SpellHotbarMinecraftClient {
         }
         if (handled != null) {
             spellHotbarHandle = handled.category();
+            if (player.isUsingItem()) {
+                player.stopUsingItem();
+                itemUseCooldown = 1;
+            }
         }
 
         if (((SpellCasterClient)player).isCastingSpell()) {
