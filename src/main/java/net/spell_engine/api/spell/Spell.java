@@ -42,7 +42,9 @@ public class Spell {
         public ParticleBatch[] particles = new ParticleBatch[]{};
     }
 
+    @Deprecated()
     public ItemUse item_use = new ItemUse();
+    @Deprecated
     public static class ItemUse { public ItemUse() { }
         public boolean shows_item_as_icon = false;
         public boolean requires_offhand_item = false;
@@ -57,6 +59,7 @@ public class Spell {
         public boolean skip_arrow_damage = false;
         public int pierce = 0;
         public float knockback = 1;
+        @Nullable public Impact[] impact;
         @Nullable public ParticleBatch[] travel_particles;
         @Nullable public ProjectileModel override_render;
     }
@@ -196,7 +199,7 @@ public class Spell {
                 public float amplifier_power_multiplier = 0;
                 public ApplyMode apply_mode = ApplyMode.SET;
                 public enum ApplyMode { SET, ADD }
-                public ApplyLimit apply_limit;
+                @Nullable public ApplyLimit apply_limit;
                 public static class ApplyLimit { public ApplyLimit() { }
                     public float health_base = 0;
                     public float spell_power_multiplier = 0;

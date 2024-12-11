@@ -22,6 +22,7 @@
     "effect.StatusEffectHealthImpacting",
     "effect.StatusEffectOnRemoval",
     "effect.StatusEffectRemoveOnHit",
+    "effect.StatusEffectSpellStash",
     "effect.StatusEffectSynchronized",
     "entity.EntityCollision",
     "entity.ItemCooldownManagerMixin",

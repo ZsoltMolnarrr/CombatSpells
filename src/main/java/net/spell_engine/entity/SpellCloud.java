@@ -206,7 +206,7 @@ public class SpellCloud extends Entity implements Ownable {
                         context = new SpellHelper.ImpactContext();
                     }
                     SpellHelper.lookupAndPerformAreaImpact(area_impact, new SpellInfo(spell, spellId), owner,null,
-                            this, context.position(this.getPos()), true);
+                            this, spell.impact, context.position(this.getPos()), true);
                 }
             }
         }
