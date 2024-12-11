@@ -1,7 +1,9 @@
 package net.spell_engine.utils;
 
+import net.minecraft.item.MaceItem;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.item.SwordItem;
+import net.minecraft.item.TridentItem;
 import net.minecraft.registry.Registries;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.SpellContainer;
@@ -24,9 +26,11 @@ public class WeaponCompatibility {
             var item = Registries.ITEM.get(itemId);
             boolean addProxy = false;
             var contentType = SpellContainer.ContentType.MAGIC;
-            if (config.add_spell_casting_to_swords && item instanceof SwordItem) {
+            if (config.add_spell_casting_to_melee_weapons
+                    && (item instanceof SwordItem || item instanceof TridentItem  || item instanceof MaceItem)) {
                 addProxy = true;
-            } else if (item instanceof RangedWeaponItem) {
+            } else if (config.add_spell_casting_to_ranged_weapons
+                    && item instanceof RangedWeaponItem) {
                 contentType = SpellContainer.ContentType.ARCHERY;
                 addProxy = true;
             } else if (matches(itemIdString, config.add_spell_casting_regex)) {

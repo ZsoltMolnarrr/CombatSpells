@@ -1,5 +1,8 @@
 # 1.1.3
 
+- Rewrite spell hotbar management of the `Use` key, to enable compatibility with weapons those have a right click use (such as Trident)
+- Rewrite first person camera compatibility (to support FirstPersonModel and Real Camera)
+- Fix item use while spell casting
 - Fix rendering on hidden HUD (Fabric API related)
 - Fix spamming console with advancement info
 

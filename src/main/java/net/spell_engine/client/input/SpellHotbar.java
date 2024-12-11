@@ -53,7 +53,7 @@ public class SpellHotbar {
         var changed = false;
         var initialSlotCount = slots.size();
         var held = player.getMainHandStack();
-        var container = SpellContainerHelper.getEquipped(held, player);
+        var mergedContainer = SpellContainerHelper.getEquipped(held, player);
 
         var slots = new ArrayList<Slot>();
         var otherSlots = new ArrayList<Slot>();
@@ -63,13 +63,13 @@ public class SpellHotbar {
         var useKey = ((KeybindingAccessor) options.useKey).getBoundKey();
         var useKeyBinding = new WrappedKeybinding(options.useKey, WrappedKeybinding.VanillaAlternative.USE_KEY);
 
-        var itemUseExpectation = expectedUseStack(player);
-        if (itemUseExpectation != null)  {
-            onUseKey = new Slot(null, SpellCast.Mode.ITEM_USE, itemUseExpectation.itemStack, useKeyBinding, null);
-        }
+        if (mergedContainer != null && !mergedContainer.spell_ids().isEmpty()) {
+            var itemUseExpectation = expectedUseStack(player);
+            if (itemUseExpectation != null)  {
+                onUseKey = new Slot(null, SpellCast.Mode.ITEM_USE, itemUseExpectation.itemStack, useKeyBinding, null);
+            }
 
-        if (container != null) {
-            var spellIds = container.spell_ids();
+            var spellIds = mergedContainer.spell_ids();
             var spellInfoList = spellIds.stream()
                     .map(idString -> {
                         var id = Identifier.of(idString);
@@ -126,14 +126,14 @@ public class SpellHotbar {
                 // Save to all slots
                 slots.add(slot);
             }
-        }
 
-        if (itemUseExpectation != null) {
-             if (itemUseExpectation.isMainHand()) {
-                 slots.addFirst(onUseKey);
-             } else {
-                 slots.addLast(onUseKey);
-             }
+            if (itemUseExpectation != null) {
+                if (itemUseExpectation.isMainHand()) {
+                    slots.addFirst(onUseKey);
+                } else {
+                    slots.addLast(onUseKey);
+                }
+            }
         }
 
         changed = initialSlotCount != slots.size();
