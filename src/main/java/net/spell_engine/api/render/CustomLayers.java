@@ -81,8 +81,10 @@ public class CustomLayers extends RenderLayer {
 
     public static RenderLayer spellObject(LightEmission lightEmission) {
         switch (lightEmission) {
-            case RADIATE, GLOW:
-                return spellObject(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, lightEmission, true);
+            case RADIATE:
+                return spellObject(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, lightEmission, false);
+            case GLOW:
+                return spellObject(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, lightEmission, false);
             case NONE:
                 break;
         }
@@ -102,7 +104,7 @@ public class CustomLayers extends RenderLayer {
                 .cull(DISABLE_CULLING)
                 .writeMaskState(translucent ? COLOR_MASK : ALL_MASK)
                 .overlay(ENABLE_OVERLAY_COLOR)
-                .target(TRANSLUCENT_TARGET)
+                .target(PARTICLES_TARGET)
                 .build(false);
         return RenderLayer.of("entity_translucent_emissive", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 256, true, true, multiPhaseParameters);
     }

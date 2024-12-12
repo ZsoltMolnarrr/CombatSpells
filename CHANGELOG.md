@@ -6,6 +6,8 @@ Functional changes:
 - Fix item use while spell casting
 - Fix rendering on hidden HUD (Fabric API related)
 - Fix spamming console with advancement info
+- Fix misc render crash #87
+- Fix spell projectile rendering order issues
 
 API Changes:
 - BREAKING - Retired Spell cast mode `ITEM_USE`, spells can no longer perform item usage 
