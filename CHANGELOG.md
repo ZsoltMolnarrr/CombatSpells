@@ -1,10 +1,17 @@
 # 1.2.0
 
-- Rewrite spell hotbar management of the `Use` key, to enable compatibility with weapons those have a right click use (such as Trident)
+Functional changes:
+- Rework spell hotbar logic around `Use` key (right-click), to enable compatibility with weapons those have a right click use (such as Trident)
 - Rewrite first person camera compatibility (to support FirstPersonModel and Real Camera)
 - Fix item use while spell casting
 - Fix rendering on hidden HUD (Fabric API related)
 - Fix spamming console with advancement info
+
+API Changes:
+- BREAKING - Retired Spell cast mode `ITEM_USE`, spells can no longer perform item usage 
+- Internal: SpellHelper.performImpacts now requires array of impacts to be supplied
+- Extend ArrowPerks API with custom array of impacts
+- Add SpellStash capability to StatusEffects to store a spell
 
 # 1.1.2
 
