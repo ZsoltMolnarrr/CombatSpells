@@ -38,8 +38,7 @@ public class ClientPlayerInteractionManagerMixin {
 
             if (!SpellEngineClient.config.useKeyHighPriority) {
                 var handled = SpellHotbar.INSTANCE.handle(clientPlayer, SpellHotbar.INSTANCE.structuredSlots.onUseKey(), client.options);
-                if (handled != null
-                        && handled.spell().spell().mode != Spell.Mode.ITEM_USE) {
+                if (handled != null) {
                     cir.setReturnValue(ActionResult.FAIL);
                     cir.cancel();
                 }

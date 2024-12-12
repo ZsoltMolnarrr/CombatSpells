@@ -10,7 +10,7 @@ Functional changes:
 - Fix spell projectile rendering order issues
 
 API Changes:
-- BREAKING - Retired Spell cast mode `ITEM_USE`, spells can no longer perform item usage 
+- BREAKING - Deprecated all item usage related fields and types in Spell.java  
 - Internal: SpellHelper.performImpacts now requires array of impacts to be supplied
 - Extend ArrowPerks API with custom array of impacts
 - Add SpellStash capability to StatusEffects to store a spell

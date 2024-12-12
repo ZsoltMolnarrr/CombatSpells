@@ -54,8 +54,7 @@ public abstract class SpellHotbarMinecraftClient {
 
         SpellHotbar.Handle handled;
         if (SpellEngineClient.config.useKeyHighPriority
-                || ((SpellCasterClient)player).isCastingSpell()
-                || (player.isUsingItem() && SpellHotbar.INSTANCE.lastHandledWasItemBypass()) ) {
+                || ((SpellCasterClient)player).isCastingSpell()) {
             handled = SpellHotbar.INSTANCE.handle(player, options);
         } else {
             handled = SpellHotbar.INSTANCE.handle(player, SpellHotbar.INSTANCE.structuredSlots.other(), options);

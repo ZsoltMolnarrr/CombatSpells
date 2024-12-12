@@ -147,17 +147,10 @@ public class SpellHotbar {
 
     private @Nullable Handle handledThisTick = null;
     private @Nullable Handle handledPreviousTick = null;
-    private boolean skipHandling = false;
     public void prepare(int itemUseCooldown) {
         this.handledPreviousTick = this.handledThisTick;
         this.handledThisTick = null;
         this.updateDebounced();
-        this.skipHandling = !lastHandledWasItemBypass() && itemUseCooldown > 0;
-    }
-
-    public boolean lastHandledWasItemBypass() {
-        return handledPreviousTick != null
-                && handledPreviousTick.spell().spell().mode == Spell.Mode.ITEM_USE;
     }
 
     @Nullable public Handle handle(ClientPlayerEntity player, GameOptions options) {
@@ -176,7 +169,7 @@ public class SpellHotbar {
     }
 
     @Nullable public Handle handle(ClientPlayerEntity player, List<Slot> slots, GameOptions options) {
-        if (handledThisTick != null || skipHandling || player.isSpectator()) { return null; }
+        if (handledThisTick != null || player.isSpectator()) { return null; }
         if (Keybindings.bypass_spell_hotbar.isPressed()
                 || (SpellEngineClient.config.sneakingByPassSpellHotbar && options.sneakKey.isPressed())) {
             return null;
@@ -263,11 +256,6 @@ public class SpellHotbar {
     private Identifier lastSyncedSpellId = null;
     public void syncItemUseSkill(ClientPlayerEntity player) {
         Identifier idToSync = null;
-        if (player.isUsingItem()
-                && handledThisTick != null
-                && handledThisTick.spell().spell().mode == Spell.Mode.ITEM_USE) {
-            idToSync = handledThisTick.spell().id();
-        }
         if (!Objects.equals(idToSync, lastSyncedSpellId)) {
             // System.out.println("Syncing item use skill: " + idToSync);
             ClientPlayNetworking.send(new Packets.SpellCastSync(idToSync, 1, 1000));

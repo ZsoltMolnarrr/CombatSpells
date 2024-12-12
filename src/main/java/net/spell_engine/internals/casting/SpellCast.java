@@ -88,20 +88,13 @@ public class SpellCast {
     public record Progress(float ratio, Process process) { }
 
     public enum Mode {
-        INSTANT, CHARGE, CHANNEL, ITEM_USE;
+        INSTANT, CHARGE, CHANNEL,
+        ITEM_USE; // This one is never produced by mapping, only manually from SpellHotbar logic
         public static Mode from(Spell spell) {
-            switch (spell.mode) {
-                case CAST -> {
-                    if (spell.cast.duration <= 0) {
-                        return INSTANT;
-                    }
-                    return SpellHelper.isChanneled(spell) ? CHANNEL : CHARGE;
-                }
-                case ITEM_USE -> {
-                    return ITEM_USE;
-                }
+            if (spell.cast.duration <= 0) {
+                return INSTANT;
             }
-            return null; // Should never happen
+            return SpellHelper.isChanneled(spell) ? CHANNEL : CHARGE;
         }
     }
 
