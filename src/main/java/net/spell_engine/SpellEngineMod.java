@@ -16,7 +16,6 @@ import net.spell_engine.api.enchantment.Enchantments_SpellEngine;
 import net.spell_engine.api.item.weapon.StaffItem;
 import net.spell_engine.api.spell.ExternalSpellSchools;
 import net.spell_engine.api.spell.SpellContainer;
-import net.spell_engine.compat.QuiverCompat;
 import net.spell_engine.config.EnchantmentsConfig;
 import net.spell_engine.config.ServerConfig;
 import net.spell_engine.config.ServerConfigWrapper;
@@ -79,7 +78,6 @@ public class SpellEngineMod {
 //            return container != null && container.isValid() && container.content != SpellContainer.ContentType.ARCHERY;
 //        });
 
-        QuiverCompat.init();
         ExternalSpellSchools.initialize();
         RPGSeriesCore.initialize();
     }
