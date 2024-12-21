@@ -1,3 +1,8 @@
+# 0.15.12
+
+Functional changes:
+- Fix crashes alongside Supplementaries, due to outdated quiver compatibility (now removed), thanks to @Dralaon #90
+
 # 0.15.11
 
 Functional changes:
