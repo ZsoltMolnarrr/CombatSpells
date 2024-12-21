@@ -28,7 +28,6 @@ import net.spell_engine.api.spell.CustomSpellHandler;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.SpellEvents;
 import net.spell_engine.api.spell.SpellInfo;
-import net.spell_engine.compat.QuiverCompat;
 import net.spell_engine.compat.TrinketsCompat;
 import net.spell_engine.entity.ConfigurableKnockback;
 import net.spell_engine.entity.SpellCloud;
@@ -91,9 +90,6 @@ public class SpellHelper {
             if(ammoItem != null) {
                 ammo = ammoItem.getDefaultStack();
                 satisfied = player.getInventory().contains(ammo);
-                if (needsArrow) {
-                    satisfied = satisfied || QuiverCompat.hasArrow(ammoItem, player);
-                }
             }
         }
         return new AmmoResult(satisfied, ammo);
