@@ -28,6 +28,7 @@ public class Defaults {
         var W2 = "#rpg_series:tier_2_weapons";
         var W3 = "#rpg_series:tier_3_weapons";
         var W4 = "#rpg_series:tier_4_weapons";
+        var W4_AE = "#rpg_series:tier_4_aether_weapons";
         var W5 = "#rpg_series:tier_5_weapons";
         var A1 = "#rpg_series:tier_1_armors";
         var A2 = "#rpg_series:tier_2_armors";
@@ -241,6 +242,24 @@ public class Defaults {
                 .add(A3, true)
                 .add(X4)
         );
+
+        // Aehter mod
+
+//        injectors.put("aether:chests/dungeon/bronze/bronze_dungeon_reward", new LootConfig.Pool()
+//                .rolls(0.1)
+//                .add(W4_AE)
+//        );
+
+        injectors.put("aether:chests/dungeon/silver/silver_dungeon_reward", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W4_AE)
+        );
+
+        injectors.put("aether:chests/dungeon/gold/gold_dungeon_reward", new LootConfig.Pool()
+                .rolls(1)
+                .add(W4_AE, true)
+        );
+
 
         // MOD CHESTS
 
