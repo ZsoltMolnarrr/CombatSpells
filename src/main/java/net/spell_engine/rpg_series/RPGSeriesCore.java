@@ -13,7 +13,7 @@ public class RPGSeriesCore {
     public static final String NAMESPACE = "rpg_series";
 
     public static ConfigManager<LootConfig> lootConfig = new ConfigManager<>
-            ("loot_v2", Defaults.lootConfig)
+            ("loot_v3", Defaults.lootConfig)
             .builder()
             .setDirectory(NAMESPACE)
             .sanitize(true)

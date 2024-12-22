@@ -260,6 +260,170 @@ public class Defaults {
                 .add(W4_AE, true)
         );
 
+        // Dungeons and Taverns
+
+        injectors.put("nova_structures:chests/lone_citadel/c_vault_boss", new LootConfig.Pool()
+                .rolls(1)
+                .add(W2, true)
+                .add(X2)
+        );
+
+        injectors.put("nova_structures:chests/lone_citadel/c_vault", new LootConfig.Pool()
+                .rolls(1)
+                .add(A2, true)
+                .add(X2)
+        );
+
+        injectors.put("nova_structures:chests/lone_citadel/c_library", new LootConfig.Pool()
+                .rolls(1)
+                .add(A2)
+        );
+
+        injectors.put("nova_structures:chests/lone_citadel/c_forge_chest", new LootConfig.Pool()
+                .rolls(1)
+                .add(A2)
+                .add(A1)
+        );
+
+        // bunker_altar
+
+        injectors.put("nova_structures:chests/bunker_altar", new LootConfig.Pool()
+                .rolls(1)
+                .add(W1)
+                .add(A1)
+        );
+
+        // conduit_ruin
+
+        injectors.put("nova_structures:chests/conduit_ruin/conduit_ruin_big", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W2)
+                .add(A2)
+        );
+
+        // creeping_crypt
+
+        injectors.put("nova_structures:chests/creeping_crypt/crypt_grave", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(A1)
+        );
+
+        injectors.put("nova_structures:chests/creeping_crypt/crypt_hallway", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W1)
+        );
+
+        injectors.put("nova_structures:chests/creeping_crypt/vault_creeping", new LootConfig.Pool()
+                .rolls(1)
+                .add(A1)
+                .add(W1)
+                .add(X1)
+        );
+
+        // desert_ruins
+
+        injectors.put("nova_structures:chests/desert_ruins/desert_ruin_lesser_treasure", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(X1)
+        );
+
+        injectors.put("nova_structures:chests/desert_ruins/desert_ruin_main_temple", new LootConfig.Pool()
+                .rolls(1)
+                .add(A1)
+                .add(W1)
+        );
+
+        // end_castle
+
+        injectors.put("nova_structures:chests/end_castle/vault_brigattine", new LootConfig.Pool()
+                .rolls(1)
+                .add(W4)
+        );
+
+        injectors.put("nova_structures:chests/end_castle/vault_galleon", new LootConfig.Pool()
+                .rolls(1)
+                .add(A3)
+        );
+
+        injectors.put("nova_structures:chests/end_castle/vault_slope", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(X4)
+        );
+
+        injectors.put("nova_structures:chests/end_castle/treasure_lighthouse", new LootConfig.Pool()
+                .rolls(1)
+                .add(X4)
+        );
+
+        // end_lighthouse
+
+        injectors.put("nova_structures:chests/end_lighthouse/vault_lighthouse", new LootConfig.Pool()
+                .rolls(1)
+                .add(X4)
+        );
+
+        // illager_hideout
+
+        injectors.put("nova_structures:chests/illager_hideout_tresure", new LootConfig.Pool()
+                .rolls(1)
+                .add(A1)
+                .add(W1)
+                .add(X1)
+        );
+
+        // nether_keep
+
+        injectors.put("nova_structures:chests/nether_keep/vault_keep", new LootConfig.Pool()
+                .rolls(1)
+                .add(W3, true)
+                .add(A3)
+                .add(X3)
+        );
+
+        // nether_skeleton_tower
+
+        injectors.put("nova_structures:chests/nether_keep/skeleton_tower_chest", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W2, true)
+                .add(A2)
+        );
+
+        injectors.put("nova_structures:chests/pillager_outpost_treasure", new LootConfig.Pool()
+                .rolls(1)
+                .add(A1)
+                .add(W1)
+                .add(X1)
+        );
+
+        // toxic_lair
+
+        injectors.put("nova_structures:chests/toxic_lair/toxic_vault", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(A1)
+                .add(W1)
+                .add(X1)
+        );
+
+        injectors.put("nova_structures:chests/toxic_lair/toxic_ominous_vault", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(A2)
+                .add(W2, true)
+                .add(X2)
+        );
+
+        injectors.put("nova_structures:chests/toxic_lair/toxic_boss_vault", new LootConfig.Pool()
+                .rolls(1)
+                .add(A2, true)
+                .add(W2, true)
+        );
+
+        // trident_trial_monument
+
+        injectors.put("nova_structures:chests/trident_trial_monument/ttm_common_vault", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W2, true)
+                .add(X2, true)
+        );
 
         // MOD CHESTS
 
