@@ -1,3 +1,11 @@
+# 1.2.1
+
+Functional changes:
+- 
+
+API Changes:
+- Add `spell.cast.animation_pitch` field
+
 # 1.2.0
 
 Functional changes:

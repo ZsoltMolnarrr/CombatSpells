@@ -42,6 +42,7 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
 
     private final AnimationSubStack castingAnimation = new AnimationSubStack(createPitchAdjustment_SpellEngine());
     private final AnimationSubStack releaseAnimation = new AnimationSubStack(createPitchAdjustment_SpellEngine());
+    private boolean castingAnimationPitching = true;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void postInit_SpellEngine(ClientWorld world, GameProfile profile, CallbackInfo ci) {
@@ -68,6 +69,9 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
                 ParticleHelper.play(player.getWorld(), player, player.getYaw(), getPitch(), batch);
             }
             speed = ((SpellCasterEntity)player).getCurrentCastingSpeed();
+            castingAnimationPitching = spell.cast.animation_pitch;
+        } else {
+            castingAnimationPitching = true;
         }
         updateCastingAnimation(castAnimationName, speed);
         updateCastingSound(castSound);
@@ -120,32 +124,34 @@ public abstract class AbstractClientPlayerEntityMixin extends PlayerEntity imple
             float offsetY = 0;
             float offsetZ = 0;
 
-            if (FirstPersonMode.isFirstPersonPass()) {
-                var pitch = player.getPitch();
-                pitch = (float) Math.toRadians(pitch);
-                switch (partName) {
-                    case "rightArm", "leftArm" -> {
-                        rotationX = pitch;
+            if (this.castingAnimationPitching) {
+                if (FirstPersonMode.isFirstPersonPass()) {
+                    var pitch = player.getPitch();
+                    pitch = (float) Math.toRadians(pitch);
+                    switch (partName) {
+                        case "rightArm", "leftArm" -> {
+                            rotationX = pitch;
+                        }
+                        default -> {
+                            return Optional.empty();
+                        }
                     }
-                    default -> {
-                        return Optional.empty();
-                    }
-                }
-            } else {
-                var pitch = player.getPitch() / 2F;
-                pitch = (float) Math.toRadians(pitch);
-                switch (partName) {
-                    case "body" -> {
-                        rotationX = (-1F) * pitch;
-                    }
-                    case "rightArm", "leftArm" -> {
-                        rotationX = pitch;
-                    }
-                    case "rightLeg", "leftLeg" -> {
-                        rotationX = (-1F) * pitch;
-                    }
-                    default -> {
-                        return Optional.empty();
+                } else {
+                    var pitch = player.getPitch() / 2F;
+                    pitch = (float) Math.toRadians(pitch);
+                    switch (partName) {
+                        case "body" -> {
+                            rotationX = (-1F) * pitch;
+                        }
+                        case "rightArm", "leftArm" -> {
+                            rotationX = pitch;
+                        }
+                        case "rightLeg", "leftLeg" -> {
+                            rotationX = (-1F) * pitch;
+                        }
+                        default -> {
+                            return Optional.empty();
+                        }
                     }
                 }
             }
