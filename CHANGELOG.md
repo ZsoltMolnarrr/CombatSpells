@@ -1,7 +1,8 @@
 # 1.2.1
 
 Functional changes:
-- Modify loot config, to reduce loot frequency in some of the commonly occurring chests 
+- Modify loot config, to reduce loot frequency in some of the commonly occurring chests
+- Restore LambdaDynamicLights compatibility
 
 API Changes:
 - Add `spell.cast.animation_pitch` field

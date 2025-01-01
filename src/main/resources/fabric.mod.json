@@ -25,7 +25,10 @@
     "modmenu": [
       "net.spell_engine.client.compatibility.ModMenuCompatibility"
     ],
-    "lamb_dynamiclights_DISABLED": [
+    "dynamiclights": [
+      "net.spell_engine.client.compatibility.DynamicLightsCompatibility"
+    ],
+    "from 1.21.4: lambdynlights:initializer": [
       "net.spell_engine.client.compatibility.DynamicLightsCompatibility"
     ]
   },

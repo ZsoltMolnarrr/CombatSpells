@@ -2,12 +2,14 @@ package net.spell_engine.client.compatibility;
 
 import dev.lambdaurora.lambdynlights.api.DynamicLightHandlers;
 import dev.lambdaurora.lambdynlights.api.DynamicLightsInitializer;
+import dev.lambdaurora.lambdynlights.api.item.ItemLightSourceManager;
 import net.spell_engine.entity.SpellCloud;
 import net.spell_engine.entity.SpellProjectile;
 
 public class DynamicLightsCompatibility implements DynamicLightsInitializer {
     @Override
-    public void onInitializeDynamicLights() {
+    public void onInitializeDynamicLights(ItemLightSourceManager itemLightSourceManager) {
+        System.out.println("Spell Engine: Initializing Dynamic Lights compatibility...");
         DynamicLightHandlers.registerDynamicLightHandler(SpellProjectile.ENTITY_TYPE, entity -> {
             var luminance = 0;
             var data = entity.projectileData();
