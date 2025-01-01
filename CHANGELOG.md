@@ -1,7 +1,7 @@
 # 1.2.1
 
 Functional changes:
-- 
+- Modify loot config, to reduce loot frequency in some of the commonly occurring chests 
 
 API Changes:
 - Add `spell.cast.animation_pitch` field

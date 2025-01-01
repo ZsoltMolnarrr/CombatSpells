@@ -560,6 +560,7 @@ public class Defaults {
         // Philip's Ruins mod
 
         injectors.put("philipsruins:chest/lost_soul_city_loot", new LootConfig.Pool()
+                .rolls(0.5)
                 .add(A2)
                 .add(A2, true)
                 .add(X2)
@@ -597,11 +598,13 @@ public class Defaults {
         );
 
         injectors.put("philipsruins:chest/nether_lava_ruins_loot", new LootConfig.Pool()
+                .rolls(0.5)
                 .add(A3, true)
                 .add(X3)
         );
 
         injectors.put("philipsruins:chest/badlands_dungeon_loot_low", new LootConfig.Pool()
+                .rolls(0.5)
                 .add(A1)
                 .add(X1)
         );
@@ -622,24 +625,24 @@ public class Defaults {
         );
 
         injectors.put("philipsruins:chest/bone_dungeon_loot", new LootConfig.Pool()
+                .rolls(0.5)
                 .add(W0)
                 .add(W1, 3, false)
-                .add(W2)
-                .add(W2, true)
                 .add(A1)
                 .add(A1, true)
-                .add(A2)
                 .add(X1)
                 .add(X2)
         );
 
         injectors.put("philipsruins:chest/ruin_loot", new LootConfig.Pool()
+                .rolls(0.5)
                 .add(W1)
                 .add(A1)
                 .add(X1)
         );
 
         injectors.put("philipsruins:chest/ancient_ruins_loot", new LootConfig.Pool()
+                .rolls(0.5)
                 .add(A2)
                 .add(X2)
         );
