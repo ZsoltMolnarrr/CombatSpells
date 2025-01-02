@@ -262,6 +262,102 @@ public class Defaults {
 
         // Dungeons and Taverns
 
+        // ancient city
+
+        injectors.put("nova_structures:chests/ancient_city", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(A2, true)
+                .add(W2, true)
+                .add(X2)
+        );
+
+        // desert temple
+
+        injectors.put("nova_structures:chests/desert_ruins/desert_ruin_lesser_treasure", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(A1, true)
+                .add(W1, true)
+                .add(X2)
+        );
+        injectors.put("nova_structures:chests/undead_crypts_grave", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W1)
+                .add(X2)
+        );
+        injectors.put("nova_structures:chests/desert_ruins/desert_ruin_main_temple", new LootConfig.Pool()
+                .rolls(1)
+                .add(A1)
+                .add(W1)
+        );
+
+        // end castle
+
+        injectors.put("nova_structures:chests/end_castle/greater_loot", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W4, true)
+                .add(A3, true)
+                .add(X4)
+        );
+        injectors.put("nova_structures:chests/end_castle/lesser_loot", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W3, true)
+                .add(A2, true)
+                .add(X3)
+        );
+        injectors.put("nova_structures:chests/end_castle/treasure_lighthouse", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W4, true)
+                .add(A2, true)
+                .add(X4)
+        );
+        injectors.put("nova_structures:chests/end_castle/vault_brigattine", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W4, true)
+                .add(A3, true)
+                .add(X4)
+        );
+        injectors.put("nova_structures:chests/end_castle/vault_galleon", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W4, true)
+                .add(A3, true)
+                .add(X4)
+        );
+        injectors.put("nova_structures:chests/end_castle/vault_slope", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W4, true)
+                .add(A3, true)
+                .add(X4)
+        );
+
+        // nether keep
+
+        injectors.put("nova_structures:chests/nether_keep/skeleton_tower_chest", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W2, true)
+                .add(A2)
+        );
+        injectors.put("nova_structures:chests/nether_keep/vault_keep", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W3, true)
+                .add(A2)
+        );
+
+        // trident_trial_monument
+
+        injectors.put("nova_structures:chests/trident_trial_monument/ttm_common_vault", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W2, true)
+                .add(X2, true)
+        );
+
+        // lone castle
+
+        injectors.put("nova_structures:chests/lone_citadel/c_vault_boss", new LootConfig.Pool()
+                .rolls(1)
+                .add(W2, true)
+                .add(X2)
+        );
+
         injectors.put("nova_structures:chests/lone_citadel/c_vault_boss", new LootConfig.Pool()
                 .rolls(1)
                 .add(W2, true)
@@ -320,48 +416,6 @@ public class Defaults {
                 .add(X1)
         );
 
-        // desert_ruins
-
-        injectors.put("nova_structures:chests/desert_ruins/desert_ruin_lesser_treasure", new LootConfig.Pool()
-                .rolls(0.5)
-                .add(X1)
-        );
-
-        injectors.put("nova_structures:chests/desert_ruins/desert_ruin_main_temple", new LootConfig.Pool()
-                .rolls(1)
-                .add(A1)
-                .add(W1)
-        );
-
-        // end_castle
-
-        injectors.put("nova_structures:chests/end_castle/vault_brigattine", new LootConfig.Pool()
-                .rolls(1)
-                .add(W4)
-        );
-
-        injectors.put("nova_structures:chests/end_castle/vault_galleon", new LootConfig.Pool()
-                .rolls(1)
-                .add(A3)
-        );
-
-        injectors.put("nova_structures:chests/end_castle/vault_slope", new LootConfig.Pool()
-                .rolls(0.5)
-                .add(X4)
-        );
-
-        injectors.put("nova_structures:chests/end_castle/treasure_lighthouse", new LootConfig.Pool()
-                .rolls(1)
-                .add(X4)
-        );
-
-        // end_lighthouse
-
-        injectors.put("nova_structures:chests/end_lighthouse/vault_lighthouse", new LootConfig.Pool()
-                .rolls(1)
-                .add(X4)
-        );
-
         // illager_hideout
 
         injectors.put("nova_structures:chests/illager_hideout_tresure", new LootConfig.Pool()
@@ -369,23 +423,6 @@ public class Defaults {
                 .add(A1)
                 .add(W1)
                 .add(X1)
-        );
-
-        // nether_keep
-
-        injectors.put("nova_structures:chests/nether_keep/vault_keep", new LootConfig.Pool()
-                .rolls(1)
-                .add(W3, true)
-                .add(A3)
-                .add(X3)
-        );
-
-        // nether_skeleton_tower
-
-        injectors.put("nova_structures:chests/nether_keep/skeleton_tower_chest", new LootConfig.Pool()
-                .rolls(0.5)
-                .add(W2, true)
-                .add(A2)
         );
 
         injectors.put("nova_structures:chests/pillager_outpost_treasure", new LootConfig.Pool()
@@ -417,13 +454,6 @@ public class Defaults {
                 .add(W2, true)
         );
 
-        // trident_trial_monument
-
-        injectors.put("nova_structures:chests/trident_trial_monument/ttm_common_vault", new LootConfig.Pool()
-                .rolls(0.5)
-                .add(W2, true)
-                .add(X2, true)
-        );
 
         // MOD CHESTS
 
@@ -870,16 +900,19 @@ public class Defaults {
                 .add(X1)
         );
         injectors.put("dungeons_arise:chests/heavenly_conqueror/heavenly_conqueror_treasure", new LootConfig.Pool()
-                .add(WG)
                 .add(A2, true)
+                .add(W2, true)
                 .add(X2)
         );
         injectors.put("dungeons_arise:chests/aviary/aviary_treasure", new LootConfig.Pool()
-                .add(WG)
-                .add(W2)
-                .add(A2)
-                .add(X2)
+                .rolls(0.5)
+                .add(W4)
+                .add(W3)
+                .add(A3)
+                .add(X3)
+                .add(X4)
         );
+
         injectors.put("dungeons_arise:chests/illager_corsair/illager_corsair_treasure", new LootConfig.Pool()
                 .add(W1, true)
                 .add(A1, true)

@@ -1,3 +1,8 @@
+# 1.2.3
+
+Functional changes:
+- Update loot config defaults
+
 # 1.2.2
 
 Functional changes:
