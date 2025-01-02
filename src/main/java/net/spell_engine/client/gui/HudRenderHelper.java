@@ -36,6 +36,7 @@ public class HudRenderHelper {
     public static void render(DrawContext context, float tickDelta) {
         render(context, tickDelta, false);
     }
+
     public static void render(DrawContext context, float tickDelta, boolean config) {
         var hudConfig = SpellEngineClient.hudConfig.value;
         MinecraftClient client = MinecraftClient.getInstance();
@@ -52,7 +53,6 @@ public class HudRenderHelper {
         boolean renderHotbar = true;
         var hotbarViewModel = SpellHotBarWidget.ViewModel.mock();
         var errorViewModel = ErrorMessageWidget.ViewModel.mock();
-        SpellHotBarWidget.ViewModel hotbarAccessories = null;
         CastBarWidget.ViewModel castBarViewModel = null;
         if (config) {
             castBarViewModel = CastBarWidget.ViewModel.mock();
@@ -126,9 +126,6 @@ public class HudRenderHelper {
                 hotbarViewModel = SpellHotBarWidget.ViewModel.mock();
             }
             SpellHotBarWidget.render(context, screenWidth, screenHeight, hotbarViewModel);
-//            if(clientConfig.collapsedIndicators && hotbarAccessories != null) {
-//                SpellHotBarWidget.renderAccessories(context, screenWidth, screenHeight, hotbarAccessories);
-//            }
         }
 
         if (errorViewModel != null) {
@@ -199,6 +196,7 @@ public class HudRenderHelper {
             lastRendered = new Rect(new Vec2f(x,y), new Vec2f(x + totalWidth,y + totalHeight));
 
             RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
 
             float red = ((float) ((viewModel.color >> 16) & 0xFF)) / 255F;
             float green = ((float) ((viewModel.color >> 8) & 0xFF)) / 255F;
@@ -213,16 +211,16 @@ public class HudRenderHelper {
             }
             var progress = viewModel.reverse() ? (1F - viewModel.progress - partialProgress) : (viewModel.progress + partialProgress);
             renderBar(context, barWidth, false, progress, x, y);
+            context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             if (hudConfig.castbar.icon.visible && viewModel.iconTexture != null) {
                 x = (int) (starting.x + hudConfig.castbar.icon.offset.x);
                 y = (int) (starting.y + hudConfig.castbar.icon.offset.y);
-                context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+
                 context.drawTexture(viewModel.iconTexture, x, y, 0, 0, spellIconSize, spellIconSize, spellIconSize, spellIconSize);
             }
 
             RenderSystem.disableBlend();
-            context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         }
 
         private static void renderBar(DrawContext context, int barWidth, boolean isBackground, float progress, int x, int y) {

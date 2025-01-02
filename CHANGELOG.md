@@ -1,3 +1,8 @@
+# 1.2.2
+
+Functional changes:
+- Fix HUD rendering issues
+
 # 1.2.1
 
 Functional changes:

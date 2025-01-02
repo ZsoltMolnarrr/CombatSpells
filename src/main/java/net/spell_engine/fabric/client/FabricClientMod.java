@@ -26,11 +26,14 @@ public class FabricClientMod implements ClientModInitializer {
         SpellEngineClient.initialize();
         registerKeyBindings();
 
-        HudRenderCallback.EVENT.register((context, tickCounter) -> {
-            if (!MinecraftClient.getInstance().options.hudHidden) {
-                HudRenderHelper.render(context, tickCounter.getTickDelta(true));
-            }
-        });
+        // HudRenderCallback.EVENT.register - had issues, rendering my content in random order
+        // Invocation of HudRenderHelper.render() moved into InGameHudMixin
+//        HudRenderCallback.EVENT.register((context, tickCounter) -> {
+//            if (!MinecraftClient.getInstance().options.hudHidden) {
+//                HudRenderHelper.render(context, tickCounter.getTickDelta(true));
+//            }
+//        });
+
         ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, tooltipType, lines) -> {
             SpellTooltip.addSpellInfo(itemStack, lines);
         });
