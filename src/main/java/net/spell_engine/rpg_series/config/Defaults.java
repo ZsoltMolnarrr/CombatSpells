@@ -262,7 +262,7 @@ public class Defaults {
 
         // Dungeons and Taverns
 
-        // ancient city
+        // DnT - ancient city
 
         injectors.put("nova_structures:chests/ancient_city", new LootConfig.Pool()
                 .rolls(0.5)
@@ -271,7 +271,7 @@ public class Defaults {
                 .add(X2)
         );
 
-        // desert temple
+        // DnT - desert temple
 
         injectors.put("nova_structures:chests/desert_ruins/desert_ruin_lesser_treasure", new LootConfig.Pool()
                 .rolls(0.5)
@@ -290,7 +290,7 @@ public class Defaults {
                 .add(W1)
         );
 
-        // end castle
+        // DnT - end castle
 
         injectors.put("nova_structures:chests/end_castle/greater_loot", new LootConfig.Pool()
                 .rolls(0.5)
@@ -329,7 +329,7 @@ public class Defaults {
                 .add(X4)
         );
 
-        // nether keep
+        // DnT - nether keep
 
         injectors.put("nova_structures:chests/nether_keep/skeleton_tower_chest", new LootConfig.Pool()
                 .rolls(0.5)
@@ -342,13 +342,42 @@ public class Defaults {
                 .add(A2)
         );
 
-        // trident_trial_monument
+        // DnT - trident_trial_monument
 
         injectors.put("nova_structures:chests/trident_trial_monument/ttm_common_vault", new LootConfig.Pool()
                 .rolls(0.5)
                 .add(W2, true)
                 .add(X2, true)
         );
+
+        // DnT - illager_hideout
+
+        injectors.put("nova_structures:chests/illager_hideout_lesser_tresure", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(A1)
+                .add(W1)
+                .add(X1)
+        );
+        injectors.put("nova_structures:chests/illager_hideout_tresure", new LootConfig.Pool()
+                .rolls(1)
+                .add(A1)
+                .add(W1)
+                .add(X1)
+        );
+        injectors.put("nova_structures:chests/illager_outpost_weaponry", new LootConfig.Pool()
+                .rolls(1)
+                .add(A1)
+                .add(W1)
+                .add(X1)
+        );
+        injectors.put("nova_structures:chests/pillager_outpost_treasure", new LootConfig.Pool()
+                .rolls(1)
+                .add(A1)
+                .add(W1)
+                .add(X1)
+        );
+
+        // DnT
 
         // lone castle
 
@@ -410,22 +439,6 @@ public class Defaults {
         );
 
         injectors.put("nova_structures:chests/creeping_crypt/vault_creeping", new LootConfig.Pool()
-                .rolls(1)
-                .add(A1)
-                .add(W1)
-                .add(X1)
-        );
-
-        // illager_hideout
-
-        injectors.put("nova_structures:chests/illager_hideout_tresure", new LootConfig.Pool()
-                .rolls(1)
-                .add(A1)
-                .add(W1)
-                .add(X1)
-        );
-
-        injectors.put("nova_structures:chests/pillager_outpost_treasure", new LootConfig.Pool()
                 .rolls(1)
                 .add(A1)
                 .add(W1)
