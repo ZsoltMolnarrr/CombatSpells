@@ -233,6 +233,8 @@ public class Defaults {
                 .rolls(2)
                 .add(W2, true)
                 .add(A2, true)
+                .add(W3, true)
+                .add(A3, true)
                 .add(X3)
         );
 
@@ -653,11 +655,9 @@ public class Defaults {
         );
 
         injectors.put("philipsruins:chest/end_ruins_loot", new LootConfig.Pool()
-                .add(W1, true)
                 .add(W2, true)
-                .add(W4)
                 .add(A2, true)
-                .add(X2)
+                .add(X3)
                 .add(X4)
         );
 
@@ -1024,12 +1024,7 @@ public class Defaults {
                 .add(A2, true)
                 .add(X2)
         );
-        injectors.put("dungeons_arise:chests/shiraz_palace/shiraz_palace_treasure", new LootConfig.Pool()
-                .rolls(2)
-                .add(W3, true)
-                .add(A2, true)
-                .add(X2)
-        );
+
         injectors.put("dungeons_arise:chests/foundry/foundry_treasure", new LootConfig.Pool()
                 .add(A2)
                 .add(X2)
@@ -1062,6 +1057,12 @@ public class Defaults {
                 .add(A2, true)
                 .add(A3)
                 .add(X2)
+                .add(X3)
+        );
+        injectors.put("dungeons_arise:chests/shiraz_palace/shiraz_palace_treasure", new LootConfig.Pool()
+                .rolls(2)
+                .add(W3, true)
+                .add(A3, true)
                 .add(X3)
         );
     }
