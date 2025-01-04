@@ -36,11 +36,11 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     @Comment("Spell binding lapis lazuli levelCost multiplier")
     public int spell_binding_lapis_cost_multiplier = 1;
     @Comment("Should spells on the offhand item be collected and used.")
-    public boolean spells_collected_from_offhand = true;
+    public boolean spell_container_from_offhand = false;
     @Comment("Should be used in compatibility mode, when Trinkets is not installed.")
-    public boolean spells_collected_from_offhand_ignore_dual_wielding = false;
+    public boolean spell_container_from_offhand_ignore_dual_wielding = false;
     @Comment("Should spells on the offhand item be collected and used.")
-    public boolean spells_collected_from_equipment = true;
+    public boolean spell_container_from_equipment = true;
     @Comment("If set true, a Fireball doesn't collide with an ally, a healing projectile doesn't collide with an enemy")
     public boolean projectiles_pass_thru_irrelevant_targets = true;
     @Comment("Auto swap Bow & Spear cooldown ticks to apply for attack and itemUse")

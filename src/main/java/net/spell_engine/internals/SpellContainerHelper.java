@@ -43,14 +43,14 @@ public class SpellContainerHelper {
         if (TrinketsCompat.isEnabled()) {
             containers.addAll(TrinketsCompat.getEquippedSpells(player));
         }
-        if (SpellEngineMod.config.spells_collected_from_offhand) {
-            if (SpellEngineMod.config.spells_collected_from_offhand_ignore_dual_wielding) {
+        if (SpellEngineMod.config.spell_container_from_offhand) {
+            if (SpellEngineMod.config.spell_container_from_offhand_ignore_dual_wielding) {
                 addContainerIfValid(getOffhandItemStack(player), containers);
             } else {
                 addContainerIfValid(player.getOffHandStack(), containers);
             }
         }
-        if (SpellEngineMod.config.spells_collected_from_equipment) {
+        if (SpellEngineMod.config.spell_container_from_equipment) {
             for (var slot : player.getInventory().armor) {
                 addContainerIfValid(slot, containers);
             }

@@ -15,6 +15,7 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.spell_engine.rpg_series.RPGSeriesCore;
+import net.spell_engine.spellbinding.SpellBindRandomlyLootFunction;
 import net.tinyconfig.ConfigManager;
 
 import java.util.ArrayList;
@@ -88,6 +89,7 @@ public class LootHelper {
             var entryId = injectEntry.id;
             var weight = injectEntry.weight;
             var enchant = injectEntry.enchant;
+            var spellBind = injectEntry.spell_bind;
             if (entryId == null || entryId.isEmpty()) { continue; }
 
             if (entryId.startsWith("#")) {
@@ -113,6 +115,10 @@ public class LootHelper {
 //                            }
                             entry.apply(enchantFunction);
                         }
+                        if (spellBind != null && spellBind.isValid()) {
+                            var function = SpellBindRandomlyLootFunction.builder(UniformLootNumberProvider.create(spellBind.min, spellBind.max));
+                            entry.apply(function);
+                        }
                         lootPoolBuilder.with(entry);
                     }
                 } else {
@@ -132,6 +138,10 @@ public class LootHelper {
 //                        }
                         entry.apply(enchantFunction);
                     }
+                    if (spellBind != null && spellBind.isValid()) {
+                        var function = SpellBindRandomlyLootFunction.builder(UniformLootNumberProvider.create(spellBind.min, spellBind.max));
+                        entry.apply(function);
+                    }
                     lootPoolBuilder.with(entry);
                 }
             } else {
@@ -146,6 +156,10 @@ public class LootHelper {
 //                        enchantFunction.allowTreasureEnchantments();
 //                    }
                     entry.apply(enchantFunction);
+                }
+                if (spellBind != null && spellBind.isValid()) {
+                    var function = SpellBindRandomlyLootFunction.builder(UniformLootNumberProvider.create(spellBind.min, spellBind.max));
+                    entry.apply(function);
                 }
                 lootPoolBuilder.with(entry);
             }

@@ -61,5 +61,6 @@ public class SpellEngineMod {
         Registry.register(Registries.SCREEN_HANDLER, SpellBinding.ID, SpellBindingScreenHandler.HANDLER_TYPE);
         Criteria.register(SpellBindingCriteria.ID.toString(), SpellBindingCriteria.INSTANCE);
         Criteria.register(SpellBookCreationCriteria.ID.toString(), SpellBookCreationCriteria.INSTANCE);
+        Registry.register(Registries.LOOT_FUNCTION_TYPE, SpellBindRandomlyLootFunction.ID, SpellBindRandomlyLootFunction.TYPE);
     }
 }

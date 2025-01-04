@@ -10,7 +10,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.spell_engine.api.spell.*;
 import net.spell_engine.client.SpellEngineClient;
-import net.spell_engine.client.gui.SpellTooltip;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,37 +28,34 @@ public class ScrollItem extends Item {
         return false;
     }
 
-    @Nullable public static ItemStack forSpell(Identifier id, Spell spell) {
+    @Nullable public static boolean applySpell(ItemStack itemStack, Identifier id, Spell spell) {
         var scroll = spell.scroll;
         if (scroll != null && scroll.generate) {
-            var stack = new ItemStack(ITEM);
 
             var contentType = spell.school.archetype == SpellSchool.Archetype.ARCHERY
                     ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
             var container = new SpellContainer(contentType, false, "", 1, List.of(id.toString()));
-            stack.set(SpellDataComponents.SPELL_CONTAINER, container);
+            itemStack.set(SpellDataComponents.SPELL_CONTAINER, container);
 
             var rarity = scroll.custom_rarity;
             if (rarity == null) {
                 var ordinal = Math.max(spell.learn.tier - 1, 0); // minimum 0
                 rarity = Rarity.values().length > ordinal ? Rarity.values()[ordinal] : Rarity.EPIC;
             }
-            stack.set(DataComponentTypes.RARITY, rarity);
-            return stack;
+            itemStack.set(DataComponentTypes.RARITY, rarity);
+            return true;
         } else {
-            return null;
+            return false;
         }
     }
 
+    @Nullable public static ItemStack forSpell(Identifier id, Spell spell) {
+        var stack = new ItemStack(ITEM);
+        var success = applySpell(stack, id, spell);
+        return success ? stack : null;
+    }
+
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
-        var spell = stack.get(SpellDataComponents.SPELL_SLOT);
-        if (spell != null && spell.id() != null && !spell.id().isEmpty()) {
-            var id = Identifier.of(spell.id());
-            tooltip.add(Text
-                    .translatable(SpellTooltip.spellTranslationKey(id))
-                    .formatted(Formatting.BOLD)
-            );
-        }
         if (SpellEngineClient.config.showSpellBindingTooltip) {
             tooltip.add(Text
                     .translatable("item.spell_engine.scroll.table_hint")

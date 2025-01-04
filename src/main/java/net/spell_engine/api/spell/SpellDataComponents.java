@@ -13,10 +13,6 @@ public class SpellDataComponents {
             builder -> builder.codec(SpellContainer.CODEC)
     );
 
-    public static final ComponentType<SpellSlot> SPELL_SLOT = register(Identifier.of(SpellEngineMod.ID, "spell"),
-            builder -> builder.codec(SpellSlot.CODEC)
-    );
-
     private static <T> ComponentType<T> register(Identifier id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
         return Registry.register(Registries.DATA_COMPONENT_TYPE, id, ((ComponentType.Builder)builderOperator.apply(ComponentType.builder())).build());
     }

@@ -1,5 +1,8 @@
 package net.spell_engine.api.loot;
 
+import net.spell_engine.item.ScrollItem;
+import net.spell_engine.spellbinding.SpellBindRandomlyLootFunction;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,6 +46,17 @@ public class LootConfig {
                     return min_power > 0 && max_power > min_power;
                 }
             }
+
+            public SpellBind spell_bind = null;
+            public static class SpellBind { public SpellBind() { }
+                public int min = 1;
+                public int max = 9;
+
+                public boolean isValid() {
+                    return min > 0 && max > min;
+                }
+            }
+
             public Entry enchant() {
                 this.enchant = new Enchant();
                 return this;
@@ -70,6 +84,19 @@ public class LootConfig {
             if (enchant) {
                 entry.enchant();
             }
+            this.entries.add(entry);
+            return this;
+        }
+
+        public Pool scroll(int tier) {
+            return scroll(tier, tier);
+        }
+        public Pool scroll(int min, int max) {
+            Entry entry = new Entry(ScrollItem.ID.toString());
+            var spell_bind = new Entry.SpellBind();
+            spell_bind.min = min;
+            spell_bind.max = max;
+            entry.spell_bind = spell_bind;
             this.entries.add(entry);
             return this;
         }
