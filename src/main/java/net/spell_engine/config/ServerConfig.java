@@ -17,7 +17,7 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     public boolean haste_affects_cooldown = true;
     @Comment("Spell costs exhausts (hunger) will be multiplied with this value. Set `0` for no exhaust.")
     public float spell_cost_exhaust_multiplier = 1F;
-    @Comment("Spells should cost items. Set `false` to remove rune (or other item) cost from all spells.")
+    @Comment("Spells should levelCost items. Set `false` to remove rune (or other item) levelCost from all spells.")
     public boolean spell_cost_item_allowed = true;
     @Comment("Spells should damage items on use. Set `false` to disable.")
     public boolean spell_cost_durability_allowed = true;
@@ -27,13 +27,13 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     public boolean spell_book_cooldown_lock = true;
     @Comment("Players can use the Spell Binding Table to create spell books.")
     public boolean spell_book_creation_enabled = true;
-    @Comment("Spell book creation level cost")
+    @Comment("Spell book creation level levelCost")
     public int spell_book_creation_cost = 1;
     @Comment("Spell book creation level requirement")
     public int spell_book_creation_requirement = 1;
-    @Comment("Spell binding level cost multiplier")
+    @Comment("Spell binding level levelCost multiplier")
     public int spell_binding_level_cost_multiplier = 1;
-    @Comment("Spell binding lapis lazuli cost multiplier")
+    @Comment("Spell binding lapis lazuli levelCost multiplier")
     public int spell_binding_lapis_cost_multiplier = 1;
     @Comment("Should spells on the offhand item be collected and used.")
     public boolean spells_collected_from_offhand = true;

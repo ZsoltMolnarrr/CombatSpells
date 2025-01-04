@@ -24,10 +24,10 @@ public class SpellBinding {
     private static final int LIBRARY_POWER_CAP = 18;
     public static final int BOOK_OFFSET = 1;
     public enum Mode { SPELL, BOOK }
-    public record Offer(int id, int cost, int levelRequirement, boolean isPowered) {  }
+    public record Offer(int id, int levelCost, int levelRequirement, int lapisCost, boolean isPowered) {  }
     public record OfferResult(Mode mode, List<Offer> offers) { }
 
-    public static OfferResult offersFor(ItemStack itemStack, int libraryPower) {
+    public static OfferResult offersFor(boolean creative, ItemStack itemStack, ItemStack consumableStack, int libraryPower) {
         if (itemStack.getItem() == Items.BOOK) {
             var books = SpellBooks.sorted();
             var offers = new ArrayList<Offer>();
@@ -37,6 +37,7 @@ public class SpellBinding {
                             i + BOOK_OFFSET,
                             SpellEngineMod.config.spell_book_creation_cost,
                             SpellEngineMod.config.spell_book_creation_requirement,
+                            0,
                             true));
                 }
             }
@@ -48,26 +49,64 @@ public class SpellBinding {
         if (container == null || pool == null || pool.spellIds().isEmpty()) {
             return new OfferResult(Mode.SPELL, List.of());
         }
+
+        var availableIds = pool.spellIds();
+        var scrollMode = false;
+        var consumableContainer = SpellContainerHelper.containerFromItemStack(consumableStack);
+        if (consumableContainer != null) {
+            availableIds = new ArrayList<>();
+            scrollMode = true;
+            if (consumableContainer.isValid() && !consumableContainer.spell_ids().isEmpty()) {
+                for (var idString : consumableContainer.spell_ids()) {
+                    var id = Identifier.of(idString);
+                    if (pool.spellIds().contains(id) || creative) {
+                        availableIds.add(id);
+                    }
+                }
+            }
+        }
+
         var spells = new HashMap<Identifier, Spell>();
-        for (var id: pool.spellIds()) {
+        for (var id: availableIds) {
             spells.put(id, SpellRegistry.getSpell(id));
         }
+        final var finalScrollMode = scrollMode;
         return new OfferResult(Mode.SPELL,
                 spells.entrySet().stream()
-                .filter(entry -> entry.getValue().learn != null
-                        && entry.getValue().learn.enabled
-                        && entry.getValue().learn.tier > 0)
+                .filter(entry ->  {
+                    var spell = entry.getValue();
+                    if (finalScrollMode) {
+                        return spell.scroll != null;
+                    } else {
+                        return spell.learn != null
+                                && spell.learn.enabled
+                                && spell.learn.tier > 0;
+                    }
+                })
                 .sorted(SpellContainerHelper.spellSorter)
                 .map(entry -> {
-                    var cost = entry.getValue().learn.tier * entry.getValue().learn.level_cost_per_tier;
-                    var levelRequirement = entry.getValue().learn.tier * entry.getValue().learn.level_requirement_per_tier;
-                    return new Offer(
-                            SpellRegistry.rawSpellId(entry.getKey()),
-                            cost,
-                            levelRequirement,
-                            (libraryPower == LIBRARY_POWER_CAP)
-                            || ((LIBRARY_POWER_BASE + libraryPower * LIBRARY_POWER_MULTIPLIER) >= levelRequirement)
-                    );
+                    var spell = entry.getValue();
+                    if (finalScrollMode) {
+                        var cost = spell.learn.tier * spell.scroll.level_cost_per_tier + spell.scroll.apply_cost_base;
+                        var levelRequirement = spell.learn.tier * spell.scroll.level_requirement_per_tier;
+                        return new Offer(
+                                SpellRegistry.rawSpellId(entry.getKey()),
+                                cost,
+                                levelRequirement,
+                                0,
+                                true);
+                    } else {
+                        var cost = spell.learn.tier * spell.learn.level_cost_per_tier;
+                        var levelRequirement = spell.learn.tier * spell.learn.level_requirement_per_tier;
+                        return new Offer(
+                                SpellRegistry.rawSpellId(entry.getKey()),
+                                cost * SpellEngineMod.config.spell_binding_level_cost_multiplier,
+                                levelRequirement,
+                                cost * SpellEngineMod.config.spell_binding_lapis_cost_multiplier,
+                                (libraryPower == LIBRARY_POWER_CAP)
+                                        || ((LIBRARY_POWER_BASE + libraryPower * LIBRARY_POWER_MULTIPLIER) >= levelRequirement)
+                        );
+                    }
                 })
                 .collect(Collectors.toList())
         );
@@ -114,8 +153,8 @@ public class SpellBinding {
         public static State of(Identifier spellId, ItemStack itemStack, int requiredLevel, int levelCost, int lapisCost) {
             var container = SpellContainerHelper.containerFromItemStack(itemStack);
             var requirements = new Requirements(
-                    lapisCost * SpellEngineMod.config.spell_binding_lapis_cost_multiplier,
-                    levelCost * SpellEngineMod.config.spell_binding_level_cost_multiplier,
+                    lapisCost,
+                    levelCost,
                     requiredLevel);
             if (container == null) {
                 return new State(ApplyState.INVALID, requirements);

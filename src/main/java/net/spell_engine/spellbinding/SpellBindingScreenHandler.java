@@ -17,6 +17,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.spell_engine.SpellEngineMod;
+import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellRegistry;
@@ -24,6 +25,7 @@ import net.spell_engine.internals.SpellRegistry;
 public class SpellBindingScreenHandler extends ScreenHandler {
     public static final ScreenHandlerType<SpellBindingScreenHandler> HANDLER_TYPE = new ScreenHandlerType(SpellBindingScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
     public static final int MAXIMUM_SPELL_COUNT = 32;
+    public static final int INIT_SYNC_ID = 14999;
     // State
     private final Inventory inventory = new SimpleInventory(2) {
         @Override
@@ -34,13 +36,15 @@ public class SpellBindingScreenHandler extends ScreenHandler {
     };
 
     private final ScreenHandlerContext context;
+    private boolean creative = false;
 
     // MARK: Synchronized data
     public final int[] mode = { SpellBinding.Mode.SPELL.ordinal() };
     public final int[] spellId = new int[MAXIMUM_SPELL_COUNT];
-    public final int[] spellCost = new int[MAXIMUM_SPELL_COUNT];
+    public final int[] spellLevelCost = new int[MAXIMUM_SPELL_COUNT];
     public final int[] spellLevelRequirement = new int[MAXIMUM_SPELL_COUNT];
     public final int[] spellPoweredByLib = new int[MAXIMUM_SPELL_COUNT];
+    public final int[] spellLapisCost = new int[MAXIMUM_SPELL_COUNT];
 
     public SpellBindingScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
@@ -63,7 +67,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(this.inventory, 1, 35, 47) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return stack.isOf(Items.LAPIS_LAZULI);
+                return stack.isOf(Items.LAPIS_LAZULI) || stack.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE);
             }
         });
 
@@ -78,9 +82,10 @@ public class SpellBindingScreenHandler extends ScreenHandler {
 
         for (int i = 0; i < MAXIMUM_SPELL_COUNT; ++i) {
             this.addProperty(Property.create(this.spellId, i));
-            this.addProperty(Property.create(this.spellCost, i));
+            this.addProperty(Property.create(this.spellLevelCost, i));
             this.addProperty(Property.create(this.spellLevelRequirement, i));
             this.addProperty(Property.create(this.spellPoweredByLib, i));
+            this.addProperty(Property.create(this.spellLapisCost, i));
         }
         this.addProperty(Property.create(this.mode, 0));
         if (playerInventory.player instanceof ServerPlayerEntity serverPlayer) {
@@ -101,14 +106,16 @@ public class SpellBindingScreenHandler extends ScreenHandler {
         if (inventory != this.inventory) {
             return;
         }
-        ItemStack itemStack = inventory.getStack(0);
-        if (itemStack.isEmpty() || !(SpellContainerHelper.hasValidContainer(itemStack) || itemStack.getItem() == Items.BOOK)) {
+        ItemStack mainStack = inventory.getStack(0);
+        ItemStack consumableStack = inventory.getStack(1);
+        if (mainStack.isEmpty() || !(SpellContainerHelper.hasValidContainer(mainStack) || mainStack.getItem() == Items.BOOK)) {
             this.mode[0] = SpellBinding.Mode.SPELL.ordinal();
             for (int i = 0; i < MAXIMUM_SPELL_COUNT; ++i) {
                 this.spellId[i] = 0;
-                this.spellCost[i] = 0;
+                this.spellLevelCost[i] = 0;
                 this.spellLevelRequirement[i] = 0;
                 this.spellPoweredByLib[i] = 0;
+                this.spellLapisCost[i] = 0;
             }
         } else {
             this.context.run((world, pos) -> {
@@ -118,21 +125,23 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                     if (!EnchantingTableBlock.canAccessPowerProvider(world, pos, blockPos)) continue;
                     ++libraryPower;
                 }
-                var offerResult = SpellBinding.offersFor(itemStack, libraryPower);
+                var offerResult = SpellBinding.offersFor(creative, mainStack, consumableStack, libraryPower);
                 this.mode[0] = offerResult.mode().ordinal();
                 var offers = offerResult.offers();
                 for (int i = 0; i < MAXIMUM_SPELL_COUNT; ++i) {
                     if (i < offers.size()) {
                         var offer = offers.get(i);
                         this.spellId[i] = offer.id();
-                        this.spellCost[i] = offer.cost();
+                        this.spellLevelCost[i] = offer.levelCost();
                         this.spellLevelRequirement[i] = offer.levelRequirement();
                         this.spellPoweredByLib[i] = offer.isPowered() ? 1 : 0;
+                        this.spellLapisCost[i] = offer.lapisCost();
                     } else {
                         this.spellId[i] = 0;
-                        this.spellCost[i] = 0;
+                        this.spellLevelCost[i] = 0;
                         this.spellLevelRequirement[i] = 0;
                         this.spellPoweredByLib[i] = 0;
+                        this.spellLapisCost[i] = 0;
                     }
                 }
                 this.sendContentUpdates();
@@ -166,7 +175,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                 if (!this.insertItem(itemStack2, 2, 38, true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (itemStack2.isOf(Items.LAPIS_LAZULI)) {
+            } else if (itemStack2.isOf(Items.LAPIS_LAZULI) || itemStack2.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE)) {
                 if (!this.insertItem(itemStack2, 1, 2, true)) {
                     return ItemStack.EMPTY;
                 }
@@ -196,15 +205,18 @@ public class SpellBindingScreenHandler extends ScreenHandler {
 
     @Override
     public boolean onButtonClick(PlayerEntity player, int id) {
+        this.creative = player.isCreative();
+        if (id == INIT_SYNC_ID) { return false; }
         try {
             var mode = SpellBinding.Mode.values()[this.mode[0]];
             var rawId = spellId[id];
-            var cost = spellCost[id];
+            var levelCost = spellLevelCost[id];
             var requiredLevel = spellLevelRequirement[id];
             var poweredByLib = spellPoweredByLib[id];
+            var lapisCost = spellLapisCost[id];
             var lapisCount = getLapisCount();
-            var weaponStack = getStacks().get(0);
-            var lapisStack = getStacks().get(1);
+            var mainStack = getStacks().get(0);
+            var consumableStack = getStacks().get(1);
 
             if (poweredByLib == 0) {
                 return false;
@@ -218,7 +230,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                         return false;
                     }
                     var spellId = spellIdOptional.get();
-                    var binding = SpellBinding.State.of(spellId, weaponStack, requiredLevel, cost, cost);
+                    var binding = SpellBinding.State.of(spellId, mainStack, requiredLevel, levelCost, lapisCost);
                     if (binding.state == SpellBinding.State.ApplyState.INVALID) {
                         return false;
                     }
@@ -226,17 +238,21 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                         return false;
                     }
                     this.context.run((world, pos) -> {
-                        SpellContainerHelper.addSpell(spellId, weaponStack);
+                        SpellContainerHelper.addSpell(spellId, mainStack);
 
-                        if (!player.isCreative()) {
-                            lapisStack.decrement(binding.requirements.lapisCost());
+                        if (consumableStack.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE)) {
+                            consumableStack.decrement(1);
+                        } else {
+                            if (!player.isCreative()) {
+                                consumableStack.decrement(binding.requirements.lapisCost());
+                            }
                         }
                         applyLevelCost(player, binding.requirements.levelCost());
                         this.inventory.markDirty();
                         this.onContentChanged(this.inventory);
                         world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
                         if (player instanceof ServerPlayerEntity serverPlayer) {
-                            var container = SpellContainerHelper.containerFromItemStack(weaponStack);
+                            var container = SpellContainerHelper.containerFromItemStack(mainStack);
                             var poolId = SpellContainerHelper.getPoolId(container);
                             if (poolId != null) {
                                 var pool = SpellContainerHelper.getPool(container);
@@ -257,7 +273,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                         return false;
                     }
                     var poolId = Identifier.of(container.pool());
-                    var binding = SpellBinding.State.forBook(cost, requiredLevel);
+                    var binding = SpellBinding.State.forBook(levelCost, requiredLevel);
                     if (binding.state == SpellBinding.State.ApplyState.INVALID) {
                         return false;
                     }
@@ -268,7 +284,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                     this.context.run((world, pos) -> {
                         this.slots.get(0).setStack(itemStack);
                         if (!player.isCreative()) {
-                            lapisStack.decrement(binding.requirements.lapisCost());
+                            consumableStack.decrement(binding.requirements.lapisCost());
                         }
                         applyLevelCost(player, binding.requirements.levelCost());
                         this.inventory.markDirty();

@@ -62,6 +62,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
         downButton.visible = false;
         this.addDrawableChild(upButton);
         this.addDrawableChild(downButton);
+        client.interactionManager.clickButton(this.handler.syncId, SpellBindingScreenHandler.INIT_SYNC_ID);
     }
 
     @Override
@@ -241,8 +242,9 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
         try {
             for (int i = 0; i < SpellBindingScreenHandler.MAXIMUM_SPELL_COUNT; i++) {
                 var rawId = handler.spellId[i];
-                var cost = handler.spellCost[i];
+                var levelCost = handler.spellLevelCost[i];
                 var requirement = handler.spellLevelRequirement[i];
+                var lapisCost = handler.spellLapisCost[i];
                 var powered = handler.spellPoweredByLib[i] == 1;
                 boolean shown = (i >= pageOffset) && (i < (pageOffset + PAGE_SIZE));
                 // System.out.println("Server offers spell ID: " + rawId + " | mode: " + mode);
@@ -253,7 +255,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                             continue;
                         }
                         var id = spellId.get();
-                        SpellBinding.State bindingState = SpellBinding.State.of(id, itemStack, requirement, cost, cost);
+                        SpellBinding.State bindingState = SpellBinding.State.of(id, itemStack, requirement, levelCost, lapisCost);
                         boolean isDetailsPublic = powered || bindingState.state == SpellBinding.State.ApplyState.ALREADY_APPLIED;
                         boolean isEnabled = powered && bindingState.readyToApply(player, lapisCount);
                         var text = Text.translatable(SpellTooltip.spellTranslationKey(id));
@@ -273,7 +275,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                     case BOOK -> {
                         if (rawId < SpellBinding.BOOK_OFFSET) continue; // Filter blank offers
                         var item = SpellBooks.sorted().get(rawId - SpellBinding.BOOK_OFFSET);
-                        SpellBinding.State bindingState = SpellBinding.State.forBook(cost, requirement);
+                        SpellBinding.State bindingState = SpellBinding.State.forBook(levelCost, requirement);
                         boolean isEnabled = bindingState.readyToApply(player, lapisCount);
 
                         var button = new ButtonViewModel(shown,
@@ -366,7 +368,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
             context.drawTextWithShadow(textRenderer, text,
                     viewModel.x + viewModel.height, viewModel.y + SPELL_ICON_INDENT, isUnlocked ? 0xFFFFFF : 0x808080);
             var goodColor = viewModel.isEnabled ? COLOR_GOOD : COLOR_GOOD_BUT_DISABLED;
-            if (!alreadyApplied) {
+            if (!alreadyApplied && viewModel.binding.requirements.requiredLevel() > 0) {
                 String levelRequirement = "" + viewModel.binding.requirements.requiredLevel();
                 context.drawTextWithShadow(textRenderer, levelRequirement,
                         viewModel.x + viewModel.width - 2 - textRenderer.getWidth(levelRequirement),
@@ -389,7 +391,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                         viewModel.x + SPELL_ICON_INDENT,
                         viewModel.y + SPELL_ICON_INDENT);
             }
-            if (!alreadyApplied) {
+            if (!alreadyApplied && viewModel.binding.requirements.levelCost() > 0) {
                 context.getMatrices().translate(0, 0, 300);
                 RenderSystem.setShaderTexture(0, TEXTURE);
                 context.drawTexture(TEXTURE,

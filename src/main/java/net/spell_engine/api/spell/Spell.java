@@ -33,7 +33,8 @@ public class Spell {
         public boolean generate = true;
         /// Cost of experience levels to apply the scroll
         public int apply_cost_base = 0;
-        public int apply_cost_per_tier = 1;
+        public int level_cost_per_tier = 1;
+        public int level_requirement_per_tier = 0;
         @Nullable public Rarity custom_rarity = null;
     }
 
