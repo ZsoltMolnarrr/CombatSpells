@@ -9,6 +9,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
+import net.spell_engine.api.item.trinket.SpellBookItem;
 import net.spell_engine.api.item.trinket.SpellBookTrinketItem;
 import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.internals.SpellContainerHelper;
@@ -30,7 +31,7 @@ public class TrinketsCompat {
 
         if (enabled) {
             TrinketsApi.registerTrinketPredicate(Identifier.of(SpellEngineMod.ID, "spell_book"), (itemStack, slotReference, livingEntity) -> {
-                if (itemStack.getItem() instanceof SpellBookTrinketItem) {
+                if (SpellBookItem.isSpellBook(itemStack.getItem())) {
                     return TriState.TRUE;
                 }
                 return TriState.DEFAULT;

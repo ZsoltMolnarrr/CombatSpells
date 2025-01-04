@@ -8,11 +8,10 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
-import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellDataComponents;
-import net.spell_engine.api.spell.SpellSlot;
+import net.spell_engine.api.spell.*;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.gui.SpellTooltip;
+import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -35,7 +34,10 @@ public class ScrollItem extends Item {
         if (scroll != null && scroll.generate) {
             var stack = new ItemStack(ITEM);
 
-            stack.set(SpellDataComponents.SPELL_SLOT, new SpellSlot(id.toString()));
+            var contentType = spell.school.archetype == SpellSchool.Archetype.ARCHERY
+                    ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
+            var container = new SpellContainer(contentType, false, "", 1, List.of(id.toString()));
+            stack.set(SpellDataComponents.SPELL_CONTAINER, container);
 
             var rarity = scroll.custom_rarity;
             if (rarity == null) {
