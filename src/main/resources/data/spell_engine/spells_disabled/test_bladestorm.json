@@ -1,0 +1,73 @@
+{
+  "school": "PHYSICAL_MELEE",
+  "range": 4,
+  "learn": {
+    "tier": 4
+  },
+  "cast": {
+    "duration": 18,
+    "movement_speed": 1.1,
+    "animation": "spell_engine:two_handed_spin_static",
+    "channel_ticks": 15,
+    "sound": {
+      "id": "rogues:whirlwind",
+      "randomness": 0
+    }
+  },
+  "release": {
+    "target": {
+      "type": "AREA",
+      "area": {
+        "vertical_range_multiplier": 0.5
+      }
+    },
+    "sound": {
+      "id": "rogues:throw"
+    },
+    "particles": [
+      {
+        "particle_id": "spell_engine:snowflake",
+        "shape": "CIRCLE",
+        "origin": "CENTER",
+        "count": 130.0,
+        "min_speed": 0.2,
+        "max_speed": 0.6
+      },
+      {
+        "particle_id": "spell_engine:frost_shard",
+        "shape": "CIRCLE",
+        "origin": "CENTER",
+        "count": 130.0,
+        "min_speed": 0.5,
+        "max_speed": 0.9
+      }
+    ]
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "spell_power_coefficient": 1
+        }
+      },
+      "particles": [
+        {
+          "particle_id": "spell_engine:frost_hit",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 30.0,
+          "min_speed": 0.2,
+          "max_speed": 0.7
+        }
+      ],
+      "sound": {
+        "id": "rogues:throw_impact"
+      }
+    }
+  ],
+  "cost": {
+    "exhaust": 0.3,
+    "cooldown_duration": 1
+  }
+}

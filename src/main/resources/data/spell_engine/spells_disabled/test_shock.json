@@ -1,0 +1,95 @@
+{
+  "range": 4.0,
+  "school": "PHYSICAL_MELEE",
+  "learn": {
+    "tier": 2
+  },
+  "cast": {
+    "duration": 0,
+    "animation": "spell_engine:dual_handed_ground_release",
+    "particles": [ ]
+  },
+  "release": {
+    "target": {
+      "type": "AREA",
+      "area": {
+        "vertical_range_multiplier": 0.5
+      }
+    },
+    "animation": "spell_engine:dual_handed_ground_release",
+    "sound": {
+      "id": "spell_engine:frost_hit"
+    },
+    "particles": [
+      {
+        "particle_id": "spell_engine:smoke_medium",
+        "shape": "CIRCLE",
+        "origin": "CENTER",
+        "count": 50.0,
+        "min_speed": 0.2,
+        "max_speed": 0.3,
+        "pre_spawn_travel": 6
+      },
+      {
+        "particle_id": "spell_engine:smoke_medium",
+        "shape": "CIRCLE",
+        "origin": "CENTER",
+        "count": 60.0,
+        "min_speed": 0.2,
+        "max_speed": 0.3,
+        "pre_spawn_travel": 8
+      },
+      {
+        "particle_id": "spell_engine:smoke_medium",
+        "shape": "SPHERE",
+        "origin": "CENTER",
+        "count": 50,
+        "min_speed": 0.25,
+        "max_speed": 0.25,
+        "pre_spawn_travel": 4
+      },
+      {
+        "particle_id": "spell_engine:electric_arc_a",
+        "shape": "PILLAR",
+        "origin": "FEET",
+        "count": 6.0,
+        "min_speed": 0.01,
+        "max_speed": 0.05,
+        "extent": 3
+      },
+      {
+        "particle_id": "spell_engine:electric_arc_b",
+        "shape": "PILLAR",
+        "origin": "FEET",
+        "count": 8.0,
+        "min_speed": 0.01,
+        "max_speed": 0.05,
+        "extent": 4
+      }
+    ]
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "weakness",
+          "duration": 6,
+          "apply_mode": "ADD",
+          "apply_limit": {
+            "health_base": 50,
+            "spell_power_multiplier": 2
+          },
+          "show_particles": false
+        }
+      },
+      "sound": {
+        "id": "spell_engine:frost_hit"
+      }
+    }
+  ],
+  "cost": {
+    "exhaust": 0.2,
+    "cooldown_duration": 1
+  }
+}

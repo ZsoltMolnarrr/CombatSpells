@@ -1,0 +1,155 @@
+{
+  "school": "FROST",
+  "range": 32.0,
+  "spell_school_v2": "frost",
+  "learn": {
+    "tier": 4
+  },
+  "cast": {
+    "duration": 8,
+    "animation": "spell_engine:one_handed_sky_charge",
+    "sound": {
+      "id": "wizards:frost_blizzard_casting",
+      "randomness": 0
+    },
+    "particles": [
+      {
+        "particle_id": "spell_engine:snowflake",
+        "shape": "PIPE",
+        "origin": "CENTER",
+        "count": 0.5,
+        "min_speed": 0.1,
+        "max_speed": 0.2
+      }
+    ],
+    "channel_ticks": 12
+  },
+  "release": {
+    "target": {
+      "type": "METEOR",
+      "meteor": {
+        "launch_height": 10,
+        "launch_radius": 3,
+        "launch_properties": {
+          "velocity": 1,
+          "extra_launch_count": 3,
+          "extra_launch_delay": 4
+        },
+        "projectile": {
+          "divergence": 8,
+          "client_data": {
+            "travel_particles": [
+              {
+                "particle_id": "spell_engine:snowflake",
+                "shape": "CIRCLE",
+                "rotation": "LOOK",
+                "origin": "CENTER",
+                "count": 4,
+                "min_speed": 0,
+                "max_speed": 0.1
+              },
+              {
+                "particle_id": "spell_engine:frost_hit",
+                "shape": "CIRCLE",
+                "rotation": "LOOK",
+                "origin": "CENTER",
+                "count": 1,
+                "min_speed": 0.1,
+                "max_speed": 0.2
+              }
+            ],
+            "model": {
+              "model_id": "wizards:projectile/frostbolt_projectile",
+              "scale": 0.8
+            }
+          }
+        }
+      }
+    },
+    "animation": "spell_engine:one_handed_area_release",
+    "sound": {
+      "id": "spell_engine:generic_frost_release"
+    }
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "spell_power_coefficient": 0.8,
+          "knockback": 0.2
+        }
+      },
+      "sound": {
+        "id": "spell_engine:generic_frost_impact"
+      }
+    },
+    {
+      "action": {
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "wizards:frost_slowness",
+          "duration": 3,
+          "amplifier": 0,
+          "apply_limit": {
+            "health_base": 80,
+            "spell_power_multiplier": 2
+          },
+          "show_particles": false
+        }
+      },
+      "particles": [
+        {
+          "particle_id": "spell_engine:frost_hit",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 50.0,
+          "min_speed": 0.2,
+          "max_speed": 0.7
+        },
+        {
+          "particle_id": "spell_engine:snowflake",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 25.0,
+          "min_speed": 0.1,
+          "max_speed": 0.4
+        }
+      ]
+    }
+  ],
+  "area_impact": {
+    "radius": 3,
+    "area": {
+      "distance_dropoff": "SQUARED"
+    },
+    "particles": [
+      {
+        "particle_id": "snowflake",
+        "shape": "SPHERE",
+        "origin": "CENTER",
+        "count": 40.0,
+        "min_speed": 0.1,
+        "max_speed": 0.3
+      },
+      {
+        "particle_id": "spell_engine:frost_hit",
+        "shape": "SPHERE",
+        "origin": "CENTER",
+        "count": 50.0,
+        "min_speed": 0.2,
+        "max_speed": 0.4
+      }
+    ],
+    "sound": {
+      "id": "wizards:frost_shard_impact",
+      "volume": 1.5
+    }
+  },
+  "cost": {
+    "exhaust": 0.4,
+    "item_id": "runes:frost_stone",
+    "cooldown_duration": 4,
+    "cooldown_proportional": true
+  }
+}

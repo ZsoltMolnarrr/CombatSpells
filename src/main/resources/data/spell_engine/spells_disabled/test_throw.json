@@ -1,0 +1,88 @@
+{
+  "school": "PHYSICAL_MELEE",
+  "range": 24,
+  "learn": {
+    "tier": 1
+  },
+  "cast": {
+    "duration": 3,
+    "animation": "spell_engine:one_handed_throw_charge",
+    "particles": [ ]
+  },
+  "release": {
+    "target": {
+      "type": "PROJECTILE",
+      "projectile": {
+        "launch_properties": {
+          "velocity": 0.8
+        },
+        "projectile": {
+          "homing_angle": 2.0,
+          "perks": {
+            "bounce": 1
+          },
+          "client_data": {
+            "travel_particles": [ ],
+            "model": {
+              "use_held_item": true,
+              "light_emission": "NONE",
+              "rotate_degrees_per_tick": -36.0,
+              "scale": 1,
+              "orientation": "ALONG_MOTION"
+            }
+          },
+          "travel_sound_interval": 8,
+          "travel_sound": {
+            "id": "rogues:throw"
+          }
+        }
+      }
+    },
+    "animation": "spell_engine:one_handed_throw_release_instant",
+    "sound": {
+      "id": "rogues:throw"
+    }
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "spell_power_coefficient": 1
+        }
+      },
+      "sound": {
+        "id": "rogues:throw_impact"
+      }
+    },
+    {
+      "action": {
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "rogues:shatter",
+          "duration": 8,
+          "amplifier": 0,
+          "apply_limit": {
+            "health_base": 100,
+            "spell_power_multiplier": 2
+          },
+          "show_particles": false
+        }
+      },
+      "particles": [
+        {
+          "particle_id": "spell_engine:dripping_blood",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 10.0,
+          "min_speed": 0.05,
+          "max_speed": 0.3
+        }
+      ]
+    }
+  ],
+  "cost": {
+    "exhaust": 0.3,
+    "cooldown_duration": 8
+  }
+}

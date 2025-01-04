@@ -20,6 +20,8 @@ public record SpellContainer(ContentType content, boolean is_proxy, String pool,
             Codec.STRING.listOf().optionalFieldOf("spell_ids", List.of()).forGetter(x -> x.spell_ids)
     ).apply(instance, SpellContainer::new));
 
+    public static final SpellContainer EMPTY = new SpellContainer(ContentType.MAGIC, false, "", 0, List.of());
+
     // Canonical constructor with default values, to avoid null values
     public SpellContainer(ContentType content, boolean is_proxy, String pool, int max_spell_count, List<String> spell_ids) {
         this.content = content != null ? content : ContentType.MAGIC;

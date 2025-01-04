@@ -55,6 +55,7 @@ public class SpellBinding {
         return new OfferResult(Mode.SPELL,
                 spells.entrySet().stream()
                 .filter(entry -> entry.getValue().learn != null
+                        && entry.getValue().learn.enabled
                         && entry.getValue().learn.tier > 0)
                 .sorted(SpellContainerHelper.spellSorter)
                 .map(entry -> {

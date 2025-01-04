@@ -1,0 +1,57 @@
+{
+  "school": "PHYSICAL_RANGED",
+  "learn": {
+    "tier": 2
+  },
+  "cast": {
+    "duration": 1,
+    "animation": "spell_engine:two_handed_channeling",
+    "particles": []
+  },
+  "release": {
+    "target": {
+      "type": "CLOUD",
+      "cloud": {
+        "volume": {
+          "radius": 3.0,
+          "area": {
+            "vertical_range_multiplier": 0.1
+          }
+        },
+        "time_to_live_seconds": 5,
+        "client_data": {
+          "particles": [
+            {
+              "particle_id": "spell_engine:roots",
+              "shape": "PILLAR",
+              "origin": "FEET",
+              "count": 5.0,
+              "min_speed": 0.0,
+              "max_speed": 0.0
+            }
+          ]
+        }
+      }
+    }
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "STATUS_EFFECT",
+        "status_effect": {
+          "effect_id": "wizards:frozen",
+          "duration": 6,
+          "apply_mode": "ADD",
+          "apply_limit": {
+            "health_base": 50,
+            "spell_power_multiplier": 2
+          },
+          "show_particles": false
+        }
+      },
+      "sound": {
+        "id": "wizards:frost_nova_effect_impact"
+      }
+    }
+  ]
+}

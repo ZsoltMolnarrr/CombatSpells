@@ -1,0 +1,467 @@
+{
+  "school": "FIRE",
+  "range": 0,
+  "learn": {
+    "tier": 4
+  },
+  "cast": {
+    "duration": 0,
+    "particles": []
+  },
+  "release": {
+    "animation": "spell_engine:one_handed_area_release_ground_left_to_right",
+    "target": {
+      "type": "CLOUD",
+      "clouds": [
+        {
+          "volume": {
+            "radius": 0.9,
+            "area": {
+              "vertical_range_multiplier": 4
+            },
+            "sound": {
+              "id": "wizards:fire_scorch_impact"
+            }
+          },
+          "impact_tick_interval": 8,
+          "time_to_live_seconds": 8,
+          "delay_ticks": 0,
+          "placement": {
+            "location_offset_by_look": 4.4,
+            "location_yaw_offset": -64,
+            "apply_yaw": true
+          },
+          "spawn": {
+            "sound": {
+              "id": "wizards:fire_wall_ignite"
+            },
+            "particles": [
+              {
+                "particle_id": "flame",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 15.0,
+                "min_speed": 0.5,
+                "max_speed": 0.1
+              }
+            ]
+          },
+          "client_data": {
+            "light_level": 8,
+            "particles": [
+              {
+                "particle_id": "spell_engine:flame_ground",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 2.0,
+                "min_speed": 0.0,
+                "max_speed": 0.0
+              },
+              {
+                "particle_id": "spell_engine:flame_medium_a",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 3.0,
+                "extent": 0,
+                "min_speed": 0.02,
+                "max_speed": 0.30
+              },
+              {
+                "particle_id": "spell_engine:flame_medium_b",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 3.0,
+                "extent": 0,
+                "min_speed": 0.1,
+                "max_speed": 0.35
+              },
+              {
+                "particle_id": "spell_engine:flame_spark",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 4.0,
+                "min_speed": 0.05,
+                "max_speed": 0.3
+              },
+              {
+                "particle_id": "campfire_cosy_smoke",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 0.1,
+                "min_speed": 0.05,
+                "max_speed": 0.01
+              }
+            ]
+          }
+        },
+        {
+          "volume": {
+            "radius": 0.9,
+            "area": {
+              "vertical_range_multiplier": 4
+            },
+            "sound": {
+              "id": "wizards:fire_scorch_impact"
+            }
+          },
+          "impact_tick_interval": 8,
+          "time_to_live_seconds": 8,
+          "delay_ticks": 4,
+          "spawn": {
+            "sound": {
+              "id": "wizards:fire_wall_ignite"
+            },
+            "particles": [
+              {
+                "particle_id": "flame",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 15.0,
+                "min_speed": 0.5,
+                "max_speed": 0.1
+              }
+            ]
+          },
+          "placement": {
+            "location_offset_by_look": 2.8,
+            "location_yaw_offset": -45,
+            "apply_yaw": true
+          },
+          "client_data": {
+            "light_level": 8,
+            "particles": [
+              {
+                "particle_id": "spell_engine:flame_ground",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 2.0,
+                "min_speed": 0.0,
+                "max_speed": 0.0
+              },
+              {
+                "particle_id": "spell_engine:flame_medium_a",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 3.0,
+                "extent": 0,
+                "min_speed": 0.02,
+                "max_speed": 0.30
+              },
+              {
+                "particle_id": "spell_engine:flame_medium_b",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 3.0,
+                "extent": 0,
+                "min_speed": 0.1,
+                "max_speed": 0.35
+              },
+              {
+                "particle_id": "spell_engine:flame_spark",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 4.0,
+                "min_speed": 0.05,
+                "max_speed": 0.3
+              },
+              {
+                "particle_id": "campfire_cosy_smoke",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 0.1,
+                "min_speed": 0.05,
+                "max_speed": 0.01
+              }
+            ]
+          }
+        },
+        {
+          "volume": {
+            "radius": 0.9,
+            "area": {
+              "vertical_range_multiplier": 4
+            },
+            "sound": {
+              "id": "wizards:fire_scorch_impact"
+            }
+          },
+          "impact_tick_interval": 8,
+          "time_to_live_seconds": 8,
+          "delay_ticks": 8,
+          "placement": {
+            "location_offset_by_look": 2,
+            "location_yaw_offset": 0,
+            "apply_yaw": true
+          },
+          "spawn": {
+            "sound": {
+              "id": "wizards:fire_wall_ignite"
+            },
+            "particles": [
+              {
+                "particle_id": "flame",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 15.0,
+                "min_speed": 0.5,
+                "max_speed": 0.1
+              }
+            ]
+          },
+          "client_data": {
+            "light_level": 8,
+            "particles": [
+              {
+                "particle_id": "spell_engine:flame_ground",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 2.0,
+                "min_speed": 0.0,
+                "max_speed": 0.0
+              },
+              {
+                "particle_id": "spell_engine:flame_medium_a",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 3.0,
+                "extent": 0,
+                "min_speed": 0.02,
+                "max_speed": 0.30
+              },
+              {
+                "particle_id": "spell_engine:flame_medium_b",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 3.0,
+                "extent": 0,
+                "min_speed": 0.1,
+                "max_speed": 0.35
+              },
+              {
+                "particle_id": "spell_engine:flame_spark",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 4.0,
+                "min_speed": 0.05,
+                "max_speed": 0.3
+              },
+              {
+                "particle_id": "campfire_cosy_smoke",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 0.1,
+                "min_speed": 0.05,
+                "max_speed": 0.01
+              }
+            ]
+          }
+        },
+        {
+          "volume": {
+            "radius": 0.9,
+            "area": {
+              "vertical_range_multiplier": 4
+            },
+            "sound": {
+              "id": "wizards:fire_scorch_impact"
+            }
+          },
+          "impact_tick_interval": 8,
+          "time_to_live_seconds": 8,
+          "delay_ticks": 12,
+          "placement": {
+            "location_offset_by_look": 2.8,
+            "location_yaw_offset": 45,
+            "apply_yaw": true
+          },
+          "spawn": {
+            "sound": {
+              "id": "wizards:fire_wall_ignite"
+            },
+            "particles": [
+              {
+                "particle_id": "flame",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 15.0,
+                "min_speed": 0.5,
+                "max_speed": 0.1
+              }
+            ]
+          },
+          "client_data": {
+            "light_level": 8,
+            "particles": [
+              {
+                "particle_id": "spell_engine:flame_ground",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 2.0,
+                "min_speed": 0.0,
+                "max_speed": 0.0
+              },
+              {
+                "particle_id": "spell_engine:flame_medium_a",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 3.0,
+                "extent": 0,
+                "min_speed": 0.02,
+                "max_speed": 0.30
+              },
+              {
+                "particle_id": "spell_engine:flame_medium_b",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 3.0,
+                "extent": 0,
+                "min_speed": 0.1,
+                "max_speed": 0.35
+              },
+              {
+                "particle_id": "spell_engine:flame_spark",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 4.0,
+                "min_speed": 0.05,
+                "max_speed": 0.3
+              },
+              {
+                "particle_id": "campfire_cosy_smoke",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 0.1,
+                "min_speed": 0.05,
+                "max_speed": 0.01
+              }
+            ]
+          }
+        },
+        {
+          "volume": {
+            "radius": 0.9,
+            "area": {
+              "vertical_range_multiplier": 4
+            },
+            "sound": {
+              "id": "wizards:fire_scorch_impact"
+            }
+          },
+          "impact_tick_interval": 8,
+          "time_to_live_seconds": 8,
+          "delay_ticks": 16,
+          "placement": {
+            "location_offset_by_look": 4.4,
+            "location_yaw_offset": 64,
+            "apply_yaw": true
+          },
+          "spawn": {
+            "sound": {
+              "id": "wizards:fire_wall_ignite"
+            },
+            "particles": [
+              {
+                "particle_id": "flame",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 15.0,
+                "min_speed": 0.5,
+                "max_speed": 0.1
+              }
+            ]
+          },
+          "client_data": {
+            "light_level": 8,
+            "particles": [
+              {
+                "particle_id": "spell_engine:flame_ground",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 2.0,
+                "min_speed": 0.0,
+                "max_speed": 0.0
+              },
+              {
+                "particle_id": "spell_engine:flame_medium_a",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 3.0,
+                "extent": 0,
+                "min_speed": 0.02,
+                "max_speed": 0.30
+              },
+              {
+                "particle_id": "spell_engine:flame_medium_b",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 3.0,
+                "extent": 0,
+                "min_speed": 0.05,
+                "max_speed": 0.35
+              },
+              {
+                "particle_id": "spell_engine:flame_spark",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 4.0,
+                "min_speed": 0.05,
+                "max_speed": 0.3
+              },
+              {
+                "particle_id": "campfire_cosy_smoke",
+                "shape": "PILLAR",
+                "origin": "FEET",
+                "count": 0.1,
+                "min_speed": 0.05,
+                "max_speed": 0.01
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "impact": [
+    {
+      "action": {
+        "type": "DAMAGE",
+        "damage": {
+          "spell_power_coefficient": 0.6
+        }
+      },
+      "particles": [
+        {
+          "particle_id": "smoke",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 15.0,
+          "min_speed": 0.01,
+          "max_speed": 0.1
+        },
+        {
+          "particle_id": "flame",
+          "shape": "SPHERE",
+          "origin": "CENTER",
+          "count": 10.0,
+          "min_speed": 0.01,
+          "max_speed": 0.1
+        }
+      ],
+      "sound": {
+        "id": "wizards:fire_scorch_impact"
+      }
+    },
+    {
+      "action": {
+        "type": "FIRE",
+        "fire": {
+          "duration": 2
+        }
+      }
+    }
+  ],
+  "cost": {
+    "exhaust": 0.2,
+    "cooldown_duration": 2
+  }
+}

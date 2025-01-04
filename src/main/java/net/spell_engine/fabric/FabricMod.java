@@ -13,6 +13,7 @@ import net.spell_engine.api.effect.RemoveOnHit;
 import net.spell_engine.compat.TrinketsCompat;
 import net.spell_engine.entity.SpellCloud;
 import net.spell_engine.entity.SpellProjectile;
+import net.spell_engine.item.SpellEngineItems;
 import net.spell_engine.utils.SoundHelper;
 
 public class FabricMod implements ModInitializer {
@@ -43,6 +44,7 @@ public class FabricMod implements ModInitializer {
     public void onInitialize() {
         SpellEngineMod.init();
         SpellEngineMod.registerSpellBinding();
+        SpellEngineItems.register();
         SoundHelper.registerSounds();
 
         TrinketsCompat.init();

@@ -1,5 +1,6 @@
 package net.spell_engine.api.spell;
 
+import net.minecraft.util.Rarity;
 import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_power.api.SpellPower;
@@ -20,9 +21,20 @@ public class Spell {
 
     public Learn learn = new Learn();
     public static class Learn { public Learn() {}
+        /// Whether the spell can be obtained from Spell Binding Table
+        public boolean enabled = true;
         public int tier = 1;
         public int level_cost_per_tier = 3;
         public int level_requirement_per_tier = 10;
+    }
+
+    public Scroll scroll = new Scroll();
+    public static class Scroll { public Scroll() {}
+        public boolean generate = true;
+        /// Cost of experience levels to apply the scroll
+        public int apply_cost_base = 0;
+        public int apply_cost_per_tier = 1;
+        @Nullable public Rarity custom_rarity = null;
     }
 
     public Cast cast = new Cast();

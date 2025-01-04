@@ -32,30 +32,44 @@ public class SpellContainerHelper {
         return getEquipped(weaponContainer, player);
     }
 
-    public static SpellContainer getEquipped(SpellContainer proxyContainer, PlayerEntity player) {
-        if (proxyContainer == null || !proxyContainer.is_proxy()) {
-            return proxyContainer;
+    public static SpellContainer getEquipped(SpellContainer starterContainer, PlayerEntity player) {
+        if (starterContainer == null || !starterContainer.is_proxy()) {
+            return SpellContainer.EMPTY;
         }
 
-        // Using LinkedHashSet to preserve order and remove duplicates
-        var spellIds = new LinkedHashSet<>(proxyContainer.spell_ids());
+        var containers = new ArrayList<SpellContainer>();
+        containers.add(starterContainer);
 
         if (TrinketsCompat.isEnabled()) {
-            spellIds.addAll(TrinketsCompat.getEquippedSpells(proxyContainer, player));
+            containers.addAll(TrinketsCompat.getEquippedSpells(player));
         }
-        if (SpellEngineMod.config.spell_book_offhand) {
-            if (isOffhandContainerValid(player, proxyContainer.content())) {
-                spellIds.addAll(getOffhandSpellIds(player));
+        if (SpellEngineMod.config.spells_collected_from_offhand) {
+            if (SpellEngineMod.config.spells_collected_from_offhand_ignore_dual_wielding) {
+                addContainerIfValid(getOffhandItemStack(player), containers);
+            } else {
+                addContainerIfValid(player.getOffHandStack(), containers);
+            }
+        }
+        if (SpellEngineMod.config.spells_collected_from_equipment) {
+            for (var slot : player.getInventory().armor) {
+                addContainerIfValid(slot, containers);
             }
         }
 
         var spells = new ArrayList<SpellInfo>();
-        for (var idString : spellIds) {
-            var id = Identifier.of(idString);
-            var spell = SpellRegistry.getSpell(id);
-            if (spell != null) {
-                spells.add(new SpellInfo(spell, id));
+        for (var container : containers) {
+            for (var idString : container.spell_ids()) {
+                var id = Identifier.of(idString);
+                var spell = SpellRegistry.getSpell(id);
+                if (spell != null) {
+                    spells.add(new SpellInfo(spell, id));
+                }
             }
+        }
+
+        var spellIds = new LinkedHashSet<String>(); // We need the IDs only, but remove duplicates
+        for (var spell : spells) {
+            spellIds.add(spell.id().toString());
         }
 
         // Remove spells with the same group, and lower tier
@@ -80,7 +94,14 @@ public class SpellContainerHelper {
         }
         spellIds.removeAll(toRemove);
 
-        return new SpellContainer(proxyContainer.content(), false, null, 0, new ArrayList<>(spellIds));
+        return new SpellContainer(starterContainer.content(), false, null, 0, new ArrayList<>(spellIds));
+    }
+
+    private static void addContainerIfValid(ItemStack fromItemStack, List<SpellContainer> intoContainers) {
+        SpellContainer container = containerFromItemStack(fromItemStack);
+        if (container != null && container.isValid()) {
+            intoContainers.add(container);
+        }
     }
 
     private static boolean isOffhandContainerValid(PlayerEntity player, SpellContainer.ContentType allowedContent) {

@@ -58,10 +58,6 @@ public class SpellEngineMod {
     public static void registerSpellBinding() {
         Registry.register(Registries.BLOCK, SpellBinding.ID, SpellBindingBlock.INSTANCE);
         Registry.register(Registries.BLOCK_ENTITY_TYPE, SpellBinding.ID, SpellBindingBlockEntity.ENTITY_TYPE);
-        Registry.register(Registries.ITEM, SpellBinding.ID, SpellBindingBlock.ITEM);
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
-            content.add(SpellBindingBlock.ITEM);
-        });
         Registry.register(Registries.SCREEN_HANDLER, SpellBinding.ID, SpellBindingScreenHandler.HANDLER_TYPE);
         Criteria.register(SpellBindingCriteria.ID.toString(), SpellBindingCriteria.INSTANCE);
         Criteria.register(SpellBookCreationCriteria.ID.toString(), SpellBookCreationCriteria.INSTANCE);

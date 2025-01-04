@@ -44,19 +44,18 @@ public class TrinketsCompat {
         return enabled;
     }
 
-    public static List<String> getEquippedSpells(SpellContainer proxyContainer, PlayerEntity player) {
+    public static List<SpellContainer> getEquippedSpells(PlayerEntity player) {
         if (!enabled) {
             return Collections.emptyList();
         }
 
         var component = TrinketsApi.getTrinketComponent(player);
 
-        if (component.isEmpty() || proxyContainer == null || !proxyContainer.is_proxy()) {
+        if (component.isEmpty()) {
             return Collections.emptyList();
         }
 
         var trinketComponent = component.get();
-        var allowedContent = proxyContainer.content();
         var items = new LinkedHashSet<ItemStack>();
         var spellBookSlot = trinketComponent.getInventory().get("charm").get("spell_book");
 
@@ -64,21 +63,23 @@ public class TrinketsCompat {
         items.add(spellBookSlot.getStack(0));
 
         // Add all other equipped items
-        trinketComponent.getAllEquipped().forEach(pair -> items.add(pair.getRight()));
+        trinketComponent.getAllEquipped().forEach(pair -> {
+            if (pair.getLeft().getId().contains("spell_book")) { return; } // Spell book slot is already added
+            items.add(pair.getRight());
+        });
 
         // Extract spell IDs from the containers
         // Using LinkedHashSet to preserve order and remove duplicates
-        var collectedSpellIds = new LinkedHashSet<>(proxyContainer.spell_ids());
+        var containers = new ArrayList<SpellContainer>();
         for (ItemStack stack : items) {
             if (stack.isEmpty()) continue;
-
             var container = SpellContainerHelper.containerFromItemStack(stack);
-            if (container != null && container.isValid() && container.content() == allowedContent) {
-                collectedSpellIds.addAll(container.spell_ids());
+            if (container != null && container.isValid()) {
+                containers.add(container);
             }
         }
 
-        return new ArrayList<>(collectedSpellIds);
+        return containers;
     }
 
     public static ItemStack getSpellBookStack(PlayerEntity player) {

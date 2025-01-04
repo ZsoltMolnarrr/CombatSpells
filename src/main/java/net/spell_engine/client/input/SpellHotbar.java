@@ -4,16 +4,11 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.UseAction;
-import net.spell_engine.SpellEngineMod;
-import net.spell_engine.api.item.trinket.SpellBookItem;
-import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.gui.HudMessages;
@@ -64,8 +59,7 @@ public class SpellHotbar {
         var useKeyBinding = new WrappedKeybinding(options.useKey, WrappedKeybinding.VanillaAlternative.USE_KEY);
 
         if (mergedContainer != null
-                && !mergedContainer.spell_ids().isEmpty()
-                && !(held.getItem() instanceof SpellBookItem)) { // Specifically disable casting directly from spell books
+                && !mergedContainer.spell_ids().isEmpty()) {
             var itemUseExpectation = expectedUseStack(player);
             if (itemUseExpectation != null)  {
                 onUseKey = new Slot(null, SpellCast.Mode.ITEM_USE, itemUseExpectation.itemStack, useKeyBinding, null);
