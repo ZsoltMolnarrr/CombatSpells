@@ -35,7 +35,7 @@ public class FabricClientMod implements ClientModInitializer {
 //        });
 
         ItemTooltipCallback.EVENT.register((itemStack, tooltipContext, tooltipType, lines) -> {
-            SpellTooltip.addSpellInfo(itemStack, lines);
+            SpellTooltip.addSpellInfo(itemStack, tooltipType, lines);
         });
         EntityRendererRegistry.register(SpellProjectile.ENTITY_TYPE, SpellProjectileRenderer::new);
         EntityRendererRegistry.register(SpellCloud.ENTITY_TYPE, SpellCloudRenderer::new);

@@ -8,6 +8,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -39,7 +40,7 @@ public class SpellTooltip {
     private static final String teleportDistanceToken = "teleport_distance";
     public static String placeholder(String token) { return "{" + token + "}"; }
 
-    public static void addSpellInfo(ItemStack itemStack, List<Text> lines) {
+    public static void addSpellInfo(ItemStack itemStack, TooltipType tooltipType, List<Text> lines) {
         var player = MinecraftClient.getInstance().player;
         if (player == null) {
             return;
@@ -121,7 +122,34 @@ public class SpellTooltip {
                 }
             }
         }
-        lines.addAll(spellInfo);
+
+        if (spellInfo.isEmpty()) {
+            return;
+        }
+        var found = 0;
+        if (tooltipType.isAdvanced()) {
+            var searchedStyle = Text.literal("x")
+                    .formatted(Formatting.DARK_GRAY)
+                    .getStyle(); // From: ItemStack.java, advanced tooltip section
+            var reverseIndex = lines.size();
+            for (var line : lines.reversed()) {
+                --reverseIndex;
+                var style = line.getStyle();
+                if (style != null) {
+                    var newFind = searchedStyle.getColor().equals(style.getColor());
+                    if (found != 0 && !newFind) {
+                        break;
+                    } else {
+                        found = reverseIndex;
+                    }
+                }
+            }
+        }
+        if (found <= 0) {
+            lines.addAll(spellInfo);
+        } else {
+            lines.addAll(found, spellInfo);
+        }
     }
 
     public static List<Text> spellInfo(Identifier spellId, PlayerEntity player, ItemStack itemStack, boolean details, boolean indented) {
@@ -143,7 +171,7 @@ public class SpellTooltip {
             }
         }
         lines.add(
-                Text.literal((details || indented) ? "" : " ")
+                Text.literal((details || !indented) ? "" : " ")
                         .append(name)
         );
 
