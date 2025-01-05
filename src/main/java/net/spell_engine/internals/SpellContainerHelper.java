@@ -78,11 +78,13 @@ public class SpellContainerHelper {
 
         var spells = new ArrayList<SpellInfo>();
         for (var container : containers) {
-            for (var idString : container.spell_ids()) {
-                var id = Identifier.of(idString);
-                var spell = SpellRegistry.getSpell(id);
-                if (spell != null) {
-                    spells.add(new SpellInfo(spell, id));
+            if (container.content() == starterContainer.content()) {
+                for (var idString : container.spell_ids()) {
+                    var id = Identifier.of(idString);
+                    var spell = SpellRegistry.getSpell(id);
+                    if (spell != null) {
+                        spells.add(new SpellInfo(spell, id));
+                    }
                 }
             }
         }

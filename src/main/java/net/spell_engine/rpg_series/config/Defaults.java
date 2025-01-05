@@ -87,13 +87,6 @@ public class Defaults {
                         .add(A1)
                 ));
 
-        List.of("minecraft:chests/shipwreck_treasure")
-                .forEach(id -> scrolls.put(id, new LootConfig.Pool()
-                        .rolls(0.5)
-                        .scroll(1, 2)
-                ));
-
-
         List.of("minecraft:chests/desert_pyramid",
                 "minecraft:chests/underwater_ruin_small",
                 "minecraft:chests/jungle_temple",
@@ -187,6 +180,7 @@ public class Defaults {
                         .add(A1)
                     );
                     scrolls.put(id, new LootConfig.Pool()
+                        .rolls(0.5)
                         .scroll(1, 2)
                     );
                 });
@@ -649,7 +643,7 @@ public class Defaults {
         // YUNG Better Desert Temples mod
 
         scrolls.put("betterdeserttemples:chests/library", new LootConfig.Pool()
-                .rolls(2)
+                .rolls(1)
                 .scroll(1, 2)
         );
         items.put("betterdeserttemples:chests/pharaoh_hidden", new LootConfig.Pool()
@@ -697,7 +691,7 @@ public class Defaults {
                 .add(A2, true)
         );
         scrolls.put("betterstrongholds:chests/grand_library", new LootConfig.Pool()
-                .rolls(2)
+                .rolls(1)
                 .scroll(2, 4)
         );
         scrolls.put("betterstrongholds:chests/library_md", new LootConfig.Pool()
@@ -1011,6 +1005,7 @@ public class Defaults {
                 .add(X2)
         );
         scrolls.put("dungeons_arise:chests/infested_temple/infested_temple_top_treasure", new LootConfig.Pool()
+                .rolls(0.5)
                 .scroll(2, 3)
         );
         items.put("dungeons_arise:chests/illager_windmill/illager_windmill_treasure", new LootConfig.Pool()
@@ -1025,6 +1020,7 @@ public class Defaults {
                 .add(X2)
         );
         scrolls.put("dungeons_arise:chests/bandit_towers/bandit_towers_treasure", new LootConfig.Pool()
+                .rolls(0.5)
                 .scroll(1, 3)
         );
         items.put("dungeons_arise:chests/ceryneian_hind/ceryneian_hind_treasure", new LootConfig.Pool()
