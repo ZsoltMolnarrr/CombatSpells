@@ -885,6 +885,15 @@ public class Defaults {
 
         // Terralith mod
 
+        items.put("terralith:mage/treasure", new LootConfig.Pool()
+                .add(A1, true)
+                .add(W1, true)
+                .add(X1)
+        );
+        scrolls.put("terralith:mage/treasure", new LootConfig.Pool()
+                .scroll(1, 2)
+        );
+
         items.put("terralith:underground/chest", new LootConfig.Pool()
                 .rolls(0.5)
                 .add(A1, true)
@@ -918,6 +927,10 @@ public class Defaults {
                 .add(W2, true)
                 .add(A2, true)
                 .add(X2)
+        );
+        scrolls.put("terralith:spire/treasure", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(2, 3)
         );
 
         items.put("terralith:desert_outpost", new LootConfig.Pool()
@@ -997,6 +1010,9 @@ public class Defaults {
                 .add(A2, true)
                 .add(X2)
         );
+        scrolls.put("dungeons_arise:chests/infested_temple/infested_temple_top_treasure", new LootConfig.Pool()
+                .scroll(2, 3)
+        );
         items.put("dungeons_arise:chests/illager_windmill/illager_windmill_treasure", new LootConfig.Pool()
                 .add(W1, true)
                 .add(A1, true)
@@ -1007,6 +1023,9 @@ public class Defaults {
                 .add(A1, true)
                 .add(A2)
                 .add(X2)
+        );
+        scrolls.put("dungeons_arise:chests/bandit_towers/bandit_towers_treasure", new LootConfig.Pool()
+                .scroll(1, 3)
         );
         items.put("dungeons_arise:chests/ceryneian_hind/ceryneian_hind_treasure", new LootConfig.Pool()
                 .add(W2, true)
@@ -1022,6 +1041,10 @@ public class Defaults {
                 .add(A2, true)
                 .add(W2, true)
                 .add(X2)
+        );
+        scrolls.put("dungeons_arise:chests/heavenly_conqueror/heavenly_conqueror_treasure", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(2, 3)
         );
         items.put("dungeons_arise:chests/aviary/aviary_treasure", new LootConfig.Pool()
                 .rolls(0.5)
@@ -1047,6 +1070,10 @@ public class Defaults {
                 .add(A1, true)
                 .add(X1)
         );
+        scrolls.put("dungeons_arise_seven_seas:chests/corsair_corvette/corsair_corvette_treasure", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1, 2)
+        );
         items.put("dungeons_arise_seven_seas:chests/small_yacht/small_yacht_treasure", new LootConfig.Pool()
                 .add(W1, true)
                 .add(A1, true)
@@ -1063,6 +1090,10 @@ public class Defaults {
                 .add(W1, true)
                 .add(A1)
                 .add(X1)
+        );
+        scrolls.put("dungeons_arise:chests/jungle_tree_house/jungle_tree_house_treasure", new LootConfig.Pool()
+                .rolls(0.2)
+                .scroll(1, 2)
         );
         items.put("dungeons_arise:chests/illager_galley/illager_galley_treasure", new LootConfig.Pool()
                 .add(W1, true)
@@ -1093,6 +1124,10 @@ public class Defaults {
                 .add(A2, true)
                 .add(X2)
         );
+        scrolls.put("dungeons_arise:chests/illager_fort/illager_fort_treasure", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1, 3)
+        );
         items.put("dungeons_arise:chests/keep_kayra/keep_kayra_treasure", new LootConfig.Pool()
                 .add(W2)
                 .add(W2, true)
@@ -1100,6 +1135,10 @@ public class Defaults {
                 .add(A3)
                 .add(X2)
                 .add(X3)
+        );
+        scrolls.put("dungeons_arise:chests/keep_kayra/keep_kayra_treasure", new LootConfig.Pool()
+                .rolls(0.3)
+                .scroll(1, 3)
         );
         items.put("dungeons_arise_seven_seas:chests/pirate_junk/pirate_junk_treasure", new LootConfig.Pool()
                 .rolls(0.5)
@@ -1125,6 +1164,10 @@ public class Defaults {
                 .add(X2)
                 .add(X3)
         );
+        scrolls.put("dungeons_arise:chests/keep_kayra/keep_kayra_library_treasure", new LootConfig.Pool()
+                .rolls(2)
+                .scroll(1, 4)
+        );
         items.put("dungeons_arise:chests/mining_system/mining_system_treasure", new LootConfig.Pool()
                 .add(A1, true)
                 .add(A2, true)
@@ -1146,6 +1189,10 @@ public class Defaults {
                 .add(A2, true)
                 .add(X2)
         );
+        scrolls.put("dungeons_arise:chests/plague_asylum/plague_asylum_treasure", new LootConfig.Pool()
+                .rolls(0.3)
+                .scroll(1, 3)
+        );
         items.put("dungeons_arise_seven_seas:chests/unicorn_galleon/unicorn_galleon_treasure", new LootConfig.Pool()
                 .add(A1, true)
                 .add(A2, true)
@@ -1156,6 +1203,9 @@ public class Defaults {
                 .add(A1)
                 .add(A2)
                 .add(X2)
+        );
+        scrolls.put("dungeons_arise:chests/shiraz_palace/shiraz_palace_library", new LootConfig.Pool()
+                .scroll(1, 4)
         );
         items.put("dungeons_arise:chests/shiraz_palace/shiraz_palace_elite", new LootConfig.Pool()
                 .rolls(2)
