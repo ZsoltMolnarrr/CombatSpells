@@ -21,7 +21,6 @@ public class Defaults {
     }
 
     static {
-
         var WG = "#rpg_series:golden_weapons";
         var W0 = "#rpg_series:tier_0_weapons";
         var W1 = "#rpg_series:tier_1_weapons";
@@ -61,7 +60,6 @@ public class Defaults {
                         .add(X0)
                 ));
 
-
         List.of("minecraft:chests/bastion_bridge",
                 "minecraft:chests/simple_dungeon",
                 "minecraft:chests/stronghold_corridor",
@@ -71,6 +69,7 @@ public class Defaults {
                         .rolls(0.5)
                         .add(W1)
                         .add(X2)
+                        .scroll(2, 3).weight(5)
                 ));
 
         List.of("minecraft:chests/shipwreck_treasure")
@@ -90,12 +89,13 @@ public class Defaults {
                         .add(W1, true)
                         .add(A1, true)
                         .add(X1, true)
+                        .scroll(1, 2).weight(16)
                 ));
 
         List.of("minecraft:chests/nether_bridge",
-                "minecraft:chests/underwater_ruin_big")
+                    "minecraft:chests/underwater_ruin_big")
                 .forEach(id -> injectors.put(id, new LootConfig.Pool()
-                        .rolls(0.5)
+                        .rolls(0.75)
                         .add(W2)
                         .add(X2)
                 ));
@@ -114,20 +114,19 @@ public class Defaults {
                 .add(X3)
         );
 
-        List.of("minecraft:chests/nether_bridge",
-                "minecraft:chests/underwater_ruin_big")
-                .forEach(id -> injectors.put(id, new LootConfig.Pool()
-                        .rolls(0.75)
-                        .add(W2)
-                        .add(X2)
-                ));
-
-        List.of("minecraft:chests/ancient_city",
-                "minecraft:chests/stronghold_library")
+        List.of("minecraft:chests/ancient_city")
                 .forEach(id -> injectors.put(id, new LootConfig.Pool()
                         .rolls(0.8)
                         .add(A2, true)
-                        .add(X2, 2, false)
+                        .add(X2, false)
+                ));
+
+        List.of("minecraft:chests/stronghold_library")
+                .forEach(id -> injectors.put(id, new LootConfig.Pool()
+                        .rolls(0.8)
+                        .add(A2, true)
+                        .add(X2, false)
+                        .scroll(2, 4).weight(20)
                 ));
 
         List.of("minecraft:chests/end_city_treasure")
@@ -162,6 +161,7 @@ public class Defaults {
                         .add(W2, true)
                         .add(A2, true)
                         .add(X2)
+                        .scroll(2, 3).weight(5)
                 ));
 
         List.of("minecraft:chests/trial_chambers/reward_ominous_unique",
@@ -170,6 +170,7 @@ public class Defaults {
                         .rolls(1)
                         .add(W3, true)
                         .add(X4)
+                        .scroll(3, 4).weight(5)
                 ));
 
         // BOSSES
@@ -584,12 +585,12 @@ public class Defaults {
         );
 
         injectors.put("betterdeserttemples:chests/tomb_pharaoh", new LootConfig.Pool()
-                .add(WG, 2, false)
+                .add(WG, false)
                 .add(X2)
         );
 
         injectors.put("betterdeserttemples:chests/pharaoh_hidden", new LootConfig.Pool()
-                .add(WG, 2, false)
+                .add(WG, false, 2)
                 .add(X2)
         );
 
@@ -670,7 +671,7 @@ public class Defaults {
         injectors.put("philipsruins:chest/bone_dungeon_loot", new LootConfig.Pool()
                 .rolls(0.5)
                 .add(W0)
-                .add(W1, 3, false)
+                .add(W1, false)
                 .add(A1)
                 .add(A1, true)
                 .add(X1)

@@ -102,10 +102,7 @@ public class LootHelper {
 //                        System.out.println("XXX Resolving from tag cache: " + tagString);
                     for (var itemId: itemList) {
                         var item = Registries.ITEM.get(Identifier.of(itemId));
-                        if (item == null) {
-                            // System.out.println("XXX Item not found: " + itemId);
-                            continue; }
-//                            System.out.println("XXX Creating item entry: " + item.getName());
+                        if (item == null) { continue; }
                         var entry = ItemEntry.builder(item)
                                 .weight(weight);
                         if (enchant != null && enchant.isValid()) {
@@ -145,7 +142,7 @@ public class LootHelper {
                     lootPoolBuilder.with(entry);
                 }
             } else {
-                var item = entries.get(entryId);
+                var item = Registries.ITEM.get(Identifier.of(entryId));
                 if (item == null) { continue; }
                 var entry = ItemEntry.builder(item)
                         .weight(weight);

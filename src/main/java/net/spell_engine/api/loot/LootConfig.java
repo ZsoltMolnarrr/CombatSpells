@@ -73,10 +73,13 @@ public class LootConfig {
         public Pool add(String id) {
             return add(id, false);
         }
-        public Pool add(String id, boolean enchant) {
-            return add(id, 0, enchant);
+        public Pool add(String id, int weight) {
+            return add(id, false, weight);
         }
-        public Pool add(String id, int weight, boolean enchant) {
+        public Pool add(String id, boolean enchant) {
+            return add(id, enchant, 0);
+        }
+        public Pool add(String id, boolean enchant, int weight) {
             Entry entry = new Entry(id);
             if (weight > 0) {
                 entry.weight = weight;
@@ -98,6 +101,13 @@ public class LootConfig {
             spell_bind.max = max;
             entry.spell_bind = spell_bind;
             this.entries.add(entry);
+            return this;
+        }
+
+        /// Adjust weight of the last entry
+        public Pool weight(int weight) {
+            var entry = this.entries.getLast();
+            entry.weight = weight;
             return this;
         }
     }
