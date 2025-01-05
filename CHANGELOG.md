@@ -2,6 +2,7 @@
 
 Functional changes:
 - Add Spell Scrolls, automatically generated for all spells, found in loot chests, can be added to matching spell books
+- Add support for any spell book logic, any item can be turned into a spell book by adding to `spell_engine:spell_books` tag, and adding proper spell container to it
 - Improved Spell Container merge logic, to allow resolving spells from equipment (New config options available in `spell_engine/server.json5`, starting with `spell_container_from` )
 - Renamed loot config (responsible for equipment loot injection) to `rpg_series/loot_equipment.json`
 - Add separate config file for Spell Scroll loot injection, `rpg_series/loot_scrolls.json`

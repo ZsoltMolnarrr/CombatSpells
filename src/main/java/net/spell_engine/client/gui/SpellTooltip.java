@@ -14,6 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
+import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.Keybindings;
@@ -63,7 +64,7 @@ public class SpellTooltip {
                     }
                 }
 
-                boolean showListHeader = itemStack.getItem() != ScrollItem.ITEM;
+                boolean showListHeader = !itemStack.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE);
 
                 if (!container.spell_ids().isEmpty() && showListHeader) {
                     if (container.pool() == null) {

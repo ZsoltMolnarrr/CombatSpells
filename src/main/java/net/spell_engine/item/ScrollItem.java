@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.spell_engine.api.spell.*;
 import net.spell_engine.client.SpellEngineClient;
-import net.spell_power.api.SpellSchool;
+import net.spell_engine.internals.SpellContainerHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -31,11 +31,7 @@ public class ScrollItem extends Item {
     @Nullable public static boolean applySpell(ItemStack itemStack, Identifier id, Spell spell) {
         var scroll = spell.scroll;
         if (scroll != null && scroll.generate) {
-
-            var contentType = spell.school.archetype == SpellSchool.Archetype.ARCHERY
-                    ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
-            var container = new SpellContainer(contentType, false, "", 1, List.of(id.toString()));
-            itemStack.set(SpellDataComponents.SPELL_CONTAINER, container);
+            itemStack.set(SpellDataComponents.SPELL_CONTAINER, SpellContainerHelper.create(id, spell, itemStack.getItem()));
 
             var rarity = scroll.custom_rarity;
             if (rarity == null) {

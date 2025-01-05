@@ -53,13 +53,13 @@ public class Spell {
         public ParticleBatch[] particles = new ParticleBatch[]{};
     }
 
-    @Deprecated()
+    @Deprecated(forRemoval = true)
     public enum Mode { CAST, ITEM_USE }
-    @Deprecated()
+    @Deprecated(forRemoval = true)
     public Mode mode = Mode.CAST;
-    @Deprecated()
+    @Deprecated(forRemoval = true)
     public ItemUse item_use = new ItemUse();
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static class ItemUse { public ItemUse() { }
         public boolean shows_item_as_icon = false;
         public boolean requires_offhand_item = false;

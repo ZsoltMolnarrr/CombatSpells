@@ -13,7 +13,9 @@ import net.minecraft.loot.provider.number.LootNumberProvider;
 import net.minecraft.loot.provider.number.LootNumberProviderTypes;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
+import net.spell_engine.api.spell.SpellDataComponents;
 import net.spell_engine.api.spell.SpellInfo;
+import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.item.ScrollItem;
 
@@ -68,6 +70,9 @@ public class SpellBindRandomlyLootFunction extends ConditionalLootFunction {
             var spell = spells.get(context.getRandom().nextInt(spells.size()));
             if (stack.getItem() == ScrollItem.ITEM) {
                 ScrollItem.applySpell(stack, spell.id(), spell.spell());
+            } else {
+                var container = SpellContainerHelper.create(spell.id(), spell.spell(), stack.getItem());
+                stack.set(SpellDataComponents.SPELL_CONTAINER, container);
             }
         } else {
             if (stack.getItem() == ScrollItem.ITEM) {

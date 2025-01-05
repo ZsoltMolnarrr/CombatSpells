@@ -1,11 +1,16 @@
 package net.spell_engine.internals;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
+import net.spell_engine.api.item.SpellEngineItemTags;
+import net.spell_engine.api.item.trinket.SpellBookItem;
 import net.spell_engine.api.spell.*;
 import net.spell_engine.compat.TrinketsCompat;
+import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -27,13 +32,27 @@ public class SpellContainerHelper {
         return SpellPool.empty;
     }
 
+    @Deprecated(forRemoval = true)
     public static SpellContainer getEquipped(ItemStack heldItemStack, PlayerEntity player) {
-        var weaponContainer = containerFromItemStack(heldItemStack);
-        return getEquipped(weaponContainer, player);
+        return getAvailable(player);
     }
 
+    @Deprecated(forRemoval = true)
     public static SpellContainer getEquipped(SpellContainer starterContainer, PlayerEntity player) {
-        if (starterContainer == null || !starterContainer.is_proxy()) {
+        return mergeWithEquipped(starterContainer, player);
+    }
+
+    public static SpellContainer getAvailable(PlayerEntity player) {
+        var heldItemStack = player.getMainHandStack();
+        var heldContainer = containerFromItemStack(heldItemStack);
+        if (heldContainer == null || !heldContainer.is_proxy()) {
+            return SpellContainer.EMPTY;
+        }
+        return mergeWithEquipped(heldContainer, player);
+    }
+
+    public static SpellContainer mergeWithEquipped(SpellContainer starterContainer, PlayerEntity player) {
+        if (starterContainer == null) {
             return SpellContainer.EMPTY;
         }
 
@@ -104,12 +123,14 @@ public class SpellContainerHelper {
         }
     }
 
+    @Deprecated(forRemoval = true)
     private static boolean isOffhandContainerValid(PlayerEntity player, SpellContainer.ContentType allowedContent) {
         ItemStack offhandItemStack = getOffhandItemStack(player);
         SpellContainer container = containerFromItemStack(offhandItemStack);
         return container != null && container.isValid() && container.content() == allowedContent;
     }
 
+    @Deprecated(forRemoval = true)
     private static List<String> getOffhandSpellIds(PlayerEntity player) {
         ItemStack offhandItemStack = getOffhandItemStack(player);
         SpellContainer container = containerFromItemStack(offhandItemStack);
@@ -213,5 +234,31 @@ public class SpellContainerHelper {
     public static boolean hasUsableContainer(ItemStack itemStack) {
         var container = containerFromItemStack(itemStack);
         return container != null && (container.isUsable() || container.is_proxy());
+    }
+
+    public static boolean isSpellValidForItem(Spell spell, Item item) {
+        var spellType = spell.school.archetype == SpellSchool.Archetype.ARCHERY
+                ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
+        var expectedContentType = (item instanceof RangedWeaponItem) ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
+        return spellType == expectedContentType;
+    }
+
+    public static SpellContainer.ContentType contentTypeForItem(Spell spell) {
+        return spell.school.archetype == SpellSchool.Archetype.ARCHERY
+                ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
+    }
+
+    public static SpellContainer create(Identifier spellId, Spell spell, Item item) {
+        return create(List.of(new SpellInfo(spell, spellId)), item);
+    }
+
+    public static SpellContainer create(List<SpellInfo> spells, Item item) {
+        final var contentType = contentTypeForItem(spells.get(0).spell());
+        var isProxy = !(SpellBookItem.isSpellBook(item) || item.getRegistryEntry().isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE));
+        var spellIds = spells.stream()
+                .filter(spellInfo -> contentTypeForItem(spellInfo.spell()) == contentType)
+                .map(spellInfo -> spellInfo.id().toString())
+                .toList();
+        return new SpellContainer(contentType, isProxy, "", spellIds.size(), spellIds);
     }
 }
