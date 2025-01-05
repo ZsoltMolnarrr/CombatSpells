@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#spell_engine:spell_book",
+    "#spell_engine:spell_books",
     "#spell_engine:spell_book_mergeable"
   ]
 }

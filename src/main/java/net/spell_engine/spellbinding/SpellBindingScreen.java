@@ -6,12 +6,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ingame.CyclingSlotIcon;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.SmithingTemplateItem;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -27,10 +29,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Environment(value= EnvType.CLIENT)
 public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler> {
     private static final Identifier TEXTURE = Identifier.of(SpellEngineMod.ID, "textures/gui/" + SpellBinding.name + ".png");
+    private static final Identifier PLACEHOLDER_SPELL_BOOK = Identifier.of(SpellEngineMod.ID, "item/placeholder/spell_book");
+    private static final Identifier PLACEHOLDER_LAPIS = Identifier.of(SpellEngineMod.ID, "item/placeholder/lapis");
+    private static final Identifier PLACEHOLDER_SCROLL = Identifier.of(SpellEngineMod.ID, "item/placeholder/scroll");
+    private final CyclingSlotIcon mainSlotIcon = new CyclingSlotIcon(0);
+    private final CyclingSlotIcon consumableSlotIcon = new CyclingSlotIcon(1);
 
     private ItemStack stack;
 
@@ -63,6 +71,13 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
         this.addDrawableChild(upButton);
         this.addDrawableChild(downButton);
         client.interactionManager.clickButton(this.handler.syncId, SpellBindingScreenHandler.INIT_SYNC_ID);
+    }
+
+    @Override
+    public void handledScreenTick() {
+        super.handledScreenTick();
+        this.mainSlotIcon.updateTexture(List.of(PLACEHOLDER_SPELL_BOOK));
+        this.consumableSlotIcon.updateTexture(List.of(PLACEHOLDER_LAPIS, PLACEHOLDER_SCROLL));
     }
 
     @Override
@@ -161,6 +176,9 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
         }
     }
 
+    private record SubTexture(int u, int v, int width, int height) { }
+    private static final SubTexture PLACEHOLDER_BOOK = new SubTexture(240, 0, 16, 16);
+
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         DiffuseLighting.disableGuiDepthLighting();
@@ -170,12 +188,10 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
         int originX = (this.width - this.backgroundWidth) / 2;
         int originY = (this.height - this.backgroundHeight) / 2;
         context.drawTexture(TEXTURE, originX, originY, 0, 0, this.backgroundWidth, this.backgroundHeight);
-        // this.drawTexture(matrices, originX, originY, 0, 0, this.backgroundWidth, this.backgroundHeight);
-        var bindingSlot = handler.slots.get(0);
-        if (bindingSlot.getStack().isEmpty()) {
-            context.drawTexture(TEXTURE, originX + bindingSlot.x, originY + bindingSlot.y, 240, 0, 16, 16);
-            // this.drawTexture(matrices, originX + bindingSlot.x, originY + bindingSlot.y, 240, 0, 16, 16);
-        }
+
+        this.mainSlotIcon.render(this.handler, context, delta, this.x, this.y);
+        this.consumableSlotIcon.render(this.handler, context, delta, this.x, this.y);
+
         DiffuseLighting.enableGuiDepthLighting();
         this.updatePageControls();
         this.updateButtons(originX, originY);
