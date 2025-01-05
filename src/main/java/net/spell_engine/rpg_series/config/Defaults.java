@@ -332,6 +332,10 @@ public class Defaults {
                 .add(W1, true)
                 .add(X2)
         );
+        scrolls.put("nova_structures:chests/desert_ruins/desert_ruin_lesser_treasure", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1, 2)
+        );
         items.put("nova_structures:chests/undead_crypts_grave", new LootConfig.Pool()
                 .rolls(0.5)
                 .add(W1)
@@ -394,6 +398,10 @@ public class Defaults {
                 .add(W3, true)
                 .add(A2)
         );
+        scrolls.put("nova_structures:chests/nether_keep/vault_keep", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(3, 4)
+        );
 
         // DnT - trident_trial_monument
 
@@ -402,13 +410,16 @@ public class Defaults {
                 .add(W2, true)
                 .add(X2, true)
         );
+        scrolls.put("nova_structures:chests/trident_trial_monument/ttm_common_vault", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(2, 3)
+        );
 
         // DnT - illager_hideout
 
         items.put("nova_structures:chests/illager_hideout_lesser_tresure", new LootConfig.Pool()
                 .rolls(0.5)
                 .add(A1)
-                .add(W1)
                 .add(X1)
         );
         items.put("nova_structures:chests/illager_hideout_tresure", new LootConfig.Pool()
@@ -417,9 +428,12 @@ public class Defaults {
                 .add(W1)
                 .add(X1)
         );
+        scrolls.put("nova_structures:chests/illager_hideout_tresure", new LootConfig.Pool()
+                .rolls(1)
+                .scroll(1, 2)
+        );
         items.put("nova_structures:chests/illager_outpost_weaponry", new LootConfig.Pool()
                 .rolls(1)
-                .add(A1)
                 .add(W1)
                 .add(X1)
         );
@@ -439,24 +453,23 @@ public class Defaults {
                 .add(W2, true)
                 .add(X2)
         );
-
-        items.put("nova_structures:chests/lone_citadel/c_vault_boss", new LootConfig.Pool()
-                .rolls(1)
-                .add(W2, true)
-                .add(X2)
-        );
-
         items.put("nova_structures:chests/lone_citadel/c_vault", new LootConfig.Pool()
                 .rolls(1)
                 .add(A2, true)
                 .add(X2)
         );
-
+        scrolls.put("nova_structures:chests/lone_citadel/c_vault", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(2, 3)
+        );
         items.put("nova_structures:chests/lone_citadel/c_library", new LootConfig.Pool()
                 .rolls(1)
                 .add(A2)
         );
-
+        scrolls.put("nova_structures:chests/lone_citadel/c_library", new LootConfig.Pool()
+                .rolls(1)
+                .scroll(3, 4)
+        );
         items.put("nova_structures:chests/lone_citadel/c_forge_chest", new LootConfig.Pool()
                 .rolls(1)
                 .add(A2)
@@ -469,6 +482,10 @@ public class Defaults {
                 .rolls(1)
                 .add(W1)
                 .add(A1)
+        );
+        scrolls.put("nova_structures:chests/bunker_altar", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1)
         );
 
         // conduit_ruin
@@ -485,17 +502,19 @@ public class Defaults {
                 .rolls(0.5)
                 .add(A1)
         );
-
         items.put("nova_structures:chests/creeping_crypt/crypt_hallway", new LootConfig.Pool()
                 .rolls(0.5)
                 .add(W1)
         );
-
         items.put("nova_structures:chests/creeping_crypt/vault_creeping", new LootConfig.Pool()
                 .rolls(1)
                 .add(A1)
                 .add(W1)
                 .add(X1)
+        );
+        scrolls.put("nova_structures:chests/creeping_crypt/vault_creeping", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1, 2)
         );
 
         // toxic_lair
@@ -506,14 +525,16 @@ public class Defaults {
                 .add(W1)
                 .add(X1)
         );
-
         items.put("nova_structures:chests/toxic_lair/toxic_ominous_vault", new LootConfig.Pool()
                 .rolls(0.5)
                 .add(A2)
                 .add(W2, true)
                 .add(X2)
         );
-
+        scrolls.put("nova_structures:chests/toxic_lair/toxic_ominous_vault", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(2, 3)
+        );
         items.put("nova_structures:chests/toxic_lair/toxic_boss_vault", new LootConfig.Pool()
                 .rolls(1)
                 .add(A2, true)
@@ -531,24 +552,24 @@ public class Defaults {
                 .add(W2, true)
                 .add(X2)
         );
-
         items.put("graveyard:chests/crypt_loot", new LootConfig.Pool()
                 .rolls(0.2)
                 .add(W1, true)
         );
-
         items.put("graveyard:chests/small_loot", new LootConfig.Pool()
                 .rolls(1)
                 .add(W1)
                 .add(A1)
         );
-
         items.put("graveyard:chests/medium_loot", new LootConfig.Pool()
                 .rolls(1)
                 .add(W1, true)
                 .add(A1, true)
         );
-
+        scrolls.put("graveyard:chests/medium_loot", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(2, 2)
+        );
         items.put("graveyard:chests/large_loot", new LootConfig.Pool()
                 .rolls(1)
                 .add(A2, true)
@@ -564,11 +585,26 @@ public class Defaults {
                 .add(W1, true)
         );
 
+        // It takes a pillage
+
+        items.put("takesapillage:chests/bastille/church", new LootConfig.Pool()
+                .rolls(1)
+                .add(A1, true)
+                .add(X1)
+        );
+        scrolls.put("takesapillage:chests/bastille/church", new LootConfig.Pool()
+                .scroll(1, 2)
+        );
+
         // YUNG Better Dungeons mod
 
         items.put("betterdungeons:skeleton_dungeon/chests/common", new LootConfig.Pool()
                 .rolls(0.5)
                 .add(W1, true)
+        );
+        scrolls.put("betterdungeons:skeleton_dungeon/chests/common", new LootConfig.Pool()
+                .rolls(0.2)
+                .scroll(1, 2)
         );
 
         items.put("betterdungeons:zombie_dungeon/chests/common", new LootConfig.Pool()
@@ -579,15 +615,6 @@ public class Defaults {
                 .add(A1)
                 .add(X1)
         );
-
-        items.put("betterdungeons:small_nether_dungeon/chests/common", new LootConfig.Pool()
-                .rolls(0.5)
-                .add(WG)
-                .add(W1, true)
-                .add(A1, true)
-                .add(X1)
-        );
-
         items.put("betterdungeons:zombie_dungeon/chests/special", new LootConfig.Pool()
                 .rolls(0.5)
                 .add(W0)
@@ -596,6 +623,10 @@ public class Defaults {
                 .add(A1)
                 .add(X1)
         );
+        scrolls.put("betterdungeons:zombie_dungeon/chests/special", new LootConfig.Pool()
+                .rolls(1)
+                .scroll(1, 2)
+        );
 
         items.put("betterdungeons:zombie_dungeon/chests/tombstone", new LootConfig.Pool()
                 .rolls(0.5)
@@ -603,11 +634,48 @@ public class Defaults {
                 .add(X2)
         );
 
-        // YUNG Better Strongholds mod
-
-        items.put("betterstrongholds:chests/cmd_yung", new LootConfig.Pool()
-                .add(W2, true)
+        items.put("betterdungeons:small_nether_dungeon/chests/common", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(WG)
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
         );
+        scrolls.put("betterdungeons:small_nether_dungeon/chests/common", new LootConfig.Pool()
+                .rolls(0.2)
+                .scroll(2, 3)
+        );
+
+        // YUNG Better Desert Temples mod
+
+        scrolls.put("betterdeserttemples:chests/library", new LootConfig.Pool()
+                .rolls(2)
+                .scroll(1, 2)
+        );
+        items.put("betterdeserttemples:chests/pharaoh_hidden", new LootConfig.Pool()
+                .add(WG, true).weight(2)
+                .add(X2)
+        );
+        items.put("betterdeserttemples:chests/tomb_pharaoh", new LootConfig.Pool()
+                .add(WG, false)
+                .add(W1, true).weight(2)
+                .add(X2)
+        );
+        items.put("betterdeserttemples:chests/wardrobe", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(A1, true)
+        );
+
+        // YUNG Better Nether Fortress mod
+
+        items.put("betterfortresses:chests/keep", new LootConfig.Pool()
+                .rolls(0.25)
+                .add(W0)
+                .add(WG)
+                .add(X1)
+        );
+
+        // YUNG Better Strongholds mod
 
         items.put("betterstrongholds:chests/armoury", new LootConfig.Pool()
                 .rolls(3)
@@ -621,35 +689,22 @@ public class Defaults {
                 .add(A2)
                 .add(A2, true)
         );
-
+        items.put("betterstrongholds:chests/cmd_yung", new LootConfig.Pool()
+                .add(W2, true)
+        );
+        items.put("betterstrongholds:chests/grand_library", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(A2, true)
+        );
+        scrolls.put("betterstrongholds:chests/grand_library", new LootConfig.Pool()
+                .rolls(2)
+                .scroll(2, 4)
+        );
+        scrolls.put("betterstrongholds:chests/library_md", new LootConfig.Pool()
+                .scroll(2, 3)
+        );
         items.put("betterstrongholds:chests/crypt", new LootConfig.Pool()
                 .add(W1)
-                .add(X1)
-        );
-
-        // YUNG Better Desert Temples mod
-
-        items.put("betterdeserttemples:chests/wardrobe", new LootConfig.Pool()
-                .rolls(0.5)
-                .add(A1, true)
-        );
-
-        items.put("betterdeserttemples:chests/tomb_pharaoh", new LootConfig.Pool()
-                .add(WG, false)
-                .add(X2)
-        );
-
-        items.put("betterdeserttemples:chests/pharaoh_hidden", new LootConfig.Pool()
-                .add(WG, false, 2)
-                .add(X2)
-        );
-
-        // YUNG Better Nether Fortress mod
-
-        items.put("betterfortresses:chests/keep", new LootConfig.Pool()
-                .rolls(0.25)
-                .add(W0)
-                .add(WG)
                 .add(X1)
         );
 

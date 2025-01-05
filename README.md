@@ -84,9 +84,18 @@ Example: enable "Casts spells from equipped Spell Book" for a specific item
 }
 ```
 
+For ranged weapons (bows and crossbows):
+```
+{
+  "is_proxy": true,
+  "content": "ARCHERY"
+}
+```
+
 Example: pre-bind spells to a specific item
 ```
 {
+  "is_proxy": true
   "spell_ids": [ "wizards:fireball" ]
 }
 ```

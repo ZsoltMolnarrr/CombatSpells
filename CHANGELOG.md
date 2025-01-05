@@ -1,15 +1,19 @@
 # 1.3.0
 
 Functional changes:
-- Added Spell Scrolls, automatically generated for all spells, found in loot chests
-- Improve Spell Container merge logic, to allow resolving spells from equipment (New config options available in `spell_engine/server.json5`, starting with `spell_container_from` )
+- Add Spell Scrolls, automatically generated for all spells, found in loot chests, can be added to matching spell books
+- Improved Spell Container merge logic, to allow resolving spells from equipment (New config options available in `spell_engine/server.json5`, starting with `spell_container_from` )
 - Renamed loot config (responsible for equipment loot injection) to `rpg_series/loot_equipment.json`
 - Add separate config file for Spell Scroll loot injection, `rpg_series/loot_scrolls.json`
-- Update loot config defaults (Aether Villages, BOMD: Obsidilith, Dungeons Arise: Shiraz Palace, Aviary) 
+- Update loot config defaults (Aether Villages, BOMD: Obsidilith, DNT: End Castle, Dungeons Arise: Shiraz Palace, Aviary)
+- Spell Books and Spell Scrolls placeable into Chiseled Bookshelf
+- Fix spell tooltip ordering with advanced tooltip
+- Fix loot injection from non tag entries
 
 API Changes:
 - Add `spell.learn.enabled` field to disable unlocking via Spell Binding Table
 - Add `spell.scroll` object, defining various spell scroll related parameters
+- Spell container from held item, now requires `is_proxy = true` to cast spells
 
 # 1.2.2
 
