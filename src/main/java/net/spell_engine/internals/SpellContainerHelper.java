@@ -10,6 +10,7 @@ import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.item.trinket.SpellBookItem;
 import net.spell_engine.api.spell.*;
 import net.spell_engine.compat.TrinketsCompat;
+import net.spell_engine.item.ScrollItem;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
 
@@ -236,8 +237,8 @@ public class SpellContainerHelper {
         return container != null && (container.isUsable() || container.is_proxy());
     }
 
-    public static boolean isSpellValidForItem(Spell spell, Item item) {
-        var spellType = spell.school.archetype == SpellSchool.Archetype.ARCHERY
+    public static boolean isSpellValidForItem(Item item, SpellInfo spell) {
+        var spellType = spell.spell().school.archetype == SpellSchool.Archetype.ARCHERY
                 ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
         var expectedContentType = (item instanceof RangedWeaponItem) ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
         return spellType == expectedContentType;

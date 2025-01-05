@@ -28,7 +28,7 @@ public class SpellRegistry {
         }
     }
     private static final Map<Identifier, SpellEntry> spells = new HashMap<>();
-    private static final Map<Identifier, SpellPool> pools = new HashMap<>();
+    public static final Map<Identifier, SpellPool> pools = new HashMap<>();
     public static final Map<Identifier, SpellContainer> book_containers = new HashMap<>();
     public static final Map<Identifier, SpellContainer> containers = new HashMap<>();
     private static final Map<SpellSchool, Integer> spellCount = new HashMap<>();

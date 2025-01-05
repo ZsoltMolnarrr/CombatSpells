@@ -68,11 +68,26 @@ public class SpellBindRandomlyLootFunction extends ConditionalLootFunction {
                 .toList();
         if (spells.size() > 0) {
             var spell = spells.get(context.getRandom().nextInt(spells.size()));
+            var retryAttempts = 3;
             if (stack.getItem() == ScrollItem.ITEM) {
-                ScrollItem.applySpell(stack, spell.id(), spell.spell());
+                var success = ScrollItem.applySpell(stack, spell.id(), spell.spell(), true);
+                while (retryAttempts-- > 0 && !success) {
+                    spell = spells.get(context.getRandom().nextInt(spells.size()));
+                    success = ScrollItem.applySpell(stack, spell.id(), spell.spell(), true);
+                }
+                if (!success) {
+                    return ItemStack.EMPTY;
+                }
             } else {
-                var container = SpellContainerHelper.create(spell.id(), spell.spell(), stack.getItem());
-                stack.set(SpellDataComponents.SPELL_CONTAINER, container);
+                var isValid = SpellContainerHelper.isSpellValidForItem(stack.getItem(), spell);
+                while (retryAttempts-- > 0 && !isValid) {
+                    spell = spells.get(context.getRandom().nextInt(spells.size()));
+                    isValid = SpellContainerHelper.isSpellValidForItem(stack.getItem(), spell);
+                }
+                if (isValid) {
+                    var container = SpellContainerHelper.create(spell.id(), spell.spell(), stack.getItem());
+                    stack.set(SpellDataComponents.SPELL_CONTAINER, container);
+                }
             }
         } else {
             if (stack.getItem() == ScrollItem.ITEM) {
