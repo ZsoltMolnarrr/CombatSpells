@@ -1,3 +1,11 @@
+# 1.3.2
+
+- Fix dedicated server crash
+
+# 1.3.1
+
+- Fix container merge logic
+
 # 1.3.0
 
 Functional changes:

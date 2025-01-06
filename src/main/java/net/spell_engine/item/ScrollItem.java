@@ -1,6 +1,5 @@
 package net.spell_engine.item;
 
-import net.minecraft.client.resource.language.I18n;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -48,12 +47,12 @@ public class ScrollItem extends Item {
                 return false;
             }
 
-            if (poolId != null) {
-                var translationKey = "item." + poolId.getNamespace() + "." + poolId.getPath() + ".spell_scroll";
-                if (I18n.hasTranslation(translationKey)) {
-                    itemStack.set(DataComponentTypes.CUSTOM_NAME, Text.translatable(translationKey));
-                }
-            }
+//            if (poolId != null) {
+//                var translationKey = "item." + poolId.getNamespace() + "." + poolId.getPath() + ".spell_scroll";
+//                if (I18n.hasTranslation(translationKey)) {
+//                    itemStack.set(DataComponentTypes.CUSTOM_NAME, Text.translatable(translationKey));
+//                }
+//            }
 
             itemStack.set(SpellDataComponents.SPELL_CONTAINER, SpellContainerHelper.create(id, spell, itemStack.getItem()));
 

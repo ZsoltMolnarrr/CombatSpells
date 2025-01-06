@@ -930,6 +930,10 @@ public class Defaults {
         items.put("terralith:desert_outpost", new LootConfig.Pool()
                 .add(W1)
         );
+        scrolls.put("terralith:desert_outpost", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1)
+        );
 
         items.put("terralith:ruin/glacial/junk", new LootConfig.Pool()
                 .rolls(0.5)
