@@ -18,6 +18,7 @@ import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.item.ScrollItem;
+import net.spell_engine.item.SpellEngineItems;
 
 import java.util.List;
 import java.util.Set;
@@ -69,7 +70,7 @@ public class SpellBindRandomlyLootFunction extends ConditionalLootFunction {
         if (spells.size() > 0) {
             var spell = spells.get(context.getRandom().nextInt(spells.size()));
             var retryAttempts = 3;
-            if (stack.getItem() == ScrollItem.ITEM) {
+            if (stack.getItem() == SpellEngineItems.SCROLL.get()) {
                 var success = ScrollItem.applySpell(stack, spell.id(), spell.spell(), true);
                 while (retryAttempts-- > 0 && !success) {
                     spell = spells.get(context.getRandom().nextInt(spells.size()));
@@ -90,7 +91,7 @@ public class SpellBindRandomlyLootFunction extends ConditionalLootFunction {
                 }
             }
         } else {
-            if (stack.getItem() == ScrollItem.ITEM) {
+            if (stack.getItem() == SpellEngineItems.SCROLL.get()) {
                 return ItemStack.EMPTY;
             }
         }

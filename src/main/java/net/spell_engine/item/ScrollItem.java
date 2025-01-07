@@ -20,7 +20,6 @@ import java.util.Map;
 
 public class ScrollItem extends Item {
     public static final Identifier ID = Identifier.of("spell_engine", "scroll");
-    public static final ScrollItem ITEM = new ScrollItem(new Item.Settings().maxCount(1));
 
     public ScrollItem(Settings settings) {
         super(settings);
@@ -67,12 +66,6 @@ public class ScrollItem extends Item {
         } else {
             return false;
         }
-    }
-
-    @Nullable public static ItemStack forSpell(Identifier id, Spell spell) {
-        var stack = new ItemStack(ITEM);
-        var success = applySpell(stack, id, spell, false);
-        return success ? stack : null;
     }
 
     public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {

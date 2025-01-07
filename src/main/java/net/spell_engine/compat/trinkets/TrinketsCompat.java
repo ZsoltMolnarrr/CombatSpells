@@ -1,4 +1,4 @@
-package net.spell_engine.compat;
+package net.spell_engine.compat.trinkets;
 
 import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.fabric.api.util.TriState;
@@ -9,8 +9,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
-import net.spell_engine.api.item.trinket.SpellBookItem;
-import net.spell_engine.api.item.trinket.SpellBookTrinketItem;
+import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.internals.SpellContainerHelper;
 
@@ -31,12 +30,11 @@ public class TrinketsCompat {
 
         if (enabled) {
             TrinketsApi.registerTrinketPredicate(Identifier.of(SpellEngineMod.ID, "spell_book"), (itemStack, slotReference, livingEntity) -> {
-                if (SpellBookItem.isSpellBook(itemStack.getItem())) {
+                if (ISpellBookItem.isSpellBook(itemStack.getItem())) {
                     return TriState.TRUE;
                 }
                 return TriState.DEFAULT;
             });
-            Registry.register(Registries.SOUND_EVENT, SpellBookTrinketItem.EQUIP_SOUND_ID, SpellBookTrinketItem.EQUIP_SOUND);
         }
         intialized = true;
     }
@@ -81,6 +79,34 @@ public class TrinketsCompat {
         }
 
         return containers;
+    }
+
+    public static SpellContainerHelper.Query getSpellContainers(PlayerEntity player) {
+        if (!enabled) {
+            return SpellContainerHelper.Query.EMPTY;
+        }
+        var component = TrinketsApi.getTrinketComponent(player);
+        if (component.isEmpty()) {
+            return SpellContainerHelper.Query.EMPTY;
+        }
+        var spellBooks = new ArrayList<SpellContainerHelper.Source>();
+        var others = new ArrayList<SpellContainerHelper.Source>();
+        var trinketComponent = component.get();
+        trinketComponent.getAllEquipped().forEach(pair -> {
+            var stack = pair.getRight();
+            if (stack.isEmpty()) {
+                return;
+            }
+            var container = SpellContainerHelper.containerFromItemStack(stack);
+            if (container != null && container.isValid()) {
+                if (pair.getLeft().getId().contains("spell/book")) {
+                    spellBooks.add(new SpellContainerHelper.Source(stack, container));
+                } else {
+                    others.add(new SpellContainerHelper.Source(stack, container));
+                }
+            }
+        });
+        return new SpellContainerHelper.Query(spellBooks, others);
     }
 
     public static ItemStack getSpellBookStack(PlayerEntity player) {

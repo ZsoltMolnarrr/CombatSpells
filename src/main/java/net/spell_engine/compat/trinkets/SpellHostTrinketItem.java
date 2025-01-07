@@ -1,4 +1,4 @@
-package net.spell_engine.api.item.trinket;
+package net.spell_engine.compat.trinkets;
 
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketItem;
@@ -6,27 +6,18 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
 
-public class SpellBookTrinketItem extends TrinketItem implements SpellBookItem {
-    private final Identifier poolId;
+public class SpellHostTrinketItem extends TrinketItem {
+    private final SoundEvent equipSound;
 
-    public static final Identifier EQUIP_SOUND_ID = Identifier.of("spell_engine", "spellbook_equip");
-    public static final SoundEvent EQUIP_SOUND = SoundEvent.of(EQUIP_SOUND_ID);
-
-    public SpellBookTrinketItem(Identifier poolId, Settings settings) {
+    public SpellHostTrinketItem(Settings settings, SoundEvent equipSound) {
         super(settings);
-        this.poolId = poolId;
+        this.equipSound = equipSound;
     }
 
     @Override
     public boolean isEnchantable(ItemStack stack) {
         return false;
-    }
-
-    @Override
-    public Identifier getPoolId() {
-        return poolId;
     }
 
     @Override
@@ -45,7 +36,7 @@ public class SpellBookTrinketItem extends TrinketItem implements SpellBookItem {
         if (entity.getWorld().isClient() // Play sound only on client
                 && entity.age > 100      // Avoid playing sound on entering world / dimension
         ) {
-            entity.playSound(EQUIP_SOUND, 1.0F, 1.0F);
+            entity.playSound(this.equipSound, 1.0F, 1.0F);
         }
     }
 }

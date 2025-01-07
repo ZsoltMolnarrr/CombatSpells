@@ -7,10 +7,9 @@ import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
-import net.spell_engine.api.item.trinket.SpellBookItem;
+import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.*;
-import net.spell_engine.compat.TrinketsCompat;
-import net.spell_engine.item.ScrollItem;
+import net.spell_engine.compat.trinkets.TrinketsCompat;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,45 +39,64 @@ public class SpellContainerHelper {
 
     @Deprecated(forRemoval = true)
     public static SpellContainer getEquipped(SpellContainer starterContainer, PlayerEntity player) {
-        return mergeWithEquipped(starterContainer, player);
+        return mergedContainerSources(player);
     }
 
     public static SpellContainer getAvailable(PlayerEntity player) {
+        return mergedContainerSources(player);
+    }
+
+    public record Source(ItemStack itemStack, SpellContainer container) { }
+    public record Query(List<Source> spell_book, List<Source> others) {
+        public static final Query EMPTY = new Query(List.of(), List.of());
+    }
+
+    @Nullable public static Source getFirstSourceOfSpell(Identifier spellId, PlayerEntity player) {
+        var query = getContainerSources(player);
+        for (var source : query) {
+            if (contains(source.container(), spellId)) {
+                return source;
+            }
+        }
+        return null;
+    }
+
+    public static List<Source> getContainerSources(PlayerEntity player) {
+        var sources = new ArrayList<Source>();
         var heldItemStack = player.getMainHandStack();
         var heldContainer = containerFromItemStack(heldItemStack);
         if (heldContainer == null || !heldContainer.is_proxy()) {
-            return SpellContainer.EMPTY;
+            return List.of();
         }
-        return mergeWithEquipped(heldContainer, player);
-    }
-
-    public static SpellContainer mergeWithEquipped(SpellContainer starterContainer, PlayerEntity player) {
-        if (starterContainer == null) {
-            return SpellContainer.EMPTY;
-        }
-
-        var containers = new ArrayList<SpellContainer>();
-        containers.add(starterContainer);
-
+        sources.add(new Source(heldItemStack, heldContainer));
         if (TrinketsCompat.isEnabled()) {
-            containers.addAll(TrinketsCompat.getEquippedSpells(player));
+            var trinketSources = TrinketsCompat.getSpellContainers(player);
+            sources.addAll(trinketSources.spell_book());
+            sources.addAll(trinketSources.others());
         }
         if (SpellEngineMod.config.spell_container_from_offhand) {
-            if (SpellEngineMod.config.spell_container_from_offhand_ignore_dual_wielding) {
-                addContainerIfValid(getOffhandItemStack(player), containers);
-            } else {
-                addContainerIfValid(player.getOffHandStack(), containers);
-            }
+            var offhandStack = SpellEngineMod.config.spell_container_from_offhand_ignore_dual_wielding ?
+                    getOffhandItemStack(player) : player.getOffHandStack();
+            addSourceIfValid(offhandStack, sources);
         }
         if (SpellEngineMod.config.spell_container_from_equipment) {
             for (var slot : player.getInventory().armor) {
-                addContainerIfValid(slot, containers);
+                addSourceIfValid(slot, sources);
             }
         }
+        return sources;
+    }
 
+    public static SpellContainer mergedContainerSources(PlayerEntity player) {
+        var sources = getContainerSources(player);
+        if (sources.isEmpty()) {
+            return SpellContainer.EMPTY;
+        }
+        var heldContainer = sources.get(0).container();
         var spells = new ArrayList<SpellInfo>();
-        for (var container : containers) {
-            if (container.content() == starterContainer.content()) {
+        for (var source : sources) {
+            var container = source.container();
+            if (container.content() == heldContainer.content()) {
                 for (var idString : container.spell_ids()) {
                     var id = Identifier.of(idString);
                     var spell = SpellRegistry.getSpell(id);
@@ -116,13 +134,20 @@ public class SpellContainerHelper {
         }
         spellIds.removeAll(toRemove);
 
-        return new SpellContainer(starterContainer.content(), false, null, 0, new ArrayList<>(spellIds));
+        return new SpellContainer(heldContainer.content(), heldContainer.is_proxy(), null, 0, new ArrayList<>(spellIds));
     }
 
     private static void addContainerIfValid(ItemStack fromItemStack, List<SpellContainer> intoContainers) {
         SpellContainer container = containerFromItemStack(fromItemStack);
         if (container != null && container.isValid()) {
             intoContainers.add(container);
+        }
+    }
+
+    private static void addSourceIfValid(ItemStack fromItemStack, List<Source> sources) {
+        SpellContainer container = containerFromItemStack(fromItemStack);
+        if (container != null && container.isValid()) {
+            sources.add(new Source(fromItemStack, container));
         }
     }
 
@@ -257,7 +282,7 @@ public class SpellContainerHelper {
 
     public static SpellContainer create(List<SpellInfo> spells, Item item) {
         final var contentType = contentTypeForItem(spells.get(0).spell());
-        var isProxy = !(SpellBookItem.isSpellBook(item) || item.getRegistryEntry().isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE));
+        var isProxy = !(ISpellBookItem.isSpellBook(item) || item.getRegistryEntry().isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE));
         var spellIds = spells.stream()
                 .filter(spellInfo -> contentTypeForItem(spellInfo.spell()) == contentType)
                 .map(spellInfo -> spellInfo.id().toString())

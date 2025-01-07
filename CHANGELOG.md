@@ -1,7 +1,13 @@
 # 1.3.3
 
-- Rework trinkets integration, to declare custom slot group
+Functional changes:
 - Add support for spell scroll slot, can be enabled using data pack
+- Rework trinkets integration, to declare custom slot group
+- Rework container merge logic
+- Spell cooldowns now get imposed onto the hosting item
+
+API Changes:
+- Add `spell.cost.cooldown_hosting_item` to disable imposing spell cooldowns onto the hosting item
 
 # 1.3.2
 

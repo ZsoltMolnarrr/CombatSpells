@@ -9,6 +9,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.SpellEngineMod;
+import net.spell_engine.api.item.trinket.SpellBookItem;
 import net.spell_engine.api.spell.Sound;
 import net.spell_engine.spellbinding.SpellBindingScreenHandler;
 
@@ -54,6 +55,7 @@ public class SoundHelper {
             Registry.register(Registries.SOUND_EVENT, soundId, soundEvent);
         }
         Registry.register(Registries.SOUND_EVENT, SpellBindingScreenHandler.soundId, SpellBindingScreenHandler.soundEvent);
+        Registry.register(Registries.SOUND_EVENT, SpellBookItem.EQUIP_SOUND_ID, SpellBookItem.EQUIP_SOUND);
     }
 
     public static void playSound(World world, Entity entity, Sound sound) {

@@ -2,6 +2,7 @@ package net.spell_engine.api.spell;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +56,10 @@ public record SpellContainer(ContentType content, boolean is_proxy, String pool,
             return false;
         }
         return !spell_ids.isEmpty() || (pool != null && !pool.isEmpty());
+    }
+
+    public boolean contains(Identifier spellId) {
+        return spell_ids.contains(spellId.toString());
     }
 
     public boolean isUsable() {

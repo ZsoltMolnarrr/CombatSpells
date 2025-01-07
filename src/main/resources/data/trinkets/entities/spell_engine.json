@@ -3,7 +3,6 @@
     "player"
   ],
   "slots": [
-    "spell/book",
-    "spell/scroll"
+    "spell/book"
   ]
 }

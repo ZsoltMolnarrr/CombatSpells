@@ -8,7 +8,8 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.spell_engine.api.spell.SpellContainer;
-import net.spell_engine.compat.TrinketsCompat;
+import net.spell_engine.compat.trinkets.SpellBookTrinketItem;
+import net.spell_engine.compat.trinkets.TrinketsCompat;
 import net.spell_engine.internals.SpellRegistry;
 
 import java.util.ArrayList;
@@ -18,9 +19,9 @@ import java.util.stream.Collectors;
 
 // TODO: This class should probably be moved to net.spell_engine.api.item as it seems to be mod-agnostic
 public class SpellBooks {
-    public static final ArrayList<SpellBookItem> all = new ArrayList<>();
+    public static final ArrayList<ISpellBookItem> all = new ArrayList<>();
 
-    public static List<SpellBookItem> sorted() {
+    public static List<ISpellBookItem> sorted() {
         return SpellBooks.all
                 .stream()
                 .sorted(Comparator.comparing(spellBookItem -> spellBookItem.getPoolId().toString()))
@@ -31,31 +32,35 @@ public class SpellBooks {
                 .collect(Collectors.toList());
     }
 
-    public static SpellBookItem create(Identifier poolId) {
+    public static ISpellBookItem create(Identifier poolId) {
         return create(poolId, SpellContainer.ContentType.MAGIC);
     }
 
-    public static SpellBookItem create(Identifier poolId, SpellContainer.ContentType contentType) {
+    public static ISpellBookItem create(Identifier poolId, SpellContainer.ContentType contentType) {
         var container = new SpellContainer(contentType, false, poolId.toString(), 0, List.of());
         SpellRegistry.book_containers.put(itemIdFor(poolId), container);
-        SpellBookItem book = null;
+        ISpellBookItem book = null;
         TrinketsCompat.init();
         if (TrinketsCompat.isEnabled()) {
-            book = new SpellBookTrinketItem(poolId, new Item.Settings().maxCount(1));
+            book = new SpellBookTrinketItem(new Item.Settings().maxCount(1), poolId, SpellBookItem.EQUIP_SOUND);
         }
         // TODO: Add support for Curios
         else {
-            book = new SpellBookVanillaItem(poolId, new Item.Settings().maxCount(1));
+            book = new SpellBookItem(poolId, new Item.Settings().maxCount(1));
         }
         all.add(book);
         return book;
     }
 
     public static Identifier itemIdFor(Identifier poolId) {
+        // DO NOT REFACTOR THIS!
+        // Spell Book items must remain under different IDs
+        // so when setting cooldown on them, they don't get all the same cooldown
+        // (This is a restriction of vanilla `ItemCooldownManager`)
         return Identifier.of(poolId.getNamespace(), poolId.getPath() + "_spell_book");
     }
 
-    public static void register(SpellBookItem spellBook) {
+    public static void register(ISpellBookItem spellBook) {
         if (spellBook instanceof Item) {
             Registry.register(Registries.ITEM, itemIdFor(spellBook.getPoolId()), (Item) spellBook);
         } else {

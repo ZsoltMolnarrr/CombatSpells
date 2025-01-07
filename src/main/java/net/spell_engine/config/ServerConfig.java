@@ -24,7 +24,7 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     @Comment("The time in ticks of global cooldown to apply to all instant cast spells when casted.")
     public int spell_instant_cast_gcd = 0;
     @Comment("Players cannot unequip a spell book, if one of the spells in it is on cooldown.")
-    public boolean spell_book_cooldown_lock = true;
+    public boolean spell_item_cooldown_lock = true;
     @Comment("Players can use the Spell Binding Table to create spell books.")
     public boolean spell_book_creation_enabled = true;
     @Comment("Spell book creation level levelCost")

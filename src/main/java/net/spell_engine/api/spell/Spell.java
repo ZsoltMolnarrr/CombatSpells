@@ -277,6 +277,7 @@ public class Spell {
         public float cooldown_duration = 0;
         public boolean cooldown_proportional = false;
         public boolean cooldown_haste_affected = true;
+        public boolean cooldown_hosting_item = true;
     }
 
     // MARK: Shared structures (used from multiple places in the spell structure)

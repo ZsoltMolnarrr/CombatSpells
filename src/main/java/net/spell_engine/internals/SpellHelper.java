@@ -23,12 +23,11 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityImmunity;
 import net.spell_engine.api.entity.SpellSpawnedEntity;
 import net.spell_engine.api.event.CombatEvents;
-import net.spell_engine.api.item.trinket.SpellBookItem;
+import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.CustomSpellHandler;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.SpellEvents;
 import net.spell_engine.api.spell.SpellInfo;
-import net.spell_engine.compat.TrinketsCompat;
 import net.spell_engine.entity.ConfigurableKnockback;
 import net.spell_engine.entity.SpellCloud;
 import net.spell_engine.entity.SpellProjectile;
@@ -190,8 +189,12 @@ public class SpellHelper {
             return;
         }
         var spellInfo = new SpellInfo(spell, spellId);
-        var itemStack = player.getMainHandStack();
-        var attempt = attemptCasting(player, itemStack, spellId);
+        var heldItemStack = player.getMainHandStack();
+        var spellSource = SpellContainerHelper.getFirstSourceOfSpell(spellId, player);
+        if (spellSource == null) {
+            return;
+        }
+        var attempt = attemptCasting(player, heldItemStack, spellId);
         if (!attempt.isSuccess()) {
             return;
         }
@@ -219,7 +222,7 @@ public class SpellHelper {
                 SpellCastSyncHelper.clearCasting(player);
             }
         }
-        var ammoResult = ammoForSpell(player, spell, itemStack);
+        var ammoResult = ammoForSpell(player, spell, heldItemStack);
 
         if (channelMultiplier > 0 && ammoResult.satisfied()) {
             var targeting = spell.release.target;
@@ -235,7 +238,7 @@ public class SpellHelper {
                     released = false;
                     if (handler != null) {
                         released = handler.apply(new CustomSpellHandler.Data(
-                                player, targets, itemStack, action, progress, context));
+                                player, targets, heldItemStack, action, progress, context));
                     }
                 } else {
                     switch (targeting.type) {
@@ -293,12 +296,13 @@ public class SpellHelper {
                 AnimationHelper.sendAnimation(player, trackingPlayers.get(), SpellCast.Animation.RELEASE, spell.release.animation, castingSpeed);
                 // Consume things
                 // Cooldown
-                imposeCooldown(player, spellId, spell, progress);
+                imposeCooldown(player, spellSource, spellId, spell, progress);
                 // Exhaust
                 player.addExhaustion(spell.cost.exhaust * SpellEngineMod.config.spell_cost_exhaust_multiplier);
                 // Durability
                 if (SpellEngineMod.config.spell_cost_durability_allowed && spell.cost.durability > 0) {
-                    itemStack.damage(spell.cost.durability, player, EquipmentSlot.MAINHAND);
+                    var stackToDamage = spellSource.itemStack().isDamageable() ? spellSource.itemStack() : heldItemStack;
+                    stackToDamage.damage(spell.cost.durability, player, EquipmentSlot.MAINHAND);
                 }
                 // Item
                 if (ammoResult.ammo != null && spell.cost.consume_item) {
@@ -328,25 +332,19 @@ public class SpellHelper {
         }
     }
 
-    public static void imposeCooldown(PlayerEntity player, Identifier spellId, Spell spell, float progress) {
+    public static void imposeCooldown(PlayerEntity player, SpellContainerHelper.Source source, Identifier spellId, Spell spell, float progress) {
         var duration = cooldownToSet(player, spell, progress);
         var durationTicks = Math.round(duration * 20F);
         if (duration > 0) {
             ((SpellCasterEntity) player).getCooldownManager().set(spellId, durationTicks);
         }
-        if (SpellEngineMod.config.spell_book_cooldown_lock) {
-            var spellBook = TrinketsCompat.getSpellBookStack(player);
-            if (!spellBook.isEmpty()) {
-                var spellBookItem = spellBook.getItem();
-                var container = SpellContainerHelper.containerFromItemStack(spellBook);
-                if (SpellContainerHelper.contains(container, spellId)) {
-                    var itemCooldowns = player.getItemCooldownManager();
-                    var durationLeft = ((ItemCooldownManagerExtension)itemCooldowns).SE_getLastCooldownDuration(spellBookItem)
-                            * itemCooldowns.getCooldownProgress(spellBookItem, 0);
-                    if (durationTicks > durationLeft) {
-                        itemCooldowns.set(spellBookItem, durationTicks);
-                    }
-                }
+        if (SpellEngineMod.config.spell_item_cooldown_lock && spell.cost.cooldown_hosting_item) {
+            var hostingItem = source.itemStack().getItem();
+            var itemCooldowns = player.getItemCooldownManager();
+            var durationLeft = ((ItemCooldownManagerExtension)itemCooldowns).SE_getLastCooldownDuration(hostingItem)
+                    * itemCooldowns.getCooldownProgress(hostingItem, 0);
+            if (durationTicks > durationLeft) {
+                itemCooldowns.set(hostingItem, durationTicks);
             }
         }
     }
@@ -1035,7 +1033,7 @@ public class SpellHelper {
         var damageEffects = new ArrayList<EstimatedValue>();
         var healEffects = new ArrayList<EstimatedValue>();
 
-        boolean forSpellBook = itemStack.getItem() instanceof SpellBookItem;
+        boolean forSpellBook = itemStack.getItem() instanceof ISpellBookItem;
         var replaceAttributes = (caster.getMainHandStack() != itemStack && !forSpellBook);
 
         var heldAttributes = AttributeModifierHelper.modifierMultimap(caster.getMainHandStack());
