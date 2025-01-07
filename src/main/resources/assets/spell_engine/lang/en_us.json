@@ -67,7 +67,8 @@
   "keybindings.spell_engine.spell_hotbar_8" : "Spell Hotbar Slot 8",
   "keybindings.spell_engine.spell_hotbar_9" : "Spell Hotbar Slot 9",
 
-  "trinkets.slot.charm.spell_book": "Spell Book",
+  "trinkets.slot.spell.book": "Spell Book",
+  "trinkets.slot.spell.scroll": "Spell Scroll",
 
   "text.autoconfig.spell_engine.title" : "Spell Engine",
 

@@ -64,7 +64,7 @@
   "keybindings.spell_engine.spell_hotbar_8": "주문 단축 바 슬롯 8",
   "keybindings.spell_engine.spell_hotbar_9": "주문 단축 바 슬롯 9",
 
-  "trinkets.slot.charm.spell_book": "주문서",
+  "trinkets.slot.spell.book": "주문서",
 
   "text.autoconfig.spell_engine.title": "주문 엔진",
 

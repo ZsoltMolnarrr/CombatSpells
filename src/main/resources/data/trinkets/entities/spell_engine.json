@@ -3,6 +3,7 @@
     "player"
   ],
   "slots": [
-    "charm/spell_book"
+    "spell/book",
+    "spell/scroll"
   ]
 }

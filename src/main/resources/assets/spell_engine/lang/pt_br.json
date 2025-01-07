@@ -64,7 +64,7 @@
   "keybindings.spell_engine.spell_hotbar_8" : "Barra de Feitiços Slot 8",
   "keybindings.spell_engine.spell_hotbar_9" : "Barra de Feitiços Slot 9",
 
-  "trinkets.slot.charm.spell_book": "Livro de feitiços",
+  "trinkets.slot.spell.book": "Livro de feitiços",
 
   "text.autoconfig.spell_engine.title" : "Motor de magia",
 

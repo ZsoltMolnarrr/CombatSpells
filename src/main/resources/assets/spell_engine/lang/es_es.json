@@ -64,7 +64,7 @@
     "keybindings.spell_engine.spell_hotbar_8": "Ranura 8 de la Barra de Acceso Rápido de Hechizos",
     "keybindings.spell_engine.spell_hotbar_9": "Ranura 9 de la Barra de Acceso Rápido de Hechizos",
 
-    "trinkets.slot.charm.spell_book": "Libro de Hechizos",
+    "trinkets.slot.spell.book": "Libro de Hechizos",
 
     "text.autoconfig.spell_engine.title": "Motor de Hechizos",
 

@@ -64,7 +64,7 @@
   "keybindings.spell_engine.spell_hotbar_8" : "Slot incantesimo 8",
   "keybindings.spell_engine.spell_hotbar_9" : "Slot incantesimo 9",
 
-  "trinkets.slot.charm.spell_book": "Libro degli incantesimi",
+  "trinkets.slot.spell.book": "Libro degli incantesimi",
 
   "text.autoconfig.spell_engine.title" : "Spell Engine",
   

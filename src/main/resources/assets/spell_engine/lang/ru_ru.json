@@ -64,7 +64,7 @@
   "keybindings.spell_engine.spell_hotbar_8" : "Слот панели заклинаний 8",
   "keybindings.spell_engine.spell_hotbar_9" : "Слот панели заклинаний 9",
 
-  "trinkets.slot.charm.spell_book": "Книга заклинаний",
+  "trinkets.slot.spell.book": "Книга заклинаний",
 
   "text.autoconfig.spell_engine.title" : "Spell Engine",
 

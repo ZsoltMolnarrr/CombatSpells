@@ -58,14 +58,14 @@ public class TrinketsCompat {
 
         var trinketComponent = component.get();
         var items = new LinkedHashSet<ItemStack>();
-        var spellBookSlot = trinketComponent.getInventory().get("charm").get("spell_book");
+        var spellBookSlot = trinketComponent.getInventory().get("spell").get("book");
 
         // Add the spell book slot first
         items.add(spellBookSlot.getStack(0));
 
         // Add all other equipped items
         trinketComponent.getAllEquipped().forEach(pair -> {
-            if (pair.getLeft().getId().contains("spell_book")) { return; } // Spell book slot is already added
+            if (pair.getLeft().getId().contains("spell/book")) { return; } // Spell book slot is already added
             items.add(pair.getRight());
         });
 
@@ -91,6 +91,6 @@ public class TrinketsCompat {
         if (component.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        return component.get().getInventory().get("charm").get("spell_book").getStack(0);
+        return component.get().getInventory().get("spell").get("book").getStack(0);
     }
 }

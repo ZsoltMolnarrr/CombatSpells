@@ -1,3 +1,8 @@
+# 1.3.3
+
+- Rework trinkets integration, to declare custom slot group
+- Add support for spell scroll slot, can be enabled using data pack
+
 # 1.3.2
 
 - Fix dedicated server crash
