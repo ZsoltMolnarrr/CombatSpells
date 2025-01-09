@@ -39,7 +39,7 @@ public class SpellEngineMod {
         AutoConfig.register(ServerConfigWrapper.class, PartitioningSerializer.wrap(JanksonConfigSerializer::new));
         config = AutoConfig.getConfigHolder(ServerConfigWrapper.class).getConfig().server;
 
-        DynamicRegistries.registerSynced(SpellRegistry_V2.KEY, SpellRegistry_V2.CODEC, SpellRegistry_V2.CODEC);
+        DynamicRegistries.registerSynced(SpellRegistry_V2.KEY, SpellRegistry_V2.CODEC);
 
         SpellRegistry.initialize();
         ServerNetwork.initializeHandlers();
