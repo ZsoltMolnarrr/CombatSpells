@@ -344,21 +344,17 @@ public class Defaults {
         // DnT - end castle
 
         items.put("nova_structures:chests/end_castle/greater_loot", new LootConfig.Pool()
-                .rolls(0.5)
+                .rolls(1)
                 .add(W4, true)
-                .add(A3, true)
-                .add(X4)
         );
         items.put("nova_structures:chests/end_castle/lesser_loot", new LootConfig.Pool()
                 .rolls(0.5)
-                .add(W3, true)
-                .add(A2, true)
-                .add(X3)
+                .add(A3, true)
+                .add(X4)
         );
         items.put("nova_structures:chests/end_castle/treasure_lighthouse", new LootConfig.Pool()
                 .rolls(0.5)
                 .add(W4, true)
-                .add(A2, true)
                 .add(X4)
         );
         items.put("nova_structures:chests/end_castle/vault_brigattine", new LootConfig.Pool()
