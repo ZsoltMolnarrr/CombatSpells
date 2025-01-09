@@ -6,7 +6,9 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.api.spell.SpellPool;
@@ -27,10 +29,20 @@ public class SpellRegistry {
             this.rawId = rawId;
         }
     }
+    // Registry<Spell>
     private static final Map<Identifier, SpellEntry> spells = new HashMap<>();
+    // Registry<Spell> Tags
     public static final Map<Identifier, SpellPool> pools = new HashMap<>();
+    // Simply move it into SpellBooks.java
     public static final Map<Identifier, SpellContainer> book_containers = new HashMap<>();
+    // Could be turned into a separate registry
+    // BUT! Vanilla registries cannot be inserted programatically
+    // (So SpellBook container assignment, and fallback/auto assignments would not be possible)
+    // Resolution:
+    // - SpellBook containers need no assignment, applying item component is suitable, or datafile can be added by devs
+    // - Fallback/auto assignments ??? - MAYBE Inject(TAIL) RegistryLoader.loadFromResource (probably wont be synced to clients)
     public static final Map<Identifier, SpellContainer> containers = new HashMap<>();
+    // Just remove this, we no longer need it
     private static final Map<SpellSchool, Integer> spellCount = new HashMap<>();
 
     public static Map<Identifier, SpellEntry> all() {
