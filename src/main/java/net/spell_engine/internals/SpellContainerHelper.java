@@ -4,6 +4,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
@@ -22,14 +23,6 @@ public class SpellContainerHelper {
             return Identifier.of(container.pool());
         }
         return null;
-    }
-
-    public static SpellPool getPool(SpellContainer container) {
-        if (container != null && container.pool() != null) {
-            var id = Identifier.of(container.pool());
-            return SpellRegistry.spellPool(id);
-        }
-        return SpellPool.empty;
     }
 
     @Deprecated(forRemoval = true)
@@ -264,8 +257,8 @@ public class SpellContainerHelper {
         return container != null && (container.isUsable() || container.is_proxy());
     }
 
-    public static boolean isSpellValidForItem(Item item, SpellInfo spell) {
-        var spellType = spell.spell().school.archetype == SpellSchool.Archetype.ARCHERY
+    public static boolean isSpellValidForItem(Item item, RegistryEntry<Spell> spell) {
+        var spellType = spell.value().school.archetype == SpellSchool.Archetype.ARCHERY
                 ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
         var expectedContentType = (item instanceof RangedWeaponItem) ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
         return spellType == expectedContentType;

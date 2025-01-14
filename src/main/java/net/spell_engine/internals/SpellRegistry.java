@@ -31,8 +31,6 @@ public class SpellRegistry {
     }
     // Registry<Spell>
     private static final Map<Identifier, SpellEntry> spells = new HashMap<>();
-    // Registry<Spell> Tags
-    public static final Map<Identifier, SpellPool> pools = new HashMap<>();
     // Simply move it into SpellBooks.java
     public static final Map<Identifier, SpellContainer> book_containers = new HashMap<>();
     // Could be turned into a separate registry
@@ -55,7 +53,6 @@ public class SpellRegistry {
 
     private static void load(MinecraftServer minecraftServer) {
         loadSpells(minecraftServer.getResourceManager());
-        loadPools(minecraftServer.getResourceManager());
         loadContainers(minecraftServer.getResourceManager());
         WeaponCompatibility.initialize();
         encodeContent();
@@ -87,36 +84,6 @@ public class SpellRegistry {
         spells.clear();
         spells.putAll(parsed);
         spellsUpdated();
-    }
-
-    public static void loadPools(ResourceManager resourceManager) {
-        var gson = new Gson();
-        Map<Identifier, SpellPool.DataFormat> parsed = new HashMap<>();
-        // Reading all attribute files
-        var directory = "spell_pools";
-        for (var entry : resourceManager.findResources(directory, fileName -> fileName.getPath().endsWith(".json")).entrySet()) {
-            var identifier = entry.getKey();
-            var resource = entry.getValue();
-            try {
-                // System.out.println("Checking resource: " + identifier);
-                JsonReader reader = new JsonReader(new InputStreamReader(resource.getInputStream()));
-                SpellPool.DataFormat pool = gson.fromJson(reader, SpellPool.DataFormat.class);
-                var id = identifier
-                        .toString().replace(directory + "/", "");
-                id = id.substring(0, id.lastIndexOf('.'));
-                parsed.put(Identifier.of(id), pool);
-                // System.out.println("loaded pool - " + id +  " ids: " + pool.spell_ids);
-            } catch (Exception e) {
-                System.err.println("Spell Engine: Failed to parse spell pool: " + identifier + " | Reason: " + e.getMessage());
-            }
-        }
-        Map<Identifier, Spell> spellFlat = spells.entrySet()
-                .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().spell));
-        pools.clear();
-        for (var entry: parsed.entrySet()) {
-            pools.put(entry.getKey(), SpellPool.fromData(entry.getValue(), spellFlat));
-        }
     }
 
     public static void loadContainers(ResourceManager resourceManager) {
@@ -177,16 +144,10 @@ public class SpellRegistry {
         return null;
     }
 
-    public static SpellPool spellPool(Identifier id) {
-        var pool = pools.get(id);
-        return pool != null ? pool : SpellPool.empty;
-    }
-
     public static List<String> encoded = List.of();
 
     public static class SyncFormat { public SyncFormat() { }
         public Map<String, SpellEntry> spells = new HashMap<>();
-        public Map<String, SpellPool.SyncFormat> pools = new HashMap<>();
         public Map<String, SpellContainer> containers = new HashMap<>();
     }
 
@@ -197,9 +158,6 @@ public class SpellRegistry {
         var sync = new SyncFormat();
         spells.forEach((key, value) -> {
             sync.spells.put(key.toString(), value);
-        });
-        pools.forEach((key, value) -> {
-            sync.pools.put(key.toString(), value.toSync());
         });
         containers.forEach((key, value) -> {
             sync.containers.put(key.toString(), value);
@@ -228,9 +186,6 @@ public class SpellRegistry {
         spells.clear();
         sync.spells.forEach((key, value) -> {
             spells.put(Identifier.of(key), value);
-        });
-        sync.pools.forEach((key, value) -> {
-            pools.put(Identifier.of(key), SpellPool.fromSync(value));
         });
         sync.containers.forEach((key, value) -> {
             containers.put(Identifier.of(key), value);

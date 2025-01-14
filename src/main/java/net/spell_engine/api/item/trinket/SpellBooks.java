@@ -7,7 +7,9 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import net.spell_engine.api.spell.SpellContainer;
+import net.spell_engine.api.spell.SpellRegistry_V2;
 import net.spell_engine.compat.trinkets.SpellBookTrinketItem;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
 import net.spell_engine.internals.SpellRegistry;
@@ -21,13 +23,13 @@ import java.util.stream.Collectors;
 public class SpellBooks {
     public static final ArrayList<ISpellBookItem> all = new ArrayList<>();
 
-    public static List<ISpellBookItem> sorted() {
+    public static List<ISpellBookItem> sorted(World world) {
         return SpellBooks.all
                 .stream()
                 .sorted(Comparator.comparing(spellBookItem -> spellBookItem.getPoolId().toString()))
                 .filter(spellBookItem -> {
-                    var pool = SpellRegistry.spellPool(spellBookItem.getPoolId());
-                    return pool != null && pool.craftable();
+                    var pool = SpellRegistry_V2.entries(world, spellBookItem.getPoolId());
+                    return pool != null && !pool.isEmpty();
                 })
                 .collect(Collectors.toList());
     }

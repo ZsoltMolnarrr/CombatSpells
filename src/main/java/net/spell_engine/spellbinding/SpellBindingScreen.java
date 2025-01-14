@@ -290,7 +290,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                     }
                     case BOOK -> {
                         if (rawId < SpellBinding.BOOK_OFFSET) continue; // Filter blank offers
-                        var item = SpellBooks.sorted().get(rawId - SpellBinding.BOOK_OFFSET);
+                        var item = SpellBooks.sorted(player.getWorld()).get(rawId - SpellBinding.BOOK_OFFSET);
                         SpellBinding.State bindingState = SpellBinding.State.forBook(levelCost, requirement);
                         boolean isEnabled = bindingState.readyToApply(player, lapisCount);
 
