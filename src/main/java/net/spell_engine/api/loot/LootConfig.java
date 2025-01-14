@@ -53,7 +53,7 @@ public class LootConfig {
                 public int max = 9;
 
                 public boolean isValid() {
-                    return min > 0 && max > min;
+                    return true;
                 }
             }
 

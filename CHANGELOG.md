@@ -5,6 +5,7 @@ Functional changes:
 - Rework trinkets integration, to declare custom slot group
 - Rework container merge logic
 - Spell cooldowns now get imposed onto the hosting item
+- Fix empty spell scrolls generated in loot chests
 
 API Changes:
 - Add `spell.cost.cooldown_hosting_item` to disable imposing spell cooldowns onto the hosting item
