@@ -574,6 +574,34 @@ public class Defaults {
                 .add(W1)
                 .add(W1, true)
         );
+        scrolls.put("illagerinvasion:chests/illager_fort_tower", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1, 2)
+        );
+
+        items.put("illagerinvasion:chests/illusioner_tower_stairs", new LootConfig.Pool()
+                .rolls(0.5)
+                .add(W1)
+                .add(W1, true)
+        );
+        scrolls.put("illagerinvasion:chests/illusioner_tower_stairs", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1, 2)
+        );
+        scrolls.put("illagerinvasion:chests/sorcerer_hut", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1, 2)
+        );
+        items.put("illagerinvasion:chests/labirynth", new LootConfig.Pool()
+                .rolls(0.3)
+                .add(W1)
+                .add(W1, true)
+                .add(A1, true)
+        );
+        scrolls.put("illagerinvasion:chests/labirynth", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1, 2)
+        );
 
         // It takes a pillage
 
@@ -853,7 +881,7 @@ public class Defaults {
                 .add(W1, true)
         );
 
-        // Kaisyn?? mod
+        // Towns and Towers (kaisyn)
 
         items.put("kaisyn:village/exclusives/village_piglin_house", new LootConfig.Pool()
                 .rolls(0.5)
@@ -866,6 +894,10 @@ public class Defaults {
                 .add(W1, true)
                 .add(W1)
                 .add(A1)
+        );
+        scrolls.put("kaisyn:outpost/common/armory", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1, 2)
         );
 
         items.put("kaisyn:village/exclusives/village_piglin_barrel", new LootConfig.Pool()
@@ -978,7 +1010,7 @@ public class Defaults {
         // Dungeons Arise mod
 
         items_regex.put("^dungeons_arise:chests.*barrels$", new LootConfig.Pool()
-                .rolls(0.2)
+                .rolls(0.1)
                 .add(W1, true)
                 .add(A1, true)
                 .add(X1)
@@ -990,6 +1022,16 @@ public class Defaults {
                 .add(X1)
         );
 
+        items.put("dungeons_arise:chests/bathhouse/bathhouse_normal", new LootConfig.Pool()
+                .rolls(0.4)
+                .add(W1, true)
+                .add(A1, true)
+                .add(X1)
+        );
+        scrolls.put("dungeons_arise:chests/bathhouse/bathhouse_normal", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1, 2)
+        );
         items.put("dungeons_arise:chests/thornborn_towers/thornborn_towers_top_treasure", new LootConfig.Pool()
                 .add(W1)
                 .add(A1, true)
@@ -1081,6 +1123,10 @@ public class Defaults {
                 .add(W1, true)
                 .add(A1)
                 .add(A1, true)
+        );
+        scrolls.put("dungeons_arise:chests/mushroom_house/mushroom_house_treasure", new LootConfig.Pool()
+                .rolls(0.5)
+                .scroll(1, 2)
         );
         items.put("dungeons_arise:chests/jungle_tree_house/jungle_tree_house_treasure", new LootConfig.Pool()
                 .add(W1, true)

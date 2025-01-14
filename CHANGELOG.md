@@ -6,6 +6,7 @@ Functional changes:
 - Rework container merge logic
 - Spell cooldowns now get imposed onto the hosting item
 - Fix empty spell scrolls generated in loot chests
+- Updated loot defaults (Illager Invasion)
 
 API Changes:
 - Add `spell.cost.cooldown_hosting_item` to disable imposing spell cooldowns onto the hosting item
