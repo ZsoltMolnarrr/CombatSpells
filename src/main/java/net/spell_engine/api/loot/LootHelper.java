@@ -8,6 +8,7 @@ import net.minecraft.loot.entry.TagEntry;
 import net.minecraft.loot.function.EnchantWithLevelsLootFunction;
 import net.minecraft.loot.provider.number.BinomialLootNumberProvider;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
+import net.minecraft.loot.provider.number.LootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
@@ -106,14 +107,14 @@ public class LootHelper {
                         var entry = ItemEntry.builder(item)
                                 .weight(weight);
                         if (enchant != null && enchant.isValid()) {
-                            var enchantFunction = EnchantWithLevelsLootFunction.builder(registries, UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
+                            var enchantFunction = EnchantWithLevelsLootFunction.builder(registries, numberProvider(enchant.min_power, enchant.max_power));
 //                            if (enchant.allow_treasure) {
 //                                enchantFunction.allowTreasureEnchantments();
 //                            }
                             entry.apply(enchantFunction);
                         }
                         if (spellBind != null && spellBind.isValid()) {
-                            var function = SpellBindRandomlyLootFunction.builder(UniformLootNumberProvider.create(spellBind.min, spellBind.max));
+                            var function = SpellBindRandomlyLootFunction.builder(numberProvider(spellBind.min, spellBind.max));
                             entry.apply(function);
                         }
                         lootPoolBuilder.with(entry);
@@ -129,14 +130,14 @@ public class LootHelper {
                             .weight(weight);
 
                     if (enchant != null && enchant.isValid()) {
-                        var enchantFunction = EnchantWithLevelsLootFunction.builder(registries, UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
+                        var enchantFunction = EnchantWithLevelsLootFunction.builder(registries, numberProvider(enchant.min_power, enchant.max_power));
 //                        if (enchant.allow_treasure) {
 //                            enchantFunction.allowTreasureEnchantments();
 //                        }
                         entry.apply(enchantFunction);
                     }
                     if (spellBind != null && spellBind.isValid()) {
-                        var function = SpellBindRandomlyLootFunction.builder(UniformLootNumberProvider.create(spellBind.min, spellBind.max));
+                        var function = SpellBindRandomlyLootFunction.builder(numberProvider(spellBind.min, spellBind.max));
                         entry.apply(function);
                     }
                     lootPoolBuilder.with(entry);
@@ -148,19 +149,27 @@ public class LootHelper {
                         .weight(weight);
 
                 if (enchant != null && enchant.isValid()) {
-                    var enchantFunction = EnchantWithLevelsLootFunction.builder(registries, UniformLootNumberProvider.create(enchant.min_power, enchant.max_power));
+                    var enchantFunction = EnchantWithLevelsLootFunction.builder(registries, numberProvider(enchant.min_power, enchant.max_power));
 //                    if (enchant.allow_treasure) {
 //                        enchantFunction.allowTreasureEnchantments();
 //                    }
                     entry.apply(enchantFunction);
                 }
                 if (spellBind != null && spellBind.isValid()) {
-                    var function = SpellBindRandomlyLootFunction.builder(UniformLootNumberProvider.create(spellBind.min, spellBind.max));
+                    var function = SpellBindRandomlyLootFunction.builder(numberProvider(spellBind.min, spellBind.max));
                     entry.apply(function);
                 }
                 lootPoolBuilder.with(entry);
             }
         }
         tableBuilder.pool(lootPoolBuilder.build());
+    }
+
+    private static LootNumberProvider numberProvider(float min, float max) {
+        if (max <= min) {
+            return ConstantLootNumberProvider.create(min);
+        } else {
+            return UniformLootNumberProvider.create(min, max);
+        }
     }
 }
