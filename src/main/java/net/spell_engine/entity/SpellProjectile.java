@@ -379,7 +379,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                     context = new SpellHelper.ImpactContext();
                     var spell = this.getSpell();
                     if (getOwner() instanceof PlayerEntity player && spell != null)  {
-                        context.power(SpellPower.getSpellPower(spell.school, player));
+                        context = context.power(SpellPower.getSpellPower(spell.school, player));
                     }
                 }
                 if (context.power() == null) {
@@ -618,6 +618,12 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         super.onBlockHit(blockHitResult);
         if (bounceFrom(blockHitResult)) {
             return;
+        }
+
+        if (this.getOwner() != null
+                && this.getOwner() instanceof LivingEntity caster) {
+            var hitPosition = blockHitResult.getPos();
+            var performed = SpellHelper.projectileImpact(caster, this, null, this.getSpellInfo(), context.position(hitPosition));
         }
         this.kill();
     }

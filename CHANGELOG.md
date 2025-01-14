@@ -5,6 +5,7 @@ Functional changes:
 - Rework trinkets integration, to declare custom slot group
 - Rework container merge logic
 - Spell cooldowns now get imposed onto the hosting item
+- Spell projectiles may perform area impacts when colliding blocks
 - Fix empty spell scrolls generated in loot chests
 - Updated loot defaults (Illager Invasion)
 
