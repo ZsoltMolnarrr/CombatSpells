@@ -180,7 +180,6 @@ public class SpellRegistry {
 
     private static void encodeContent() {
         var gson = new Gson();
-        var buffer = PacketByteBufs.create();
 
         var sync = new SyncFormat();
         spells.forEach((key, value) -> {
