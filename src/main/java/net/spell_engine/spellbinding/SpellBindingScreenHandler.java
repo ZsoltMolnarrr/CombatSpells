@@ -21,7 +21,6 @@ import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.api.spell.SpellRegistry_V2;
 import net.spell_engine.internals.SpellContainerHelper;
-import net.spell_engine.internals.SpellRegistry;
 
 public class SpellBindingScreenHandler extends ScreenHandler {
     public static final ScreenHandlerType<SpellBindingScreenHandler> HANDLER_TYPE = new ScreenHandlerType(SpellBindingScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
@@ -218,19 +217,19 @@ public class SpellBindingScreenHandler extends ScreenHandler {
             var lapisCount = getLapisCount();
             var mainStack = getStacks().get(0);
             var consumableStack = getStacks().get(1);
+            var playerWorld = player.getWorld();
 
             if (poweredByLib == 0) {
                 return false;
             }
 
             switch (mode) {
-
                 case SPELL -> {
-                    var spellIdOptional = SpellRegistry.fromRawSpellId(rawId);
-                    if (spellIdOptional.isEmpty()) {
+                    var spellEntry = SpellRegistry_V2.from(playerWorld).getEntry(rawId);
+                    if (spellEntry.isEmpty()) {
                         return false;
                     }
-                    var spellId = spellIdOptional.get();
+                    var spellId = spellEntry.get().getKey().get().getValue();
                     var binding = SpellBinding.State.of(spellId, mainStack, requiredLevel, levelCost, lapisCost);
                     if (binding.state == SpellBinding.State.ApplyState.INVALID) {
                         return false;
@@ -239,7 +238,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                         return false;
                     }
                     this.context.run((world, pos) -> {
-                        SpellContainerHelper.addSpell(spellId, mainStack);
+                        SpellContainerHelper.addSpell(world, spellId, mainStack);
 
                         if (consumableStack.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE)) {
                             consumableStack.decrement(1);

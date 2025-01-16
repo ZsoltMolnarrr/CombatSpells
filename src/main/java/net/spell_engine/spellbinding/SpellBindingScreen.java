@@ -21,6 +21,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.trinket.SpellBooks;
+import net.spell_engine.api.spell.SpellRegistry_V2;
 import net.spell_engine.client.gui.CustomButton;
 import net.spell_engine.client.gui.SpellTooltip;
 import net.spell_engine.client.util.SpellRender;
@@ -256,6 +257,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
         var player = MinecraftClient.getInstance().player;
 
         try {
+            var world = MinecraftClient.getInstance().world;
             for (int i = 0; i < SpellBindingScreenHandler.MAXIMUM_SPELL_COUNT; i++) {
                 var rawId = handler.spellId[i];
                 var levelCost = handler.spellLevelCost[i];
@@ -266,11 +268,11 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                 // System.out.println("Server offers spell ID: " + rawId + " | mode: " + mode);
                 switch (mode) {
                     case SPELL -> {
-                        var spellId = SpellRegistry.fromRawSpellId(rawId);
-                        if (spellId.isEmpty()) {
+                        var spellEntry = SpellRegistry_V2.from(world).getEntry(rawId);
+                        if (spellEntry.isEmpty()) {
                             continue;
                         }
-                        var id = spellId.get();
+                        var id = spellEntry.get().getKey().get().getValue();
                         SpellBinding.State bindingState = SpellBinding.State.of(id, itemStack, requirement, levelCost, lapisCost);
                         boolean isDetailsPublic = powered || bindingState.state == SpellBinding.State.ApplyState.ALREADY_APPLIED;
                         boolean isEnabled = powered && bindingState.readyToApply(player, lapisCount);

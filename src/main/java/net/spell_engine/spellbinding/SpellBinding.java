@@ -101,7 +101,7 @@ public class SpellBinding {
                         var cost = spell.learn.tier * spell.scroll.level_cost_per_tier + spell.scroll.apply_cost_base;
                         var levelRequirement = spell.learn.tier * spell.scroll.level_requirement_per_tier;
                         return new Offer(
-                                SpellRegistry.rawSpellId(entry.getKey()),
+                                rawSpellId(world, entry.getKey()),
                                 cost,
                                 levelRequirement,
                                 0,
@@ -110,7 +110,7 @@ public class SpellBinding {
                         var cost = spell.learn.tier * spell.learn.level_cost_per_tier;
                         var levelRequirement = spell.learn.tier * spell.learn.level_requirement_per_tier;
                         return new Offer(
-                                SpellRegistry.rawSpellId(entry.getKey()),
+                                rawSpellId(world, entry.getKey()),
                                 cost * SpellEngineMod.config.spell_binding_level_cost_multiplier,
                                 levelRequirement,
                                 cost * SpellEngineMod.config.spell_binding_lapis_cost_multiplier,
@@ -121,6 +121,12 @@ public class SpellBinding {
                 })
                 .collect(Collectors.toList())
         );
+    }
+
+    private static int rawSpellId(World world, Identifier spellId) {
+        var registry = SpellRegistry_V2.from(world);
+        var entry = registry.getEntry(spellId).get();
+        return registry.getRawId(entry.value());
     }
 
     public static class State {
@@ -153,12 +159,13 @@ public class SpellBinding {
             }
         }
 
-        public static State of(int spellId, ItemStack itemStack, int levelCost, int requiredLevel, int lapisCost) {
-            var validId = SpellRegistry.fromRawSpellId(spellId);
-            if (validId.isEmpty()) {
+        public static State of(World world, int spellId, ItemStack itemStack, int levelCost, int requiredLevel, int lapisCost) {
+            var registry = SpellRegistry_V2.from(world);
+            var spellEntry = registry.getEntry(spellId);
+            if (spellEntry.isEmpty()) {
                 return new State(ApplyState.INVALID, null);
             }
-            return State.of(validId.get(), itemStack, levelCost, requiredLevel, lapisCost);
+            return State.of(spellEntry.get().getKey().get().getValue(), itemStack, levelCost, requiredLevel, lapisCost);
         }
 
         public static State of(Identifier spellId, ItemStack itemStack, int requiredLevel, int levelCost, int lapisCost) {

@@ -52,10 +52,11 @@ public class SpellHelper {
 
     public static SpellCast.Attempt attemptCasting(PlayerEntity player, ItemStack itemStack, Identifier spellId, boolean checkAmmo) {
         var caster = (SpellCasterEntity)player;
-        var spell = SpellRegistry.getSpell(spellId);
-        if (spell == null) {
+        var spellEntry = SpellRegistry_V2.from(player.getWorld()).getEntry(spellId).orElse(null);
+        if (spellEntry == null) {
             return SpellCast.Attempt.none();
         }
+        var spell = spellEntry.value();
         if (caster.getCooldownManager().isCoolingDown(spellId)) {
             return SpellCast.Attempt.failOnCooldown(new SpellCast.Attempt.OnCooldownInfo());
         }

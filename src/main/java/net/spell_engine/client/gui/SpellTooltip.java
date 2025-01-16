@@ -16,12 +16,12 @@ import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.api.spell.SpellRegistry_V2;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.Keybindings;
 import net.spell_engine.internals.SpellCasterItemStack;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellRegistry;
-import net.spell_engine.item.ScrollItem;
 import net.spell_power.api.SpellPower;
 
 import java.util.ArrayList;
@@ -155,10 +155,16 @@ public class SpellTooltip {
 
     public static List<Text> spellEntry(Identifier spellId, PlayerEntity player, ItemStack itemStack, boolean details, boolean indented) {
         var lines = new ArrayList<Text>();
-        var spell = SpellRegistry.getSpell(spellId);
-        if (spell == null) {
+        var world = MinecraftClient.getInstance().world;
+        if (world == null) {
             return lines;
         }
+        var spellEntry = SpellRegistry_V2.from(world).getEntry(spellId);
+        if (spellEntry.isEmpty()) {
+            return lines;
+        }
+        var spell = spellEntry.get().value();
+
         var primaryPower = SpellPower.getSpellPower(spell.school, player);
 
         var name = Text.translatable(spellTranslationKey(spellId))

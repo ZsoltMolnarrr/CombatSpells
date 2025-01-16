@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.item.trinket.ISpellBookItem;
@@ -206,7 +207,7 @@ public class SpellContainerHelper {
         return Identifier.of(container.spellId(selectedIndex));
     }
 
-    public static SpellContainer addSpell(Identifier spellId, SpellContainer container) {
+    public static SpellContainer addSpell(World world, Identifier spellId, SpellContainer container) {
         var spellIds = new ArrayList<String>(container.spell_ids());
         spellIds.add(spellId.toString());
 
@@ -214,9 +215,9 @@ public class SpellContainerHelper {
         HashMap<Identifier, Spell> spells = new HashMap<>();
         for (var idString : spellIds) {
             var id = Identifier.of(idString);
-            var spell = SpellRegistry.getSpell(id);
-            if (spell != null) {
-                spells.put(id, spell);
+            var spellEntry = SpellRegistry_V2.from(world).getEntry(id).orElse(null);
+            if (spellEntry != null) {
+                spells.put(id, spellEntry.value());
             }
         }
         var sortedSpellIds = spells.entrySet().stream()
@@ -227,13 +228,13 @@ public class SpellContainerHelper {
         return container.copyWith(sortedSpellIds);
     }
 
-    public static void addSpell(Identifier spellId, ItemStack itemStack) {
+    public static void addSpell(World world, Identifier spellId, ItemStack itemStack) {
         var container = containerFromItemStack(itemStack);
         if (container == null || !container.isValid()) {
             System.err.println("Trying to add spell: " + spellId + " to an ItemStack without valid spell container");
             return;
         }
-        var modifiedContainer = addSpell(spellId, container);
+        var modifiedContainer = addSpell(world, spellId, container);
         itemStack.set(SpellDataComponents.SPELL_CONTAINER, modifiedContainer);
     }
 
