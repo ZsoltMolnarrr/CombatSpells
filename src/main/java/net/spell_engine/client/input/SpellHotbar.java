@@ -16,7 +16,6 @@ import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.gui.HudMessages;
 import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.casting.SpellCasterClient;
 import net.spell_engine.mixin.client.control.KeybindingAccessor;
@@ -189,7 +188,7 @@ public class SpellHotbar {
                         }
                     }
                     case CHARGE, CHANNEL -> {
-                        if (casted != null && casted.process().id().equals(slot.spell)) {
+                        if (casted != null && casted.process().id().equals(slot.spell.getKey().get().getValue())) {
                             // The spell is already being casted
                             var needsToBeHeld = SpellHelper.isChanneled(casted.process().spell().value()) ?
                                     SpellEngineClient.config.holdToCastChannelled :
