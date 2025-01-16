@@ -69,7 +69,7 @@ public class SpellBinding {
             spells = consumableSpells.stream()
                     .filter(entry -> {
                         var spellId = entry.getKey().get().getValue();
-                        return availableSpellIds.contains(spellId);
+                        return availableSpellIds.contains(spellId) || creative;
                     })
                     .toList();
         } else {

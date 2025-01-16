@@ -52,9 +52,12 @@ public class SpellRegistry_V2 {
         return lookup.getOrThrow(tag);
     }
 
-
     public static List<RegistryEntry<Spell>> entries(World world, @Nullable Identifier id) {
-        return find(world, id).stream().toList();
+        try {
+            return find(world, id).stream().toList();
+        } catch (Exception e) {
+            return List.of();
+        }
     }
 
     public static List<RegistryEntry<Spell>> entries(World world, @Nullable String pool) {

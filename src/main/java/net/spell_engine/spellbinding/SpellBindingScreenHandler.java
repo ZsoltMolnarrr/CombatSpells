@@ -22,10 +22,13 @@ import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.api.spell.SpellRegistry_V2;
 import net.spell_engine.internals.SpellContainerHelper;
 
+import java.util.Arrays;
+
 public class SpellBindingScreenHandler extends ScreenHandler {
     public static final ScreenHandlerType<SpellBindingScreenHandler> HANDLER_TYPE = new ScreenHandlerType(SpellBindingScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
     public static final int MAXIMUM_SPELL_COUNT = 32;
     public static final int INIT_SYNC_ID = 14999;
+    private static final int SPELL_ID_RAW_NONE = -1;
     // State
     private final Inventory inventory = new SimpleInventory(2) {
         @Override
@@ -88,6 +91,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
             this.addProperty(Property.create(this.spellLapisCost, i));
         }
         this.addProperty(Property.create(this.mode, 0));
+        Arrays.fill(this.spellId, SPELL_ID_RAW_NONE);
         if (playerInventory.player instanceof ServerPlayerEntity serverPlayer) {
             SpellBindingCriteria.INSTANCE.trigger(serverPlayer, SpellBinding.ADVANCEMENT_VISIT_ID, true);
         }
@@ -111,7 +115,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
         if (mainStack.isEmpty() || !(SpellContainerHelper.hasValidContainer(mainStack) || mainStack.getItem() == Items.BOOK)) {
             this.mode[0] = SpellBinding.Mode.SPELL.ordinal();
             for (int i = 0; i < MAXIMUM_SPELL_COUNT; ++i) {
-                this.spellId[i] = 0;
+                this.spellId[i] = SPELL_ID_RAW_NONE;
                 this.spellLevelCost[i] = 0;
                 this.spellLevelRequirement[i] = 0;
                 this.spellPoweredByLib[i] = 0;
@@ -137,7 +141,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                         this.spellPoweredByLib[i] = offer.isPowered() ? 1 : 0;
                         this.spellLapisCost[i] = offer.lapisCost();
                     } else {
-                        this.spellId[i] = 0;
+                        this.spellId[i] = SPELL_ID_RAW_NONE;
                         this.spellLevelCost[i] = 0;
                         this.spellLevelRequirement[i] = 0;
                         this.spellPoweredByLib[i] = 0;

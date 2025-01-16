@@ -8,14 +8,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.utils.WeaponCompatibility;
-import net.spell_power.api.SpellSchool;
 
 import java.io.InputStreamReader;
 import java.util.*;
 
 public class SpellRegistry {
     // Simply move it into SpellBooks.java
-    public static final Map<Identifier, SpellContainer> book_containers = new HashMap<>();
+
     // Could be turned into a separate registry
     // BUT! Vanilla registries cannot be inserted programatically
     // (So SpellBook container assignment, and fallback/auto assignments would not be possible)
@@ -23,6 +22,7 @@ public class SpellRegistry {
     // - SpellBook containers need no assignment, applying item component is suitable, or datafile can be added by devs
     // - Fallback/auto assignments ??? - MAYBE Inject(TAIL) RegistryLoader.loadFromResource (probably wont be synced to clients)
     public static final Map<Identifier, SpellContainer> containers = new HashMap<>();
+    public static final Map<Identifier, SpellContainer> book_containers = new HashMap<>();
 
     public static void initialize() {
         ServerLifecycleEvents.SERVER_STARTING.register(SpellRegistry::load);
