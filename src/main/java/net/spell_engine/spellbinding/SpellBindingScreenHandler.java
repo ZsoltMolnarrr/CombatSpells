@@ -19,7 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.item.trinket.SpellBooks;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.internals.SpellContainerHelper;
 
 import java.util.Arrays;
@@ -229,7 +229,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
 
             switch (mode) {
                 case SPELL -> {
-                    var spellEntry = SpellRegistry_V2.from(playerWorld).getEntry(rawId);
+                    var spellEntry = SpellRegistry.from(playerWorld).getEntry(rawId);
                     if (spellEntry.isEmpty()) {
                         return false;
                     }
@@ -259,7 +259,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                             var container = SpellContainerHelper.containerFromItemStack(mainStack);
                             var poolId = SpellContainerHelper.getPoolId(container);
                             if (poolId != null) {
-                                var pool = SpellRegistry_V2.entries(world, container.pool());
+                                var pool = SpellRegistry.entries(world, container.pool());
                                 var isComplete = container.spell_ids().size() == pool.size();
                                 SpellBindingCriteria.INSTANCE.trigger(serverPlayer, poolId, isComplete);
                                 // System.out.println("Triggering advancement SpellBindingCriteria.INSTANCE spell_pool: " + poolId + " isComplete: " + isComplete);

@@ -88,7 +88,7 @@ public class SpellContainerHelper {
         }
         var heldContainer = sources.get(0).container();
         var spells = new ArrayList<RegistryEntry<Spell>>();
-        var registry = SpellRegistry_V2.from(player.getWorld());
+        var registry = SpellRegistry.from(player.getWorld());
         for (var source : sources) {
             var container = source.container();
             if (container.content() == heldContainer.content()) {
@@ -114,8 +114,8 @@ public class SpellContainerHelper {
             var tag = spell.group;
             if (tag != null) {
                 for (var other : spells) {
-                    var spellId = spellEntry.getKey().get();
-                    var otherId = other.getKey().get();
+                    var spellId = spellEntry.getKey().get().getValue();
+                    var otherId = other.getKey().get().getValue();
                     if (spellId.equals(otherId)) continue;
                     if (tag.equals(other.value().group)) {
                         if (spellEntry.value().learn.tier == other.value().learn.tier) {
@@ -215,7 +215,7 @@ public class SpellContainerHelper {
         HashMap<Identifier, Spell> spells = new HashMap<>();
         for (var idString : spellIds) {
             var id = Identifier.of(idString);
-            var spellEntry = SpellRegistry_V2.from(world).getEntry(id).orElse(null);
+            var spellEntry = SpellRegistry.from(world).getEntry(id).orElse(null);
             if (spellEntry != null) {
                 spells.put(id, spellEntry.value());
             }

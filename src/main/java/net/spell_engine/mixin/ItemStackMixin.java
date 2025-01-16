@@ -7,8 +7,7 @@ import net.minecraft.registry.Registries;
 import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.api.spell.SpellDataComponents;
 import net.spell_engine.internals.SpellCasterItemStack;
-import net.spell_engine.internals.SpellContainerHelper;
-import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.internals.SpellAssignments;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -42,7 +41,7 @@ public abstract class ItemStackMixin implements SpellCasterItemStack {
     private SpellContainer spellContainerDefault() {
         var item = getItem();
         var id = Registries.ITEM.getId(item);
-        return SpellRegistry.containerForItem(id);
+        return SpellAssignments.containerForItem(id);
     }
 
     // SpellCasterItemStack

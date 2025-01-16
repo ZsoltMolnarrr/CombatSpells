@@ -12,7 +12,7 @@ import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
 import net.spell_engine.api.effect.SpellStash;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,7 +46,7 @@ public class RangedWeaponItemMixin {
                     var stack = entry.getValue();
                     var stashedSpell = ((SpellStash) effect).getStashedSpell();
                     if (stashedSpell != null) {
-                        var spellEntry = SpellRegistry_V2.from(world).getEntry(stashedSpell.id()).orElse(null);
+                        var spellEntry = SpellRegistry.from(world).getEntry(stashedSpell.id()).orElse(null);
                         if (spellEntry != null && spellEntry.value().arrow_perks != null) {
                             arrow.applyArrowPerks(spellEntry);
                         }

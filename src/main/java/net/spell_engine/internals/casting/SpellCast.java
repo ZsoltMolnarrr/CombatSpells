@@ -5,7 +5,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.internals.SpellHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,7 +81,7 @@ public class SpellCast {
                 return null;
             }
             var id = Identifier.of(spellId);
-            var spellEntry = SpellRegistry_V2.from(world).getEntry(id).orElse(null);
+            var spellEntry = SpellRegistry.from(world).getEntry(id).orElse(null);
             return new Process(spellEntry, item, sync.s(), sync.l(), startedAt);
         }
 

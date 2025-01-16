@@ -12,7 +12,7 @@ import net.spell_engine.utils.WeaponCompatibility;
 import java.io.InputStreamReader;
 import java.util.*;
 
-public class SpellRegistry {
+public class SpellAssignments {
     // Simply move it into SpellBooks.java
 
     // Could be turned into a separate registry
@@ -25,7 +25,7 @@ public class SpellRegistry {
     public static final Map<Identifier, SpellContainer> book_containers = new HashMap<>();
 
     public static void initialize() {
-        ServerLifecycleEvents.SERVER_STARTING.register(SpellRegistry::load);
+        ServerLifecycleEvents.SERVER_STARTING.register(SpellAssignments::load);
     }
 
     private static void load(MinecraftServer minecraftServer) {

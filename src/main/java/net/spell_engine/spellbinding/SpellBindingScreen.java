@@ -13,7 +13,6 @@ import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SmithingTemplateItem;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -21,16 +20,14 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.trinket.SpellBooks;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.client.gui.CustomButton;
 import net.spell_engine.client.gui.SpellTooltip;
 import net.spell_engine.client.util.SpellRender;
-import net.spell_engine.internals.SpellRegistry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Environment(value= EnvType.CLIENT)
 public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler> {
@@ -268,7 +265,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                 // System.out.println("Server offers spell ID: " + rawId + " | mode: " + mode);
                 switch (mode) {
                     case SPELL -> {
-                        var spellEntry = SpellRegistry_V2.from(world).getEntry(rawId);
+                        var spellEntry = SpellRegistry.from(world).getEntry(rawId);
                         if (spellEntry.isEmpty()) {
                             continue;
                         }

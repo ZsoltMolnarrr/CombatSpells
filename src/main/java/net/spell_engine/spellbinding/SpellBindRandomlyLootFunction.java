@@ -14,7 +14,7 @@ import net.minecraft.loot.provider.number.LootNumberProviderTypes;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.SpellDataComponents;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.internals.SpellContainerHelper;
 import net.spell_engine.item.ScrollItem;
 import net.spell_engine.item.SpellEngineItems;
@@ -60,7 +60,7 @@ public class SpellBindRandomlyLootFunction extends ConditionalLootFunction {
     @Override
     public ItemStack process(ItemStack stack, LootContext context) {
         final var selectedTier = this.tier.nextInt(context);
-        var spells = SpellRegistry_V2.stream(context.getWorld())
+        var spells = SpellRegistry.stream(context.getWorld())
                 .filter(entry -> entry.value().learn.tier == selectedTier)
                 .toList();
         if (spells.size() > 0) {

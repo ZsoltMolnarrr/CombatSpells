@@ -3,7 +3,6 @@ package net.spell_engine.network;
 import com.google.common.collect.Iterables;
 import net.fabricmc.fabric.api.networking.v1.*;
 import net.minecraft.entity.Entity;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.server.network.ServerPlayerConfigurationTask;
 import net.minecraft.server.world.ServerWorld;
@@ -12,7 +11,7 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.config.ServerConfig;
 import net.spell_engine.internals.SpellCastSyncHelper;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.internals.SpellAssignments;
 import net.spell_engine.utils.TargetHelper;
 
 import java.util.ArrayList;
@@ -40,11 +39,11 @@ public class ServerNetwork {
         });
         ServerConfigurationConnectionEvents.CONFIGURE.register((handler, server) -> {
             if (ServerConfigurationNetworking.canSend(handler, Packets.SpellRegistrySync.ID)) {
-                if (SpellRegistry.encoded.isEmpty()) {
+                if (SpellAssignments.encoded.isEmpty()) {
                     throw new AssertionError("Spell registry is empty!");
                 }
                 // System.out.println("Starting WeaponRegistrySyncTask, chunks: " + WeaponRegistry.getEncodedRegistry().chunks().size());
-                handler.addTask(new SpellRegistrySyncTask(SpellRegistry.encoded));
+                handler.addTask(new SpellRegistrySyncTask(SpellAssignments.encoded));
             } else {
                 handler.disconnect(Text.literal("Network configuration task not supported: " + SpellRegistrySyncTask.name));
             }

@@ -28,7 +28,7 @@ import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.CustomSpellHandler;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.SpellEvents;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.entity.ConfigurableKnockback;
 import net.spell_engine.entity.SpellCloud;
 import net.spell_engine.entity.SpellProjectile;
@@ -52,7 +52,7 @@ public class SpellHelper {
 
     public static SpellCast.Attempt attemptCasting(PlayerEntity player, ItemStack itemStack, Identifier spellId, boolean checkAmmo) {
         var caster = (SpellCasterEntity)player;
-        var spellEntry = SpellRegistry_V2.from(player.getWorld()).getEntry(spellId).orElse(null);
+        var spellEntry = SpellRegistry.from(player.getWorld()).getEntry(spellId).orElse(null);
         if (spellEntry == null) {
             return SpellCast.Attempt.none();
         }
@@ -168,7 +168,7 @@ public class SpellHelper {
     }
 
     public static void startCasting(PlayerEntity player, Identifier spellId, float speed, int length) {
-        var spellEntry = SpellRegistry_V2.from(player.getWorld()).getEntry(spellId).orElse(null);
+        var spellEntry = SpellRegistry.from(player.getWorld()).getEntry(spellId).orElse(null);
         if (spellEntry == null) {
             return;
         }
@@ -187,7 +187,7 @@ public class SpellHelper {
 
     public static void performSpell(World world, PlayerEntity player, Identifier spellId, TargetHelper.SpellTargetResult targetResult, SpellCast.Action action, float progress) {
         if (player.isSpectator()) { return; }
-        var optionalSpellEntry = SpellRegistry_V2.from(world).getEntry(spellId);
+        var optionalSpellEntry = SpellRegistry.from(world).getEntry(spellId);
         if (optionalSpellEntry.isEmpty()) {
             return;
         }

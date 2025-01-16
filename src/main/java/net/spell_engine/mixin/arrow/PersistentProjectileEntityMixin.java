@@ -14,10 +14,9 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.entity.ConfigurableKnockback;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.particle.ParticleHelper;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +53,7 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
         if (cachedSpellEntry != null) {
             return cachedSpellEntry;
         }
-        var entry = SpellRegistry_V2.from(arrow().getWorld()).getEntry(spellId).orElse(null);
+        var entry = SpellRegistry.from(arrow().getWorld()).getEntry(spellId).orElse(null);
         cachedSpellEntry = entry;
         return entry;
     }

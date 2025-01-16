@@ -10,9 +10,8 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.internals.SpellContainerHelper;
-import net.spell_engine.internals.SpellRegistry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +51,7 @@ public class SpellBinding {
         if (container == null) {
             return new OfferResult(Mode.SPELL, List.of());
         }
-        var pool = SpellRegistry_V2.entries(world, container.pool());
+        var pool = SpellRegistry.entries(world, container.pool());
         if (pool == null || pool.isEmpty()) {
             return new OfferResult(Mode.SPELL, List.of());
         }
@@ -62,7 +61,7 @@ public class SpellBinding {
         var scrollMode = false;
         if (consumableStack.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE) && consumableContainer != null) {
             scrollMode = true;
-            var consumableSpells = SpellRegistry_V2.entries(world, consumableContainer.pool());
+            var consumableSpells = SpellRegistry.entries(world, consumableContainer.pool());
             var availableSpellIds = pool.stream()
                     .map(entry -> entry.getKey().get().getValue())
                     .collect(Collectors.toSet());
@@ -124,7 +123,7 @@ public class SpellBinding {
     }
 
     private static int rawSpellId(World world, Identifier spellId) {
-        var registry = SpellRegistry_V2.from(world);
+        var registry = SpellRegistry.from(world);
         var entry = registry.getEntry(spellId).get();
         return registry.getRawId(entry.value());
     }
@@ -160,7 +159,7 @@ public class SpellBinding {
         }
 
         public static State of(World world, int spellId, ItemStack itemStack, int levelCost, int requiredLevel, int lapisCost) {
-            var registry = SpellRegistry_V2.from(world);
+            var registry = SpellRegistry.from(world);
             var spellEntry = registry.getEntry(spellId);
             if (spellEntry.isEmpty()) {
                 return new State(ApplyState.INVALID, null);

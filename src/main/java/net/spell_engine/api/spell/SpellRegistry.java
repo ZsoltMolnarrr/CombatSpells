@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
@@ -20,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class SpellRegistry_V2 {
+public class SpellRegistry {
     /**
      * Using vanilla name space on purpose!
      * So spell data file path looks like this:
@@ -28,7 +25,7 @@ public class SpellRegistry_V2 {
      * instead of this:
      * `data/MOD/spell_engine/spell/SPELL.json`
      */
-    public static final Identifier ID = Identifier.ofVanilla("spells");
+    public static final Identifier ID = Identifier.ofVanilla("spell");
     public static final RegistryKey<Registry<Spell>> KEY = RegistryKey.ofRegistry(ID);
     public static Registry<Spell> from(World world) {
         return world.getRegistryManager().get(KEY);

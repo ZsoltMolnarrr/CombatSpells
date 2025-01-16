@@ -15,11 +15,8 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.trinket.SpellBookItem;
 import net.spell_engine.compat.trinkets.SpellScrollTrinketItem;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.spellbinding.SpellBinding;
 import net.spell_engine.spellbinding.SpellBindingBlock;
-
-import java.util.Comparator;
 
 public class SpellEngineItems {
     public static class Group {

@@ -12,12 +12,9 @@ import net.minecraft.util.Rarity;
 import net.spell_engine.api.spell.*;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.internals.SpellContainerHelper;
-import net.spell_engine.internals.SpellRegistry;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 public class ScrollItem extends Item {
     public static final Identifier ID = Identifier.of("spell_engine", "scroll");

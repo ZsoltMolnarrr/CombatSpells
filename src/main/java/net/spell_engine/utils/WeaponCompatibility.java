@@ -7,7 +7,7 @@ import net.minecraft.item.TridentItem;
 import net.minecraft.registry.Registries;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.SpellContainer;
-import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.internals.SpellAssignments;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -39,10 +39,10 @@ public class WeaponCompatibility {
             if (addProxy) {
                 switch (contentType) {
                     case MAGIC -> {
-                        SpellRegistry.containers.putIfAbsent(itemId, spellProxyContainer);
+                        SpellAssignments.containers.putIfAbsent(itemId, spellProxyContainer);
                     }
                     case ARCHERY -> {
-                        SpellRegistry.containers.putIfAbsent(itemId, arrowProxyContainer);
+                        SpellAssignments.containers.putIfAbsent(itemId, arrowProxyContainer);
                     }
                 }
             }

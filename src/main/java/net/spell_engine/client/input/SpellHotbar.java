@@ -11,7 +11,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.UseAction;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.gui.HudMessages;
 import net.spell_engine.internals.SpellContainerHelper;
@@ -69,7 +69,7 @@ public class SpellHotbar {
             var spellEntryList = spellIds.stream()
                     .map(idString -> {
                         var id = Identifier.of(idString);
-                        return SpellRegistry_V2.from(player.getWorld()).getEntry(id).orElse(null);
+                        return SpellRegistry.from(player.getWorld()).getEntry(id).orElse(null);
                     })
                     .filter(Objects::nonNull)
                     .toList();

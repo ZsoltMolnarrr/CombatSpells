@@ -16,12 +16,11 @@ import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.Keybindings;
 import net.spell_engine.internals.SpellCasterItemStack;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_power.api.SpellPower;
 
 import java.util.ArrayList;
@@ -159,7 +158,7 @@ public class SpellTooltip {
         if (world == null) {
             return lines;
         }
-        var spellEntry = SpellRegistry_V2.from(world).getEntry(spellId);
+        var spellEntry = SpellRegistry.from(world).getEntry(spellId);
         if (spellEntry.isEmpty()) {
             return lines;
         }

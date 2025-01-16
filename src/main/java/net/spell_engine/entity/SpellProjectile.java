@@ -27,10 +27,9 @@ import net.minecraft.world.World;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.entity.TwoWayCollisionChecker;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.client.render.FlyingSpellEntity;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
@@ -572,7 +571,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
     // MARK: Helper
 
     @Nullable public RegistryEntry<Spell> getSpellEntry() {
-        return SpellRegistry_V2.from(this.getWorld()).getEntry(spellId).orElse(null);
+        return SpellRegistry.from(this.getWorld()).getEntry(spellId).orElse(null);
     }
 
     public SpellHelper.ImpactContext getImpactContext() {

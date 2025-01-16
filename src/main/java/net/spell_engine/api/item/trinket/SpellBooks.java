@@ -9,10 +9,10 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.api.spell.SpellContainer;
-import net.spell_engine.api.spell.SpellRegistry_V2;
+import net.spell_engine.api.spell.SpellRegistry;
 import net.spell_engine.compat.trinkets.SpellBookTrinketItem;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
-import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.internals.SpellAssignments;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,7 +28,7 @@ public class SpellBooks {
                 .stream()
                 .sorted(Comparator.comparing(spellBookItem -> spellBookItem.getPoolId().toString()))
                 .filter(spellBookItem -> {
-                    var pool = SpellRegistry_V2.entries(world, spellBookItem.getPoolId());
+                    var pool = SpellRegistry.entries(world, spellBookItem.getPoolId());
                     return pool != null && !pool.isEmpty();
                 })
                 .collect(Collectors.toList());
@@ -40,7 +40,7 @@ public class SpellBooks {
 
     public static ISpellBookItem create(Identifier poolId, SpellContainer.ContentType contentType) {
         var container = new SpellContainer(contentType, false, poolId.toString(), 0, List.of());
-        SpellRegistry.book_containers.put(itemIdFor(poolId), container);
+        SpellAssignments.book_containers.put(itemIdFor(poolId), container);
         ISpellBookItem book = null;
         TrinketsCompat.init();
         if (TrinketsCompat.isEnabled()) {
