@@ -6,10 +6,12 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.UseAction;
-import net.spell_engine.api.spell.SpellInfo;
+import net.spell_engine.api.spell.Spell;
+import net.spell_engine.api.spell.SpellRegistry_V2;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.gui.HudMessages;
 import net.spell_engine.internals.SpellContainerHelper;
@@ -29,7 +31,7 @@ import java.util.Objects;
 public class SpellHotbar {
     public static SpellHotbar INSTANCE = new SpellHotbar();
 
-    public record Slot(SpellInfo spell, SpellCast.Mode castMode,  @Nullable ItemStack itemStack, @Nullable WrappedKeybinding keybinding, @Nullable KeyBinding modifier) {
+    public record Slot(RegistryEntry<Spell> spell, SpellCast.Mode castMode, @Nullable ItemStack itemStack, @Nullable WrappedKeybinding keybinding, @Nullable KeyBinding modifier) {
         @Nullable public KeyBinding getKeyBinding(GameOptions options) {
             if (keybinding != null) {
                 var unwrapped = keybinding.get(options);
@@ -65,23 +67,17 @@ public class SpellHotbar {
             }
 
             var spellIds = mergedContainer.spell_ids();
-            var spellInfoList = spellIds.stream()
+            var spellEntryList = spellIds.stream()
                     .map(idString -> {
                         var id = Identifier.of(idString);
-                        var spell = SpellRegistry.getSpell(id);
-                        if (spell == null) {
-                            return null;
-                        }
-                        return new SpellInfo(spell, id);
+                        return SpellRegistry_V2.from(player.getWorld()).getEntry(id).orElse(null);
                     })
                     .filter(Objects::nonNull)
                     .toList();
 
             int keyBindingIndex = 0;
-            for (SpellInfo spellInfo : spellInfoList) {
-                var spellId = spellInfo.id();
-
-                var spell = spellInfo.spell();
+            for (RegistryEntry<Spell> spellEntry : spellEntryList) {
+                var spell = spellEntry.value();
                 if (spell == null) {
                     continue;
                 }
@@ -102,7 +98,7 @@ public class SpellHotbar {
                 }
 
                 // Create slot
-                var slot = new Slot(new SpellInfo(spell, spellId), SpellCast.Mode.from(spell), null, keyBinding, null);
+                var slot = new Slot(spellEntry, SpellCast.Mode.from(spell), null, keyBinding, null);
 
                 // Try to categorize slot based on keybinding
                 if (keyBinding != null) {
@@ -155,7 +151,7 @@ public class SpellHotbar {
         return handle(player, List.of(slot), options);
     }
 
-    public record Handle(SpellInfo spell, KeyBinding keyBinding, @Nullable WrappedKeybinding.Category category) {
+    public record Handle(RegistryEntry<Spell> spell, KeyBinding keyBinding, @Nullable WrappedKeybinding.Category category) {
         public static Handle from(Slot slot, KeyBinding keyBinding, @Nullable WrappedKeybinding.Category category) {
             return new Handle(slot.spell, keyBinding, category);
         }
@@ -186,16 +182,16 @@ public class SpellHotbar {
                     }
                     case INSTANT -> {
                         if (pressed) {
-                            var attempt = caster.startSpellCast(casterStack, slot.spell.id());
+                            var attempt = caster.startSpellCast(casterStack, slot.spell);
                             handledThisTick = handle;
                             displayAttempt(attempt);
                             return handle;
                         }
                     }
                     case CHARGE, CHANNEL -> {
-                        if (casted != null && casted.process().id().equals(slot.spell.id())) {
+                        if (casted != null && casted.process().id().equals(slot.spell)) {
                             // The spell is already being casted
-                            var needsToBeHeld = SpellHelper.isChanneled(casted.process().spell()) ?
+                            var needsToBeHeld = SpellHelper.isChanneled(casted.process().spell().value()) ?
                                     SpellEngineClient.config.holdToCastChannelled :
                                     SpellEngineClient.config.holdToCastCharged;
                             if (needsToBeHeld) {
@@ -215,7 +211,7 @@ public class SpellHotbar {
                         } else {
                             // A different spell or no spell is being casted
                             if (pressed && isReleased(keyBinding, UseCase.STOP)) {
-                                var attempt = caster.startSpellCast(casterStack, slot.spell.id());
+                                var attempt = caster.startSpellCast(casterStack, slot.spell);
                                 debounce(keyBinding, UseCase.START);
                                 handledThisTick = handle;
                                 displayAttempt(attempt);

@@ -4,6 +4,7 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -30,7 +31,8 @@ public class ScrollItem extends Item {
         return false;
     }
 
-    @Nullable public static boolean applySpell(ItemStack itemStack, Identifier id, Spell spell, boolean requirePool) {
+    @Nullable public static boolean applySpell(ItemStack itemStack, RegistryEntry<Spell> spellEntry, boolean requirePool) {
+        var spell = spellEntry.value();
         var scroll = spell.scroll;
         if (scroll != null && scroll.generate) {
 //            var poolId = SpellRegistry.pools.entrySet().stream() // TODO: Disable generate for low tier spells
@@ -52,7 +54,7 @@ public class ScrollItem extends Item {
 //                    itemStack.set(DataComponentTypes.CUSTOM_NAME, Text.translatable(translationKey));
 //                }
 //            }
-            itemStack.set(SpellDataComponents.SPELL_CONTAINER, SpellContainerHelper.create(id, spell, itemStack.getItem()));
+            itemStack.set(SpellDataComponents.SPELL_CONTAINER, SpellContainerHelper.create(spellEntry, itemStack.getItem()));
 
             var rarity = scroll.custom_rarity;
             if (rarity == null) {

@@ -86,15 +86,16 @@ public class SpellContainerHelper {
             return SpellContainer.EMPTY;
         }
         var heldContainer = sources.get(0).container();
-        var spells = new ArrayList<SpellInfo>();
+        var spells = new ArrayList<RegistryEntry<Spell>>();
+        var registry = SpellRegistry_V2.from(player.getWorld());
         for (var source : sources) {
             var container = source.container();
             if (container.content() == heldContainer.content()) {
                 for (var idString : container.spell_ids()) {
                     var id = Identifier.of(idString);
-                    var spell = SpellRegistry.getSpell(id);
+                    var spell = registry.getEntry(id).orElse(null);
                     if (spell != null) {
-                        spells.add(new SpellInfo(spell, id));
+                        spells.add(spell);
                     }
                 }
             }
@@ -102,24 +103,27 @@ public class SpellContainerHelper {
 
         var spellIds = new LinkedHashSet<String>(); // We need the IDs only, but remove duplicates
         for (var spell : spells) {
-            spellIds.add(spell.id().toString());
+            spellIds.add(spell.getKey().get().getValue().toString());
         }
 
         // Remove spells with the same group, and lower tier
         var toRemove = new HashSet<String>();
-        for (var spell : spells) {
-            var tag = spell.spell().group;
+        for (var spellEntry : spells) {
+            var spell = spellEntry.value();
+            var tag = spell.group;
             if (tag != null) {
                 for (var other : spells) {
-                    if (spell.id().equals(other.id())) continue;
-                    if (tag.equals(other.spell().group)) {
-                        if (spell.spell().learn.tier == other.spell().learn.tier) {
-                            if (spell.spell().rank > other.spell().rank) {
-                                toRemove.add(other.id().toString());
+                    var spellId = spellEntry.getKey().get();
+                    var otherId = other.getKey().get();
+                    if (spellId.equals(otherId)) continue;
+                    if (tag.equals(other.value().group)) {
+                        if (spellEntry.value().learn.tier == other.value().learn.tier) {
+                            if (spellEntry.value().rank > other.value().rank) {
+                                toRemove.add(otherId.toString());
                             }
                         }
-                        if (spell.spell().learn.tier > other.spell().learn.tier) {
-                            toRemove.add(other.id().toString());
+                        if (spellEntry.value().learn.tier > other.value().learn.tier) {
+                            toRemove.add(otherId.toString());
                         }
                     }
                 }
@@ -269,16 +273,16 @@ public class SpellContainerHelper {
                 ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
     }
 
-    public static SpellContainer create(Identifier spellId, Spell spell, Item item) {
-        return create(List.of(new SpellInfo(spell, spellId)), item);
+    public static SpellContainer create(RegistryEntry<Spell> spell, Item item) {
+        return create(List.of(spell), item);
     }
 
-    public static SpellContainer create(List<SpellInfo> spells, Item item) {
-        final var contentType = contentTypeForItem(spells.get(0).spell());
+    public static SpellContainer create(List<RegistryEntry<Spell>> spells, Item item) {
+        final var contentType = contentTypeForItem(spells.get(0).value());
         var isProxy = !(ISpellBookItem.isSpellBook(item) || item.getRegistryEntry().isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE));
         var spellIds = spells.stream()
-                .filter(spellInfo -> contentTypeForItem(spellInfo.spell()) == contentType)
-                .map(spellInfo -> spellInfo.id().toString())
+                .filter(entry -> contentTypeForItem(entry.value()) == contentType)
+                .map(entry -> entry.getKey().get().getValue().toString())
                 .toList();
         return new SpellContainer(contentType, isProxy, "", spellIds.size(), spellIds);
     }

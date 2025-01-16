@@ -166,7 +166,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                 }
                 if (showSpellDetails) {
                     tooltip.add(Text.literal(" "));
-                    tooltip.addAll(SpellTooltip.spellInfo(button.spell.id(), player, itemStack, true, false));
+                    tooltip.addAll(SpellTooltip.spellEntry(button.spell.id(), player, itemStack, true, false));
                 }
                 if (button.isDetailsPublic) {
                     context.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
@@ -278,7 +278,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                         if (!isDetailsPublic) {
                             text = text.formatted(Formatting.OBFUSCATED).fillStyle(RUNE_STYLE);
                         }
-                        var spell = new SpellInfo(
+                        var spell = new SpellViewModel(
                                 id,
                                 SpellRender.iconTexture(id),
                                 text);
@@ -324,8 +324,8 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
     }
 
     enum ButtonState { NORMAL, HOVER }
-    record SpellInfo(Identifier id, Identifier icon, Text name) { }
-    record ButtonViewModel(boolean shown, int x, int y, int width, int height, boolean isEnabled, boolean isDetailsPublic, @Nullable SpellInfo spell, @Nullable Item item, SpellBinding.State binding) {
+    record SpellViewModel(Identifier id, Identifier icon, Text name) { }
+    record ButtonViewModel(boolean shown, int x, int y, int width, int height, boolean isEnabled, boolean isDetailsPublic, @Nullable SpellViewModel spell, @Nullable Item item, SpellBinding.State binding) {
         public boolean mouseOver(int mouseX, int mouseY) {
             if(!shown) { return false; }
             return (mouseX > x && mouseX < x + width) && (mouseY > y && mouseY < y + height);

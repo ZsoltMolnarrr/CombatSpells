@@ -14,10 +14,8 @@ import net.minecraft.loot.provider.number.LootNumberProviderTypes;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.SpellDataComponents;
-import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.api.spell.SpellRegistry_V2;
 import net.spell_engine.internals.SpellContainerHelper;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.item.ScrollItem;
 import net.spell_engine.item.SpellEngineItems;
 
@@ -69,10 +67,10 @@ public class SpellBindRandomlyLootFunction extends ConditionalLootFunction {
             var spell = spells.get(context.getRandom().nextInt(spells.size()));
             var retryAttempts = 3;
             if (stack.getItem() == SpellEngineItems.SCROLL.get()) {
-                var success = ScrollItem.applySpell(stack, spell.getKey().get().getValue(), spell.value(), true);
+                var success = ScrollItem.applySpell(stack, spell, true);
                 while (retryAttempts-- > 0 && !success) {
                     spell = spells.get(context.getRandom().nextInt(spells.size()));
-                    success = ScrollItem.applySpell(stack, spell.getKey().get().getValue(), spell.value(), true);
+                    success = ScrollItem.applySpell(stack, spell, true);
                 }
                 if (!success) {
                     return ItemStack.EMPTY;
@@ -84,7 +82,7 @@ public class SpellBindRandomlyLootFunction extends ConditionalLootFunction {
                     isValid = SpellContainerHelper.isSpellValidForItem(stack.getItem(), spell);
                 }
                 if (isValid) {
-                    var container = SpellContainerHelper.create(spell.getKey().get().getValue(), spell.value(), stack.getItem());
+                    var container = SpellContainerHelper.create(spell, stack.getItem());
                     stack.set(SpellDataComponents.SPELL_CONTAINER, container);
                 }
             }

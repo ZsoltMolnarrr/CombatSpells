@@ -3,6 +3,7 @@ package net.spell_engine.api.spell;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.spell_engine.api.event.Event;
 import net.spell_engine.entity.SpellProjectile;
 import net.spell_engine.internals.SpellHelper;
@@ -16,7 +17,7 @@ public class SpellEvents {
                                         Spell.LaunchProperties mutableLaunchProperties,
                                         LivingEntity caster,
                                         @Nullable Entity target,
-                                        SpellInfo spellInfo,
+                                        RegistryEntry<Spell> spellEntry,
                                         SpellHelper.ImpactContext context,
                                         int sequenceIndex) { }
     public interface ProjectileLaunch {
@@ -26,7 +27,7 @@ public class SpellEvents {
     public static final Event<ArrowLaunch> ARROW_FIRED = new Event<ArrowLaunch>();
     public record ArrowLaunchEvent(ProjectileEntity projectile,
                                    LivingEntity shooter,
-                                   SpellInfo spellInfo,
+                                   RegistryEntry<Spell> spellEntry,
                                    SpellHelper.ImpactContext context,
                                    int sequenceIndex) { }
     public interface ArrowLaunch {

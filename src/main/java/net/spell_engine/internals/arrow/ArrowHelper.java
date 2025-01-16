@@ -3,12 +3,13 @@ package net.spell_engine.internals.arrow;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import net.spell_engine.api.spell.SpellInfo;
+import net.spell_engine.api.spell.Spell;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.WorldScheduler;
 import net.spell_engine.internals.casting.SpellCasterEntity;
@@ -17,12 +18,12 @@ import net.spell_engine.mixin.item.RangedWeaponAccessor;
 import java.util.List;
 
 public class ArrowHelper {
-    public static void shootArrow(World world, LivingEntity shooter, SpellInfo spellInfo, SpellHelper.ImpactContext context) {
-        shootArrow(world, shooter, spellInfo, context, 0);
+    public static void shootArrow(World world, LivingEntity shooter, RegistryEntry<Spell> spellEntry, SpellHelper.ImpactContext context) {
+        shootArrow(world, shooter, spellEntry, context, 0);
     }
 
-    public static void shootArrow(World world, LivingEntity shooter, SpellInfo spellInfo, SpellHelper.ImpactContext context, int sequenceIndex) {
-        var spell = spellInfo.spell();
+    public static void shootArrow(World world, LivingEntity shooter, RegistryEntry<Spell> spellEntry, SpellHelper.ImpactContext context, int sequenceIndex) {
+        var spell = spellEntry.value();
         var shoot_arrow = spell.release.target.shoot_arrow;
         var weaponStack = shooter.getMainHandStack();
 
@@ -48,7 +49,7 @@ public class ArrowHelper {
 
             // Save as active spell
             if (shooter instanceof SpellCasterEntity caster) {
-                caster.setTemporaryActiveSpell(spellInfo);
+                caster.setTemporaryActiveSpell(spellEntry);
             }
             var divergence = (sequenceIndex == 0) ? 0F : shoot_arrow.divergence;
             // Perform shoot
@@ -91,7 +92,7 @@ public class ArrowHelper {
                         if (shooter == null || !shooter.isAlive()) {
                             return;
                         }
-                        shootArrow(world, shooter, spellInfo, context, nextSequenceIndex);
+                        shootArrow(world, shooter, spellEntry, context, nextSequenceIndex);
                     });
                 }
             }

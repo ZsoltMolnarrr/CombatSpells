@@ -5,8 +5,8 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.client.animation.AnimatablePlayer;
 import net.spell_engine.internals.*;
 import net.spell_engine.internals.casting.SpellCast;
@@ -51,7 +51,7 @@ public class PlayerEntityMixin implements SpellCasterEntity {
     public Spell getCurrentSpell() {
         var process = getSpellCastProcess();
         if (process != null) {
-            return process.spell();
+            return process.spell().value();
         }
         return null;
     }
@@ -65,13 +65,13 @@ public class PlayerEntityMixin implements SpellCasterEntity {
         return 1F; // Fallback value
     }
 
-    private SpellInfo temporaryActiveSpell = null;
+    private RegistryEntry<Spell> temporaryActiveSpell = null;
     @Override
-    public void setTemporaryActiveSpell(@Nullable SpellInfo spellInfo) {
-        temporaryActiveSpell = spellInfo;
+    public void setTemporaryActiveSpell(@Nullable RegistryEntry<Spell> spellEntry) {
+        temporaryActiveSpell = spellEntry;
     }
     @Override
-    @Nullable public SpellInfo getTemporaryActiveSpell() {
+    @Nullable public RegistryEntry<Spell> getTemporaryActiveSpell() {
         return temporaryActiveSpell;
     }
 
@@ -95,7 +95,7 @@ public class PlayerEntityMixin implements SpellCasterEntity {
                     this.synchronizedSpellCastProcess = null;
                 } else {
                     var syncFormat = syncGson.fromJson(progressString, SpellCast.Process.SyncFormat.class);
-                    this.synchronizedSpellCastProcess = SpellCast.Process.fromSync(syncFormat, player.getMainHandStack().getItem(), player.getWorld().getTime());
+                    this.synchronizedSpellCastProcess = SpellCast.Process.fromSync(player.getWorld(), syncFormat, player.getMainHandStack().getItem(), player.getWorld().getTime());
                 }
                 lastHandledSyncData = progressString;
             }

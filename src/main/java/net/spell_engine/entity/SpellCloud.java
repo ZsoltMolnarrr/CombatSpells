@@ -5,15 +5,15 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellInfo;
+import net.spell_engine.api.spell.SpellRegistry_V2;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.SoundPlayerWorld;
 import org.jetbrains.annotations.Nullable;
@@ -45,8 +45,9 @@ public class SpellCloud extends Entity implements Ownable {
         this.spellId = spellId;
         this.context = context;
 
-        var spell = getSpell();
-        if (spell != null) {
+        var spellEntry = getSpellEntry();
+        if (spellEntry != null) {
+            var spell = spellEntry.value();
             var index = -1;
             var dataList = List.of(spell.release.target.clouds);
             if (!dataList.isEmpty()) {
@@ -199,13 +200,14 @@ public class SpellCloud extends Entity implements Ownable {
                 // Impact tick due
                 var area_impact = cloudData.volume;
                 var owner = (LivingEntity) this.getOwner();
-                var spell = getSpell();
-                if (area_impact != null && owner != null && spell != null) {
+                var spellEntry = getSpellEntry();
+                if (area_impact != null && owner != null && spellEntry != null) {
+                    var spell = spellEntry.value();
                     var context = this.context;
                     if (context == null) {
                         context = new SpellHelper.ImpactContext();
                     }
-                    SpellHelper.lookupAndPerformAreaImpact(area_impact, new SpellInfo(spell, spellId), owner,null,
+                    SpellHelper.lookupAndPerformAreaImpact(area_impact, spellEntry, owner,null,
                             this, spell.impact, context.position(this.getPos()), true);
                 }
             }
@@ -213,8 +215,9 @@ public class SpellCloud extends Entity implements Ownable {
     }
 
     @Nullable public Spell.Release.Target.Cloud getCloudData() {
-        var spell = this.getSpell();
-        if (spell != null) {
+        var spellEntry = getSpellEntry();
+        if (spellEntry != null) {
+            var spell = spellEntry.value();
             if (spell.release.target.clouds.length > 0) {
                 return spell.release.target.clouds[dataIndex];
             } else {
@@ -224,7 +227,7 @@ public class SpellCloud extends Entity implements Ownable {
         return null;
     }
 
-    public Spell getSpell() {
-        return SpellRegistry.getSpell(spellId);
+    @Nullable public RegistryEntry<Spell> getSpellEntry() {
+        return SpellRegistry_V2.from(this.getWorld()).getEntry(this.spellId).orElse(null);
     }
 }

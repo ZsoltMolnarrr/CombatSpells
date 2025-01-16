@@ -3,7 +3,8 @@ package net.spell_engine.api.event;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.spell_engine.api.spell.SpellInfo;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.spell_engine.api.spell.Spell;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class CombatEvents {
 
     public static final Event<SpellCast> SPELL_CAST = new Event<SpellCast>();
     public interface SpellCast {
-        record Args(PlayerEntity caster, SpellInfo spell, List<Entity> targets, net.spell_engine.internals.casting.SpellCast.Action action, float progress) {}
+        record Args(PlayerEntity caster, RegistryEntry<Spell> spell, List<Entity> targets, net.spell_engine.internals.casting.SpellCast.Action action, float progress) {}
         void onSpellCast(Args args);
     }
 

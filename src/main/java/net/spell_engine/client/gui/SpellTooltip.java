@@ -41,24 +41,24 @@ public class SpellTooltip {
     private static final String teleportDistanceToken = "teleport_distance";
     public static String placeholder(String token) { return "{" + token + "}"; }
 
-    public static void addSpellInfo(ItemStack itemStack, TooltipType tooltipType, List<Text> lines) {
+    public static void addSpellLines(ItemStack itemStack, TooltipType tooltipType, List<Text> lines) {
         var player = MinecraftClient.getInstance().player;
         if (player == null) {
             return;
         }
         var config = SpellEngineClient.config;
-        var spellInfo = new ArrayList<Text>();
+        var spellEntry = new ArrayList<Text>();
         if ((Object)itemStack instanceof SpellCasterItemStack stack) {
             var container = stack.getSpellContainer();
             if(container != null && container.isValid()) {
                 if (container.is_proxy() && config.showSpellBookSuppportTooltip) {
                     switch (container.content()) {
                         case MAGIC -> {
-                            spellInfo.add(Text.translatable("spell.tooltip.host.proxy.spell")
+                            spellEntry.add(Text.translatable("spell.tooltip.host.proxy.spell")
                                     .formatted(Formatting.GRAY));
                         }
                         case ARCHERY -> {
-                            spellInfo.add(Text.translatable("spell.tooltip.host.proxy.arrow")
+                            spellEntry.add(Text.translatable("spell.tooltip.host.proxy.arrow")
                                     .formatted(Formatting.GRAY));
                         }
                     }
@@ -68,7 +68,7 @@ public class SpellTooltip {
 
                 if (!container.spell_ids().isEmpty() && showListHeader) {
                     if (container.pool() == null) {
-                        spellInfo.add(Text.translatable(container.is_proxy() ? "spell.tooltip.host.additional" : "spell.tooltip.host.pre_loaded")
+                        spellEntry.add(Text.translatable(container.is_proxy() ? "spell.tooltip.host.additional" : "spell.tooltip.host.pre_loaded")
                                 .formatted(Formatting.GRAY));
                     } else {
                         String limit = "";
@@ -87,7 +87,7 @@ public class SpellTooltip {
                                 key = "spell.tooltip.host.list.arrow";
                             }
                         }
-                        spellInfo.add(Text.translatable(key)
+                        spellEntry.add(Text.translatable(key)
                                 .append(Text.literal(" " + limit))
                                 .formatted(Formatting.GRAY));
                     }
@@ -100,31 +100,31 @@ public class SpellTooltip {
                         );
                 for (int i = 0; i < container.spell_ids().size(); i++) {
                     var spellId = Identifier.of(container.spell_ids().get(i));
-                    var info = spellInfo(spellId, player, itemStack, showDetails, showListHeader);
+                    var info = spellEntry(spellId, player, itemStack, showDetails, showListHeader);
                     if (!info.isEmpty()) {
                         if (i > 0 && showDetails) {
-                            spellInfo.add(Text.literal(" ")); // Separator: empty line
+                            spellEntry.add(Text.literal(" ")); // Separator: empty line
                         }
-                        spellInfo.addAll(info);
+                        spellEntry.addAll(info);
                     }
                 }
                 if (!showDetails) {
                     if (!keybinding.isUnbound() && container.spell_ids().size() > 0) {
-                        spellInfo.add(Text.translatable("spell.tooltip.hold_for_details",
+                        spellEntry.add(Text.translatable("spell.tooltip.hold_for_details",
                                         keybinding.getBoundKeyLocalizedText())
                                 .formatted(Formatting.GRAY));
                     }
                     if (config.showSpellBindingTooltip
                             && container.pool() != null && !container.pool().isEmpty()
                             && container.spell_ids().isEmpty()) {
-                        spellInfo.add(Text.translatable("spell.tooltip.spell_binding_tip")
+                        spellEntry.add(Text.translatable("spell.tooltip.spell_binding_tip")
                                 .formatted(Formatting.GRAY));
                     }
                 }
             }
         }
 
-        if (spellInfo.isEmpty()) {
+        if (spellEntry.isEmpty()) {
             return;
         }
         var found = 0;
@@ -147,13 +147,13 @@ public class SpellTooltip {
             }
         }
         if (found <= 0) {
-            lines.addAll(spellInfo);
+            lines.addAll(spellEntry);
         } else {
-            lines.addAll(found, spellInfo);
+            lines.addAll(found, spellEntry);
         }
     }
 
-    public static List<Text> spellInfo(Identifier spellId, PlayerEntity player, ItemStack itemStack, boolean details, boolean indented) {
+    public static List<Text> spellEntry(Identifier spellId, PlayerEntity player, ItemStack itemStack, boolean details, boolean indented) {
         var lines = new ArrayList<Text>();
         var spell = SpellRegistry.getSpell(spellId);
         if (spell == null) {

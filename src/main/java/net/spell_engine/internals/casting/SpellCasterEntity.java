@@ -1,7 +1,7 @@
 package net.spell_engine.internals.casting;
 
+import net.minecraft.registry.entry.RegistryEntry;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellInfo;
 import net.spell_engine.internals.SpellCooldownManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,8 +15,8 @@ public interface SpellCasterEntity {
     float getCurrentCastingSpeed();
 
     // Used for Archery
-    void setTemporaryActiveSpell(@Nullable SpellInfo spellInfo);
-    @Nullable SpellInfo getTemporaryActiveSpell();
+    void setTemporaryActiveSpell(@Nullable RegistryEntry<Spell> spellEntry);
+    @Nullable RegistryEntry<Spell> getTemporaryActiveSpell();
 
     boolean isBeaming();
     @Nullable

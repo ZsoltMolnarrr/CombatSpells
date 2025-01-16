@@ -45,16 +45,16 @@ public class SpellEngineItems {
         Registry.register(Registries.ITEM, ScrollItem.ID, SCROLL.get());
         ItemGroupEvents.modifyEntriesEvent(Group.KEY).register(content -> {
             content.add(SpellBindingBlock.ITEM);
-            SpellRegistry.all()
-                    .entrySet()
-                    .stream()
-                    .sorted(Comparator.comparing(a -> a.getKey().getNamespace() + "_" + a.getValue().spell.learn.tier + "_" + a.getKey().getPath()))
-                    .forEach((entry) -> {
-                var scroll = new ItemStack(SCROLL.get());
-                if (ScrollItem.applySpell(scroll, entry.getKey(), entry.getValue().spell, true)) {
-                    content.add(scroll);
-                }
-            });
+//            SpellRegistry.all()
+//                    .entrySet()
+//                    .stream()
+//                    .sorted(Comparator.comparing(a -> a.getKey().getNamespace() + "_" + a.getValue().spell.learn.tier + "_" + a.getKey().getPath()))
+//                    .forEach((entry) -> {
+//                var scroll = new ItemStack(SCROLL.get());
+//                if (ScrollItem.applySpell(scroll, entry.getKey(), entry.getValue().spell, true)) {
+//                    content.add(scroll);
+//                }
+//            });
         });
     }
 }
