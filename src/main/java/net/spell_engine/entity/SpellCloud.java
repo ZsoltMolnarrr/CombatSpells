@@ -12,7 +12,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellRegistry;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.SoundPlayerWorld;

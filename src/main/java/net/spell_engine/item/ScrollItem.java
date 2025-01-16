@@ -32,19 +32,6 @@ public class ScrollItem extends Item {
         var spell = spellEntry.value();
         var scroll = spell.scroll;
         if (scroll != null && scroll.generate) {
-//            var poolId = SpellRegistry.pools.entrySet().stream() // TODO: Disable generate for low tier spells
-//                    .sorted(Comparator.comparing(a -> a.getKey().toString()))
-//                    .filter(e -> e.getValue().spellIds().contains(id))
-//                    .map(Map.Entry::getKey)
-//                    .findFirst()
-//                    .orElse(null);
-//            // At least one compatible pool is required when generating for loot
-//            if (requirePool && poolId == null)  {
-//                // There is no spell pool to use this spell
-//                // No scroll should be generated
-//                return false;
-//            }
-
 //            if (poolId != null) {
 //                var translationKey = "item." + poolId.getNamespace() + "." + poolId.getPath() + ".spell_scroll";
 //                if (I18n.hasTranslation(translationKey)) {

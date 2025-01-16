@@ -12,7 +12,7 @@ import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
 import net.spell_engine.api.effect.SpellStash;
-import net.spell_engine.api.spell.SpellRegistry;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import org.spongepowered.asm.mixin.Mixin;

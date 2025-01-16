@@ -13,7 +13,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.spell_engine.api.item.weapon.StaffItem;
 import net.spell_engine.api.spell.ExternalSpellSchools;
-import net.spell_engine.api.spell.SpellRegistry;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.config.ServerConfig;
 import net.spell_engine.config.ServerConfigWrapper;
 import net.spell_engine.internals.SpellAssignments;

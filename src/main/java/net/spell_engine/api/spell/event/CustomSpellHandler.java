@@ -1,10 +1,9 @@
-package net.spell_engine.api.spell;
+package net.spell_engine.api.spell.event;
 
 import it.unimi.dsi.fastutil.Function;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.SpellHelper;

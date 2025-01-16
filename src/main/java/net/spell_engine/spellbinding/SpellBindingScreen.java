@@ -20,7 +20,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.trinket.SpellBooks;
-import net.spell_engine.api.spell.SpellRegistry;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.gui.CustomButton;
 import net.spell_engine.client.gui.SpellTooltip;
 import net.spell_engine.client.util.SpellRender;

@@ -10,7 +10,7 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellRegistry;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.SpellContainerHelper;
 
 import java.util.ArrayList;

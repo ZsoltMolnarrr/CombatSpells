@@ -14,7 +14,7 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellRegistry;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.entity.ConfigurableKnockback;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.arrow.ArrowExtension;

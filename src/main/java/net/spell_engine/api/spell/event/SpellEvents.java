@@ -1,10 +1,11 @@
-package net.spell_engine.api.spell;
+package net.spell_engine.api.spell.event;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.spell_engine.api.event.Event;
+import net.spell_engine.api.spell.Spell;
 import net.spell_engine.entity.SpellProjectile;
 import net.spell_engine.internals.SpellHelper;
 import org.jetbrains.annotations.Nullable;

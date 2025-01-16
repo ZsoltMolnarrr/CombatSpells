@@ -11,6 +11,7 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.*;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;

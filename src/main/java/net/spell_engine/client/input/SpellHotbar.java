@@ -11,7 +11,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.UseAction;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellRegistry;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.gui.HudMessages;
 import net.spell_engine.internals.SpellContainerHelper;

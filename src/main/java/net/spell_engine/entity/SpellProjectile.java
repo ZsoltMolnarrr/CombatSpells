@@ -27,7 +27,7 @@ import net.minecraft.world.World;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.entity.TwoWayCollisionChecker;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellRegistry;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.render.FlyingSpellEntity;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.particle.ParticleHelper;

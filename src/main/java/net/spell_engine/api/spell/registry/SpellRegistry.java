@@ -1,4 +1,4 @@
-package net.spell_engine.api.spell;
+package net.spell_engine.api.spell.registry;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,6 +12,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.World;
+import net.spell_engine.api.spell.Spell;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
