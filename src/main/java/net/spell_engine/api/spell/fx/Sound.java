@@ -1,4 +1,4 @@
-package net.spell_engine.api.spell;
+package net.spell_engine.api.spell.fx;
 
 import java.util.Objects;
 import java.util.Random;

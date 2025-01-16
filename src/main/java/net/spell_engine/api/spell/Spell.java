@@ -2,6 +2,8 @@ package net.spell_engine.api.spell;
 
 import net.minecraft.util.Rarity;
 import net.spell_engine.api.render.LightEmission;
+import net.spell_engine.api.spell.fx.ParticleBatch;
+import net.spell_engine.api.spell.fx.Sound;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_power.api.SpellPower;
 import net.spell_power.api.SpellSchool;

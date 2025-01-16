@@ -18,7 +18,7 @@ import net.minecraft.util.Arm;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.spell_engine.api.spell.Sound;
+import net.spell_engine.api.spell.fx.Sound;
 import net.spell_engine.client.animation.*;
 import net.spell_engine.client.compatibility.FirstPersonAnimationCompatibility;
 import net.spell_engine.client.sound.SpellCastingSound;
