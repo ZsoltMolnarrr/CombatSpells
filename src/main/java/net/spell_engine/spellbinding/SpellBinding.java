@@ -16,6 +16,7 @@ import net.spell_engine.internals.SpellContainerHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SpellBinding {
@@ -61,7 +62,13 @@ public class SpellBinding {
         var scrollMode = false;
         if (consumableStack.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE) && consumableContainer != null) {
             scrollMode = true;
-            var consumableSpells = SpellRegistry.entries(world, consumableContainer.pool());
+            var spellRegistry = SpellRegistry.from(world);
+            var consumableSpells = consumableContainer.spell_ids().stream()
+                    .map(Identifier::of)
+                    .map(spellRegistry::getEntry)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .toList();
             var availableSpellIds = pool.stream()
                     .map(entry -> entry.getKey().get().getValue())
                     .collect(Collectors.toSet());
@@ -70,6 +77,7 @@ public class SpellBinding {
                         var spellId = entry.getKey().get().getValue();
                         return availableSpellIds.contains(spellId) || creative;
                     })
+                    .map(entry -> (RegistryEntry<Spell>) entry)
                     .toList();
         } else {
             spells = pool;
