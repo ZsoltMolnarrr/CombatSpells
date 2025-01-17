@@ -11,6 +11,7 @@ Functional changes:
 
 API Changes:
 - Add `spell.cost.cooldown_hosting_item` to disable imposing spell cooldowns onto the hosting item
+- Add `spell.range_melee` to match spell range with melee attack range (EIR)
 
 # 1.3.2
 

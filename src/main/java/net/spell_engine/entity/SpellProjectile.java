@@ -561,7 +561,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
 
             var angle = launchAngle * i + launchAngleOffset;
             projectile.setVelocity(launchVector.rotateY((float) Math.toRadians(angle)));
-            projectile.range = spell.range;
+            projectile.range = this.range;
             ProjectileUtil.setRotationFromVelocity(projectile, 0.2F);
             projectile.impactHistory = new HashSet<>(this.impactHistory);
             getWorld().spawnEntity(projectile);

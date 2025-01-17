@@ -115,7 +115,13 @@ public class SpellHelper {
 
     public static float hasteAffectedValue(LivingEntity caster, SpellSchool school, float value, ItemStack provisionedWeapon) {
         var haste = SpellPower.getHaste(caster, school); // FIXME: ? Provisioned weapon
-        return hasteAffectedValue(value, haste);
+        return hasteAffectedValue(value, haste) ;
+    }
+
+    public static float getRange(PlayerEntity player, Spell spell) {
+        return spell.range_melee
+                ? (float) player.getEntityInteractionRange() + spell.range
+                : spell.range;
     }
 
     public static float getCastDuration(LivingEntity caster, Spell spell) {
@@ -250,7 +256,8 @@ public class SpellHelper {
                         case AREA -> {
                             var center = player.getPos().add(0, player.getHeight() / 2F, 0);
                             var area = spell.release.target.area;
-                            applyAreaImpact(world, player, targets, spell.range * player.getScale(), area, spellEntry, spell.impact, context.position(center), true);
+                            var range = getRange(player, spell) * player.getScale();
+                            applyAreaImpact(world, player, targets, range, area, spellEntry, spell.impact, context.position(center), true);
                         }
                         case BEAM -> {
                             beamImpact(world, player, targets, spellEntry, context);

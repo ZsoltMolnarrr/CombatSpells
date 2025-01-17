@@ -13,6 +13,7 @@ public class Spell {
     // Structure
     public SpellSchool school;
     public float range = 50;
+    public boolean range_melee = false;
 
     // An arbitrary group to group spells by
     // Spells with the same group override each other, prioritized by tier

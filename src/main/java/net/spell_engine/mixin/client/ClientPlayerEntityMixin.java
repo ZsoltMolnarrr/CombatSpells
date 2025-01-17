@@ -277,7 +277,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         boolean fallbackToPreviousTargets = false;
         var targetingMode = SpellHelper.selectionTargetingMode(currentSpell);
         var targetType = currentSpell.release.target.type;
-        var range = currentSpell.range  * player().getScale();
+        var range = SpellHelper.getRange(caster, currentSpell) * player().getScale();
 
         Predicate<Entity> selectionPredicate = (target) -> {
             boolean intentAllows = false;

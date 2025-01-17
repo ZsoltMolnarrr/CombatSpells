@@ -293,12 +293,22 @@ public class SpellTooltip {
                     .formatted(Formatting.GOLD));
         }
 
-
-        if (spell.range > 0) {
-            var rangeKey = keyWithPlural("spell.tooltip.range", spell.range);
-            var range = I18n.translate(rangeKey).replace(placeholder(rangeToken), formattedNumber(spell.range));
+        if (spell.range > 0 || spell.range_melee) {
+            String rangeText;
+            if (spell.range_melee) {
+                if (spell.range == 0) {
+                    rangeText = I18n.translate("spell.tooltip.range.melee");
+                } else {
+                    var key = spell.range > 0 ? "spell.tooltip.range.melee.plus" : "spell.tooltip.range.melee.minus";
+                    var rangeKey = keyWithPlural(key, spell.range);
+                    rangeText = I18n.translate(rangeKey).replace(placeholder(rangeToken), formattedNumber(spell.range));
+                }
+            } else {
+                var rangeKey = keyWithPlural("spell.tooltip.range", spell.range);
+                rangeText = I18n.translate(rangeKey).replace(placeholder(rangeToken), formattedNumber(spell.range));
+            }
             lines.add(Text.literal(" ")
-                    .append(Text.literal(range))
+                    .append(Text.literal(rangeText))
                     .formatted(Formatting.GOLD));
         }
 
