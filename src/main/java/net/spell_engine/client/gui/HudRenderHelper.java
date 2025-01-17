@@ -69,7 +69,7 @@ public class HudRenderHelper {
                 var cooldownManager = caster.getCooldownManager();
                 var spells = SpellHotbar.INSTANCE.slots.stream().map(slot -> {
                     var spellEntry = slot.spell();
-                    var id = spellEntry.getKey().get().getValue();
+                    var id = spellEntry != null ? spellEntry.getKey().get().getValue() : null;
                     var itemStack = slot.itemStack();
                     var useItem = itemStack != null;
                     var cooldownProgress = useItem

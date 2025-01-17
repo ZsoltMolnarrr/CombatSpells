@@ -1,4 +1,4 @@
-# 1.3.3
+# 1.4.0
 
 Functional changes:
 - Add support for spell scroll slot, can be enabled using data pack

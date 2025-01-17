@@ -154,6 +154,7 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
             this.setDamage(this.getDamage() * perks.damage_multiplier);
         }
         var spellId = spellEntry.getKey().get().getValue();
+        this.spellId = spellId;
         arrow.getDataTracker().set(SPELL_ID_TRACKER, spellId.toString());
     }
 
