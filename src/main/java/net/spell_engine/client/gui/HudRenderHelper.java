@@ -68,14 +68,15 @@ public class HudRenderHelper {
             } else {
                 var cooldownManager = caster.getCooldownManager();
                 var spells = SpellHotbar.INSTANCE.slots.stream().map(slot -> {
-                    var info = slot.spell();
+                    var spellEntry = slot.spell();
+                    var id = spellEntry != null ? spellEntry.getKey().get().getValue() : null;
                     var itemStack = slot.itemStack();
                     var useItem = itemStack != null;
                     var cooldownProgress = useItem
                             ? player.getItemCooldownManager().getCooldownProgress(itemStack.getItem(), tickDelta)
-                            : cooldownManager.getCooldownProgress(Identifier.of(info.id().toString()), tickDelta);
+                            : cooldownManager.getCooldownProgress(id, tickDelta);
                     return new SpellHotBarWidget.SpellViewModel(
-                            useItem ? null : SpellRender.iconTexture(info.id()),
+                            useItem ? null : SpellRender.iconTexture(id),
                             useItem ? itemStack : null,
                             cooldownProgress,
                             SpellHotBarWidget.KeyBindingViewModel.from(slot.getKeyBinding(client.options)),
@@ -88,12 +89,12 @@ public class HudRenderHelper {
             var spellCast = caster.getSpellCastProgress();
             if (spellCast != null) {
                 castBarViewModel = new CastBarWidget.ViewModel(
-                        spellCast.process().spell().school.color,
+                        spellCast.process().spell().value().school.color,
                         spellCast.ratio(),
                         spellCast.process().length(),
                         SpellRender.iconTexture(spellCast.process().id()),
                         true,
-                        SpellHelper.isChanneled(spellCast.process().spell())
+                        SpellHelper.isChanneled(spellCast.process().spell().value())
                 );
             }
 

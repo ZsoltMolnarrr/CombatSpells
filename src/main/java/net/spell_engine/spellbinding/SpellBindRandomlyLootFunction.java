@@ -14,9 +14,9 @@ import net.minecraft.loot.provider.number.LootNumberProviderTypes;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.SpellDataComponents;
-import net.spell_engine.api.spell.SpellInfo;
+import net.spell_engine.api.spell.registry.SpellRegistry;
+import net.spell_engine.api.spell.registry.SpellTags;
 import net.spell_engine.internals.SpellContainerHelper;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.item.ScrollItem;
 import net.spell_engine.item.SpellEngineItems;
 
@@ -61,20 +61,17 @@ public class SpellBindRandomlyLootFunction extends ConditionalLootFunction {
     @Override
     public ItemStack process(ItemStack stack, LootContext context) {
         final var selectedTier = this.tier.nextInt(context);
-        var spells = SpellRegistry.all()
-                .entrySet()
-                .stream()
-                .filter(entry -> entry.getValue().spell.learn.tier == selectedTier)
-                .map(entry -> new SpellInfo(entry.getValue().spell, entry.getKey()))
+        var spells = SpellRegistry.stream(context.getWorld())
+                .filter(entry -> entry.value().learn.tier == selectedTier && entry.isIn(SpellTags.TREASURE))
                 .toList();
         if (spells.size() > 0) {
             var spell = spells.get(context.getRandom().nextInt(spells.size()));
             var retryAttempts = 3;
             if (stack.getItem() == SpellEngineItems.SCROLL.get()) {
-                var success = ScrollItem.applySpell(stack, spell.id(), spell.spell(), true);
+                var success = ScrollItem.applySpell(stack, spell, true);
                 while (retryAttempts-- > 0 && !success) {
                     spell = spells.get(context.getRandom().nextInt(spells.size()));
-                    success = ScrollItem.applySpell(stack, spell.id(), spell.spell(), true);
+                    success = ScrollItem.applySpell(stack, spell, true);
                 }
                 if (!success) {
                     return ItemStack.EMPTY;
@@ -86,7 +83,7 @@ public class SpellBindRandomlyLootFunction extends ConditionalLootFunction {
                     isValid = SpellContainerHelper.isSpellValidForItem(stack.getItem(), spell);
                 }
                 if (isValid) {
-                    var container = SpellContainerHelper.create(spell.id(), spell.spell(), stack.getItem());
+                    var container = SpellContainerHelper.create(spell, stack.getItem());
                     stack.set(SpellDataComponents.SPELL_CONTAINER, container);
                 }
             }

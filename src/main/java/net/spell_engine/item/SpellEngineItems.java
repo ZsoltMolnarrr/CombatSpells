@@ -13,9 +13,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.trinket.SpellBookItem;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.compat.trinkets.SpellScrollTrinketItem;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.spellbinding.SpellBinding;
 import net.spell_engine.spellbinding.SpellBindingBlock;
 
@@ -45,16 +45,16 @@ public class SpellEngineItems {
         Registry.register(Registries.ITEM, ScrollItem.ID, SCROLL.get());
         ItemGroupEvents.modifyEntriesEvent(Group.KEY).register(content -> {
             content.add(SpellBindingBlock.ITEM);
-            SpellRegistry.all()
-                    .entrySet()
-                    .stream()
-                    .sorted(Comparator.comparing(a -> a.getKey().getNamespace() + "_" + a.getValue().spell.learn.tier + "_" + a.getKey().getPath()))
+
+            var registryWrapper = content.getContext().lookup().getWrapperOrThrow(SpellRegistry.KEY);
+            registryWrapper.streamEntries()
+                    .sorted(Comparator.comparing(a -> a.getKey().get().getValue().getNamespace() + "_" + a.value().learn.tier + "_" + a.getKey().get().getValue().getPath()))
                     .forEach((entry) -> {
-                var scroll = new ItemStack(SCROLL.get());
-                if (ScrollItem.applySpell(scroll, entry.getKey(), entry.getValue().spell, true)) {
-                    content.add(scroll);
-                }
-            });
+                        var scroll = new ItemStack(SCROLL.get());
+                        if (ScrollItem.applySpell(scroll, entry, true)) {
+                            content.add(scroll);
+                        }
+                    });
         });
     }
 }

@@ -10,13 +10,9 @@ import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.api.effect.SpellStash;
-import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellInfo;
-import net.spell_engine.internals.SpellContainerHelper;
-import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,10 +31,10 @@ public class RangedWeaponItemMixin {
         if (shooter instanceof PlayerEntity player
                 && projectile instanceof ArrowExtension arrow) {
             var caster = (SpellCasterEntity) player;
-            if (caster.getTemporaryActiveSpell() != null) {
-                var info = caster.getTemporaryActiveSpell();
-                if (info.spell().arrow_perks != null) {
-                    arrow.applyArrowPerks(info);
+            var activeSpellEntry = caster.getTemporaryActiveSpell();
+            if (activeSpellEntry != null) {
+                if (activeSpellEntry.value().arrow_perks != null) {
+                    arrow.applyArrowPerks(activeSpellEntry);
                 }
             } else {
                 var removeEffects = new ArrayList<RegistryEntry<StatusEffect>>();
@@ -50,10 +46,9 @@ public class RangedWeaponItemMixin {
                     var stack = entry.getValue();
                     var stashedSpell = ((SpellStash) effect).getStashedSpell();
                     if (stashedSpell != null) {
-                        var spell = SpellRegistry.getSpell(stashedSpell.id());
-                        if (spell != null && spell.arrow_perks != null) {
-                            var info = new SpellInfo(spell, stashedSpell.id());
-                            arrow.applyArrowPerks(info);
+                        var spellEntry = SpellRegistry.from(world).getEntry(stashedSpell.id()).orElse(null);
+                        if (spellEntry != null && spellEntry.value().arrow_perks != null) {
+                            arrow.applyArrowPerks(spellEntry);
                         }
 
                         removeEffects.add(effectEntry);

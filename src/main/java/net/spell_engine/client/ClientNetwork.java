@@ -2,12 +2,11 @@ package net.spell_engine.client;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.client.animation.AnimatablePlayer;
 import net.spell_engine.internals.casting.SpellCasterEntity;
-import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.internals.SpellAssignments;
 import net.spell_engine.network.Packets;
 import net.spell_engine.network.ServerNetwork;
 import net.spell_engine.particle.ParticleHelper;
@@ -20,7 +19,7 @@ public class ClientNetwork {
         });
 
         ClientConfigurationNetworking.registerGlobalReceiver(Packets.SpellRegistrySync.PACKET_ID, (packet, context) -> {
-            SpellRegistry.decodeContent(packet.chunks());
+            SpellAssignments.decodeContent(packet.chunks());
             context.responseSender().sendPacket(new Packets.Ack(ServerNetwork.SpellRegistrySyncTask.name));
         });
 

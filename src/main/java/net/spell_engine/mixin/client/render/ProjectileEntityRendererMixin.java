@@ -36,8 +36,9 @@ public abstract class ProjectileEntityRendererMixin extends EntityRenderer {
     )
     private void render_HEAD_SpellEngine(Entity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
         if (entity instanceof ArrowExtension arrowExtension) {
-            if (arrowExtension.getCarriedSpell() != null) {
-                var arrowPerks = arrowExtension.getCarriedSpell().arrow_perks;
+            var spellEntry = arrowExtension.getCarriedSpell();
+            if (spellEntry != null) {
+                var arrowPerks = spellEntry.value().arrow_perks;
                 if (arrowPerks != null) {
                     var renderData = arrowPerks.override_render;
                     if (renderData != null) {

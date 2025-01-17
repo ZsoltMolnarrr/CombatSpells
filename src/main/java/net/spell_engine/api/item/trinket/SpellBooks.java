@@ -7,10 +7,12 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import net.spell_engine.api.spell.SpellContainer;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.compat.trinkets.SpellBookTrinketItem;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
-import net.spell_engine.internals.SpellRegistry;
+import net.spell_engine.internals.SpellAssignments;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,13 +23,13 @@ import java.util.stream.Collectors;
 public class SpellBooks {
     public static final ArrayList<ISpellBookItem> all = new ArrayList<>();
 
-    public static List<ISpellBookItem> sorted() {
+    public static List<ISpellBookItem> sorted(World world) {
         return SpellBooks.all
                 .stream()
                 .sorted(Comparator.comparing(spellBookItem -> spellBookItem.getPoolId().toString()))
                 .filter(spellBookItem -> {
-                    var pool = SpellRegistry.spellPool(spellBookItem.getPoolId());
-                    return pool != null && pool.craftable();
+                    var pool = SpellRegistry.entries(world, spellBookItem.getPoolId());
+                    return pool != null && !pool.isEmpty();
                 })
                 .collect(Collectors.toList());
     }
@@ -38,7 +40,7 @@ public class SpellBooks {
 
     public static ISpellBookItem create(Identifier poolId, SpellContainer.ContentType contentType) {
         var container = new SpellContainer(contentType, false, poolId.toString(), 0, List.of());
-        SpellRegistry.book_containers.put(itemIdFor(poolId), container);
+        SpellAssignments.book_containers.put(itemIdFor(poolId), container);
         ISpellBookItem book = null;
         TrinketsCompat.init();
         if (TrinketsCompat.isEnabled()) {

@@ -19,13 +19,16 @@ import net.minecraft.util.math.BlockPos;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.item.trinket.SpellBooks;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.SpellContainerHelper;
-import net.spell_engine.internals.SpellRegistry;
+
+import java.util.Arrays;
 
 public class SpellBindingScreenHandler extends ScreenHandler {
     public static final ScreenHandlerType<SpellBindingScreenHandler> HANDLER_TYPE = new ScreenHandlerType(SpellBindingScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
     public static final int MAXIMUM_SPELL_COUNT = 32;
     public static final int INIT_SYNC_ID = 14999;
+    private static final int SPELL_ID_RAW_NONE = -1;
     // State
     private final Inventory inventory = new SimpleInventory(2) {
         @Override
@@ -88,6 +91,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
             this.addProperty(Property.create(this.spellLapisCost, i));
         }
         this.addProperty(Property.create(this.mode, 0));
+        Arrays.fill(this.spellId, SPELL_ID_RAW_NONE);
         if (playerInventory.player instanceof ServerPlayerEntity serverPlayer) {
             SpellBindingCriteria.INSTANCE.trigger(serverPlayer, SpellBinding.ADVANCEMENT_VISIT_ID, true);
         }
@@ -111,7 +115,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
         if (mainStack.isEmpty() || !(SpellContainerHelper.hasValidContainer(mainStack) || mainStack.getItem() == Items.BOOK)) {
             this.mode[0] = SpellBinding.Mode.SPELL.ordinal();
             for (int i = 0; i < MAXIMUM_SPELL_COUNT; ++i) {
-                this.spellId[i] = 0;
+                this.spellId[i] = SPELL_ID_RAW_NONE;
                 this.spellLevelCost[i] = 0;
                 this.spellLevelRequirement[i] = 0;
                 this.spellPoweredByLib[i] = 0;
@@ -125,7 +129,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                     if (!EnchantingTableBlock.canAccessPowerProvider(world, pos, blockPos)) continue;
                     ++libraryPower;
                 }
-                var offerResult = SpellBinding.offersFor(creative, mainStack, consumableStack, libraryPower);
+                var offerResult = SpellBinding.offersFor(world, creative, mainStack, consumableStack, libraryPower);
                 this.mode[0] = offerResult.mode().ordinal();
                 var offers = offerResult.offers();
                 for (int i = 0; i < MAXIMUM_SPELL_COUNT; ++i) {
@@ -137,7 +141,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                         this.spellPoweredByLib[i] = offer.isPowered() ? 1 : 0;
                         this.spellLapisCost[i] = offer.lapisCost();
                     } else {
-                        this.spellId[i] = 0;
+                        this.spellId[i] = SPELL_ID_RAW_NONE;
                         this.spellLevelCost[i] = 0;
                         this.spellLevelRequirement[i] = 0;
                         this.spellPoweredByLib[i] = 0;
@@ -217,19 +221,19 @@ public class SpellBindingScreenHandler extends ScreenHandler {
             var lapisCount = getLapisCount();
             var mainStack = getStacks().get(0);
             var consumableStack = getStacks().get(1);
+            var playerWorld = player.getWorld();
 
             if (poweredByLib == 0) {
                 return false;
             }
 
             switch (mode) {
-
                 case SPELL -> {
-                    var spellIdOptional = SpellRegistry.fromRawSpellId(rawId);
-                    if (spellIdOptional.isEmpty()) {
+                    var spellEntry = SpellRegistry.from(playerWorld).getEntry(rawId);
+                    if (spellEntry.isEmpty()) {
                         return false;
                     }
-                    var spellId = spellIdOptional.get();
+                    var spellId = spellEntry.get().getKey().get().getValue();
                     var binding = SpellBinding.State.of(spellId, mainStack, requiredLevel, levelCost, lapisCost);
                     if (binding.state == SpellBinding.State.ApplyState.INVALID) {
                         return false;
@@ -238,7 +242,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                         return false;
                     }
                     this.context.run((world, pos) -> {
-                        SpellContainerHelper.addSpell(spellId, mainStack);
+                        SpellContainerHelper.addSpell(world, spellId, mainStack);
 
                         if (consumableStack.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE)) {
                             consumableStack.decrement(1);
@@ -255,8 +259,8 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                             var container = SpellContainerHelper.containerFromItemStack(mainStack);
                             var poolId = SpellContainerHelper.getPoolId(container);
                             if (poolId != null) {
-                                var pool = SpellContainerHelper.getPool(container);
-                                var isComplete = container.spell_ids().size() == pool.spellIds().size();
+                                var pool = SpellRegistry.entries(world, container.pool());
+                                var isComplete = container.spell_ids().size() == pool.size();
                                 SpellBindingCriteria.INSTANCE.trigger(serverPlayer, poolId, isComplete);
                                 // System.out.println("Triggering advancement SpellBindingCriteria.INSTANCE spell_pool: " + poolId + " isComplete: " + isComplete);
                             } else {
@@ -266,7 +270,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                     });
                 }
                 case BOOK -> {
-                    var item = SpellBooks.sorted().get(rawId - SpellBinding.BOOK_OFFSET);
+                    var item = SpellBooks.sorted(player.getWorld()).get(rawId - SpellBinding.BOOK_OFFSET);
                     var itemStack = ((Item)item).getDefaultStack(); // Upcast to `Item` to make sure this line is remapped for other devs
                     var container = SpellContainerHelper.containerFromItemStack(itemStack);
                     if (container == null || !container.isValid() || container.pool() == null) {

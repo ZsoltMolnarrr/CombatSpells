@@ -13,7 +13,6 @@ import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SmithingTemplateItem;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
@@ -21,15 +20,14 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.trinket.SpellBooks;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.gui.CustomButton;
 import net.spell_engine.client.gui.SpellTooltip;
 import net.spell_engine.client.util.SpellRender;
-import net.spell_engine.internals.SpellRegistry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Environment(value= EnvType.CLIENT)
 public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler> {
@@ -166,7 +164,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                 }
                 if (showSpellDetails) {
                     tooltip.add(Text.literal(" "));
-                    tooltip.addAll(SpellTooltip.spellInfo(button.spell.id(), player, itemStack, true, false));
+                    tooltip.addAll(SpellTooltip.spellEntry(button.spell.id(), player, itemStack, true, false));
                 }
                 if (button.isDetailsPublic) {
                     context.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
@@ -256,6 +254,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
         var player = MinecraftClient.getInstance().player;
 
         try {
+            var world = MinecraftClient.getInstance().world;
             for (int i = 0; i < SpellBindingScreenHandler.MAXIMUM_SPELL_COUNT; i++) {
                 var rawId = handler.spellId[i];
                 var levelCost = handler.spellLevelCost[i];
@@ -266,11 +265,11 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                 // System.out.println("Server offers spell ID: " + rawId + " | mode: " + mode);
                 switch (mode) {
                     case SPELL -> {
-                        var spellId = SpellRegistry.fromRawSpellId(rawId);
-                        if (spellId.isEmpty()) {
+                        var spellEntry = SpellRegistry.from(world).getEntry(rawId);
+                        if (spellEntry.isEmpty()) {
                             continue;
                         }
-                        var id = spellId.get();
+                        var id = spellEntry.get().getKey().get().getValue();
                         SpellBinding.State bindingState = SpellBinding.State.of(id, itemStack, requirement, levelCost, lapisCost);
                         boolean isDetailsPublic = powered || bindingState.state == SpellBinding.State.ApplyState.ALREADY_APPLIED;
                         boolean isEnabled = powered && bindingState.readyToApply(player, lapisCount);
@@ -278,7 +277,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                         if (!isDetailsPublic) {
                             text = text.formatted(Formatting.OBFUSCATED).fillStyle(RUNE_STYLE);
                         }
-                        var spell = new SpellInfo(
+                        var spell = new SpellViewModel(
                                 id,
                                 SpellRender.iconTexture(id),
                                 text);
@@ -290,7 +289,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                     }
                     case BOOK -> {
                         if (rawId < SpellBinding.BOOK_OFFSET) continue; // Filter blank offers
-                        var item = SpellBooks.sorted().get(rawId - SpellBinding.BOOK_OFFSET);
+                        var item = SpellBooks.sorted(player.getWorld()).get(rawId - SpellBinding.BOOK_OFFSET);
                         SpellBinding.State bindingState = SpellBinding.State.forBook(levelCost, requirement);
                         boolean isEnabled = bindingState.readyToApply(player, lapisCount);
 
@@ -324,8 +323,8 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
     }
 
     enum ButtonState { NORMAL, HOVER }
-    record SpellInfo(Identifier id, Identifier icon, Text name) { }
-    record ButtonViewModel(boolean shown, int x, int y, int width, int height, boolean isEnabled, boolean isDetailsPublic, @Nullable SpellInfo spell, @Nullable Item item, SpellBinding.State binding) {
+    record SpellViewModel(Identifier id, Identifier icon, Text name) { }
+    record ButtonViewModel(boolean shown, int x, int y, int width, int height, boolean isEnabled, boolean isDetailsPublic, @Nullable SpellViewModel spell, @Nullable Item item, SpellBinding.State binding) {
         public boolean mouseOver(int mouseX, int mouseY) {
             if(!shown) { return false; }
             return (mouseX > x && mouseX < x + width) && (mouseY > y && mouseY < y + height);

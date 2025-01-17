@@ -10,7 +10,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.spell_engine.api.spell.ParticleBatch;
+import net.spell_engine.api.spell.fx.ParticleBatch;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.network.Packets;
 import net.spell_engine.utils.VectorHelper;

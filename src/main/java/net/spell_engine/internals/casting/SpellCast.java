@@ -1,10 +1,12 @@
 package net.spell_engine.internals.casting;
 
 import net.minecraft.item.Item;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellRegistry;
 import org.jetbrains.annotations.Nullable;
 
 public class SpellCast {
@@ -40,7 +42,7 @@ public class SpellCast {
     }
 
     public record Duration(float speed, int length) { }
-    public record Process(Identifier id, Spell spell, Item item, float speed, int length, long startedAt) {
+    public record Process(RegistryEntry<Spell> spell, Item item, float speed, int length, long startedAt) {
         public int spellCastTicksSoFar(long worldTime) {
             // At least zero
             // The difference must fit into an integer
@@ -60,30 +62,34 @@ public class SpellCast {
             return progress(castTicks);
         }
 
+        public Identifier id() {
+            return spell.getKey().get().getValue();
+        }
+
         public SyncFormat sync() {
-            return new SyncFormat(SpellRegistry.rawSpellId(id), speed, length);
+            return new SyncFormat(id().toString(), speed, length);
         }
 
         public String fastSyncJSON() {
-            return "{\"i\":" + SpellRegistry.rawSpellId(id) + ",\"s\":" + speed + ",\"l\":" + length + "}";
+            return "{\"i\":" + '"' + id().toString() + '"'  + ",\"s\":" + speed + ",\"l\":" + length + "}";
         }
 
-
         @Nullable
-        public static Process fromSync(SyncFormat sync, Item item, long startedAt) {
-            var spellId = SpellRegistry.fromRawSpellId(sync.i());
+        public static Process fromSync(World world, SyncFormat sync, Item item, long startedAt) {
+            var spellId = sync.i();
             if (spellId.isEmpty()) {
                 return null;
             }
-            var spell = SpellRegistry.getSpell(spellId.get());
-            return new Process(spellId.get(), spell, item, sync.s(), sync.l(), startedAt);
+            var id = Identifier.of(spellId);
+            var spellEntry = SpellRegistry.from(world).getEntry(id).orElse(null);
+            return new Process(spellEntry, item, sync.s(), sync.l(), startedAt);
         }
 
         /**
          * Represents the spell cast process in a format that can be sent to the client.
          * Short field names are used to improve JSON performance.
          */
-        public record SyncFormat(int i, float s, int l) { }
+        public record SyncFormat(String i, float s, int l) { }
     }
     public record Progress(float ratio, Process process) { }
 

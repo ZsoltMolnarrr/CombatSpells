@@ -10,7 +10,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.trinket.SpellBookItem;
-import net.spell_engine.api.spell.Sound;
+import net.spell_engine.api.spell.fx.Sound;
 import net.spell_engine.spellbinding.SpellBindingScreenHandler;
 
 import java.util.List;

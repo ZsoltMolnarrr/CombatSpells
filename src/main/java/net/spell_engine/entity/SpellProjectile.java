@@ -15,6 +15,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -26,15 +27,15 @@ import net.minecraft.world.World;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.entity.TwoWayCollisionChecker;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellInfo;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.render.FlyingSpellEntity;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
 import net.spell_engine.utils.VectorHelper;
 import net.spell_power.api.SpellPower;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.HashSet;
@@ -99,7 +100,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         if (getWorld().isClient) {
             return clientSyncedData;
         } else {
-            var spell = getSpell();
+            var spell = getSpellEntry().value();
             var release = spell.release.target;
             switch (release.type) {
                 case PROJECTILE -> {
@@ -215,9 +216,10 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         if (getWorld().isClient) {
             updateClientSideData();
         }
+        var spellEntry = getSpellEntry();
         if (!this.getWorld().isClient) {
             // Server side
-            if (getSpell() == null) {
+            if (spellEntry == null) {
                 System.err.println("Spell Projectile safeguard termination, failed to resolve spell: " + spellId);
                 this.kill();
                 return;
@@ -258,7 +260,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                             boolean shouldCollideWithEntity = true;
                             if (hitResult.getType() == HitResult.Type.ENTITY) {
                                 var target = ((EntityHitResult) hitResult).getEntity();
-                                var spell = getSpell();
+                                var spell = spellEntry.value();
                                 if (SpellEngineMod.config.projectiles_pass_thru_irrelevant_targets
                                         && spell != null
                                         && spell.impact.length > 0
@@ -341,7 +343,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
             return;
         }
         if (owner instanceof LivingEntity livingEntity) {
-            SpellHelper.fallImpact(livingEntity, this, this.getSpellInfo(), context.position(this.getPos()));
+            SpellHelper.fallImpact(livingEntity, this, this.getSpellEntry(), context.position(this.getPos()));
         }
     }
 
@@ -377,7 +379,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                 var context = this.context;
                 if (context == null) {
                     context = new SpellHelper.ImpactContext();
-                    var spell = this.getSpell();
+                    var spell = this.getSpellEntry().value();
                     if (getOwner() instanceof PlayerEntity player && spell != null)  {
                         context = context.power(SpellPower.getSpellPower(spell.school, player));
                     }
@@ -391,7 +393,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                 var hitVector = entityHitResult.getPos().subtract(prevProjectilePos).normalize().multiply(this.getWidth() * 0.5F);
                 var hitPosition = entityHitResult.getPos().subtract(hitVector);
 
-                var performed = SpellHelper.projectileImpact(caster, this, target, this.getSpellInfo(), context.position(hitPosition));
+                var performed = SpellHelper.projectileImpact(caster, this, target, this.getSpellEntry(), context.position(hitPosition));
                 if (performed) {
                     chainReactionFrom(target);
                     if (ricochetFrom(target, caster)) {
@@ -424,7 +426,8 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                 this.perks.ricochet_range,
                 this.perks.ricochet_range,
                 this.perks.ricochet_range);
-        var intents = SpellHelper.intents(this.getSpell());
+        var spell = this.getSpellEntry().value();
+        var intents = SpellHelper.intents(spell);
         Predicate<Entity> intentMatches = (entity) -> {
             boolean intentAllows = false;
             for (var intent: intents) {
@@ -540,7 +543,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         if (getWorld().isClient) {
             return;
         }
-        var spell = getSpell();
+        var spell = getSpellEntry().value();
         var position = this.getPos();
         var spawnCount = this.perks.chain_reaction_size;
         var launchVector = new Vec3d(1, 0, 0).multiply(this.getVelocity().length());
@@ -567,12 +570,8 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
 
     // MARK: Helper
 
-    public Spell getSpell() {
-        return SpellRegistry.getSpell(spellId);
-    }
-
-    public SpellInfo getSpellInfo() {
-        return new SpellInfo(getSpell(), spellId);
+    @Nullable public RegistryEntry<Spell> getSpellEntry() {
+        return SpellRegistry.from(this.getWorld()).getEntry(spellId).orElse(null);
     }
 
     public SpellHelper.ImpactContext getImpactContext() {
@@ -623,7 +622,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         if (this.getOwner() != null
                 && this.getOwner() instanceof LivingEntity caster) {
             var hitPosition = blockHitResult.getPos();
-            var performed = SpellHelper.projectileImpact(caster, this, null, this.getSpellInfo(), context.position(hitPosition));
+            var performed = SpellHelper.projectileImpact(caster, this, null, this.getSpellEntry(), context.position(hitPosition));
         }
         this.kill();
     }

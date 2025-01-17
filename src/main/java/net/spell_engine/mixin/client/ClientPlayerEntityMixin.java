@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.spell_engine.SpellEngineMod;
@@ -15,7 +16,6 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.SpellHotbar;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.casting.SpellCasterClient;
 import net.spell_engine.network.Packets;
@@ -53,7 +53,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
     @Override
     public Spell getCurrentSpell() {
         if (spellCastProcess != null) {
-            return spellCastProcess.spell();
+            return spellCastProcess.spell().value();
         }
         return null;
     }
@@ -80,7 +80,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             float speed = 0;
             int length = 0;
             if (newValue != null) {
-                id = newValue.id();
+                id = newValue.spell().getKey().get().getValue();
                 speed = newValue.speed();
                 length = newValue.length();
             }
@@ -88,16 +88,17 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         }
     }
 
-    public SpellCast.Attempt startSpellCast(ItemStack itemStack, Identifier spellId) {
+    public SpellCast.Attempt startSpellCast(ItemStack itemStack, RegistryEntry<Spell> spellEntry) {
         var caster = player();
         if (caster.isSpectator()) {
             return SpellCast.Attempt.none();
         }
-        if (spellId == null) {
+        if (spellEntry == null) {
             this.cancelSpellCast();
             return SpellCast.Attempt.none();
         }
-        var spell = SpellRegistry.getSpell(spellId);
+        var spell = spellEntry.value();
+        var spellId = spellEntry.getKey().get().getValue();
         if ((spellCastProcess != null && spellCastProcess.id().equals(spellId))
                 || spell == null) {
             return SpellCast.Attempt.none();
@@ -114,14 +115,14 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             var instant = spell.cast.duration <= 0;
             if (instant) {
                 // Release instant spell
-                var process = new SpellCast.Process(spellId, spell, itemStack.getItem(), 1, 0, caster.getWorld().getTime());
+                var process = new SpellCast.Process(spellEntry, itemStack.getItem(), 1, 0, caster.getWorld().getTime());
                 this.setSpellCastProcess(process, false);
                 this.updateSpellCast();
                 applyInstantGlobalCooldown();
             } else {
                 // Start casting
                 var details = SpellHelper.getCastTimeDetails(caster, spell);
-                setSpellCastProcess(new SpellCast.Process(spellId, spell, itemStack.getItem(), details.speed(), details.length(), caster.getWorld().getTime()), true);
+                setSpellCastProcess(new SpellCast.Process(spellEntry, itemStack.getItem(), details.speed(), details.length(), caster.getWorld().getTime()), true);
             }
         }
         return attempt;
@@ -131,9 +132,9 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         var duration = SpellEngineMod.config.spell_instant_cast_gcd;
         if (duration > 0) {
             for (var slot: SpellHotbar.INSTANCE.slots) {
-                var info = slot.spell();
-                if (info.spell().cast != null && info.spell().cast.duration <= 0) {
-                    getCooldownManager().set(info.id(), duration, false);
+                var spellEntry = slot.spell();
+                if (spellEntry.value().cast != null && spellEntry.value().cast.duration <= 0) {
+                    getCooldownManager().set(spellEntry.getKey().get().getValue(), duration, false);
                 }
             }
         }
@@ -153,7 +154,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
     public void cancelSpellCast(boolean syncProcess) {
         var process = spellCastProcess;
         if (process != null) {
-            if (SpellHelper.isChanneled(process.spell())) {
+            if (SpellHelper.isChanneled(process.spell().value())) {
                 var player = player();
                 var progress = process.progress(player.getWorld().getTime());
                 ClientPlayNetworking.send(new Packets.SpellRequest(SpellCast.Action.RELEASE, process.id(), progress.ratio(), new int[]{}, null));
@@ -176,10 +177,10 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
                 cancelSpellCast();
                 return;
             }
+            var spell = process.spell().value();
 
-            spellTarget = findTargets(process.spell());
+            spellTarget = findTargets(spell);
 
-            var spell = process.spell();
             var spellCastTicks = process.spellCastTicksSoFar(player.getWorld().getTime());
             if (SpellHelper.isChanneled(spell)) {
                 // Is channel tick due?
@@ -205,7 +206,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
 
     private void releaseSpellCast(SpellCast.Process process, SpellCast.Action action) {
         var spellId = process.id();
-        var spell = process.spell();
+        var spell = process.spell().value();
         var player = player();
         var progress = process.progress(player.getWorld().getTime());
         var release = spell.release.target;

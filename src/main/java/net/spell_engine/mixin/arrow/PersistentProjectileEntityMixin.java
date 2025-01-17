@@ -10,13 +10,13 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellInfo;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.entity.ConfigurableKnockback;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.particle.ParticleHelper;
 import org.jetbrains.annotations.Nullable;
@@ -45,11 +45,17 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
          return (PersistentProjectileEntity)(Object)this;
     }
 
-    @Nullable Spell spell() {
-        if (spellId != null) {
-            return SpellRegistry.getSpell(spellId);
+    private RegistryEntry<Spell> cachedSpellEntry = null;
+    @Nullable RegistryEntry<Spell> spellEntry() {
+        if (spellId == null) {
+            return null;
         }
-        return null;
+        if (cachedSpellEntry != null) {
+            return cachedSpellEntry;
+        }
+        var entry = SpellRegistry.from(arrow().getWorld()).getEntry(spellId).orElse(null);
+        cachedSpellEntry = entry;
+        return entry;
     }
 
     // MARK: Persist extra data
@@ -75,33 +81,34 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
 
     // MARK: Sync data to client
 
-    private static final TrackedData<Integer> SPELL_ID_TRACKER = DataTracker.registerData(PersistentProjectileEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final TrackedData<String> SPELL_ID_TRACKER = DataTracker.registerData(PersistentProjectileEntity.class, TrackedDataHandlerRegistry.STRING);
     @Inject(method = "initDataTracker", at = @At("TAIL"))
     private void initDataTracker_TAIL_SpellEngine(DataTracker.Builder builder, CallbackInfo ci) {
-        builder.add(SPELL_ID_TRACKER, 0);
+        builder.add(SPELL_ID_TRACKER, "");
     }
 
     // MARK: Tick
 
-    private int client_lastResolvedSpellRawId = 0;
-    @Nullable private Spell client_lastResolvedSpell = null;
     @Inject(method = "tick", at = @At("HEAD"))
     private void tick_HEAD_SpellEngine(CallbackInfo ci) {
         var arrow = arrow();
-        if (arrow.getWorld().isClient) {
-            var rawId = arrow().getDataTracker().get(SPELL_ID_TRACKER);
-            if (rawId != client_lastResolvedSpellRawId) {
-                client_lastResolvedSpellRawId = rawId;
-                spellId = SpellRegistry.fromRawSpellId(rawId).orElse(null);
-                client_lastResolvedSpell = spell();
+        var world = arrow.getWorld();
+        if (world.isClient && this.spellId == null) {
+            var idString = arrow().getDataTracker().get(SPELL_ID_TRACKER);
+            if (idString.isEmpty()) {
+                return;
             }
+            this.spellId = Identifier.of(idString);
+            this.spellEntry();
         }
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick_TAIL_SpellEngine(CallbackInfo ci) {
-        if (client_lastResolvedSpell != null) {
-            var perks = client_lastResolvedSpell.arrow_perks;
+        var spellEntry = spellEntry();
+        if (spellEntry != null) {
+            var spell = spellEntry.value();
+            var perks = spell.arrow_perks;
             if (perks != null && perks.travel_particles != null) {
                 var arrow = arrow();
                 for (var travel_particles : perks.travel_particles) {
@@ -124,26 +131,17 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
         return inGround;
     }
 
-    @Override
-    @Nullable public Identifier getCarriedSpellId() {
-        return spellId;
-    }
-
-    @Nullable public Spell getCarriedSpell() {
-        if (arrow().getWorld().isClient()) {
-            return client_lastResolvedSpell;
-        } else {
-            return spell();
-        }
+    @Nullable public RegistryEntry<Spell> getCarriedSpell() {
+        return spellEntry();
     }
 
     @Override
-    public void applyArrowPerks(SpellInfo spellInfo) {
+    public void applyArrowPerks(RegistryEntry<Spell> spellEntry) {
         if(arrowPerksAlreadyApplied) {
             return;
         }
         var arrow = arrow();
-        var perks = spellInfo.spell().arrow_perks;
+        var perks = spellEntry.value().arrow_perks;
         if (perks != null) {
             if (perks.velocity_multiplier != 1.0F) {
                 arrow.setVelocity(arrow.getVelocity().multiply(perks.velocity_multiplier));
@@ -155,16 +153,18 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
             }
             this.setDamage(this.getDamage() * perks.damage_multiplier);
         }
-        this.spellId = spellInfo.id();
-        arrow.getDataTracker().set(SPELL_ID_TRACKER, SpellRegistry.rawSpellId(spellInfo.id()));
+        var spellId = spellEntry.getKey().get().getValue();
+        this.spellId = spellId;
+        arrow.getDataTracker().set(SPELL_ID_TRACKER, spellId.toString());
     }
 
     // MARK: Apply impact effects
 
     @Inject(method = "onEntityHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"), cancellable = true)
     private void onEntityHit_BeforeDamage_SpellEngine(EntityHitResult entityHitResult, CallbackInfo ci) {
-        var spell = spell();
-        if (spell != null) {
+        var spellEntry = spellEntry();
+        if (spellEntry != null) {
+            var spell = spellEntry.value();
             var arrowPerks = spell.arrow_perks;
             if (arrowPerks != null) {
                 if (arrowPerks.skip_arrow_damage) {
@@ -185,10 +185,11 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
             Entity entity, DamageSource damageSource, float amount, Operation<Boolean> original,
             // Context Parameters
             EntityHitResult entityHitResult) {
-        var spell = spell();
-        if (entity.getWorld().isClient() || spell == null) {
+        var spellEnrty = spellEntry();
+        if (entity.getWorld().isClient() || spellEnrty == null) {
             return original.call(entity, damageSource, amount);
         } else {
+            var spell = spellEnrty.value();
             var arrowPerks = spell.arrow_perks;
             var pushedKnockback = false;
             int iFrameToRestore = 0;
@@ -220,13 +221,13 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
     }
 
     private void performImpacts(Entity target, EntityHitResult entityHitResult) {
-        var spell = spell();
+        var spellEntry = spellEntry();
         var arrow = arrow();
         var owner = arrow.getOwner();
-        if (spell != null
-                && spell.impact != null
+        if (spellEntry != null
+                && spellEntry.value().impact != null
                 && owner instanceof LivingEntity shooter) {
-            SpellHelper.arrowImpact(shooter, arrow, target, new SpellInfo(spell, spellId),
+            SpellHelper.arrowImpact(shooter, arrow, target, spellEntry,
                     new SpellHelper.ImpactContext().position(entityHitResult.getPos()));
         }
     }
