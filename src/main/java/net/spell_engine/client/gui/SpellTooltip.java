@@ -301,7 +301,7 @@ public class SpellTooltip {
                 } else {
                     var key = spell.range > 0 ? "spell.tooltip.range.melee.plus" : "spell.tooltip.range.melee.minus";
                     var rangeKey = keyWithPlural(key, spell.range);
-                    rangeText = I18n.translate(rangeKey).replace(placeholder(rangeToken), formattedNumber(spell.range));
+                    rangeText = I18n.translate(rangeKey).replace(placeholder(rangeToken), formattedNumber(Math.abs(spell.range))); // Abs to avoid "--1"
                 }
             } else {
                 var rangeKey = keyWithPlural("spell.tooltip.range", spell.range);
