@@ -1,10 +1,15 @@
 # 1.4.0
 
+IMPORTANT DISCLAIMER:
+- Items in the spell book trinket slot will be lost (as the slot itself is being relocated)
+- This update requires content mods to be updated, due to major API changes
+
 Functional changes:
 - Add support for spell scroll slot, can be enabled using data pack
 - Rework trinkets integration, to declare custom slot group
 - Rework container merge logic
 - Spell cooldowns now get imposed onto the hosting item
+- Durability cost of spell cast will be imposed on the source ItemStack of the spell (if possible)
 - Spell projectiles may perform area impacts when colliding blocks
 - Fix empty spell scrolls generated in loot chests
 - Updated loot defaults (Illager Invasion)
