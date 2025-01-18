@@ -12,6 +12,7 @@ Functional changes:
 API Changes:
 - Add `spell.cost.cooldown_hosting_item` to disable imposing spell cooldowns onto the hosting item
 - Add `spell.range_melee` to match spell range with melee attack range (EIR)
+- Add `spell.impact.target_conditions` allowing entity type specific immunities, weaknesses and resistances
 
 # 1.3.2
 

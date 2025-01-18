@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -13,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -683,20 +685,6 @@ public class SpellHelper {
         boolean isKnockbackPushed = false;
         var spell = spellEntry.value();
         try {
-            double particleMultiplier = 1 * context.total();
-            var power = context.power();
-            var school = impact.school != null ? impact.school : spell.school;
-            if (power == null || power.school() != school) {
-                power = SpellPower.getSpellPower(school, caster);
-            }
-            if (power.baseValue() < impact.action.min_power) {
-                power = new SpellPower.Result(power.school(), impact.action.min_power, power.criticalChance(), power.criticalDamage());
-            }
-
-            if (impact.action.apply_to_caster) {
-                target = caster;
-            }
-
             var intent = intent(impact.action);
             if (!TargetHelper.actionAllowed(context.targetingMode(), intent, caster, target)) {
                 return false;
@@ -705,6 +693,33 @@ public class SpellHelper {
                     && context.targetingMode() == TargetHelper.TargetingMode.AREA
                     && ((EntityImmunity)target).isImmuneTo(EntityImmunity.Type.AREA_EFFECT)) {
                 return false;
+            }
+            var conditionResult = evaluateImpactConditions(target, impact.target_conditions);
+            if (!conditionResult.allowed) {
+                return false;
+            }
+
+            double particleMultiplier = 1 * context.total();
+            var power = context.power();
+            var school = impact.school != null ? impact.school : spell.school;
+            if (power == null || power.school() != school) {
+                power = SpellPower.getSpellPower(school, caster);
+            }
+
+            var bonusPower = 1 + (conditionResult.modifiers().stream().map(modifier -> modifier.power_multiplier).reduce(0F, Float::sum));
+            var bonusCritChance = conditionResult.modifiers().stream().map(modifier -> modifier.critical_chance_bonus).reduce(0F, Float::sum);
+            var bonusCritDamage = conditionResult.modifiers().stream().map(modifier -> modifier.critical_damage_bonus).reduce(0F, Float::sum);
+            power = new SpellPower.Result(power.school(),
+                    power.baseValue() * bonusPower,
+                    power.criticalChance() + bonusCritChance,
+                    power.criticalDamage() + bonusCritDamage);
+
+            if (power.baseValue() < impact.action.min_power) {
+                power = new SpellPower.Result(power.school(), impact.action.min_power, power.criticalChance(), power.criticalDamage());
+            }
+
+            if (impact.action.apply_to_caster) {
+                target = caster;
             }
 
             switch (impact.action.type) {
@@ -903,6 +918,66 @@ public class SpellHelper {
             }
         }
         return success;
+    }
+
+    public record TargetConditionResult(boolean allowed, List<Spell.Impact.Modifier> modifiers) {
+        public static final TargetConditionResult ALLOWED = new TargetConditionResult(true, List.of());
+        public static final TargetConditionResult DENIED = new TargetConditionResult(false, List.of());
+    }
+    public static TargetConditionResult evaluateImpactConditions(Entity target, Spell.Impact.TargetCondition[] target_conditions) {
+        if (target_conditions == null) {
+            return TargetConditionResult.ALLOWED;
+        }
+        var modifiers = new ArrayList<Spell.Impact.Modifier>();
+        for (var condition: target_conditions) {
+            var entityTypeMatches = false;
+            if (condition.entity_type != null && !condition.entity_type.isEmpty()) {
+                var invert = condition.entity_type.startsWith("!");
+                if (invert) {
+                    entityTypeMatches = !entityTypeMatches(condition.entity_type.substring(1), target);
+                } else {
+                    entityTypeMatches = entityTypeMatches(condition.entity_type, target);
+                }
+            }
+            var hasStatusEffect = false;
+            if (condition.has_effect != null && !condition.has_effect.isEmpty() && target instanceof LivingEntity livingTarget) {
+                var invert = condition.has_effect.startsWith("!");
+                var idString = invert ? condition.has_effect.substring(1) : condition.has_effect;
+                var id = Identifier.of(idString);
+                var effect = Registries.STATUS_EFFECT.getEntry(id);
+                hasStatusEffect = effect.isPresent() && livingTarget.hasStatusEffect(effect.get());
+            }
+
+            var conditionMet = condition.all_required
+                    ? entityTypeMatches && hasStatusEffect
+                    : entityTypeMatches || hasStatusEffect;
+            if (conditionMet) {
+                if (!condition.allow_action) {
+                    return TargetConditionResult.DENIED;
+                }
+                if (condition.modifier != null) {
+                    modifiers.add(condition.modifier);
+                }
+            }
+        }
+        return new TargetConditionResult(true, modifiers);
+    }
+
+    public static boolean entityTypeMatches(String typeString, Entity target) {
+        if (typeString.startsWith("#")) {
+            var id = Identifier.of(typeString.substring(1));
+            var tag = TagKey.of(Registries.ENTITY_TYPE.getKey(), id);
+            if (tag != null) {
+                return target.getType().isIn(tag);
+            }
+        } else {
+            var id = Identifier.of(typeString);
+            var type = Registries.ENTITY_TYPE.getEntry(id);
+            if (type.isPresent()) {
+                return type.get().value().equals(target.getType());
+            }
+        }
+        return false;
     }
 
     public static void placeCloud(World world, LivingEntity caster, RegistryEntry<Spell> spellEntry, ImpactContext context) {

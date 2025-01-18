@@ -192,6 +192,25 @@ public class Spell {
         public Action action;
         /// Magic school of this specific impact, if null then spell school is used
         @Nullable public SpellSchool school;
+        public TargetCondition[] target_conditions = new TargetCondition[]{};
+        public static class TargetCondition {
+            // If true = AND, if false = OR
+            public boolean all_required = false;
+            @Nullable public String entity_type;
+            @Nullable public String has_effect;
+            // @Nullable public String predicate ?
+
+            public boolean allow_action = true;
+            @Nullable public Modifier modifier;
+        }
+        public static class Modifier {
+            // Combined as `ADD_MULTIPLIED_BASE` in `EntityAttributeModifier.Operation`
+            public float power_multiplier = 0;
+            // Combined as `ADD_VALUE` in `EntityAttributeModifier.Operation`
+            public float critical_chance_bonus = 0;
+            // Combined as `ADD_VALUE` in `EntityAttributeModifier.Operation`
+            public float critical_damage_bonus = 0;
+        }
         public static class Action { public Action() { }
             public Type type;
             public boolean apply_to_caster = false;
