@@ -414,16 +414,27 @@ public class SpellHelper {
         }
         var velocity = mutableLaunchProperties.velocity;
         var divergence = projectileData.divergence;
+        var casterPitch = caster.getPitch();
+        var casterYaw = caster.getYaw();
         if (data.inherit_shooter_velocity) {
-            projectile.setVelocity(caster, caster.getPitch(), caster.getYaw(), 0, velocity, divergence);
+            projectile.setVelocity(caster, casterPitch, casterYaw, 0, velocity, divergence);
         } else {
-            var look = caster.getRotationVector().normalize();
+            if (data.direction_offsets != null && data.direction_offsets.length > 0
+                && (!data.direction_offsets_require_target || target != null)) {
+                var index = sequenceIndex % data.direction_offsets.length;
+                var offset = data.direction_offsets[index];
+                casterPitch += offset.pitch;
+                casterYaw += offset.yaw;
+            }
+            // var look = caster.getRotationVector().normalize();
+            var look = caster.getRotationVector(casterPitch, casterYaw).normalize();
             projectile.setVelocity(look.x, look.y, look.z, velocity, divergence);
         }
         projectile.range = spell.range;
-        projectile.setPitch(caster.getPitch());
-        projectile.setYaw(caster.getYaw());
+        projectile.setPitch(casterPitch);
+        projectile.setYaw(casterYaw);
 
+        projectile.setFollowedTarget(target);
         world.spawnEntity(projectile);
         SoundHelper.playSound(world, projectile, mutableLaunchProperties.sound);
 

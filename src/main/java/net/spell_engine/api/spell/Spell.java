@@ -152,6 +152,9 @@ public class Spell {
             public ShootProjectile projectile;
             public static class ShootProjectile {
                 public boolean inherit_shooter_velocity = false;
+                public static class DirectionOffset {  public float yaw = 0; public float pitch = 0; }
+                public DirectionOffset[] direction_offsets;
+                public boolean direction_offsets_require_target = false;
                 /// Launch properties of the spell projectile
                 public LaunchProperties launch_properties = new LaunchProperties();
                 /// The projectile to be launched
@@ -351,6 +354,8 @@ public class Spell {
     public static class ProjectileData { public ProjectileData() { }
         public float divergence = 0;
         public float homing_angle = 1F;
+        public float homing_after_absolute_distance = 0;
+        public float homing_after_relative_distance = 0;
         /// The frequency of playing the travel sound in ticks
         public int travel_sound_interval = 20;
         @Nullable public Sound travel_sound;

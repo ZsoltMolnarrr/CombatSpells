@@ -86,7 +86,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                 setItemStackModel(caster.getMainHandStack());
             }
         }
-        setFollowedTarget(target);
+        // setFollowedTarget(target);
     }
 
     /**
@@ -161,8 +161,14 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         this.prevPitch = this.getPitch();
     }
 
+    private double distanceToFollow = 0;
     public void setFollowedTarget(Entity target) {
         followedTarget = target;
+        if (target != null) {
+            distanceToFollow = target.distanceTo(this);
+        } else {
+            distanceToFollow = 0;
+        }
         var id = 0;
         if (!getWorld().isClient) {
             if (target != null) {
@@ -349,7 +355,15 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
 
     private void followTarget() {
         var target = getFollowedTarget();
-        if (target != null && projectileData().homing_angle > 0) {
+        var data = projectileData();
+        if (target != null && data.homing_angle > 0) {
+            if (data.homing_after_relative_distance > 0 || data.homing_after_absolute_distance > 0) {
+                var shouldFollow = distanceTraveled >= (distanceToFollow * data.homing_after_relative_distance)
+                        || distanceTraveled >= data.homing_after_absolute_distance;
+                if (!shouldFollow) {
+                    return;
+                }
+            }
             var distanceVector = (target.getPos().add(0, target.getHeight() / 2F, 0))
                     .subtract(this.getPos().add(0, this.getHeight() / 2F, 0));
 //            System.out.println((world.isClient ? "Client: " : "Server: ") + "Distance: " + distanceVector);
@@ -680,5 +694,22 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         TARGET_ID = DataTracker.registerData(SpellProjectile.class, TrackedDataHandlerRegistry.INTEGER);
         BEHAVIOUR = DataTracker.registerData(SpellProjectile.class, TrackedDataHandlerRegistry.STRING);
         ITEM_MODEL_ID = DataTracker.registerData(SpellProjectile.class, TrackedDataHandlerRegistry.STRING);
+    }
+
+    public void onTrackedDataSet(TrackedData<?> data) {
+        super.onTrackedDataSet(data);
+        if (this.getWorld().isClient) {
+            if (data.equals(CLIENT_DATA)) {
+                updateClientSideData();
+            }
+            if (data.equals(ITEM_MODEL_ID)) {
+                updateItemModel(this.getDataTracker().get(ITEM_MODEL_ID));
+            }
+            if (data.equals(TARGET_ID)) {
+                var id = this.getDataTracker().get(TARGET_ID);
+                var target = this.getWorld().getEntityById(id);
+                this.setFollowedTarget(target);
+            }
+        }
     }
 }

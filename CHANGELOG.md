@@ -4,6 +4,11 @@
 - Improve render effect of spell beams (with added configuration to disable high luminance)
 - Restore disabling creation of certain spell books, by adding to them to `spell_engine:non_craftable_spell_books` item tag
 
+API Changes:
+- Add `spell.projectile.homing_after_absolute_distance` to allow homing projectiles to start homing after reaching certain distance
+- Add `spell.projectile.homing_after_relative_distance` to allow homing projectiles to start homing after reaching certain distance relative to the target
+- Add `spell.release.target.projectile.direction_offsets` to allow shooting projectile into various directions
+
 # 1.4.0
 
 IMPORTANT DISCLAIMER:
