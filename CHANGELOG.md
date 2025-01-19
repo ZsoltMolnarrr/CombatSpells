@@ -1,6 +1,7 @@
 # 1.4.1
 
 - Fix Arcane Charge not applying to spell caster
+- Restore disabling creation of certain spell books, by adding to them to `spell_engine:non_craftable_spell_books` item tag
 
 # 1.4.0
 

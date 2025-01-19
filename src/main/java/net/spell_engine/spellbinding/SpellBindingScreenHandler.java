@@ -270,7 +270,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                     });
                 }
                 case BOOK -> {
-                    var item = SpellBooks.sorted(player.getWorld()).get(rawId - SpellBinding.BOOK_OFFSET);
+                    var item = SpellBinding.availableSpellBooks(player.getWorld()).get(rawId - SpellBinding.BOOK_OFFSET);
                     var itemStack = ((Item)item).getDefaultStack(); // Upcast to `Item` to make sure this line is remapped for other devs
                     var container = SpellContainerHelper.containerFromItemStack(itemStack);
                     if (container == null || !container.isValid() || container.pool() == null) {

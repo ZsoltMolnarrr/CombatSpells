@@ -3,11 +3,13 @@ package net.spell_engine.spellbinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
+import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
@@ -31,9 +33,21 @@ public class SpellBinding {
     public record Offer(int id, int levelCost, int levelRequirement, int lapisCost, boolean isPowered) {  }
     public record OfferResult(Mode mode, List<Offer> offers) { }
 
+    public static List<ISpellBookItem> availableSpellBooks(World world) {
+        return SpellBooks
+                .sorted(world)
+                .stream()
+                .filter(spellBookItem -> {
+                    var item = spellBookItem.asItem();
+                    var entry = Registries.ITEM.getEntry(item);
+                    return !entry.isIn(SpellEngineItemTags.NON_CRAFTABLE_SPELL_BOOK);
+                })
+                .toList();
+    }
+
     public static OfferResult offersFor(World world, boolean creative, ItemStack itemStack, ItemStack consumableStack, int libraryPower) {
         if (itemStack.getItem() == Items.BOOK) {
-            var books = SpellBooks.sorted(world);
+            var books = availableSpellBooks(world);
             var offers = new ArrayList<Offer>();
             if (SpellEngineMod.config.spell_book_creation_enabled) {
                 for (int i = 0; i < books.size(); ++i) {
