@@ -13,5 +13,6 @@ public class SpellCastSyncHelper {
     public static void clearCasting(PlayerEntity caster) {
         //System.out.println("Clearing casting process");
         ((SpellCasterEntity)caster).setSpellCastProcess(null);
+        ((SpellCasterEntity)caster).setChannelTickIndex(0);
     }
 }

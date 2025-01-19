@@ -8,6 +8,7 @@ API Changes:
 - Add `spell.projectile.homing_after_absolute_distance` to allow homing projectiles to start homing after reaching certain distance
 - Add `spell.projectile.homing_after_relative_distance` to allow homing projectiles to start homing after reaching certain distance relative to the target
 - Add `spell.release.target.projectile.direction_offsets` to allow shooting projectile into various directions
+- Add `channelTickIndex` to ImpactContext, to allow tracking channeling progress
 
 # 1.4.0
 

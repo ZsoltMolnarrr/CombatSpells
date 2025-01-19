@@ -8,6 +8,9 @@ import org.jetbrains.annotations.Nullable;
 public interface SpellCasterEntity {
     SpellCooldownManager getCooldownManager();
 
+    void setChannelTickIndex(int channelTickIndex);
+    int getChannelTickIndex();
+
     void setSpellCastProcess(@Nullable SpellCast.Process process);
     @Nullable SpellCast.Process getSpellCastProcess();
 

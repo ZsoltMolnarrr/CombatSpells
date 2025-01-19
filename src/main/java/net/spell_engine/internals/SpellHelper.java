@@ -211,18 +211,23 @@ public class SpellHelper {
         if (!attempt.isSuccess()) {
             return;
         }
+        var caster = (SpellCasterEntity)player;
         var targets = targetResult.entities();
         var targetLocation = targetResult.location();
-        var castingSpeed = ((SpellCasterEntity)player).getCurrentCastingSpeed();
+        var castingSpeed = caster.getCurrentCastingSpeed();
         // Normalized progress in 0 to 1
         progress = Math.max(Math.min(progress, 1F), 0F);
         var channelMultiplier = 1F;
+        var channelTickIndex = 0;
+        int incrementChannelTicks = 0;
         boolean shouldPerformImpact = true;
         Supplier<Collection<ServerPlayerEntity>> trackingPlayers = Suppliers.memoize(() -> { // Suppliers.memoize = Lazy
             return PlayerLookup.tracking(player);
         });
         switch (action) {
             case CHANNEL -> {
+                channelTickIndex = caster.getChannelTickIndex();
+                incrementChannelTicks = 1;
                 channelMultiplier = channelValueMultiplier(spell);
             }
             case RELEASE -> {
@@ -245,7 +250,9 @@ public class SpellHelper {
                         1F,
                         null,
                         SpellPower.getSpellPower(spell.school, player),
-                        impactTargetingMode(spell));
+                        impactTargetingMode(spell),
+                        channelTickIndex);
+
                 if (spell.release.custom_impact) {
                     var handler = CustomSpellHandler.handlers.get(spellId);
                     released = false;
@@ -303,6 +310,7 @@ public class SpellHelper {
                         }
                     }
                 }
+                caster.setChannelTickIndex(channelTickIndex + incrementChannelTicks);
             }
             if (released) {
                 ParticleHelper.sendBatches(player, spell.release.particles);
@@ -421,7 +429,8 @@ public class SpellHelper {
         } else {
             if (data.direction_offsets != null && data.direction_offsets.length > 0
                 && (!data.direction_offsets_require_target || target != null)) {
-                var index = sequenceIndex % data.direction_offsets.length;
+                var baseIndex = context.isChanneled() ? context.channelTickIndex() : sequenceIndex;
+                var index = baseIndex % data.direction_offsets.length;
                 var offset = data.direction_offsets[index];
                 casterPitch += offset.pitch;
                 casterYaw += offset.yaw;
@@ -599,29 +608,29 @@ public class SpellHelper {
         }
     }
 
-    public record ImpactContext(float channel, float distance, @Nullable Vec3d position, SpellPower.Result power, TargetHelper.TargetingMode targetingMode) {
+    public record ImpactContext(float channel, float distance, @Nullable Vec3d position, SpellPower.Result power, TargetHelper.TargetingMode targetingMode, int channelTickIndex) {
         public ImpactContext() {
-            this(1, 1, null, null, TargetHelper.TargetingMode.DIRECT);
+            this(1, 1, null, null, TargetHelper.TargetingMode.DIRECT, 0);
         }
 
         public ImpactContext channeled(float multiplier) {
-            return new ImpactContext(multiplier, distance, position, power, targetingMode);
+            return new ImpactContext(multiplier, distance, position, power, targetingMode, channelTickIndex);
         }
 
         public ImpactContext distance(float multiplier) {
-            return new ImpactContext(channel, multiplier, position, power, targetingMode);
+            return new ImpactContext(channel, multiplier, position, power, targetingMode, channelTickIndex);
         }
 
         public ImpactContext position(Vec3d position) {
-            return new ImpactContext(channel, distance, position, power, targetingMode);
+            return new ImpactContext(channel, distance, position, power, targetingMode, channelTickIndex);
         }
 
         public ImpactContext power(SpellPower.Result spellPower) {
-            return new ImpactContext(channel, distance, position, spellPower, targetingMode);
+            return new ImpactContext(channel, distance, position, spellPower, targetingMode, channelTickIndex);
         }
 
         public ImpactContext target(TargetHelper.TargetingMode targetingMode) {
-            return new ImpactContext(channel, distance, position, power, targetingMode);
+            return new ImpactContext(channel, distance, position, power, targetingMode, channelTickIndex);
         }
 
         public boolean hasOffset() {

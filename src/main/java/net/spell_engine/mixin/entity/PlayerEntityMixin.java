@@ -43,6 +43,16 @@ public class PlayerEntityMixin implements SpellCasterEntity {
         player().getDataTracker().set(SPELL_ENGINE_SPELL_PROGRESS, json);
     }
 
+    private int channelTickIndex = 0;
+    @Override
+    public void setChannelTickIndex(int channelTickIndex) {
+        this.channelTickIndex = channelTickIndex;
+    }
+    @Override
+    public int getChannelTickIndex() {
+        return channelTickIndex;
+    }
+
     @Nullable public SpellCast.Process getSpellCastProcess() {
         return synchronizedSpellCastProcess;
     }
