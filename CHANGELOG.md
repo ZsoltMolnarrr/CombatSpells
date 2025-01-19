@@ -1,3 +1,7 @@
+# 1.4.1
+
+- Fix Arcane Charge not applying to spell caster
+
 # 1.4.0
 
 IMPORTANT DISCLAIMER:

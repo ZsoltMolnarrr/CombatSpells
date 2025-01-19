@@ -685,6 +685,11 @@ public class SpellHelper {
         boolean isKnockbackPushed = false;
         var spell = spellEntry.value();
         try {
+            // Guards
+
+            if (impact.action.apply_to_caster) {
+                target = caster;
+            }
             var intent = intent(impact.action);
             if (!TargetHelper.actionAllowed(context.targetingMode(), intent, caster, target)) {
                 return false;
@@ -698,6 +703,8 @@ public class SpellHelper {
             if (!conditionResult.allowed) {
                 return false;
             }
+
+            // Power calculation
 
             double particleMultiplier = 1 * context.total();
             var power = context.power();
@@ -718,9 +725,7 @@ public class SpellHelper {
                 power = new SpellPower.Result(power.school(), impact.action.min_power, power.criticalChance(), power.criticalDamage());
             }
 
-            if (impact.action.apply_to_caster) {
-                target = caster;
-            }
+            // Action execution
 
             switch (impact.action.type) {
                 case DAMAGE -> {
