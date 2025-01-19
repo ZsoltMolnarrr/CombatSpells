@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static net.spell_engine.api.spell.Spell.Release.Target.Type.BEAM;
 
-@Mixin(PlayerEntity.class)
+@Mixin(value = PlayerEntity.class, priority = 555)
 public class PlayerEntityMixin implements SpellCasterEntity {
 
     private PlayerEntity player() {

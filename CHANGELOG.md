@@ -1,6 +1,7 @@
 # 1.4.1
 
 - Fix Arcane Charge not applying to spell caster
+- Fix unstable multiplayer alongside Better Combat mod
 - Improve render effect of spell beams (with added configuration to disable high luminance)
 - Restore disabling creation of certain spell books, by adding to them to `spell_engine:non_craftable_spell_books` item tag
 
