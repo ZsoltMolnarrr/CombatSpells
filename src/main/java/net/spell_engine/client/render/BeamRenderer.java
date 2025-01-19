@@ -12,13 +12,62 @@ import net.minecraft.util.math.Vec3d;
 import net.spell_engine.api.render.CustomLayers;
 import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.beam.BeamEmitterEntity;
+import net.spell_engine.client.compatibility.ShaderCompatibility;
+import net.spell_engine.client.util.Color;
 import net.spell_engine.internals.Beam;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.utils.TargetHelper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BeamRenderer extends RenderLayer {
+    public record LayerSet(RenderLayer inner, RenderLayer outer) { }
+    private static final Map<String, LayerSet> layerCache = new HashMap<>();
+    public static LayerSet layerSetFor(Identifier texture, Spell.Release.Target.Beam.Luminance luminance) {
+        var key = texture.toString() + luminance.toString();
+        if (layerCache.containsKey(key)) {
+            return layerCache.get(key);
+        } else {
+            LayerSet layerSet;
+            switch (luminance) {
+                case LOW -> {
+                    layerSet = low(texture);
+                }
+                case MEDIUM -> {
+                    layerSet = medium(texture);
+                }
+                case HIGH -> {
+                    layerSet = high(texture);
+                }
+                default -> layerSet = low(texture);
+            }
+            layerCache.put(key, layerSet);
+            return layerSet;
+        }
+    }
+    public static LayerSet low(Identifier texture) {
+        return new LayerSet(
+                RenderLayer.getBeaconBeam(texture, false),
+                RenderLayer.getBeaconBeam(texture, true)
+        );
+    }
+    public static LayerSet medium(Identifier texture) {
+        return new LayerSet(
+                CustomLayers.spellObject(texture, LightEmission.RADIATE, false),
+                CustomLayers.beam(texture, false, true)
+        );
+    }
+    public static LayerSet high(Identifier texture) {
+        return new LayerSet(
+                CustomLayers.spellObject(texture, LightEmission.RADIATE, true),
+                CustomLayers.spellObject(texture, LightEmission.RADIATE, false)
+        );
+    }
+
     public static void setup() {
         WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
             VertexConsumerProvider.Immediate vcProvider = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
@@ -101,15 +150,16 @@ public class BeamRenderer extends RenderLayer {
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(absoluteTime * 2.25F - 45.0F));
 
         var texture = Identifier.of(beam.texture_id);
-        var color = beam.color_rgba;
-        var red = (color >> 24) & 255;
-        var green = (color >> 16) & 255;
-        var blue = (color >> 8) & 255;
-        var alpha = color & 255;
-        // System.out.println("Beam color " + " red:" + red + " green:" + green + " blue:" + blue + " alpha:" + alpha);
+        var outerColor = Color.IntFormat.fromLongRGBA(beam.color_rgba);
+        var innerColor = Color.IntFormat.fromLongRGBA(beam.inner_color_rgba);
+
+        var luminance = ShaderCompatibility.isShaderPackInUse()
+                ? (SpellEngineClient.config.renderBeamsHighLuminance ? beam.luminance : Spell.Release.Target.Beam.Luminance.MEDIUM)
+                : Spell.Release.Target.Beam.Luminance.LOW;
+        LayerSet renderLayers = layerSetFor(texture, luminance);
         BeamRenderer.renderBeam(matrixStack, vertexConsumerProvider,
                 texture, time, tickDelta, beam.flow, true,
-                (int)red, (int)green, (int)blue, (int)alpha,
+                innerColor, outerColor, renderLayers,
                 0, length, beam.width);
 
         matrixStack.pop();
@@ -121,37 +171,32 @@ public class BeamRenderer extends RenderLayer {
 
     public static void renderBeam(MatrixStack matrices, VertexConsumerProvider vertexConsumers,
                                   Identifier texture, long time, float tickDelta, float direction, boolean center,
-                                  int red, int green, int blue, int alpha,
+                                  Color.IntFormat innerColor, Color.IntFormat outerColor, LayerSet renderLayers,
                                   float yOffset, float height, float width) {
         matrices.push();
 
         float shift = (float)Math.floorMod(time, 40) + tickDelta;
         float offset = MathHelper.fractionalPart(shift * 0.2f - (float)MathHelper.floor(shift * 0.1f)) * (- direction);
 
-//        var innerRenderLayer = CustomLayers.beam(texture, true, true); //alpha < 250);
-        var outerRenderLayer = CustomLayers.beam(texture, false, true);
-        var innerRenderLayer = CustomLayers.spellObject(texture, LightEmission.RADIATE, false); //alpha < 250);
-//        var outerRenderLayer = CustomLayers.spellObject(texture, LightEmission.GLOW, true); //alpha < 250);
-
         var originalWidth = width;
         if (center) {
-            renderBeamLayer(matrices, vertexConsumers.getBuffer(innerRenderLayer),
-                    red, green, blue, alpha,
+            renderBeamLayer(matrices, vertexConsumers.getBuffer(renderLayers.inner()),
+                    innerColor.red(), innerColor.green(), innerColor.blue(), innerColor.alpha(),
                     yOffset, height,
                     0.0f, width, width, 0.0f, -width, 0.0f, 0.0f, -width,
                     0.0f, 1f, height, offset);
         }
 
         width = originalWidth * 1.5F;
-        renderBeamLayer(matrices, vertexConsumers.getBuffer(outerRenderLayer),
-                red, green, blue, (int) (alpha * 0.75),
+        renderBeamLayer(matrices, vertexConsumers.getBuffer(renderLayers.outer()),
+                outerColor.red(), outerColor.green(), outerColor.blue(), (int) (outerColor.alpha() * 0.75F),
                 yOffset, height,
                 0.0f, width, width, 0.0f, -width, 0.0f, 0.0f, -width,
                 0.0f, 1.0f, height, offset * 0.9F);
 
         width = originalWidth * 2F;
-        renderBeamLayer(matrices, vertexConsumers.getBuffer(outerRenderLayer),
-                red, green, blue, alpha / 3,
+        renderBeamLayer(matrices, vertexConsumers.getBuffer(renderLayers.outer()),
+                outerColor.red(), outerColor.green(), outerColor.blue(), outerColor.alpha() / 3,
                 yOffset, height,
                 0.0f, width, width, 0.0f, -width, 0.0f, 0.0f, -width,
                 0.0f, 1.0f, height, offset * 0.8F);

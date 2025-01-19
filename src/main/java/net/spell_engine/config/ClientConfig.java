@@ -9,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 @Config(name = "client")
 public class ClientConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
+    public boolean renderBeamsHighLuminance = true;
+    @ConfigEntry.Gui.Tooltip
     public boolean holdToCastChannelled = true;
     @ConfigEntry.Gui.Tooltip
     public boolean holdToCastCharged = true;
