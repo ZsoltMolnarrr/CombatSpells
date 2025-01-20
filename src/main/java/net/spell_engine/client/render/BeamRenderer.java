@@ -158,7 +158,7 @@ public class BeamRenderer extends RenderLayer {
                 : Spell.Release.Target.Beam.Luminance.LOW;
         LayerSet renderLayers = layerSetFor(texture, luminance);
         BeamRenderer.renderBeam(matrixStack, vertexConsumerProvider,
-                texture, time, tickDelta, beam.flow, true,
+                time, tickDelta, beam.flow, true,
                 innerColor, outerColor, renderLayers,
                 0, length, beam.width);
 
@@ -170,7 +170,7 @@ public class BeamRenderer extends RenderLayer {
     }
 
     public static void renderBeam(MatrixStack matrices, VertexConsumerProvider vertexConsumers,
-                                  Identifier texture, long time, float tickDelta, float direction, boolean center,
+                                  long time, float tickDelta, float direction, boolean center,
                                   Color.IntFormat innerColor, Color.IntFormat outerColor, LayerSet renderLayers,
                                   float yOffset, float height, float width) {
         matrices.push();
