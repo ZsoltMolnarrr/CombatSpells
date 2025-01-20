@@ -354,6 +354,7 @@ public class Spell {
     public static class ProjectileData { public ProjectileData() { }
         public float divergence = 0;
         public float homing_angle = 1F;
+        @Nullable public float[] homing_angles = null;
         public float homing_after_absolute_distance = 0;
         public float homing_after_relative_distance = 0;
         /// The frequency of playing the travel sound in ticks

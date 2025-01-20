@@ -1,3 +1,7 @@
+# 1.4.3
+
+- Improve spell projectile interpolation
+
 # 1.4.2
 
 - Fix high luminance of beams spell layer ordering

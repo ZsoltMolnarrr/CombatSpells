@@ -30,6 +30,7 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.render.FlyingSpellEntity;
 import net.spell_engine.internals.SpellHelper;
+import net.spell_engine.internals.WorldScheduler;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
@@ -175,6 +176,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                 id = target.getId();
             }
             this.getDataTracker().set(TARGET_ID, id);
+            this.velocityDirty = true;
         }
     }
 
@@ -353,10 +355,18 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         }
     }
 
+    private int followTicks = 0;
     private void followTarget() {
         var target = getFollowedTarget();
         var data = projectileData();
-        if (target != null && data.homing_angle > 0) {
+        if (data == null) {
+            return;
+        }
+        var homing_angle = projectileData().homing_angle;
+        if (projectileData().homing_angles != null && followTicks < projectileData().homing_angles.length) {
+            homing_angle = projectileData().homing_angles[followTicks];
+        }
+        if (target != null && homing_angle > 0) {
             if (data.homing_after_relative_distance > 0 || data.homing_after_absolute_distance > 0) {
                 var shouldFollow = distanceTraveled >= (distanceToFollow * data.homing_after_relative_distance)
                         || distanceTraveled >= data.homing_after_absolute_distance;
@@ -364,15 +374,17 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                     return;
                 }
             }
+            System.out.println((this.getWorld().isClient ? "Client: " : "Server: ") + "Following target: " + target + " with angle: " + homing_angle);
             var distanceVector = (target.getPos().add(0, target.getHeight() / 2F, 0))
                     .subtract(this.getPos().add(0, this.getHeight() / 2F, 0));
 //            System.out.println((world.isClient ? "Client: " : "Server: ") + "Distance: " + distanceVector);
 //            System.out.println((world.isClient ? "Client: " : "Server: ") + "Velocity: " + getVelocity());
-            var newVelocity = VectorHelper.rotateTowards(getVelocity(), distanceVector, projectileData().homing_angle);
+            var newVelocity = VectorHelper.rotateTowards(getVelocity(), distanceVector, homing_angle);
             if (newVelocity.lengthSquared() > 0) {
 //                System.out.println((world.isClient ? "Client: " : "Server: ") + "Rotated to: " + newVelocity);
                 this.setVelocity(newVelocity);
-                this.velocityDirty = true;
+                // this.velocityDirty = true;
+                followTicks += 1;
             }
         }
     }
@@ -492,6 +504,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         // Save
         impactHistory.add(target.getId());
         setFollowedTarget(null);
+        this.velocityDirty = true;
         this.perks.pierce -= 1;
         return true;
     }
@@ -557,7 +570,6 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         if (getWorld().isClient) {
             return;
         }
-        var spell = getSpellEntry().value();
         var position = this.getPos();
         var spawnCount = this.perks.chain_reaction_size;
         var launchVector = new Vec3d(1, 0, 0).multiply(this.getVelocity().length());
