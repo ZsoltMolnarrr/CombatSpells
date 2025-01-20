@@ -1,6 +1,7 @@
 # 1.4.2
 
 - Fix high luminance of beams spell layer ordering
+- Fix brightness for some spell particles
 
 # 1.4.1
 
