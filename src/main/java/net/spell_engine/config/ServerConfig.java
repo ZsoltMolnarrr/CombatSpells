@@ -75,7 +75,8 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     public LinkedHashMap<String, TargetHelper.Relation> player_relations = new LinkedHashMap<>() {{
         put("minecraft:player", TargetHelper.Relation.FRIENDLY);
         put("minecraft:villager", TargetHelper.Relation.FRIENDLY);
-        put("minecraft:iron_golem", TargetHelper.Relation.NEUTRAL);
+        put("minecraft:allay", TargetHelper.Relation.FRIENDLY);
+        put("minecraft:iron_golem", TargetHelper.Relation.FRIENDLY);
         put("guardvillagers:guard", TargetHelper.Relation.FRIENDLY);
         put("minecraft:cat", TargetHelper.Relation.FRIENDLY);
     }};

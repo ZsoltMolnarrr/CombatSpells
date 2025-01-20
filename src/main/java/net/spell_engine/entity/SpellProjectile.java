@@ -170,13 +170,12 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         } else {
             distanceToFollow = 0;
         }
-        var id = 0;
+        var id = -1;
         if (!getWorld().isClient) {
             if (target != null) {
                 id = target.getId();
             }
             this.getDataTracker().set(TARGET_ID, id);
-            this.velocityDirty = true;
         }
     }
 
@@ -184,7 +183,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         Entity entityReference = null;
         if (getWorld().isClient) {
             var id = this.getDataTracker().get(TARGET_ID);
-            if (id != null && id != 0) {
+            if (id != null && id > 0) {
                 entityReference = getWorld().getEntityById(id);
             }
         } else {
@@ -195,6 +194,11 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         }
         return entityReference;
     }
+
+//    @Override
+//    public void setVelocityClient(double x, double y, double z) {
+//        super.setVelocityClient(x, y, z);
+//    }
 
     public boolean shouldRender(double distance) {
         double d0 = this.getBoundingBox().getAverageSideLength() * 4.0;
@@ -374,7 +378,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                     return;
                 }
             }
-            System.out.println((this.getWorld().isClient ? "Client: " : "Server: ") + "Following target: " + target + " with angle: " + homing_angle);
+//            System.out.println((this.getWorld().isClient ? "Client: " : "Server: ") + "Following target: " + target + " with angle: " + homing_angle);
             var distanceVector = (target.getPos().add(0, target.getHeight() / 2F, 0))
                     .subtract(this.getPos().add(0, this.getHeight() / 2F, 0));
 //            System.out.println((world.isClient ? "Client: " : "Server: ") + "Distance: " + distanceVector);
@@ -504,8 +508,15 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         // Save
         impactHistory.add(target.getId());
         setFollowedTarget(null);
-        this.velocityDirty = true;
         this.perks.pierce -= 1;
+
+        // Modify velocity by a tiny, non zero amount
+        // to enforce velocity update on the client.
+        // (Otherwise the projectile is going crazy on the client)
+        var tiny = 0.01 * ((-1) * (this.perks.pierce % 2));
+        this.setVelocity(this.getVelocity().multiply(1 + tiny));
+        this.velocityDirty = true;
+
         return true;
     }
 
@@ -719,7 +730,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
             }
             if (data.equals(TARGET_ID)) {
                 var id = this.getDataTracker().get(TARGET_ID);
-                var target = this.getWorld().getEntityById(id);
+                var target = id > 0 ? this.getWorld().getEntityById(id) : null;
                 this.setFollowedTarget(target);
             }
         }

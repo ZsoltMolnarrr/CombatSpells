@@ -1,3 +1,8 @@
+# 1.4.4
+
+- Fix Spell Projectiles sometimes visually glitching after piercing a target
+- Fix Spell Projectiles spamming the console
+
 # 1.4.3
 
 - Improve spell projectile interpolation
