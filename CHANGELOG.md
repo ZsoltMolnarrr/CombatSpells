@@ -1,3 +1,7 @@
+# 1.4.2
+
+- Fix high luminance of beams spell layer ordering
+
 # 1.4.1
 
 - Fix Arcane Charge not applying to spell caster

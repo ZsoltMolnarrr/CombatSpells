@@ -63,8 +63,8 @@ public class BeamRenderer extends RenderLayer {
     }
     public static LayerSet high(Identifier texture) {
         return new LayerSet(
-                CustomLayers.spellObject(texture, LightEmission.RADIATE, true),
-                CustomLayers.spellObject(texture, LightEmission.RADIATE, false)
+                CustomLayers.spellObject(texture, LightEmission.RADIATE, false),
+                CustomLayers.spellObject(texture, LightEmission.RADIATE, true)
         );
     }
 

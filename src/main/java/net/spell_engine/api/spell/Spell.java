@@ -110,8 +110,8 @@ public class Spell {
                 public enum Luminance { LOW, MEDIUM, HIGH }
                 public Luminance luminance = Luminance.HIGH;
                 public String texture_id = "textures/entity/beacon_beam.png";
-                public long color_rgba = 0xFFFFFFFF;
-                public long inner_color_rgba = 0xFFFFFFFF;
+                public long color_rgba = 0xFFFFFFFFL;
+                public long inner_color_rgba = 0xFFFFFFFFL;
                 public float width = 0.1F;
                 public float flow = 1;
                 public ParticleBatch[] block_hit_particles = new ParticleBatch[]{};
