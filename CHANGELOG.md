@@ -2,6 +2,7 @@
 
 - Fix Spell Projectiles sometimes visually glitching after piercing a target
 - Fix Spell Projectiles spamming the console
+- Allays and Iron Golems are now considered as friendly by default 
 
 # 1.4.3
 
