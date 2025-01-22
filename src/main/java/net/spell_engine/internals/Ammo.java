@@ -79,8 +79,11 @@ public class Ammo {
 
             ammo = Searched.from(spell.cost.item.id);
             if(ammo.isValid()) {
-                sources = findSources(player, ammo, spell.cost.item.amount);
-                satisfied = sources.stream().mapToInt(Source::found).sum() >= spell.cost.item.amount;
+                var amountNeeded = spell.cost.item.amount;
+                sources = findSources(player, ammo, amountNeeded);
+                var amountAvailable = sources.stream().mapToInt(Source::found).sum();
+                satisfied = amountAvailable >= amountNeeded;
+                consume = (satisfied && spell.cost.item.consume) ? amountAvailable : 0;
             }
         }
         return new Result(satisfied, ammo, consume, sources);
