@@ -297,10 +297,15 @@ public class Spell {
     /// Apply this impact to other entities nearby
     @Nullable public AreaImpact area_impact;
 
+    /// Applied to the caster, once the spell casting process finishes
     public Cost cost = new Cost();
     public static class Cost { public Cost() { }
+        /// Exhaust to add
         public float exhaust = 0.1F;
+        /// Durability of the spell host item to consume
         public int durability = 1;
+        /// Status effect to remove
+        /// (Useful for channeled spells)
         @Nullable public String effect_id;
 
         public Cooldown cooldown = new Cooldown();
