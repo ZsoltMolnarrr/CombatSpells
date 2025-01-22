@@ -34,7 +34,7 @@ public class HudMessages {
             case MISSING_ITEM -> {
                 var item = attempt.missingItem().item();
                 if (item != null) {
-                    var itemName = item.getTranslationKey();
+                    var itemName = I18n.translate(item.getTranslationKey());
                     message = Text.translatable(translationKey, itemName);
                 }
             }

@@ -63,9 +63,12 @@ public class Ammo {
         Searched ammo = null;
         int consume = 0;
         List<Source> sources = List.of();
-        boolean ignoreAmmo = player.getAbilities().creativeMode
-                || !SpellEngineMod.config.spell_cost_item_allowed;
-        if (!ignoreAmmo && spell.cost.item != null && spell.cost.item.id != null && !spell.cost.item.id.isEmpty()) {
+        if (spell.cost.item != null && spell.cost.item.id != null && !spell.cost.item.id.isEmpty()) {
+            ammo = Searched.from(spell.cost.item.id);
+            if (player.getAbilities().creativeMode
+                    || !SpellEngineMod.config.spell_cost_item_allowed) {
+                return new Result(satisfied, ammo, consume, sources);
+            }
             var id = Identifier.of(spell.cost.item.id);
             var needsArrow = id.getPath().contains("arrow");
 
@@ -77,7 +80,6 @@ public class Ammo {
                 return new Result(satisfied, ammo, consume, sources);
             }
 
-            ammo = Searched.from(spell.cost.item.id);
             if(ammo.isValid()) {
                 var amountNeeded = spell.cost.item.amount;
                 sources = findSources(player, ammo, amountNeeded);

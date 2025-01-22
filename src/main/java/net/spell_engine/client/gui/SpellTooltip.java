@@ -39,6 +39,7 @@ public class SpellTooltip {
     private static final String effectAmplifierToken = "effect_amplifier";
     private static final String impactRangeToken = "impact_range";
     private static final String teleportDistanceToken = "teleport_distance";
+    private static final String countToken = "count";
     public static String placeholder(String token) { return "{" + token + "}"; }
 
     public static void addSpellLines(ItemStack itemStack, TooltipType tooltipType, List<Text> lines) {
@@ -332,14 +333,18 @@ public class SpellTooltip {
         if (config != null) {
             showItemCost = config.spell_cost_item_allowed;
         }
-        if (showItemCost && spell.cost != null && spell.cost.item != null
-                && spell.cost.item.id != null && !spell.cost.item.id.isEmpty()) {
+        if (showItemCost) {
             var ammoResult = Ammo.ammoForSpell(player, spell, itemStack);
-            var ammoKey = keyWithPlural("spell.tooltip.ammo", spell.cost.item.amount);
-            var itemName = I18n.translate(ammoResult.item().getTranslationKey());
-            var ammo = I18n.translate(ammoKey).replace(placeholder(itemToken), itemName);
-            lines.add(Text.literal(" ")
-                    .append(Text.literal(ammo).formatted(ammoResult.satisfied() ? Formatting.GREEN : Formatting.RED)));
+            if (ammoResult.item() != null) {
+                var amount = spell.cost.item.amount;
+                var ammoKey = keyWithPlural("spell.tooltip.ammo", amount);
+                var itemName = I18n.translate(ammoResult.item().getTranslationKey());
+                var ammo = I18n.translate(ammoKey)
+                        .replace(placeholder(itemToken), itemName)
+                        .replace(placeholder(countToken), amount + "");
+                lines.add(Text.literal(" ")
+                        .append(Text.literal(ammo).formatted(ammoResult.satisfied() ? Formatting.GREEN : Formatting.RED)));
+            }
         }
 
         return lines;
