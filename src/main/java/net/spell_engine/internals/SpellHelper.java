@@ -658,15 +658,16 @@ public class SpellHelper {
 
             if (impact.action.apply_to_caster) {
                 target = caster;
-            }
-            var intent = intent(impact.action);
-            if (!TargetHelper.actionAllowed(context.targetingMode(), intent, caster, target)) {
-                return false;
-            }
-            if (intent == TargetHelper.Intent.HARMFUL
-                    && context.targetingMode() == TargetHelper.TargetingMode.AREA
-                    && ((EntityImmunity)target).isImmuneTo(EntityImmunity.Type.AREA_EFFECT)) {
-                return false;
+            } else {
+                var intent = intent(impact.action);
+                if (!TargetHelper.actionAllowed(context.targetingMode(), intent, caster, target)) {
+                    return false;
+                }
+                if (intent == TargetHelper.Intent.HARMFUL
+                        && context.targetingMode() == TargetHelper.TargetingMode.AREA
+                        && ((EntityImmunity)target).isImmuneTo(EntityImmunity.Type.AREA_EFFECT)) {
+                    return false;
+                }
             }
             var conditionResult = evaluateImpactConditions(target, impact.target_conditions);
             if (!conditionResult.allowed) {
@@ -759,27 +760,43 @@ public class SpellHelper {
                         if(!underApplyLimit(power, livingTarget, school, data.apply_limit)) {
                             return false;
                         }
-                        var duration = Math.round(data.duration * 20F);
-                        // duration *= progressMultiplier; // ?????
                         var amplifier = data.amplifier + (int)(data.amplifier_power_multiplier * power.nonCriticalValue());
-                        var showParticles = data.show_particles;
                         switch (data.apply_mode) {
-                            case SET -> {
-                            }
-                            case ADD -> {
-                                var currentEffect = livingTarget.getStatusEffect(effect);
-                                int newAmplifier = 0;
-                                if (currentEffect != null) {
-                                    var incrementedAmplifier = currentEffect.getAmplifier() + 1;
-                                    newAmplifier = Math.min(incrementedAmplifier, amplifier);
+                            case ADD, SET -> {
+                                var duration = Math.round(data.duration * 20F);
+                                var showParticles = data.show_particles;
+
+                                if (data.apply_mode == Spell.Impact.Action.StatusEffect.ApplyMode.ADD) {
+                                    var currentEffect = livingTarget.getStatusEffect(effect);
+                                    int newAmplifier = 0;
+                                    if (currentEffect != null) {
+                                        var incrementedAmplifier = currentEffect.getAmplifier() + 1;
+                                        newAmplifier = Math.min(incrementedAmplifier, amplifier);
+                                    }
+                                    amplifier = newAmplifier;
                                 }
-                                amplifier = newAmplifier;
+
+                                livingTarget.addStatusEffect(
+                                        new StatusEffectInstance(effect, duration, amplifier, false, showParticles, true),
+                                        caster);
+                                success = true;
+                            }
+                            case REMOVE -> {
+                                if (livingTarget.hasStatusEffect(effect)) {
+                                    var currentEffect = livingTarget.getStatusEffect(effect);
+                                    var newAmplifier = (amplifier > 0) ? (currentEffect.getAmplifier() - amplifier) : -1;
+                                    if (newAmplifier < 0) {
+                                        livingTarget.removeStatusEffect(effect);
+                                    } else {
+                                        livingTarget.addStatusEffect(new StatusEffectInstance(
+                                                effect, currentEffect.getDuration(), newAmplifier, currentEffect.isAmbient(), currentEffect.shouldShowParticles(),
+                                                        currentEffect.shouldShowIcon()),
+                                                caster);
+                                    }
+                                    success = true;
+                                }
                             }
                         }
-                        livingTarget.addStatusEffect(
-                                new StatusEffectInstance(effect, duration, amplifier, false, showParticles, true),
-                                caster);
-                        success = true;
                     }
                 }
                 case FIRE -> {

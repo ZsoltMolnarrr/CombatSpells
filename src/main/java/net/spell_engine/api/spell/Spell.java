@@ -9,6 +9,8 @@ import net.spell_power.api.SpellPower;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class Spell {
     // Structure
     public SpellSchool school;
@@ -241,7 +243,7 @@ public class Spell {
                 public int amplifier = 0;
                 public float amplifier_power_multiplier = 0;
                 public ApplyMode apply_mode = ApplyMode.SET;
-                public enum ApplyMode { SET, ADD }
+                public enum ApplyMode { SET, ADD, REMOVE }
                 @Nullable public ApplyLimit apply_limit;
                 public static class ApplyLimit { public ApplyLimit() { }
                     public float health_base = 0;
@@ -249,6 +251,7 @@ public class Spell {
                 }
                 public boolean show_particles = true;
             }
+
             public Fire fire;
             public static class Fire { public Fire() { }
                 // Entity.java - Notice `% 20` - tick offset is used to avoid instant hits
@@ -292,14 +295,13 @@ public class Spell {
         public Sound sound;
     }
     /// Apply this impact to other entities nearby
-    @Nullable
-    public AreaImpact area_impact;
+    @Nullable public AreaImpact area_impact;
 
     public Cost cost = new Cost();
     public static class Cost { public Cost() { }
         public float exhaust = 0.1F;
-        public String effect_id;
         public int durability = 1;
+        @Nullable public String effect_id;
 
         public Cooldown cooldown = new Cooldown();
         public static class Cooldown {
