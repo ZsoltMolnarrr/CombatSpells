@@ -32,8 +32,11 @@ public class HudMessages {
         MutableText message = null;
         switch (attempt.result()) {
             case MISSING_ITEM -> {
-                var itemName = attempt.missingItem().item().getName().getString();
-                message = Text.translatable(translationKey, itemName);
+                var item = attempt.missingItem().item();
+                if (item != null) {
+                    var itemName = item.getTranslationKey();
+                    message = Text.translatable(translationKey, itemName);
+                }
             }
             case ON_COOLDOWN -> {
                 message = Text.translatable(translationKey);

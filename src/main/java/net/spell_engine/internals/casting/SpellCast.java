@@ -6,6 +6,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
+import net.spell_engine.internals.Ammo;
 import net.spell_engine.internals.SpellHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +15,7 @@ public class SpellCast {
                           @Nullable MissingItemInfo missingItem,
                           @Nullable OnCooldownInfo onCooldown) {
         public enum Result { SUCCESS, MISSING_ITEM, ON_COOLDOWN, NONE }
-        public record MissingItemInfo(Item item) { }
+        public record MissingItemInfo(Ammo.Searched item) { }
         public record OnCooldownInfo() { }
 
         public static Attempt none() {

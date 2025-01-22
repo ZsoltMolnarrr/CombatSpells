@@ -5,12 +5,11 @@ import net.fabricmc.fabric.api.util.TriState;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.SpellContainer;
+import net.spell_engine.compat.ContainerCompat;
 import net.spell_engine.internals.SpellContainerHelper;
 
 import java.util.ArrayList;
@@ -35,8 +34,18 @@ public class TrinketsCompat {
                 }
                 return TriState.DEFAULT;
             });
+            ContainerCompat.addProvider(TrinketsCompat::getAll);
         }
         intialized = true;
+    }
+
+    public static List<ItemStack> getAll(PlayerEntity player) {
+        var component = TrinketsApi.getTrinketComponent(player);
+        if (component.isEmpty()) {
+            return List.of();
+        }
+        var trinketComponent = component.get();
+        return trinketComponent.getAllEquipped().stream().map(reference -> reference.getRight()).toList();
     }
 
     public static boolean isEnabled() {

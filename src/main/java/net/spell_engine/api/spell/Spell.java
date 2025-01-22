@@ -298,14 +298,26 @@ public class Spell {
     public Cost cost = new Cost();
     public static class Cost { public Cost() { }
         public float exhaust = 0.1F;
-        public String item_id;
-        public boolean consume_item = true;
         public String effect_id;
         public int durability = 1;
+
         public float cooldown_duration = 0;
         public boolean cooldown_proportional = false;
         public boolean cooldown_haste_affected = true;
         public boolean cooldown_hosting_item = true;
+
+        @Nullable public Item item;
+        public static class Item {
+            /// ID or Tag
+            /// (When using tags, make sure to have a translation for tha tag)
+            public String id;
+            /// How many of the item is consumed
+            public int amount = 1;
+            /// When set to false, spell cast attempt will check availability,
+            /// but upon successful cast will not be consumed
+            /// (Useful for archery skills)
+            public boolean consume = true;
+        }
     }
 
     // MARK: Shared structures (used from multiple places in the spell structure)

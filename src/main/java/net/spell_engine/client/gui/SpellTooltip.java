@@ -19,6 +19,7 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.Keybindings;
+import net.spell_engine.internals.Ammo;
 import net.spell_engine.internals.SpellCasterItemStack;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_power.api.SpellPower;
@@ -331,16 +332,14 @@ public class SpellTooltip {
         if (config != null) {
             showItemCost = config.spell_cost_item_allowed;
         }
-        if (showItemCost && spell.cost != null && spell.cost.item_id != null && !spell.cost.item_id.isEmpty()) {
-            var item = Registries.ITEM.get(Identifier.of(spell.cost.item_id));
-            if (item != Items.AIR) {
-                var ammoKey = keyWithPlural("spell.tooltip.ammo", 1); // Add variable ammo count later
-                var itemName = I18n.translate(item.getTranslationKey());
-                var ammo = I18n.translate(ammoKey).replace(placeholder(itemToken), itemName);
-                var hasItem = SpellHelper.ammoForSpell(player, spell, itemStack).satisfied();
-                lines.add(Text.literal(" ")
-                        .append(Text.literal(ammo).formatted(hasItem ? Formatting.GREEN : Formatting.RED)));
-            }
+        if (showItemCost && spell.cost != null && spell.cost.item != null
+                && spell.cost.item.id != null && !spell.cost.item.id.isEmpty()) {
+            var ammoResult = Ammo.ammoForSpell(player, spell, itemStack);
+            var ammoKey = keyWithPlural("spell.tooltip.ammo", spell.cost.item.amount);
+            var itemName = I18n.translate(ammoResult.item().getTranslationKey());
+            var ammo = I18n.translate(ammoKey).replace(placeholder(itemToken), itemName);
+            lines.add(Text.literal(" ")
+                    .append(Text.literal(ammo).formatted(ammoResult.satisfied() ? Formatting.GREEN : Formatting.RED)));
         }
 
         return lines;

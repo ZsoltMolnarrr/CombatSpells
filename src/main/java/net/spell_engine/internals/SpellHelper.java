@@ -2,17 +2,13 @@ package net.spell_engine.internals;
 
 import com.google.common.base.Suppliers;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -63,48 +59,12 @@ public class SpellHelper {
             return SpellCast.Attempt.failOnCooldown(new SpellCast.Attempt.OnCooldownInfo());
         }
         if (checkAmmo) {
-            var ammoResult = SpellHelper.ammoForSpell(player, spell, itemStack);
+            var ammoResult = Ammo.ammoForSpell(player, spell, itemStack);
             if (!ammoResult.satisfied()) {
-                return SpellCast.Attempt.failMissingItem(new SpellCast.Attempt.MissingItemInfo(ammoResult.ammo.getItem()));
+                return SpellCast.Attempt.failMissingItem(new SpellCast.Attempt.MissingItemInfo(ammoResult.item()));
             }
         }
         return SpellCast.Attempt.success();
-    }
-
-    private static final Identifier SPELL_INFINITY = Identifier.of(SpellEngineMod.ID, "spell_infinity");
-    public record AmmoResult(boolean satisfied, ItemStack ammo) { }
-    public static AmmoResult ammoForSpell(PlayerEntity player, Spell spell, ItemStack itemStack) {
-        boolean satisfied = true;
-        ItemStack ammo = null;
-        var hasInfinity = false;
-        boolean ignoreAmmo = player.getAbilities().creativeMode
-                || !SpellEngineMod.config.spell_cost_item_allowed;
-        if (!ignoreAmmo && spell.cost.item_id != null && !spell.cost.item_id.isEmpty()) {
-            var id = Identifier.of(spell.cost.item_id);
-            var needsArrow = id.getPath().contains("arrow");
-
-            var enchantmentQuery = needsArrow
-                    ? player.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.INFINITY)
-                    : player.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(SPELL_INFINITY);
-            if (enchantmentQuery.isPresent()) {
-                hasInfinity = EnchantmentHelper.getLevel(enchantmentQuery.get(), itemStack) > 0;
-            }
-
-            if (hasInfinity) {
-                return new AmmoResult(satisfied, ammo);
-            }
-            var ammoItem = Registries.ITEM.get(id);
-            if(ammoItem != null) {
-                ammo = ammoItem.getDefaultStack();
-                satisfied = player.getInventory().contains(ammo);
-
-                // Retired QuiverCompat
-                // if (needsArrow) {
-                //     satisfied = satisfied || QuiverCompat.hasArrow(ammoItem, player);
-                // }
-            }
-        }
-        return new AmmoResult(satisfied, ammo);
     }
 
     public static float hasteAffectedValue(float value, float haste) {
@@ -240,7 +200,7 @@ public class SpellHelper {
                 SpellCastSyncHelper.clearCasting(player);
             }
         }
-        var ammoResult = ammoForSpell(player, spell, heldItemStack);
+        var ammoResult = Ammo.ammoForSpell(player, spell, heldItemStack);
 
         if (channelMultiplier > 0 && ammoResult.satisfied()) {
             var targeting = spell.release.target;
@@ -327,18 +287,7 @@ public class SpellHelper {
                     stackToDamage.damage(spell.cost.durability, player, EquipmentSlot.MAINHAND);
                 }
                 // Item
-                if (ammoResult.ammo != null && spell.cost.consume_item) {
-                    for(int i = 0; i < player.getInventory().size(); ++i) {
-                        var stack = player.getInventory().getStack(i);
-                        if (stack.isOf(ammoResult.ammo.getItem())) {
-                            stack.decrement(1);
-                            if (stack.isEmpty()) {
-                                player.getInventory().removeOne(stack);
-                            }
-                            break;
-                        }
-                    }
-                }
+                Ammo.consume(ammoResult, player);
                 // Status effect
                 if (spell.cost.effect_id != null) {
                     var effect = Registries.STATUS_EFFECT.getEntry(Identifier.of(spell.cost.effect_id));
