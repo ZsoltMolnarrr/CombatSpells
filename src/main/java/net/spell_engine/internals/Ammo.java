@@ -94,7 +94,7 @@ public class Ammo {
     public static List<Source> findSources(PlayerEntity player, Searched searched, int totalAmount) {
         ArrayList<Source> sources = new ArrayList<>();
         var foundAmount = 0;
-        var container = findContainer(player, searched, totalAmount);
+        var container = findContainer(player, searched.asPredicate(), totalAmount);
         if (container != null) {
             sources.add(container);
             foundAmount += container.found();
@@ -121,7 +121,7 @@ public class Ammo {
         return new Source(stack, found, false);
     }
 
-    @Nullable public static Ammo.Source findContainer(PlayerEntity player, Searched item, int amount) {
+    @Nullable public static Ammo.Source findContainer(PlayerEntity player, Predicate<ItemStack> item, int amount) {
         for (var provider : ContainerCompat.providers) {
             var stacks = provider.apply(player);
             for (var stack : stacks) {
@@ -134,13 +134,13 @@ public class Ammo {
         return null;
     }
 
-    public static int findInContainer(ItemStack containerStack, Searched consumedItem) {
+    public static int findInContainer(ItemStack containerStack, Predicate<ItemStack> consumedItem) {
         int found = 0;
         var bundle = containerStack.get(DataComponentTypes.BUNDLE_CONTENTS);
         if (bundle != null) {
             for (int i = 0; i < bundle.size(); i++) {
                 var storedStack = bundle.get(i);
-                if (consumedItem.matches(storedStack)) {
+                if (consumedItem.test(storedStack)) {
                     found += storedStack.getCount();
                 }
             }
@@ -148,6 +148,18 @@ public class Ammo {
         return found;
     }
 
+    public static ItemStack findFirstInContainer(ItemStack containerStack, Predicate<ItemStack> consumedItem) {
+        var bundle = containerStack.get(DataComponentTypes.BUNDLE_CONTENTS);
+        if (bundle != null) {
+            for (int i = 0; i < bundle.size(); i++) {
+                var storedStack = bundle.get(i);
+                if (consumedItem.test(storedStack)) {
+                    return storedStack;
+                }
+            }
+        }
+        return ItemStack.EMPTY;
+    }
 
     public static void consume(Result result, PlayerEntity player) {
         if (result.consume() > 0) {
@@ -165,6 +177,10 @@ public class Ammo {
     }
 
     public static int takeFromContainer(ItemStack containerStack, Searched consumedItem, int amount) {
+        return takeFromContainer(containerStack, consumedItem.asPredicate(), amount);
+    }
+
+    public static int takeFromContainer(ItemStack containerStack, Predicate<ItemStack> consumedItem, int amount) {
         int taken = 0;
         var bundle = containerStack.get(DataComponentTypes.BUNDLE_CONTENTS);
         var toDecreement = amount;
@@ -172,18 +188,18 @@ public class Ammo {
             var putBack = new ArrayList<ItemStack>();
             for (int i = 0; i < bundle.size(); i++) {
                 var storedStack = bundle.get(i);
-                if (consumedItem.matches(storedStack)) {
+                if (consumedItem.test(storedStack)) {
                     var decrementable = Math.min(storedStack.getCount(), toDecreement);
                     storedStack.decrement(decrementable);
                     toDecreement -= decrementable;
                     taken += decrementable;
-                    if (!storedStack.isEmpty()) {
-                        putBack.add(storedStack);
-                    }
+                }
+                if (!storedStack.isEmpty()) {
+                    putBack.add(storedStack);
                 }
             }
             var newBundle = new BundleContentsComponent.Builder(bundle).clear();
-            for (var stackToAdd : putBack) {
+            for (var stackToAdd : putBack.reversed()) { // Reversed as putting items manually results reversed order
                 newBundle.add(stackToAdd);
             }
             containerStack.set(DataComponentTypes.BUNDLE_CONTENTS, newBundle.build());
