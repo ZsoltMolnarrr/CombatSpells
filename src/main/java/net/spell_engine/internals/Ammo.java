@@ -125,7 +125,7 @@ public class Ammo {
         for (var provider : ContainerCompat.providers) {
             var stacks = provider.apply(player);
             for (var stack : stacks) {
-                var found = findInContainer(stack, item, amount);
+                var found = Math.min(findInContainer(stack, item), amount);
                 if (found > 0) {
                     return new Ammo.Source(stack, found, true);
                 }
@@ -134,7 +134,7 @@ public class Ammo {
         return null;
     }
 
-    public static int findInContainer(ItemStack containerStack, Searched consumedItem, int amount) {
+    public static int findInContainer(ItemStack containerStack, Searched consumedItem) {
         int found = 0;
         var bundle = containerStack.get(DataComponentTypes.BUNDLE_CONTENTS);
         if (bundle != null) {
