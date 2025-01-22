@@ -316,7 +316,7 @@ public class SpellTooltip {
         var cooldownDuration = SpellHelper.getCooldownDuration(player, spell, itemStack);
         if (cooldownDuration > 0) {
             String cooldown;
-            if (spell.cost.cooldown_proportional) {
+            if (spell.cost.cooldown.proportional) {
                 cooldown = I18n.translate("spell.tooltip.cooldown.proportional");
             } else {
                 var cooldownKey = keyWithPlural("spell.tooltip.cooldown", cooldownDuration);

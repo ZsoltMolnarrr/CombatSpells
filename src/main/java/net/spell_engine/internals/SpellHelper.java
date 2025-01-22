@@ -110,10 +110,10 @@ public class SpellHelper {
     }
 
     public static float getCooldownDuration(LivingEntity caster, Spell spell, ItemStack provisionedWeapon) {
-        var duration = spell.cost.cooldown_duration;
+        var duration = spell.cost.cooldown.duration;
         if (duration > 0) {
-            if (SpellEngineMod.config.haste_affects_cooldown && spell.cost.cooldown_haste_affected) {
-                duration = hasteAffectedValue(caster, spell.school, spell.cost.cooldown_duration, provisionedWeapon);
+            if (SpellEngineMod.config.haste_affects_cooldown && spell.cost.cooldown.haste_affected) {
+                duration = hasteAffectedValue(caster, spell.school, spell.cost.cooldown.duration, provisionedWeapon);
             }
         }
         return duration;
@@ -309,7 +309,7 @@ public class SpellHelper {
         if (duration > 0) {
             ((SpellCasterEntity) player).getCooldownManager().set(spellId, durationTicks);
         }
-        if (SpellEngineMod.config.spell_item_cooldown_lock && spell.cost.cooldown_hosting_item) {
+        if (SpellEngineMod.config.spell_item_cooldown_lock && spell.cost.cooldown.hosting_item) {
             var hostingItem = source.itemStack().getItem();
             var itemCooldowns = player.getItemCooldownManager();
             var durationLeft = ((ItemCooldownManagerExtension)itemCooldowns).SE_getLastCooldownDuration(hostingItem)
@@ -321,7 +321,7 @@ public class SpellHelper {
     }
 
     private static float cooldownToSet(LivingEntity caster, Spell spell, float progress) {
-        if (spell.cost.cooldown_proportional) {
+        if (spell.cost.cooldown.proportional) {
             return getCooldownDuration(caster, spell) * progress;
         } else {
             return getCooldownDuration(caster, spell);

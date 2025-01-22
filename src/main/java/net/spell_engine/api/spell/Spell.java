@@ -301,10 +301,17 @@ public class Spell {
         public String effect_id;
         public int durability = 1;
 
-        public float cooldown_duration = 0;
-        public boolean cooldown_proportional = false;
-        public boolean cooldown_haste_affected = true;
-        public boolean cooldown_hosting_item = true;
+        public Cooldown cooldown = new Cooldown();
+        public static class Cooldown {
+            /// Duration of the cooldown in seconds
+            public float duration = 0;
+            /// Whether the duration to be multiplied by channeling duration
+            public boolean proportional = false;
+            /// Whether the cooldown is affected by haste
+            public boolean haste_affected = true;
+            /// Whether item cooldown is imposed onto the hosting item of this spell
+            public boolean hosting_item = true;
+        }
 
         @Nullable public Item item;
         public static class Item {
