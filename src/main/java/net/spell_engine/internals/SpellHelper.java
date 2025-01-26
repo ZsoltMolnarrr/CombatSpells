@@ -347,28 +347,41 @@ public class SpellHelper {
                 delivered = anySuccess;
             }
             case PROJECTILE -> {
-                Entity target = null;
-                var entityFound = targets.stream().findFirst();
-                if (entityFound.isPresent()) {
-                    target = entityFound.get().entity();
+                if (targets.isEmpty()) {
+                    shootProjectile(world, caster, null, spellEntry, context);
+                } else {
+                    for(var targeted: targets) {
+                        var target = targeted.entity;
+                        var targetSpecificContext = targeted.context;
+                        shootProjectile(world, caster, target, spellEntry, targetSpecificContext);
+                    }
                 }
-                shootProjectile(world, caster, target, spellEntry, context);
-                return true;
+                delivered = true;
             }
             case METEOR -> {
-                var firstTarget = targets.stream().findFirst();
-                Entity target = null;
-                if (firstTarget.isPresent()) {
-                    target = firstTarget.get().entity();
+                var anyLaunched = false;
+                if (targets.isEmpty() && targetLocation != null) {
+                    fallProjectile(world, caster, null, targetLocation, spellEntry, context);
+                    anyLaunched = true;
+                } else {
+                    for(var targeted: targets) {
+                        var target = targeted.entity;
+                        var targetSpecificContext = targeted.context;
+                        fallProjectile(world, caster, target, null, spellEntry, targetSpecificContext);
+                        anyLaunched = true;
+                    }
                 }
-                if (target != null || targetLocation != null) {
-                    fallProjectile(world, caster, target, targetLocation, spellEntry, context);
-                    delivered = true;
-                }
+                delivered = anyLaunched;
             }
             case CLOUD -> {
-                placeCloud(world, caster, spellEntry, context);
-                delivered = true;
+                var placedAny = false;
+                for(var targeted: targets) {
+                    var target = targeted.entity;
+                    var targetSpecificContext = targeted.context;
+                    placeCloud(world, caster, target, spellEntry, targetSpecificContext);
+                    placedAny = true;
+                }
+                delivered = placedAny;
             }
             case SHOOT_ARROW -> {
                 ArrowHelper.shootArrow(world, caster, spellEntry, context);
@@ -1043,7 +1056,7 @@ public class SpellHelper {
         return false;
     }
 
-    public static void placeCloud(World world, LivingEntity caster, RegistryEntry<Spell> spellEntry, ImpactContext context) {
+    public static void placeCloud(World world, LivingEntity caster, Entity target, RegistryEntry<Spell> spellEntry, ImpactContext context) {
         var spell = spellEntry.value();
 
         List<Spell.Delivery.Cloud> clouds;
@@ -1051,6 +1064,9 @@ public class SpellHelper {
             clouds = List.of(spell.delivery.clouds);
         } else {
             clouds = List.of(spell.delivery.cloud);
+        }
+        if (target == null) {
+            target = caster;
         }
 
         for (var cloud: clouds) {
@@ -1063,9 +1079,8 @@ public class SpellHelper {
                 entity = new SpellCloud(world);
             }
             entity.setOwner(caster);
-
             entity.onCreatedFromSpell(spellEntry.getKey().get().getValue(), cloud, context);
-            applyEntityPlacement(entity, caster, caster.getPos(), cloud.placement);
+            applyEntityPlacement(entity, target, caster.getPos(), cloud.placement);
             ((WorldScheduler)world).schedule(cloud.delay_ticks, () -> {
                 world.spawnEntity(entity);
                 var sound = cloud.spawn.sound;
@@ -1080,8 +1095,7 @@ public class SpellHelper {
         }
     }
 
-
-    public static void applyEntityPlacement(Entity entity, LivingEntity target, Vec3d initialPosition, Spell.EntityPlacement placement) {
+    public static void applyEntityPlacement(Entity entity, Entity target, Vec3d initialPosition, Spell.EntityPlacement placement) {
         var position = initialPosition;
         if (placement != null) {
             if (placement.location_offset_by_look > 0) {
@@ -1121,7 +1135,6 @@ public class SpellHelper {
         assert true;
         return null;
     }
-
 
     public static TargetHelper.TargetingMode impactTargetingMode(Spell spell) {
 //        switch (spell.release.target.type) {

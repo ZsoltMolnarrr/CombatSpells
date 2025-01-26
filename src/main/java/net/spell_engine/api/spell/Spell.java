@@ -107,9 +107,9 @@ public class Spell {
         @Nullable public ProjectileModel override_render;
     }
 
-    public Target target;
+    public Target target = new Target();
     public static class Target {
-        public Type type = Type.NONE;
+        public Type type = Type.CASTER;
         public enum Type {
             NONE, CASTER, CURSOR, BEAM, AREA
         }
@@ -117,7 +117,7 @@ public class Spell {
         public Cursor cursor;
         public static class Cursor { public Cursor() { }
             /// Whether an entity must be targeted to cast the spell
-            public boolean required = true;
+            public boolean required = false;
             /// Whether the spell casting process keeps an entity that was targeted already
             public boolean sticky = false;
             /// Whether the spell casting process uses the caster as a fallback target
