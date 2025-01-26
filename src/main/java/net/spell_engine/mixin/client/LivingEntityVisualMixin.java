@@ -31,7 +31,7 @@ public class LivingEntityVisualMixin implements BeamEmitterEntity {
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick_TAIL_spawnBeamParticles(CallbackInfo ci) {
         var livingEntity = livingEntity();
-        Spell.Release.Target.Beam beam = null;
+        Spell.Target.Beam beam = null;
         if (livingEntity instanceof SpellCasterEntity caster) {
             beam = caster.getBeam();
         }

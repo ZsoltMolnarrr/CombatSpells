@@ -30,7 +30,6 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.render.FlyingSpellEntity;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.WorldScheduler;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
@@ -102,7 +101,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
             return clientSyncedData;
         } else {
             var spell = getSpellEntry().value();
-            var release = spell.release.target;
+            var release = spell.delivery;
             switch (release.type) {
                 case PROJECTILE -> {
                     return release.projectile.projectile;

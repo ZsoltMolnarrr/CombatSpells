@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static net.spell_engine.api.spell.Spell.Release.Target.Type.BEAM;
+import static net.spell_engine.api.spell.Spell.Target.Type.BEAM;
 
 @Mixin(value = PlayerEntity.class, priority = 555)
 public class PlayerEntityMixin implements SpellCasterEntity {
@@ -127,10 +127,10 @@ public class PlayerEntityMixin implements SpellCasterEntity {
     }
 
     @Nullable
-    public Spell.Release.Target.Beam getBeam() {
+    public Spell.Target.Beam getBeam() {
         var spell = getCurrentSpell();
-        if (spell != null && spell.release != null && spell.release.target.type == BEAM) {
-            return spell.release.target.beam;
+        if (spell != null && spell.target != null && spell.target.type == BEAM) {
+            return spell.target.beam;
         }
         return null;
     }

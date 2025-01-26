@@ -189,13 +189,13 @@ public class SpellTooltip {
 
         var description = I18n.translate(spellKeyPrefix(spellId) + ".description");
 
-        if (spell.release != null) {
+        if (spell.delivery != null) {
             Spell.ProjectileData projectile = null;
-            if (spell.release.target.projectile != null) {
-                projectile = spell.release.target.projectile.projectile;
+            if (spell.delivery.projectile != null) {
+                projectile = spell.delivery.projectile.projectile;
             }
-            if (spell.release.target.meteor != null) {
-                projectile = spell.release.target.meteor.projectile;
+            if (spell.delivery.meteor != null) {
+                projectile = spell.delivery.meteor.projectile;
             }
             if (projectile != null) {
                 if (projectile.perks.ricochet > 0) {
@@ -213,11 +213,11 @@ public class SpellTooltip {
             }
 
             Spell.LaunchProperties launchProperties = null;
-            if (spell.release.target.projectile != null) {
-                launchProperties = spell.release.target.projectile.launch_properties;
+            if (spell.delivery.projectile != null) {
+                launchProperties = spell.delivery.projectile.launch_properties;
             }
-            if (spell.release.target.meteor != null) {
-                launchProperties = spell.release.target.meteor.launch_properties;
+            if (spell.delivery.meteor != null) {
+                launchProperties = spell.delivery.meteor.launch_properties;
             }
             if (launchProperties != null) {
                 var extra_launch_count = launchProperties.extra_launch_count;
@@ -225,9 +225,9 @@ public class SpellTooltip {
                     description = description.replace(placeholder("extra_launch"), formattedNumber(extra_launch_count));
                 }
             }
-            var cloud = spell.release.target.cloud;
-            if (spell.release.target.clouds.length > 0) {
-                cloud = spell.release.target.clouds[0];
+            var cloud = spell.delivery.cloud;
+            if (spell.delivery.clouds.length > 0) {
+                cloud = spell.delivery.clouds[0];
             }
             if (cloud != null) {
                 var cloud_duration = cloud.time_to_live_seconds;

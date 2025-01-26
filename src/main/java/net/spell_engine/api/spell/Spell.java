@@ -9,8 +9,6 @@ import net.spell_power.api.SpellPower;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class Spell {
     // Structure
     public SpellSchool school;
@@ -58,16 +56,41 @@ public class Spell {
         public ParticleBatch[] particles = new ParticleBatch[]{};
     }
 
-    @Deprecated(forRemoval = true)
-    public enum Mode { CAST, ITEM_USE }
-    @Deprecated(forRemoval = true)
-    public Mode mode = Mode.CAST;
-    @Deprecated(forRemoval = true)
-    public ItemUse item_use = new ItemUse();
-    @Deprecated(forRemoval = true)
-    public static class ItemUse { public ItemUse() { }
-        public boolean shows_item_as_icon = false;
-        public boolean requires_offhand_item = false;
+    /// Applied to the caster, once the spell casting process finishes
+    public Cost cost = new Cost();
+    public static class Cost { public Cost() { }
+        /// Exhaust to add
+        public float exhaust = 0.1F;
+        /// Durability of the spell host item to consume
+        public int durability = 1;
+        /// Status effect to remove
+        /// (Useful for channeled spells)
+        @Nullable public String effect_id;
+
+        public Cooldown cooldown = new Cooldown();
+        public static class Cooldown {
+            /// Duration of the cooldown in seconds
+            public float duration = 0;
+            /// Whether the duration to be multiplied by channeling duration
+            public boolean proportional = false;
+            /// Whether the cooldown is affected by haste
+            public boolean haste_affected = true;
+            /// Whether item cooldown is imposed onto the hosting item of this spell
+            public boolean hosting_item = true;
+        }
+
+        @Nullable public Item item;
+        public static class Item {
+            /// ID or Tag
+            /// (When using tags, make sure to have a translation for tha tag)
+            public String id;
+            /// How many of the item is consumed
+            public int amount = 1;
+            /// When set to false, spell cast attempt will check availability,
+            /// but upon successful cast will not be consumed
+            /// (Useful for archery skills)
+            public boolean consume = true;
+        }
     }
 
     @Nullable public ArrowPerks arrow_perks = null;
@@ -84,112 +107,223 @@ public class Spell {
         @Nullable public ProjectileModel override_render;
     }
 
-    public Release release;
-    public static class Release { public Release() { }
-        public Target target;
-        public boolean custom_impact = false;
-        public static class Target { public Target() { }
-            public Type type;
-            public enum Type {
-                AREA, BEAM, CURSOR, SELF,
+    public Target target;
+    public static class Target {
+        public Type type = Type.NONE;
+        public enum Type {
+            NONE, CASTER, CURSOR, BEAM, AREA
+        }
 
-                // To be refactored into `Action` in the future
-                PROJECTILE, METEOR, CLOUD, SHOOT_ARROW
+        public Cursor cursor;
+        public static class Cursor { public Cursor() { }
+            /// Whether an entity must be targeted to cast the spell
+            public boolean required = true;
+            /// Whether the spell casting process keeps an entity that was targeted already
+            public boolean sticky = false;
+            /// Whether the spell casting process uses the caster as a fallback target
+            public boolean use_caster_as_fallback = false;
+        }
+
+        public Beam beam;
+        public static class Beam { public Beam() { }
+            public enum Luminance { LOW, MEDIUM, HIGH }
+            public Beam.Luminance luminance = Beam.Luminance.HIGH;
+            public String texture_id = "textures/entity/beacon_beam.png";
+            public long color_rgba = 0xFFFFFFFFL;
+            public long inner_color_rgba = 0xFFFFFFFFL;
+            public float width = 0.1F;
+            public float flow = 1;
+            public ParticleBatch[] block_hit_particles = new ParticleBatch[]{};
+        }
+
+        public Area area;
+        public static class Area { public Area() { }
+            public enum DropoffCurve { NONE, SQUARED }
+            public DropoffCurve distance_dropoff = DropoffCurve.NONE;
+            public float horizontal_range_multiplier = 1F;
+            public float vertical_range_multiplier = 1F;
+            public float angle_degrees = 0F;
+            public boolean include_caster = false;
+        }
+    }
+
+    public Delivery delivery = new Delivery();
+    public static class Delivery {
+        public Type type = Type.DIRECT;
+        public enum Type {
+            DIRECT, PROJECTILE, METEOR, CLOUD, SHOOT_ARROW
+        }
+
+        public ShootProjectile projectile;
+        public static class ShootProjectile {
+            public boolean inherit_shooter_velocity = false;
+            public static class DirectionOffset {  public float yaw = 0; public float pitch = 0; }
+            public ShootProjectile.DirectionOffset[] direction_offsets;
+            public boolean direction_offsets_require_target = false;
+            /// Launch properties of the spell projectile
+            public LaunchProperties launch_properties = new LaunchProperties();
+            /// The projectile to be launched
+            public ProjectileData projectile;
+        }
+
+        public Meteor meteor;
+        public static class Meteor { public Meteor() { }
+            /// How high the falling projectile is launched from compared to the position of the target
+            public float launch_height = 10;
+            public int offset_requires_sequence = 1;
+            public int divergence_requires_sequence = 1;
+            public int follow_target_requires_sequence = -1;
+            /// How far horizontally the falling projectile is launched from the target
+            public float launch_radius = 0;
+            /// Launch properties of the falling projectile
+            public LaunchProperties launch_properties = new LaunchProperties();
+            /// The projectile to be launched
+            public ProjectileData projectile;
+        }
+
+        public ShootArrow shoot_arrow;
+        public static class ShootArrow { public ShootArrow() { }
+            public boolean consume_arrow = true;
+            public float divergence = 5F;
+            public boolean arrow_critical_strike = true;
+            /// Launch properties of the arrow
+            /// (vanilla default velocity for crossbows is 3.15)
+            public LaunchProperties launch_properties = new LaunchProperties().velocity(3.15F);
+        }
+
+        public Cloud cloud;
+        public Cloud[] clouds = new Cloud[]{};
+        public static class Cloud { public Cloud() { }
+            // Custom entity type id to spawn, must be a subclass of `SpellCloud`
+            @Nullable public String entity_type_id;
+            public AreaImpact volume = new AreaImpact();
+            public float time_to_live_seconds = 0;
+
+            /// The number of ticks between looking for targets and trying to apply impact
+            public int impact_tick_interval = 5;
+            public int delay_ticks = 0;
+            public EntityPlacement placement = new EntityPlacement();
+            @Nullable public Sound presence_sound;
+            public Cloud.ClientData client_data = new Cloud.ClientData();
+            public static class ClientData {
+                public int light_level = 0;
+                public ParticleBatch[] particles = new ParticleBatch[]{};
+                public ProjectileModel model;
             }
-
-            public Area area;
-            public static class Area { public Area() { }
-                public enum DropoffCurve { NONE, SQUARED }
-                public DropoffCurve distance_dropoff = DropoffCurve.NONE;
-                public float horizontal_range_multiplier = 1F;
-                public float vertical_range_multiplier = 1F;
-                public float angle_degrees = 0F;
-                public boolean include_caster = false;
-            }
-
-            public Beam beam;
-            public static class Beam { public Beam() { }
-                public enum Luminance { LOW, MEDIUM, HIGH }
-                public Luminance luminance = Luminance.HIGH;
-                public String texture_id = "textures/entity/beacon_beam.png";
-                public long color_rgba = 0xFFFFFFFFL;
-                public long inner_color_rgba = 0xFFFFFFFFL;
-                public float width = 0.1F;
-                public float flow = 1;
-                public ParticleBatch[] block_hit_particles = new ParticleBatch[]{};
-            }
-
-            // Populate either `cloud` or `clouds` but not both
-            public Cloud cloud;
-            public Cloud[] clouds = new Cloud[]{};
-            public static class Cloud { public Cloud() { }
-                // Custom entity type id to spawn, must be a subclass of `SpellCloud`
-                @Nullable public String entity_type_id;
-                public AreaImpact volume = new AreaImpact();
-                public float time_to_live_seconds = 0;
-
-                /// The number of ticks between looking for targets and trying to apply impact
-                public int impact_tick_interval = 5;
-                public int delay_ticks = 0;
-                public EntityPlacement placement = new EntityPlacement();
-                @Nullable public Sound presence_sound;
-                public ClientData client_data = new ClientData();
-                public static class ClientData {
-                    public int light_level = 0;
-                    public ParticleBatch[] particles = new ParticleBatch[]{};
-                    public ProjectileModel model;
-                }
-                public Spawn spawn = new Spawn();
-                public static class Spawn {
-                    public Sound sound;
-                    public ParticleBatch[] particles = new ParticleBatch[]{};
-                }
-            }
-
-            public Cursor cursor;
-            public static class Cursor { public Cursor() { }
-                public boolean use_caster_as_fallback = false;
-            }
-
-            public ShootProjectile projectile;
-            public static class ShootProjectile {
-                public boolean inherit_shooter_velocity = false;
-                public static class DirectionOffset {  public float yaw = 0; public float pitch = 0; }
-                public DirectionOffset[] direction_offsets;
-                public boolean direction_offsets_require_target = false;
-                /// Launch properties of the spell projectile
-                public LaunchProperties launch_properties = new LaunchProperties();
-                /// The projectile to be launched
-                public ProjectileData projectile;
-            }
-
-            public Meteor meteor;
-            public static class Meteor { public Meteor() { }
-                /// Determines whether the it can be casted on the ground, without a targeted entity
-                public boolean requires_entity = false;
-                /// How high the falling projectile is launched from compared to the position of the target
-                public float launch_height = 10;
-                public int offset_requires_sequence = 1;
-                public int divergence_requires_sequence = 1;
-                public int follow_target_requires_sequence = -1;
-                /// How far horizontally the falling projectile is launched from the target
-                public float launch_radius = 0;
-                /// Launch properties of the falling projectile
-                public LaunchProperties launch_properties = new LaunchProperties();
-                /// The projectile to be launched
-                public ProjectileData projectile;
-            }
-
-            public ShootArrow shoot_arrow;
-            public static class ShootArrow { public ShootArrow() { }
-                public boolean consume_arrow = true;
-                public float divergence = 5F;
-                public boolean arrow_critical_strike = true;
-                /// Launch properties of the arrow
-                /// (vanilla default velocity for crossbows is 3.15)
-                public LaunchProperties launch_properties = new LaunchProperties().velocity(3.15F);
+            public Cloud.Spawn spawn = new Cloud.Spawn();
+            public static class Spawn {
+                public Sound sound;
+                public ParticleBatch[] particles = new ParticleBatch[]{};
             }
         }
+    }
+
+    public Release release;
+    public static class Release { public Release() { }
+//        public Target target;
+//        public boolean custom_impact = false;
+//        public static class Target { public Target() { }
+//            public Type type;
+//            public enum Type {
+//                AREA, BEAM, CURSOR, SELF,
+//
+//                // To be refactored into `Action` in the future
+//                PROJECTILE, METEOR, CLOUD, SHOOT_ARROW
+//            }
+//
+//            public Area area;
+//            public static class Area { public Area() { }
+//                public enum DropoffCurve { NONE, SQUARED }
+//                public DropoffCurve distance_dropoff = DropoffCurve.NONE;
+//                public float horizontal_range_multiplier = 1F;
+//                public float vertical_range_multiplier = 1F;
+//                public float angle_degrees = 0F;
+//                public boolean include_caster = false;
+//            }
+//
+//            public Beam beam;
+//            public static class Beam { public Beam() { }
+//                public enum Luminance { LOW, MEDIUM, HIGH }
+//                public Luminance luminance = Luminance.HIGH;
+//                public String texture_id = "textures/entity/beacon_beam.png";
+//                public long color_rgba = 0xFFFFFFFFL;
+//                public long inner_color_rgba = 0xFFFFFFFFL;
+//                public float width = 0.1F;
+//                public float flow = 1;
+//                public ParticleBatch[] block_hit_particles = new ParticleBatch[]{};
+//            }
+//
+//            // Populate either `cloud` or `clouds` but not both
+//            public Cloud cloud;
+//            public Cloud[] clouds = new Cloud[]{};
+//            public static class Cloud { public Cloud() { }
+//                // Custom entity type id to spawn, must be a subclass of `SpellCloud`
+//                @Nullable public String entity_type_id;
+//                public AreaImpact volume = new AreaImpact();
+//                public float time_to_live_seconds = 0;
+//
+//                /// The number of ticks between looking for targets and trying to apply impact
+//                public int impact_tick_interval = 5;
+//                public int delay_ticks = 0;
+//                public EntityPlacement placement = new EntityPlacement();
+//                @Nullable public Sound presence_sound;
+//                public ClientData client_data = new ClientData();
+//                public static class ClientData {
+//                    public int light_level = 0;
+//                    public ParticleBatch[] particles = new ParticleBatch[]{};
+//                    public ProjectileModel model;
+//                }
+//                public Spawn spawn = new Spawn();
+//                public static class Spawn {
+//                    public Sound sound;
+//                    public ParticleBatch[] particles = new ParticleBatch[]{};
+//                }
+//            }
+//
+//            public Cursor cursor;
+//            public static class Cursor { public Cursor() { }
+//                public boolean use_caster_as_fallback = false;
+//            }
+//
+//            public ShootProjectile projectile;
+//            public static class ShootProjectile {
+//                public boolean inherit_shooter_velocity = false;
+//                public static class DirectionOffset {  public float yaw = 0; public float pitch = 0; }
+//                public DirectionOffset[] direction_offsets;
+//                public boolean direction_offsets_require_target = false;
+//                /// Launch properties of the spell projectile
+//                public LaunchProperties launch_properties = new LaunchProperties();
+//                /// The projectile to be launched
+//                public ProjectileData projectile;
+//            }
+//
+//            public Meteor meteor;
+//            public static class Meteor { public Meteor() { }
+//                /// Determines whether the it can be casted on the ground, without a targeted entity
+//                public boolean requires_entity = false;
+//                /// How high the falling projectile is launched from compared to the position of the target
+//                public float launch_height = 10;
+//                public int offset_requires_sequence = 1;
+//                public int divergence_requires_sequence = 1;
+//                public int follow_target_requires_sequence = -1;
+//                /// How far horizontally the falling projectile is launched from the target
+//                public float launch_radius = 0;
+//                /// Launch properties of the falling projectile
+//                public LaunchProperties launch_properties = new LaunchProperties();
+//                /// The projectile to be launched
+//                public ProjectileData projectile;
+//            }
+//
+//            public ShootArrow shoot_arrow;
+//            public static class ShootArrow { public ShootArrow() { }
+//                public boolean consume_arrow = true;
+//                public float divergence = 5F;
+//                public boolean arrow_critical_strike = true;
+//                /// Launch properties of the arrow
+//                /// (vanilla default velocity for crossbows is 3.15)
+//                public LaunchProperties launch_properties = new LaunchProperties().velocity(3.15F);
+//            }
+//        }
         public String animation;
         public ParticleBatch[] particles;
         public Sound sound;
@@ -297,42 +431,6 @@ public class Spell {
     /// Apply this impact to other entities nearby
     @Nullable public AreaImpact area_impact;
 
-    /// Applied to the caster, once the spell casting process finishes
-    public Cost cost = new Cost();
-    public static class Cost { public Cost() { }
-        /// Exhaust to add
-        public float exhaust = 0.1F;
-        /// Durability of the spell host item to consume
-        public int durability = 1;
-        /// Status effect to remove
-        /// (Useful for channeled spells)
-        @Nullable public String effect_id;
-
-        public Cooldown cooldown = new Cooldown();
-        public static class Cooldown {
-            /// Duration of the cooldown in seconds
-            public float duration = 0;
-            /// Whether the duration to be multiplied by channeling duration
-            public boolean proportional = false;
-            /// Whether the cooldown is affected by haste
-            public boolean haste_affected = true;
-            /// Whether item cooldown is imposed onto the hosting item of this spell
-            public boolean hosting_item = true;
-        }
-
-        @Nullable public Item item;
-        public static class Item {
-            /// ID or Tag
-            /// (When using tags, make sure to have a translation for tha tag)
-            public String id;
-            /// How many of the item is consumed
-            public int amount = 1;
-            /// When set to false, spell cast attempt will check availability,
-            /// but upon successful cast will not be consumed
-            /// (Useful for archery skills)
-            public boolean consume = true;
-        }
-    }
 
     // MARK: Shared structures (used from multiple places in the spell structure)
 
@@ -343,7 +441,7 @@ public class Spell {
             public float power_coefficient = 0;
             public float power_cap = 0;
         }
-        public Release.Target.Area area = new Release.Target.Area();
+        public Target.Area area = new Target.Area();
         public ParticleBatch[] particles = new ParticleBatch[]{};
         @Nullable
         public Sound sound;

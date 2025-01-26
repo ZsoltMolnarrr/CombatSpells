@@ -1,3 +1,9 @@
+# 1.5.0
+
+API Changes:
+- Add spell container `slot` field param to allow offhand containers
+- Rework spell cost structure
+
 # 1.4.4
 
 - Fix Spell Projectiles sometimes visually glitching after piercing a target

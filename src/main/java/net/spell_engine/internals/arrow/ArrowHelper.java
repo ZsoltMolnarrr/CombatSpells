@@ -24,7 +24,7 @@ public class ArrowHelper {
 
     public static void shootArrow(World world, LivingEntity shooter, RegistryEntry<Spell> spellEntry, SpellHelper.ImpactContext context, int sequenceIndex) {
         var spell = spellEntry.value();
-        var shoot_arrow = spell.release.target.shoot_arrow;
+        var shoot_arrow = spell.delivery.shoot_arrow;
         var weaponStack = shooter.getMainHandStack();
 
         // var weapon = weaponStack.getItem();

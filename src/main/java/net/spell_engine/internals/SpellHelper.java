@@ -203,9 +203,11 @@ public class SpellHelper {
         var ammoResult = Ammo.ammoForSpell(player, spell, heldItemStack);
 
         if (channelMultiplier > 0 && ammoResult.satisfied()) {
-            var targeting = spell.release.target;
+            var targeting = spell.target;
             boolean released = action == SpellCast.Action.RELEASE;
+            boolean success = true;
             if (shouldPerformImpact) {
+                success = false;
                 var context = new ImpactContext(channelMultiplier,
                         1F,
                         null,
@@ -213,66 +215,92 @@ public class SpellHelper {
                         impactTargetingMode(spell),
                         channelTickIndex);
 
-                if (spell.release.custom_impact) {
-                    var handler = CustomSpellHandler.handlers.get(spellId);
-                    released = false;
-                    if (handler != null) {
-                        released = handler.apply(new CustomSpellHandler.Data(
-                                player, targets, heldItemStack, action, progress, context));
-                    }
-                } else {
+//                if (spell.release.custom_impact) {
+//                    var handler = CustomSpellHandler.handlers.get(spellId);
+//                    released = false;
+//                    if (handler != null) {
+//                        released = handler.apply(new CustomSpellHandler.Data(
+//                                player, targets, heldItemStack, action, progress, context));
+//                    }
+//                } else {
                     switch (targeting.type) {
-                        case AREA -> {
-                            var center = player.getPos().add(0, player.getHeight() / 2F, 0);
-                            var area = spell.release.target.area;
-                            var range = getRange(player, spell) * player.getScale();
-                            applyAreaImpact(world, player, targets, range, area, spellEntry, spell.impact, context.position(center), true);
+                        case NONE -> {
+                            success = deliver(world, spellEntry, player, List.of(), context, null);
                         }
-                        case BEAM -> {
-                            beamImpact(world, player, targets, spellEntry, context);
-                        }
-                        case CLOUD -> {
-                            placeCloud(world, player, spellEntry, context);
-                            released = true;
+                        case CASTER -> {
+                            var targetsWithContext = List.of(new TargetedEntity(player, context.position(player.getPos())));
+                            success = deliver(world, spellEntry, player, targetsWithContext, context, null);
                         }
                         case CURSOR -> {
-                            var target = targets.stream().findFirst();
-                            if (target.isPresent()) {
-                                directImpact(world, player, target.get(), spellEntry, context);
-                            } else {
-                                released = false;
+                            var cursor = targeting.cursor;
+                            var firstTarget = targets.stream().findFirst();
+                            List<TargetedEntity> targetsWithContext = List.of();
+                            if (firstTarget.isPresent()) {
+                                var target = firstTarget.get();
+                                var targetSpecificContext = context.position(target.getPos());
+                                targetsWithContext = List.of(new TargetedEntity(target, targetSpecificContext));
+                            }
+                            if (!cursor.required || firstTarget.isPresent()) {
+                                success = deliver(world, spellEntry, player, targetsWithContext, context, targetResult.location());
                             }
                         }
-                        case PROJECTILE -> {
-                            Entity target = null;
-                            var entityFound = targets.stream().findFirst();
-                            if (entityFound.isPresent()) {
-                                target = entityFound.get();
-                            }
-                            shootProjectile(world, player, target, spellEntry, context);
+                        case AREA -> {
+                            var center = player.getPos().add(0, player.getHeight() / 2F, 0);
+                            var area = spell.target.area;
+                            var range = getRange(player, spell) * player.getScale();
+                            final var centeredContext = context.position(center);
+                            double squaredRange = range * range;
+                            var targetsWithContext = targets.stream().map(target -> {
+                                float distanceBasedMultiplier = 1F;
+                                switch (area.distance_dropoff) {
+                                    case NONE -> { }
+                                    case SQUARED -> {
+                                        distanceBasedMultiplier = (float) ((squaredRange - target.squaredDistanceTo(center)) / squaredRange);
+                                        distanceBasedMultiplier = Math.max(distanceBasedMultiplier, 0F);
+                                    }
+                                }
+                                return new TargetedEntity(target, centeredContext.distance(distanceBasedMultiplier));
+                            }).toList();
+                            deliver(world, spellEntry, player, targetsWithContext, context, null);
+                            success = true; // Always true, otherwise area spells don't go to CD without targets
                         }
-                        case METEOR -> {
-                            var target = targets.stream().findFirst();
-                            if (target.isPresent() || targetLocation != null) {
-                                // Not setting `released` flag to allow channeling
-                                fallProjectile(world, player, target.orElse(null), targetLocation, spellEntry, context);
-                            } else {
-                                released = false;
-                            }
+                        case BEAM -> {
+                            var targetsWithContext = targets.stream().map(target -> new TargetedEntity(target, context.position(target.getPos()))).toList();
+                            success = deliver(world, spellEntry, player, targetsWithContext, context, null);
                         }
-                        case SELF -> {
-                            directImpact(world, player, player, spellEntry, context);
-                            released = true;
-                        }
-                        case SHOOT_ARROW -> {
-                            ArrowHelper.shootArrow(world, player, spellEntry, context);
-                            released = true;
-                        }
+//                        case CLOUD -> {
+//                            placeCloud(world, player, spellEntry, context);
+//                            released = true;
+//                        }
+//                        case PROJECTILE -> {
+//                            Entity target = null;
+//                            var entityFound = targets.stream().findFirst();
+//                            if (entityFound.isPresent()) {
+//                                target = entityFound.get();
+//                            }
+//                            shootProjectile(world, player, target, spellEntry, context);
+//                        }
+//                        case METEOR -> {
+//                            var target = targets.stream().findFirst();
+//                            if (target.isPresent() || targetLocation != null) {
+//                                // Not setting `released` flag to allow channeling
+//                                fallProjectile(world, player, target.orElse(null), targetLocation, spellEntry, context);
+//                            } else {
+//                                released = false;
+//                            }
+//                        }
+//                        case SELF -> {
+//                            directImpact(world, player, player, spellEntry, context);
+//                            released = true;
+//                        }
+//                        case SHOOT_ARROW -> {
+//                            ArrowHelper.shootArrow(world, player, spellEntry, context);
+//                            released = true;
+//                        }
                     }
-                }
                 caster.setChannelTickIndex(channelTickIndex + incrementChannelTicks);
             }
-            if (released) {
+            if (released && success) {
                 ParticleHelper.sendBatches(player, spell.release.particles);
                 SoundHelper.playSound(world, player, spell.release.sound);
                 AnimationHelper.sendAnimation(player, trackingPlayers.get(), SpellCast.Animation.RELEASE, spell.release.animation, castingSpeed);
@@ -301,6 +329,53 @@ public class SpellHelper {
                 }
             }
         }
+    }
+
+    public record TargetedEntity(Entity entity, ImpactContext context) {}
+    public static boolean deliver(World world, RegistryEntry<Spell> spellEntry, PlayerEntity caster, List<TargetedEntity> targets, ImpactContext context, @Nullable Vec3d targetLocation) {
+        var spell = spellEntry.value();
+        var delivered = false;
+        switch (spell.delivery.type) {
+            case DIRECT -> {
+                var anySuccess = false;
+                for(var targeted: targets) {
+                    var target = targeted.entity;
+                    var targetSpecificContext = targeted.context;
+                    var result = performImpacts(world, caster, target, target, spellEntry, spell.impact, targetSpecificContext);
+                    anySuccess = anySuccess || result;
+                }
+                delivered = anySuccess;
+            }
+            case PROJECTILE -> {
+                Entity target = null;
+                var entityFound = targets.stream().findFirst();
+                if (entityFound.isPresent()) {
+                    target = entityFound.get().entity();
+                }
+                shootProjectile(world, caster, target, spellEntry, context);
+                return true;
+            }
+            case METEOR -> {
+                var firstTarget = targets.stream().findFirst();
+                Entity target = null;
+                if (firstTarget.isPresent()) {
+                    target = firstTarget.get().entity();
+                }
+                if (target != null || targetLocation != null) {
+                    fallProjectile(world, caster, target, targetLocation, spellEntry, context);
+                    delivered = true;
+                }
+            }
+            case CLOUD -> {
+                placeCloud(world, caster, spellEntry, context);
+                delivered = true;
+            }
+            case SHOOT_ARROW -> {
+                ArrowHelper.shootArrow(world, caster, spellEntry, context);
+                delivered = true;
+            }
+        }
+        return delivered;
     }
 
     public static void imposeCooldown(PlayerEntity player, SpellContainerHelper.Source source, Identifier spellId, Spell spell, float progress) {
@@ -356,7 +431,7 @@ public class SpellHelper {
 
         var spell = spellEntry.value();
         var launchPoint = launchPoint(caster);
-        var data = spell.release.target.projectile;
+        var data = spell.delivery.projectile;
         var projectileData = data.projectile;
         var mutablePerks = projectileData.perks.copy();
 
@@ -425,13 +500,10 @@ public class SpellHelper {
         }
 
         var spell = spellEntry.value();
-        var meteor = spell.release.target.meteor;
-        if (meteor.requires_entity && target == null) {
-            return false;
-        }
+        var meteor = spell.delivery.meteor;
         var height = meteor.launch_height;
         var launchPoint = targetPosition.add(0, height, 0);
-        var data = spell.release.target.meteor;
+        var data = spell.delivery.meteor;
         var projectileData = data.projectile;
         var mutableLaunchProperties = data.launch_properties.copy();
         var mutablePerks = projectileData.perks.copy();
@@ -537,7 +609,7 @@ public class SpellHelper {
     }
 
     private static void applyAreaImpact(World world, LivingEntity caster, List<Entity> targets,
-                                        float range, Spell.Release.Target.Area area,
+                                        float range, Spell.Target.Area area,
                                         RegistryEntry<Spell> spellEntry, Spell.Impact[] impacts, ImpactContext context, boolean additionalTargetLookup) {
         double squaredRange = range * range;
         var center = context.position();
@@ -974,11 +1046,11 @@ public class SpellHelper {
     public static void placeCloud(World world, LivingEntity caster, RegistryEntry<Spell> spellEntry, ImpactContext context) {
         var spell = spellEntry.value();
 
-        List<Spell.Release.Target.Cloud> clouds;
-        if (spell.release.target.clouds.length > 0) {
-            clouds = List.of(spell.release.target.clouds);
+        List<Spell.Delivery.Cloud> clouds;
+        if (spell.delivery.clouds.length > 0) {
+            clouds = List.of(spell.delivery.clouds);
         } else {
-            clouds = List.of(spell.release.target.cloud);
+            clouds = List.of(spell.delivery.cloud);
         }
 
         for (var cloud: clouds) {
@@ -1038,11 +1110,11 @@ public class SpellHelper {
     }
 
     public static TargetHelper.TargetingMode selectionTargetingMode(Spell spell) {
-        switch (spell.release.target.type) {
+        switch (spell.target.type) {
             case AREA, BEAM -> {
                 return TargetHelper.TargetingMode.AREA;
             }
-            case CURSOR, PROJECTILE, METEOR, SELF, CLOUD, SHOOT_ARROW -> {
+            case NONE, CASTER, CURSOR -> {
                 return TargetHelper.TargetingMode.DIRECT;
             }
         }
@@ -1052,11 +1124,19 @@ public class SpellHelper {
 
 
     public static TargetHelper.TargetingMode impactTargetingMode(Spell spell) {
-        switch (spell.release.target.type) {
-            case AREA, BEAM, METEOR -> {
+//        switch (spell.release.target.type) {
+//            case AREA, BEAM, METEOR -> {
+//                return TargetHelper.TargetingMode.AREA;
+//            }
+//            case CURSOR, PROJECTILE, SELF, CLOUD, SHOOT_ARROW -> {
+//                return TargetHelper.TargetingMode.DIRECT;
+//            }
+//        }
+        switch (spell.target.type) {
+            case AREA, BEAM -> {
                 return TargetHelper.TargetingMode.AREA;
             }
-            case CURSOR, PROJECTILE, SELF, CLOUD, SHOOT_ARROW -> {
+            case NONE, CASTER, CURSOR -> {
                 return TargetHelper.TargetingMode.DIRECT;
             }
         }

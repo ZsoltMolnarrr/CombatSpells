@@ -74,7 +74,7 @@ public class LivingEntityRendererMixin {
     // Beam rendering is now handled by the BeamRenderer class
 
 //    private static void renderBeam(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider,
-//                                   Spell.Release.Target.Beam beam,
+//                                   Spell.Target.Beam beam,
 //                                   Vec3d from, Vec3d to, Vec3d offset, long time, float tickDelta) {
 //        var absoluteTime = (float)Math.floorMod(time, 40) + tickDelta;
 //

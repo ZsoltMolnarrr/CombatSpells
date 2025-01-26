@@ -252,12 +252,12 @@ public class TargetHelper {
         return entities;
     }
 
-    public static List<Entity> targetsFromArea(Entity caster, float range, Spell.Release.Target.Area area, @Nullable Predicate<Entity> predicate) {
+    public static List<Entity> targetsFromArea(Entity caster, float range, Spell.Target.Area area, @Nullable Predicate<Entity> predicate) {
         var origin = caster.getEyePos();
         return targetsFromArea(caster, origin, range, area, predicate);
     }
 
-    public static List<Entity> targetsFromArea(Entity centerEntity, Vec3d origin, float range, Spell.Release.Target.Area area, @Nullable Predicate<Entity> predicate) {
+    public static List<Entity> targetsFromArea(Entity centerEntity, Vec3d origin, float range, Spell.Target.Area area, @Nullable Predicate<Entity> predicate) {
         var horizontal = range * area.horizontal_range_multiplier;
         var vertical = range * area.vertical_range_multiplier;
         var box = centerEntity.getBoundingBox().expand(
