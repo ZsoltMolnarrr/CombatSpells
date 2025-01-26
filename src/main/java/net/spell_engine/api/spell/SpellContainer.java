@@ -7,7 +7,7 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public record SpellContainer(ContentType content, boolean is_proxy, String pool, int max_spell_count, List<String> spell_ids) {
+public record SpellContainer(ContentType content, boolean is_proxy, String pool, String slot, int max_spell_count, List<String> spell_ids) {
     public enum ContentType {
         MAGIC, ARCHERY;
         public static Codec<ContentType> CODEC = Codec.STRING.xmap(ContentType::valueOf, ContentType::name);
@@ -17,6 +17,7 @@ public record SpellContainer(ContentType content, boolean is_proxy, String pool,
             ContentType.CODEC.optionalFieldOf("content", ContentType.MAGIC).forGetter(x -> x.content),
             Codec.BOOL.optionalFieldOf("is_proxy", false).forGetter(x -> x.is_proxy),
             Codec.STRING.optionalFieldOf("pool", "").forGetter(x -> x.pool),
+            Codec.STRING.optionalFieldOf("slot", "").forGetter(x -> x.slot),
             Codec.INT.optionalFieldOf("max_spell_count", 0).forGetter(x -> x.max_spell_count),
             Codec.STRING.listOf().optionalFieldOf("spell_ids", List.of()).forGetter(x -> x.spell_ids)
     ).apply(instance, SpellContainer::new));
@@ -25,9 +26,14 @@ public record SpellContainer(ContentType content, boolean is_proxy, String pool,
 
     // Canonical constructor with default values, to avoid null values
     public SpellContainer(ContentType content, boolean is_proxy, String pool, int max_spell_count, List<String> spell_ids) {
+        this(content, is_proxy, pool, "", max_spell_count, spell_ids);
+    }
+
+    public SpellContainer(ContentType content, boolean is_proxy, String pool, String slot, int max_spell_count, List<String> spell_ids) {
         this.content = content != null ? content : ContentType.MAGIC;
         this.is_proxy = is_proxy;
         this.pool = pool != null ? pool : "";
+        this.slot = slot != null ? slot : "";
         this.max_spell_count = max_spell_count;
         this.spell_ids = spell_ids != null ? spell_ids : List.of();
     }

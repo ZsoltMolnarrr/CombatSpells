@@ -1,5 +1,6 @@
 package net.spell_engine.internals;
 
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -13,6 +14,7 @@ import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.*;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
+import net.spell_engine.utils.StringUtil;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,11 +71,15 @@ public class SpellContainerHelper {
             sources.addAll(trinketSources.spell_book());
             sources.addAll(trinketSources.others());
         }
+
+        var offhandStack = SpellEngineMod.config.spell_container_from_offhand_ignore_dual_wielding ?
+                getOffhandItemStack(player) : player.getOffHandStack();
         if (SpellEngineMod.config.spell_container_from_offhand) {
-            var offhandStack = SpellEngineMod.config.spell_container_from_offhand_ignore_dual_wielding ?
-                    getOffhandItemStack(player) : player.getOffHandStack();
             addSourceIfValid(offhandStack, sources);
+        } else {
+            addSourceIfValid(offhandStack, sources, EquipmentSlot.OFFHAND.asString());
         }
+
         if (SpellEngineMod.config.spell_container_from_equipment) {
             for (var slot : player.getInventory().armor) {
                 addSourceIfValid(slot, sources);
@@ -144,8 +150,13 @@ public class SpellContainerHelper {
     }
 
     private static void addSourceIfValid(ItemStack fromItemStack, List<Source> sources) {
+        addSourceIfValid(fromItemStack, sources, null);
+    }
+
+    private static void addSourceIfValid(ItemStack fromItemStack, List<Source> sources, @Nullable String requiredSlot) {
         SpellContainer container = containerFromItemStack(fromItemStack);
-        if (container != null && container.isValid()) {
+        if (container != null && container.isValid()
+                && (requiredSlot == null || container.slot().contains(requiredSlot)) ) {
             sources.add(new Source(fromItemStack, container));
         }
     }
