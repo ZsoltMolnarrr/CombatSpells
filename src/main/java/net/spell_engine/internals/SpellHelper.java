@@ -304,7 +304,7 @@ public class SpellHelper {
     public static boolean deliver(World world, RegistryEntry<Spell> spellEntry, PlayerEntity caster, List<TargetedEntity> targets, ImpactContext context, @Nullable Vec3d targetLocation) {
         var spell = spellEntry.value();
         var delivered = false;
-        switch (spell.delivery.type) {
+        switch (spell.deliver.type) {
             case DIRECT -> {
                 var anySuccess = false;
                 for(var targeted: targets) {
@@ -358,7 +358,7 @@ public class SpellHelper {
             }
             case STASH_EFFECT -> {
                 var anyAdded = false;
-                var stash = spell.delivery.stash_effect;
+                var stash = spell.deliver.stash_effect;
                 var id = Identifier.of(stash.id);
                 var effect = Registries.STATUS_EFFECT.getEntry(id).get();
                 for (var targeted: targets) {
@@ -427,7 +427,7 @@ public class SpellHelper {
 
         var spell = spellEntry.value();
         var launchPoint = launchPoint(caster);
-        var data = spell.delivery.projectile;
+        var data = spell.deliver.projectile;
         var projectileData = data.projectile;
         var mutablePerks = projectileData.perks.copy();
 
@@ -496,10 +496,10 @@ public class SpellHelper {
         }
 
         var spell = spellEntry.value();
-        var meteor = spell.delivery.meteor;
+        var meteor = spell.deliver.meteor;
         var height = meteor.launch_height;
         var launchPoint = targetPosition.add(0, height, 0);
-        var data = spell.delivery.meteor;
+        var data = spell.deliver.meteor;
         var projectileData = data.projectile;
         var mutableLaunchProperties = data.launch_properties.copy();
         var mutablePerks = projectileData.perks.copy();
@@ -583,9 +583,9 @@ public class SpellHelper {
     }
 
     public static boolean arrowImpact(LivingEntity caster, Entity projectile, Entity target, RegistryEntry<Spell> spellEntry, ImpactContext context) {
-        var arrowPerks = spellEntry.value().arrow_perks;
-        if (arrowPerks != null && arrowPerks.impact != null) {
-            return performImpacts(projectile.getWorld(), caster, target, projectile, spellEntry, arrowPerks.impact, context);
+        var spell = spellEntry.value();
+        if (spell.impact != null) {
+            return performImpacts(projectile.getWorld(), caster, target, projectile, spellEntry, spell.impact, context);
         }
         return false;
     }
@@ -1035,10 +1035,10 @@ public class SpellHelper {
         var spell = spellEntry.value();
 
         List<Spell.Delivery.Cloud> clouds;
-        if (spell.delivery.clouds.length > 0) {
-            clouds = List.of(spell.delivery.clouds);
+        if (spell.deliver.clouds.length > 0) {
+            clouds = List.of(spell.deliver.clouds);
         } else {
-            clouds = List.of(spell.delivery.cloud);
+            clouds = List.of(spell.deliver.cloud);
         }
         if (target == null) {
             target = caster;
@@ -1112,9 +1112,9 @@ public class SpellHelper {
     }
 
     public static Optional<TargetHelper.Intent> deliveryIntent(Spell spell) {
-        switch (spell.delivery.type) {
+        switch (spell.deliver.type) {
             case STASH_EFFECT -> {
-                var intent = intentForStatusEffect(spell.delivery.stash_effect.id);
+                var intent = intentForStatusEffect(spell.deliver.stash_effect.id);
                 return Optional.of(intent);
             }
             default -> {

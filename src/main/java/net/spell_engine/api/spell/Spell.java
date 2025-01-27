@@ -103,7 +103,7 @@ public class Spell {
         }
     }
 
-    public Delivery delivery = new Delivery();
+    public Delivery deliver = new Delivery();
     public static class Delivery {
         public Type type = Type.DIRECT;
         public enum Type {
@@ -308,7 +308,6 @@ public class Spell {
         public boolean skip_arrow_damage = false;
         public int pierce = 0;
         public float knockback = 1;
-        @Nullable public Impact[] impact;
         @Nullable public ParticleBatch[] travel_particles;
         @Nullable public ProjectileModel override_render;
     }

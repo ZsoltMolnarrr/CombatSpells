@@ -49,7 +49,7 @@ public class SpellCloud extends Entity implements Ownable {
         if (spellEntry != null) {
             var spell = spellEntry.value();
             var index = -1;
-            var dataList = List.of(spell.delivery.clouds);
+            var dataList = List.of(spell.deliver.clouds);
             if (!dataList.isEmpty()) {
                 index = dataList.indexOf(cloudData);
             }
@@ -218,10 +218,10 @@ public class SpellCloud extends Entity implements Ownable {
         var spellEntry = getSpellEntry();
         if (spellEntry != null) {
             var spell = spellEntry.value();
-            if (spell.delivery.clouds.length > 0) {
-                return spell.delivery.clouds[dataIndex];
+            if (spell.deliver.clouds.length > 0) {
+                return spell.deliver.clouds[dataIndex];
             } else {
-                return spell.delivery.cloud;
+                return spell.deliver.cloud;
             }
         }
         return null;

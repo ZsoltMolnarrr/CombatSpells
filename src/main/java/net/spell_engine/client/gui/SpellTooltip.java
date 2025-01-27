@@ -7,9 +7,7 @@ import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -189,13 +187,13 @@ public class SpellTooltip {
 
         var description = I18n.translate(spellKeyPrefix(spellId) + ".description");
 
-        if (spell.delivery != null) {
+        if (spell.deliver != null) {
             Spell.ProjectileData projectile = null;
-            if (spell.delivery.projectile != null) {
-                projectile = spell.delivery.projectile.projectile;
+            if (spell.deliver.projectile != null) {
+                projectile = spell.deliver.projectile.projectile;
             }
-            if (spell.delivery.meteor != null) {
-                projectile = spell.delivery.meteor.projectile;
+            if (spell.deliver.meteor != null) {
+                projectile = spell.deliver.meteor.projectile;
             }
             if (projectile != null) {
                 if (projectile.perks.ricochet > 0) {
@@ -213,11 +211,11 @@ public class SpellTooltip {
             }
 
             Spell.LaunchProperties launchProperties = null;
-            if (spell.delivery.projectile != null) {
-                launchProperties = spell.delivery.projectile.launch_properties;
+            if (spell.deliver.projectile != null) {
+                launchProperties = spell.deliver.projectile.launch_properties;
             }
-            if (spell.delivery.meteor != null) {
-                launchProperties = spell.delivery.meteor.launch_properties;
+            if (spell.deliver.meteor != null) {
+                launchProperties = spell.deliver.meteor.launch_properties;
             }
             if (launchProperties != null) {
                 var extra_launch_count = launchProperties.extra_launch_count;
@@ -225,9 +223,9 @@ public class SpellTooltip {
                     description = description.replace(placeholder("extra_launch"), formattedNumber(extra_launch_count));
                 }
             }
-            var cloud = spell.delivery.cloud;
-            if (spell.delivery.clouds.length > 0) {
-                cloud = spell.delivery.clouds[0];
+            var cloud = spell.deliver.cloud;
+            if (spell.deliver.clouds.length > 0) {
+                cloud = spell.deliver.clouds[0];
             }
             if (cloud != null) {
                 var cloud_duration = cloud.time_to_live_seconds;

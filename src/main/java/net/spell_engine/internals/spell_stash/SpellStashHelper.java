@@ -28,12 +28,12 @@ public class SpellStashHelper {
         registry.streamEntries().forEach(entry -> {
             var spell = entry.value();
             var id = entry.getKey().get().getValue();
-            if (spell.delivery.type == Spell.Delivery.Type.STASH_EFFECT) {
-                if (spell.delivery.stash_effect == null) {
+            if (spell.deliver.type == Spell.Delivery.Type.STASH_EFFECT) {
+                if (spell.deliver.stash_effect == null) {
                     System.err.println("Spell Engine: Stash spell linking error! Spell:" + id + " is missing `stash_effect`!");
                     return;
                 }
-                var stash = spell.delivery.stash_effect;
+                var stash = spell.deliver.stash_effect;
                 if (stash.id == null || stash.id.isEmpty()) {
                     System.err.println("Spell Engine: Stash spell linking error! Spell:" + id + " is missing `stash_effect.id`!");
                     return;
@@ -88,7 +88,7 @@ public class SpellStashHelper {
 
                 var consume = trigger.consume;
                 var stacksAvailable = updateEffectStacks.getOrDefault(stack, stack.getAmplifier());
-                if (stacksAvailable < consume) {
+                if ((stacksAvailable + 1) < consume) {
                     continue;
                 }
 
@@ -114,11 +114,11 @@ public class SpellStashHelper {
             var instance = entry.getKey();
             var newAmplifier = entry.getValue();
             var effect = instance.getEffectType();
+
+            caster.removeStatusEffect(effect);
             if (newAmplifier >= 0) {
                 caster.addStatusEffect(new StatusEffectInstance(effect, instance.getDuration(), newAmplifier,
                         instance.isAmbient(), instance.shouldShowParticles(), instance.shouldShowIcon()));
-            } else {
-                caster.removeStatusEffect(effect);
             }
         }
     }

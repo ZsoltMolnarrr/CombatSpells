@@ -101,7 +101,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
             return clientSyncedData;
         } else {
             var spell = getSpellEntry().value();
-            var release = spell.delivery;
+            var release = spell.deliver;
             switch (release.type) {
                 case PROJECTILE -> {
                     return release.projectile.projectile;

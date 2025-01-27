@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mixin(StatusEffect.class)
 public class StatusEffectSpellStash implements SpellStash {
-    private ArrayList<SpellStash.Entry> stashedSpells;
+    private ArrayList<SpellStash.Entry> stashedSpells = new ArrayList<>();
 
     @Override
     public void stashedSpell(SpellStash.Entry entry) {
