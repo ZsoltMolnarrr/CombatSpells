@@ -186,14 +186,9 @@ public class Spell {
             /// Duration of the status effect in seconds
             public float duration = 10;
             public boolean show_particles = false;
-
+            /// Status effect stacks to consume upon triggering
+            public int consume = 1;
             public Trigger trigger = new Trigger();
-            public static class Trigger {
-                public enum Type { ARROW_SHOT, ARROW_HIT, MELEE_HIT, SPELL_HIT }
-                public Type type = Type.SPELL_HIT;
-                /// Status effect stacks to consume upon triggering
-                public int consume = 1;
-            }
         }
     }
 
@@ -350,6 +345,12 @@ public class Spell {
     }
 
     // MARK: Shared structures (used from multiple places in the spell structure)
+
+    public static class Trigger {
+        public enum Type { ARROW_SHOT, ARROW_HIT, MELEE_HIT, SPELL_HIT }
+        public Type type;
+    }
+
 
     public static class AreaImpact { public AreaImpact() { }
         public float radius = 1F;

@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
+import net.spell_engine.internals.SpellTriggers;
 import net.spell_engine.internals.spell_stash.SpellStash;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
@@ -38,7 +39,7 @@ public class RangedWeaponItemMixin {
                     arrow.applyArrowPerks(activeSpellEntry);
                 }
             }
-            SpellStashHelper.onArrowShot(arrow, player);
+            SpellTriggers.onArrowShot(arrow, player);
         }
         return projectile;
     }

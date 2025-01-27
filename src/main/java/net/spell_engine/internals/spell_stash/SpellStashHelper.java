@@ -1,18 +1,14 @@
 package net.spell_engine.internals.spell_stash;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.arrow.ArrowExtension;
-import org.jetbrains.annotations.Nullable;
+import net.spell_engine.internals.SpellTriggers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,31 +45,26 @@ public class SpellStashHelper {
                     System.err.println("Spell Engine: Stash spell linking error! Spell:" + id + " found no status effect for `stash_effect.id`: " + stash.id);
                     return;
                 }
-                SpellStash.configure(statusEffect, entry, trigger);
+                SpellStash.configure(statusEffect, entry, trigger, stash.consume);
             }
         });
     }
 
-    public static void onArrowHit(ArrowExtension arrow, PlayerEntity shooter, Entity target) {
-        useStashes(shooter, Spell.Delivery.StashEffect.Trigger.Type.ARROW_SHOT, target, true, arrow, false);
-    }
+//    public static void onArrowHit(ArrowExtension arrow, PlayerEntity shooter, Entity target) {
+//        useStashes(shooter, Spell.Trigger.Type.ARROW_SHOT, target, true, arrow, false);
+//    }
 
-    public static void onArrowShot(ArrowExtension arrow, PlayerEntity shooter) {
-        useStashes(shooter, Spell.Delivery.StashEffect.Trigger.Type.ARROW_SHOT, null, false, arrow, true);
-    }
+//    public static void onMeleeHit(PlayerEntity caster, Entity target) {
+//        useStashes(caster, Spell.Trigger.Type.MELEE_HIT, target, true, null, false);
+//    }
+//
+//    public static void onSpellHit(PlayerEntity caster, Entity target, RegistryEntry<Spell> spell) {
+//        // `spell` parameter currently ignored, maybe use for filtering in the future
+//        useStashes(caster, Spell.Trigger.Type.SPELL_HIT, target, true, null, false);
+//    }
 
-    public static void onMeleeHit(PlayerEntity caster, Entity target) {
-        useStashes(caster, Spell.Delivery.StashEffect.Trigger.Type.MELEE_HIT, target, true, null, false);
-    }
-
-    public static void onSpellHit(PlayerEntity caster, Entity target, RegistryEntry<Spell> spell) {
-        // `spell` parameter currently ignored, maybe use for filtering in the future
-        useStashes(caster, Spell.Delivery.StashEffect.Trigger.Type.SPELL_HIT, target, true, null, false);
-    }
-
-    public static void useStashes(PlayerEntity caster, Spell.Delivery.StashEffect.Trigger.Type type,
-                                  @Nullable Entity target, boolean performImpacts,
-                                  @Nullable ArrowExtension arrow, boolean applyArrowPerks) {
+    public static void useStashes(SpellTriggers.Event event) {
+        var caster = event.player;
         var world = caster.getWorld();
         Map<StatusEffectInstance, Integer> updateEffectStacks = new HashMap<>();
         var activeEffects = caster.getActiveStatusEffects();
@@ -84,21 +75,24 @@ public class SpellStashHelper {
             for (var stashedSpell: ((SpellStash) effect).getStashedSpells()) {
                 var spellEntry = stashedSpell.spell();
                 var trigger = stashedSpell.trigger();
-                if (spellEntry == null || trigger == null || trigger.type != type) { continue; }
+                if (spellEntry == null || trigger == null) { continue; }
+                if (!SpellTriggers.matches(trigger, event)) { continue; }
 
-                var consume = trigger.consume;
+                var consume = stashedSpell.consume();
                 var stacksAvailable = updateEffectStacks.getOrDefault(stack, stack.getAmplifier());
                 if ((stacksAvailable + 1) < consume) {
                     continue;
                 }
 
                 var applied = false;
-                if (applyArrowPerks&& arrow != null && spellEntry.value().arrow_perks != null) {
+                var arrow = event.arrow;
+                if (arrow != null && spellEntry.value().arrow_perks != null) {
                     arrow.applyArrowPerks(spellEntry);
                     applied = true;
                 }
 
-                if (performImpacts && target != null) {
+                var target = event.target;
+                if (target != null) {
                     SpellHelper.performImpacts(world, caster, target, target, spellEntry, spellEntry.value().impact,
                             new SpellHelper.ImpactContext().position(target.getPos()));
                     applied = true;
