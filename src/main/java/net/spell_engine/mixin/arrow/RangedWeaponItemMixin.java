@@ -11,10 +11,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
-import net.spell_engine.api.effect.SpellStash;
+import net.spell_engine.internals.spell_stash.SpellStash;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.internals.casting.SpellCasterEntity;
+import net.spell_engine.internals.spell_stash.SpellStashHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -37,35 +38,7 @@ public class RangedWeaponItemMixin {
                     arrow.applyArrowPerks(activeSpellEntry);
                 }
             } else {
-                var removeEffects = new ArrayList<RegistryEntry<StatusEffect>>();
-                var addEffects = new ArrayList<StatusEffectInstance>();
-                var activeEffects = shooter.getActiveStatusEffects();
-                for(var entry: activeEffects.entrySet()) {
-                    var effectEntry = entry.getKey();
-                    var effect = entry.getKey().value();
-                    var stack = entry.getValue();
-                    var stashedSpell = ((SpellStash) effect).getStashedSpell();
-                    if (stashedSpell != null) {
-                        var spellEntry = SpellRegistry.from(world).getEntry(stashedSpell.id()).orElse(null);
-                        if (spellEntry != null && spellEntry.value().arrow_perks != null) {
-                            arrow.applyArrowPerks(spellEntry);
-                        }
-
-                        removeEffects.add(effectEntry);
-                        var newAmplifier = stack.getAmplifier() - stashedSpell.consumed();
-                        if (newAmplifier >= 0) {
-                            addEffects.add(new StatusEffectInstance(
-                                    effectEntry, stack.getDuration(), newAmplifier,
-                                    stack.isAmbient(), stack.shouldShowParticles(), stack.shouldShowIcon()));
-                        }
-                    }
-                }
-                for (var effectEntry: removeEffects) {
-                    shooter.removeStatusEffect(effectEntry);
-                }
-                for (var effectInstance: addEffects) {
-                    shooter.addStatusEffect(effectInstance);
-                }
+                SpellStashHelper.onArrowShot(arrow, player);
             }
         }
         return projectile;

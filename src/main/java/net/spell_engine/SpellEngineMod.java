@@ -3,6 +3,7 @@ package net.spell_engine;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.fabricmc.fabric.api.item.v1.EnchantmentEvents;
 import net.fabricmc.fabric.api.util.TriState;
@@ -18,6 +19,7 @@ import net.spell_engine.config.ServerConfig;
 import net.spell_engine.config.ServerConfigWrapper;
 import net.spell_engine.internals.SpellAssignments;
 import net.spell_engine.internals.criteria.EnchantmentSpecificCriteria;
+import net.spell_engine.internals.spell_stash.SpellStashHelper;
 import net.spell_engine.network.ServerNetwork;
 import net.spell_engine.particle.Particles;
 import net.spell_engine.rpg_series.RPGSeriesCore;
@@ -55,6 +57,7 @@ public class SpellEngineMod {
 
         ExternalSpellSchools.initialize();
         RPGSeriesCore.initialize();
+        SpellStashHelper.initialize();
     }
 
     public static void registerSpellBinding() {

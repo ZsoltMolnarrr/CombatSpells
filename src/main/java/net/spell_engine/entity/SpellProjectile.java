@@ -276,11 +276,11 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                                         && spell != null
                                         && spell.impact.length > 0
                                         && getOwner() instanceof LivingEntity owner) {
-                                    var intents = SpellHelper.intents(spell);
+                                    var intents = SpellHelper.impactIntents(spell);
 
                                     boolean intentAllows = false;
                                     for (var intent: intents) {
-                                        intentAllows = intentAllows || TargetHelper.actionAllowed(TargetHelper.TargetingMode.DIRECT, intent, owner, target);
+                                        intentAllows = intentAllows || TargetHelper.actionAllowed(TargetHelper.FocusMode.DIRECT, intent, owner, target);
                                     }
                                     shouldCollideWithEntity = intentAllows;
                                 }
@@ -456,11 +456,11 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                 this.perks.ricochet_range,
                 this.perks.ricochet_range);
         var spell = this.getSpellEntry().value();
-        var intents = SpellHelper.intents(spell);
+        var intents = SpellHelper.impactIntents(spell);
         Predicate<Entity> intentMatches = (entity) -> {
             boolean intentAllows = false;
             for (var intent: intents) {
-                intentAllows = intentAllows || TargetHelper.actionAllowed(TargetHelper.TargetingMode.AREA, intent, caster, entity);
+                intentAllows = intentAllows || TargetHelper.actionAllowed(TargetHelper.FocusMode.AREA, intent, caster, entity);
             }
             return intentAllows;
         };

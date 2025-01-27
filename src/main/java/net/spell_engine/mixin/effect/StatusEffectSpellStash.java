@@ -1,20 +1,23 @@
 package net.spell_engine.mixin.effect;
 
 import net.minecraft.entity.effect.StatusEffect;
-import net.spell_engine.api.effect.SpellStash;
+import net.spell_engine.internals.spell_stash.SpellStash;
 import org.spongepowered.asm.mixin.Mixin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(StatusEffect.class)
 public class StatusEffectSpellStash implements SpellStash {
-    private SpellStash.Entry stashedSpell;
+    private ArrayList<SpellStash.Entry> stashedSpells;
 
     @Override
-    public void setStashedSpell(SpellStash.Entry spell) {
-        this.stashedSpell = spell;
+    public void stashedSpell(SpellStash.Entry entry) {
+        this.stashedSpells.add(entry);
     }
 
     @Override
-    public SpellStash.Entry getStashedSpell() {
-        return this.stashedSpell;
+    public List<Entry> getStashedSpells() {
+        return this.stashedSpells;
     }
 }

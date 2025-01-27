@@ -36,7 +36,7 @@ public class TargetHelper {
     public enum Intent {
         HELPFUL, HARMFUL
     }
-    public enum TargetingMode {
+    public enum FocusMode {
         DIRECT, AREA
     }
     public enum Relation {
@@ -97,14 +97,14 @@ public class TargetHelper {
             { true,     true,           false,  false,  true }, // Area Healing
     };
 
-    public static boolean actionAllowed(TargetingMode targetingMode, Intent intent, LivingEntity attacker, Entity target) {
+    public static boolean actionAllowed(FocusMode focusMode, Intent intent, LivingEntity attacker, Entity target) {
         var relation = getRelation(attacker, target);
 
         int row = 0;
         if (intent == Intent.HELPFUL) {
             row += 2;
         }
-        if (targetingMode == TargetingMode.AREA) {
+        if (focusMode == FocusMode.AREA) {
             row += 1;
         }
 

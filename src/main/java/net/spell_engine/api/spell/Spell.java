@@ -107,7 +107,7 @@ public class Spell {
     public static class Delivery {
         public Type type = Type.DIRECT;
         public enum Type {
-            DIRECT, PROJECTILE, METEOR, CLOUD, SHOOT_ARROW
+            DIRECT, PROJECTILE, METEOR, CLOUD, SHOOT_ARROW, STASH_EFFECT
         }
 
         public ShootProjectile projectile;
@@ -170,6 +170,29 @@ public class Spell {
             public static class Spawn {
                 public Sound sound;
                 public ParticleBatch[] particles = new ParticleBatch[]{};
+            }
+        }
+
+        public StashEffect stash_effect;
+        public static class StashEffect {
+            /// Spells with valid `stash_effect` get automatically linked
+            /// to the status effect specified below.
+            /// No java code required.
+
+            /// ID of the status effect, that will stash this spell.
+            public String id;
+            /// Stacks to apply (-1)
+            public int amplifier = 0;
+            /// Duration of the status effect in seconds
+            public float duration = 10;
+            public boolean show_particles = false;
+
+            public Trigger trigger = new Trigger();
+            public static class Trigger {
+                public enum Type { ARROW_SHOT, ARROW_HIT, MELEE_HIT, SPELL_HIT }
+                public Type type = Type.SPELL_HIT;
+                /// Status effect stacks to consume upon triggering
+                public int consume = 1;
             }
         }
     }
