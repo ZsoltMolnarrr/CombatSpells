@@ -37,9 +37,8 @@ public class RangedWeaponItemMixin {
                 if (activeSpellEntry.value().arrow_perks != null) {
                     arrow.applyArrowPerks(activeSpellEntry);
                 }
-            } else {
-                SpellStashHelper.onArrowShot(arrow, player);
             }
+            SpellStashHelper.onArrowShot(arrow, player);
         }
         return projectile;
     }
