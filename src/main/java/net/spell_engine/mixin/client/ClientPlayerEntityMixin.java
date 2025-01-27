@@ -212,33 +212,12 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         // var release = spell.release.target;
         var targets = spellTarget.entities();
         var location = spellTarget.location();
-        int[] targetIDs = new int[]{};
-
-        targetIDs = new int[targets.size()];
+        int[] targetIDs = new int[targets.size()];
         int i = 0;
         for (var target : targets) {
             targetIDs[i] = target.getId();
             i += 1;
         }
-
-//        switch (release.type) {
-//            case PROJECTILE, CURSOR, METEOR -> {
-//                var firstTarget = firstTarget();
-//                if (firstTarget != null) {
-//                    targetIDs = new int[]{ firstTarget.getId() };
-//                }
-//            }
-//            case AREA, BEAM -> {
-//                targetIDs = new int[targets.size()];
-//                int i = 0;
-//                for (var target : targets) {
-//                    targetIDs[i] = target.getId();
-//                    i += 1;
-//                }
-//            }
-//            case SELF, SHOOT_ARROW -> {
-//            }
-//        }
 
         ClientPlayNetworking.send(new Packets.SpellRequest(action, spellId, progress.ratio(), targetIDs, location));
         switch (action) {
