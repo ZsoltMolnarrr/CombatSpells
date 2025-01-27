@@ -173,7 +173,6 @@ public class SpellHelper {
         }
         var caster = (SpellCasterEntity)player;
         var targets = targetResult.entities();
-        var targetLocation = targetResult.location();
         var castingSpeed = caster.getCurrentCastingSpeed();
         // Normalized progress in 0 to 1
         progress = Math.max(Math.min(progress, 1F), 0F);
@@ -268,35 +267,6 @@ public class SpellHelper {
                             var targetsWithContext = targets.stream().map(target -> new TargetedEntity(target, context.position(target.getPos()))).toList();
                             success = deliver(world, spellEntry, player, targetsWithContext, context, null);
                         }
-//                        case CLOUD -> {
-//                            placeCloud(world, player, spellEntry, context);
-//                            released = true;
-//                        }
-//                        case PROJECTILE -> {
-//                            Entity target = null;
-//                            var entityFound = targets.stream().findFirst();
-//                            if (entityFound.isPresent()) {
-//                                target = entityFound.get();
-//                            }
-//                            shootProjectile(world, player, target, spellEntry, context);
-//                        }
-//                        case METEOR -> {
-//                            var target = targets.stream().findFirst();
-//                            if (target.isPresent() || targetLocation != null) {
-//                                // Not setting `released` flag to allow channeling
-//                                fallProjectile(world, player, target.orElse(null), targetLocation, spellEntry, context);
-//                            } else {
-//                                released = false;
-//                            }
-//                        }
-//                        case SELF -> {
-//                            directImpact(world, player, player, spellEntry, context);
-//                            released = true;
-//                        }
-//                        case SHOOT_ARROW -> {
-//                            ArrowHelper.shootArrow(world, player, spellEntry, context);
-//                            released = true;
-//                        }
                     }
                 caster.setChannelTickIndex(channelTickIndex + incrementChannelTicks);
             }
