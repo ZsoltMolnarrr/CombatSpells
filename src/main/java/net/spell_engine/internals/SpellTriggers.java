@@ -31,9 +31,16 @@ public class SpellTriggers {
         event.arrow = arrow;
         fireTriggers(event);
     }
-    
-    public static void onArrowHit(ArrowExtension arrow, PlayerEntity shooter, Entity target) {
 
+    public static void onArrowImpact(ArrowExtension arrow, PlayerEntity shooter, Entity target) {
+        var event = new Event(Spell.Trigger.Type.ARROW_IMPACT, shooter, target);
+        event.arrow = arrow;
+        fireTriggers(event);
+    }
+
+    public static void onMeleeImpact(PlayerEntity caster, Entity target) {
+        var event = new Event(Spell.Trigger.Type.MELEE_IMPACT, caster, target);
+        fireTriggers(event);
     }
 
     private static void fireTriggers(Event event) {
@@ -47,5 +54,4 @@ public class SpellTriggers {
         // TODO: Add more checks
         return trigger.type == event.type;
     }
-
 }

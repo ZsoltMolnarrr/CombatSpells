@@ -10,6 +10,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -19,6 +20,7 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.entity.ConfigurableKnockback;
 import net.spell_engine.internals.SpellHelper;
+import net.spell_engine.internals.SpellTriggers;
 import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.particle.ParticleHelper;
 import org.jetbrains.annotations.Nullable;
@@ -246,6 +248,11 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
             var result = original.call(entity, damageSource, amount);
             for (var spellEnrty : spellEntries) {
                 performImpacts(spellEnrty, entity, entityHitResult);
+            }
+            var arrow = arrow();
+            var owner = arrow.getOwner();
+            if (owner instanceof PlayerEntity shooter) {
+                SpellTriggers.onArrowImpact((ArrowExtension) arrow, shooter, entity);
             }
 
             if (pushedKnockback) {

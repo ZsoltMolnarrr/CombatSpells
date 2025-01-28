@@ -347,10 +347,9 @@ public class Spell {
     // MARK: Shared structures (used from multiple places in the spell structure)
 
     public static class Trigger {
-        public enum Type { ARROW_SHOT, ARROW_HIT, MELEE_HIT, SPELL_HIT }
+        public enum Type { ARROW_SHOT, ARROW_IMPACT, MELEE_IMPACT, SPELL_IMPACT }
         public Type type;
     }
-
 
     public static class AreaImpact { public AreaImpact() { }
         public float radius = 1F;
