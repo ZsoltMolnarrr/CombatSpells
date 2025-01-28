@@ -1,4 +1,4 @@
-package net.spell_engine.internals;
+package net.spell_engine.internals.container;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;

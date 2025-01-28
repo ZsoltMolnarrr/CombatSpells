@@ -9,9 +9,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.config.ServerConfig;
-import net.spell_engine.internals.SpellCastSyncHelper;
+import net.spell_engine.internals.casting.SpellCastSyncHelper;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellAssignments;
+import net.spell_engine.internals.container.SpellAssignments;
 import net.spell_engine.utils.TargetHelper;
 
 import java.util.ArrayList;

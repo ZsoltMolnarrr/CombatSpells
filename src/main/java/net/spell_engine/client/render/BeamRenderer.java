@@ -16,7 +16,7 @@ import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.beam.BeamEmitterEntity;
 import net.spell_engine.client.compatibility.ShaderCompatibility;
 import net.spell_engine.client.util.Color;
-import net.spell_engine.internals.Beam;
+import net.spell_engine.internals.delivery.Beam;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.utils.TargetHelper;

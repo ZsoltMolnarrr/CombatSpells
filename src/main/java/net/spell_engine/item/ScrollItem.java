@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
 import net.spell_engine.api.spell.*;
 import net.spell_engine.client.SpellEngineClient;
-import net.spell_engine.internals.SpellContainerHelper;
+import net.spell_engine.internals.container.SpellContainerHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

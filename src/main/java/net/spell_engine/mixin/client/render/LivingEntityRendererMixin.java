@@ -1,25 +1,12 @@
 package net.spell_engine.mixin.client.render;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec3d;
-import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.effect.CustomModelStatusEffect;
 import net.spell_engine.api.effect.Synchronized;
-import net.spell_engine.client.beam.BeamEmitterEntity;
-import net.spell_engine.client.render.BeamRenderer;
-import net.spell_engine.api.render.CustomLayers;
-import net.spell_engine.internals.Beam;
-import net.spell_engine.internals.casting.SpellCasterEntity;
-import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.utils.TargetHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

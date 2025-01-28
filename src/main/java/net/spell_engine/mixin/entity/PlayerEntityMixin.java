@@ -10,6 +10,7 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.client.animation.AnimatablePlayer;
 import net.spell_engine.internals.*;
 import net.spell_engine.internals.casting.SpellCast;
+import net.spell_engine.internals.casting.SpellCastSyncHelper;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;

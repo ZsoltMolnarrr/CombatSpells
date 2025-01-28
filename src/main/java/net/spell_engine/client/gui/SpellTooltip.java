@@ -18,7 +18,7 @@ import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.Keybindings;
 import net.spell_engine.internals.Ammo;
-import net.spell_engine.internals.SpellCasterItemStack;
+import net.spell_engine.internals.container.SpellCasterItemStack;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_power.api.SpellPower;
 

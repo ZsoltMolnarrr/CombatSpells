@@ -21,7 +21,7 @@ import net.minecraft.world.World;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.compat.MultipartEntityCompat;
-import net.spell_engine.internals.Beam;
+import net.spell_engine.internals.delivery.Beam;
 import net.spell_engine.internals.casting.SpellCasterClient;
 import net.spell_engine.internals.SpellHelper;
 import org.jetbrains.annotations.Nullable;

@@ -14,7 +14,7 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.gui.HudMessages;
-import net.spell_engine.internals.SpellContainerHelper;
+import net.spell_engine.internals.container.SpellContainerHelper;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.casting.SpellCasterClient;

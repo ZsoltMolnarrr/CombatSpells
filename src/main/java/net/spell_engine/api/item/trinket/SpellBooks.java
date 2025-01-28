@@ -12,7 +12,7 @@ import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.compat.trinkets.SpellBookTrinketItem;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
-import net.spell_engine.internals.SpellAssignments;
+import net.spell_engine.internals.container.SpellAssignments;
 
 import java.util.ArrayList;
 import java.util.Comparator;

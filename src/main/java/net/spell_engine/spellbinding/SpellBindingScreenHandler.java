@@ -18,9 +18,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
-import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.api.spell.registry.SpellRegistry;
-import net.spell_engine.internals.SpellContainerHelper;
+import net.spell_engine.internals.container.SpellContainerHelper;
 
 import java.util.Arrays;
 
