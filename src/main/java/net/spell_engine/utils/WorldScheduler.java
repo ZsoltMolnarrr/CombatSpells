@@ -1,4 +1,4 @@
-package net.spell_engine.internals;
+package net.spell_engine.utils;
 
 import java.util.ArrayList;
 import java.util.List;

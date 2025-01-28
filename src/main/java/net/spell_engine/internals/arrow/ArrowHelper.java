@@ -11,7 +11,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.WorldScheduler;
+import net.spell_engine.utils.WorldScheduler;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.mixin.item.RangedWeaponAccessor;
 

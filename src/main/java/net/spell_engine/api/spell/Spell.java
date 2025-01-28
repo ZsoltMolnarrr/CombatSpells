@@ -359,7 +359,7 @@ public class Spell {
             ARROW_SHOT, ARROW_IMPACT,
             MELEE_IMPACT,
             SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC,
-            ROLL
+            ROLL  /// Only works when Combat Roll mod is installed
         }
         public Type type;
         public static class SpellImpact { public SpellImpact() { }
