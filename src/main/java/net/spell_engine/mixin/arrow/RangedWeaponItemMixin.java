@@ -3,24 +3,16 @@ package net.spell_engine.mixin.arrow;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
 import net.spell_engine.internals.SpellTriggers;
-import net.spell_engine.internals.spell_stash.SpellStash;
-import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.internals.casting.SpellCasterEntity;
-import net.spell_engine.internals.spell_stash.SpellStashHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-
-import java.util.ArrayList;
 
 @Mixin(RangedWeaponItem.class)
 public class RangedWeaponItemMixin {

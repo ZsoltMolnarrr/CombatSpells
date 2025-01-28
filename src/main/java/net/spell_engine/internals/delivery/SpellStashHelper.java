@@ -1,4 +1,4 @@
-package net.spell_engine.internals.spell_stash;
+package net.spell_engine.internals.delivery;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -9,6 +9,8 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellTriggers;
+import net.spell_engine.utils.TargetHelper;
+import net.spell_power.api.SpellPower;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,39 +31,26 @@ public class SpellStashHelper {
                     System.err.println("Spell Engine: Stash spell linking error! Spell:" + id + " is missing `stash_effect`!");
                     return;
                 }
-                var stash = spell.deliver.stash_effect;
-                if (stash.id == null || stash.id.isEmpty()) {
+                var stashEffect = spell.deliver.stash_effect;
+                if (stashEffect.id == null || stashEffect.id.isEmpty()) {
                     System.err.println("Spell Engine: Stash spell linking error! Spell:" + id + " is missing `stash_effect.id`!");
                     return;
                 }
-                var trigger = stash.trigger;
+                var trigger = stashEffect.trigger;
                 if (trigger == null) {
                     System.err.println("Spell Engine: Stash spell linking error! Spell:" + id + " is missing `stash_effect.trigger`!");
                     return;
                 }
-                var effectId = Identifier.of(stash.id);
+                var effectId = Identifier.of(stashEffect.id);
                 var statusEffect = Registries.STATUS_EFFECT.get(effectId);
                 if (statusEffect == null) {
-                    System.err.println("Spell Engine: Stash spell linking error! Spell:" + id + " found no status effect for `stash_effect.id`: " + stash.id);
+                    System.err.println("Spell Engine: Stash spell linking error! Spell:" + id + " found no status effect for `stash_effect.id`: " + stashEffect.id);
                     return;
                 }
-                SpellStash.configure(statusEffect, entry, trigger, stash.consume);
+                SpellStash.configure(statusEffect, entry, stashEffect.trigger, stashEffect.impact_mode, stashEffect.consume);
             }
         });
     }
-
-//    public static void onArrowHit(ArrowExtension arrow, PlayerEntity shooter, Entity target) {
-//        useStashes(shooter, Spell.Trigger.Type.ARROW_SHOT, target, true, arrow, false);
-//    }
-
-//    public static void onMeleeHit(PlayerEntity caster, Entity target) {
-//        useStashes(caster, Spell.Trigger.Type.MELEE_HIT, target, true, null, false);
-//    }
-//
-//    public static void onSpellHit(PlayerEntity caster, Entity target, RegistryEntry<Spell> spell) {
-//        // `spell` parameter currently ignored, maybe use for filtering in the future
-//        useStashes(caster, Spell.Trigger.Type.SPELL_HIT, target, true, null, false);
-//    }
 
     public static void useStashes(SpellTriggers.Event event) {
         var caster = event.player;
@@ -72,35 +61,40 @@ public class SpellStashHelper {
             var effect = entry.getKey().value();
             var stack = entry.getValue();
 
-            for (var stashedSpell: ((SpellStash) effect).getStashedSpells()) {
-                var spellEntry = stashedSpell.spell();
-                var trigger = stashedSpell.trigger();
+            for (var stash: ((SpellStash) effect).getStashedSpells()) {
+                var spellEntry = stash.spell();
+                var trigger = stash.trigger();
                 if (spellEntry == null || trigger == null) { continue; }
                 if (!SpellTriggers.matches(trigger, event)) { continue; }
 
-                var consume = stashedSpell.consume();
+                var consume = stash.consume();
                 var stacksAvailable = updateEffectStacks.getOrDefault(stack, stack.getAmplifier());
                 if ((stacksAvailable + 1) < consume) {
                     continue;
                 }
 
-                var applied = false;
-                var arrow = event.arrow;
-                if (arrow != null && spellEntry.value().arrow_perks != null) {
-                    arrow.applyArrowPerks(spellEntry);
-                    applied = true;
+                switch (stash.impactMode()) {
+                    case PERFORM -> {
+                        var target = event.target;
+                        var spell = stash.spell().value();
+                        var power = SpellPower.getSpellPower(spell.school, event.player);
+                        var impactContext = new SpellHelper.ImpactContext(1F, 1F, null, power, TargetHelper.FocusMode.DIRECT, 0);
+                        if (target != null) {
+                            impactContext = impactContext.position(target.getPos());
+                        } else {
+                            impactContext = impactContext.position(event.aoeSource.getPos());
+                        }
+                        SpellHelper.performImpacts(world, caster, target, event.aoeSource, spellEntry, spellEntry.value().impact, impactContext);
+                    }
+                    case TRANSFER -> {
+                        var arrow = event.arrow;
+                        if (arrow != null && spellEntry.value().arrow_perks != null) {
+                            arrow.applyArrowPerks(spellEntry);
+                        }
+                    }
                 }
 
-                var target = event.target;
-                if (target != null) {
-                    SpellHelper.performImpacts(world, caster, target, target, spellEntry, spellEntry.value().impact,
-                            new SpellHelper.ImpactContext().position(target.getPos()));
-                    applied = true;
-                }
-
-                if (applied) {
-                    updateEffectStacks.put(stack, stacksAvailable - consume);
-                }
+                updateEffectStacks.put(stack, stacksAvailable - consume);
             }
         }
 

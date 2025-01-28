@@ -186,9 +186,17 @@ public class Spell {
             /// Duration of the status effect in seconds
             public float duration = 10;
             public boolean show_particles = false;
+
+            /// Trigger of the status effect
+            public Trigger trigger = new Trigger();
             /// Status effect stacks to consume upon triggering
             public int consume = 1;
-            public Trigger trigger = new Trigger();
+            /// Determines what happens to the impacts of the spell when using this stash
+            public ImpactMode impact_mode = ImpactMode.PERFORM;
+            public enum ImpactMode {
+                PERFORM,    /// Perform the impacts, on the target that is available at the time of triggering
+                TRANSFER    /// Pass the impacts onto a projectile, that will be launched at the time of triggering
+            }
         }
     }
 
@@ -347,8 +355,18 @@ public class Spell {
     // MARK: Shared structures (used from multiple places in the spell structure)
 
     public static class Trigger {
-        public enum Type { ARROW_SHOT, ARROW_IMPACT, MELEE_IMPACT, SPELL_IMPACT }
+        public enum Type {
+            ARROW_SHOT, ARROW_IMPACT,
+            MELEE_IMPACT,
+            SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC,
+            ROLL
+        }
         public Type type;
+        public static class SpellImpact { public SpellImpact() { }
+            // ID or tag to match the spell
+            @Nullable public String spell_id;
+
+        }
     }
 
     public static class AreaImpact { public AreaImpact() { }

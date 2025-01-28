@@ -675,7 +675,7 @@ public class SpellHelper {
                                          Spell.Impact[] impacts, ImpactContext context, boolean additionalTargetLookup) {
         var trackers = target != null ? PlayerLookup.tracking(target) : null;
         var spell = spellEntry.value();
-        var performed = false;
+        var anyPerformed = false;
         TargetHelper.Intent selectedIntent = null;
         for (var impact: impacts) {
             var intent = impactIntent(impact.action);
@@ -688,7 +688,7 @@ public class SpellHelper {
 
             if (target != null) {
                 var result = performImpact(world, caster, target, spellEntry, impact, context, trackers);
-                performed = performed || result;
+                anyPerformed = anyPerformed || result;
                 if (result) {
                     selectedIntent = intent;
                 }
@@ -697,11 +697,12 @@ public class SpellHelper {
         var area_impact = spell.area_impact;
         if (area_impact != null
                 && additionalTargetLookup
-                && (performed || target == null) ) {
+                && (anyPerformed || target == null) ) {
             lookupAndPerformAreaImpact(area_impact, spellEntry, caster, target, aoeSource, impacts, context, false);
         }
 
-        return performed;
+
+        return anyPerformed;
     }
 
     private static final float knockbackDefaultStrength = 0.4F;
