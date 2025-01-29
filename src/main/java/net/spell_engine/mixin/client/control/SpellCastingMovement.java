@@ -20,8 +20,8 @@ public class SpellCastingMovement {
         var player = (ClientPlayerEntity) (Object) this;
         var caster = (SpellCasterClient) player;
         var process = caster.getSpellCastProcess();
-        if (process != null && process.spell().value().cast != null && !player.hasVehicle()) {
-            var multiplier = process.spell().value().cast.movement_speed * SpellEngineMod.config.movement_multiplier_speed_while_casting;
+        if (process != null && process.spell().value().active.cast != null && !player.hasVehicle()) {
+            var multiplier = process.spell().value().active.cast.movement_speed * SpellEngineMod.config.movement_multiplier_speed_while_casting;
             input.movementSideways *= multiplier;
             input.movementForward *= multiplier;
             ticksLeftToDoubleTapSprint = 0;

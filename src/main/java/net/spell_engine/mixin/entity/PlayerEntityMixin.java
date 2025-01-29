@@ -39,6 +39,7 @@ public class PlayerEntityMixin implements SpellCasterEntity {
 
     private SpellCast.Process synchronizedSpellCastProcess = null;
     public void setSpellCastProcess(@Nullable SpellCast.Process process) {
+        if (process != null && process.spell().value().active == null) { return; }
         synchronizedSpellCastProcess = process;
         var json = process != null ? process.fastSyncJSON() : "";
         player().getDataTracker().set(SPELL_ENGINE_SPELL_PROGRESS, json);

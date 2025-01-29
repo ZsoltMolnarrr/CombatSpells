@@ -30,7 +30,8 @@ public class ScrollItem extends Item {
 
     @Nullable public static boolean applySpell(ItemStack itemStack, RegistryEntry<Spell> spellEntry, boolean requirePool) {
         var spell = spellEntry.value();
-        var scroll = spell.scroll;
+        if (spell.active == null) { return false; }
+        var scroll = spell.active.scroll;
         if (scroll != null && scroll.generate) {
 //            if (poolId != null) {
 //                var translationKey = "item." + poolId.getNamespace() + "." + poolId.getPath() + ".spell_scroll";

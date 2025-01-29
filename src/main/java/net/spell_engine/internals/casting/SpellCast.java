@@ -42,7 +42,9 @@ public class SpellCast {
         }
     }
 
-    public record Duration(float speed, int length) { }
+    public record Duration(float speed, int length) {
+        public static final Duration EMPTY = new Duration(0, 0);
+    }
     public record Process(RegistryEntry<Spell> spell, Item item, float speed, int length, long startedAt) {
         public int spellCastTicksSoFar(long worldTime) {
             // At least zero
@@ -95,13 +97,20 @@ public class SpellCast {
     public record Progress(float ratio, Process process) { }
 
     public enum Mode {
-        INSTANT, CHARGE, CHANNEL,
+        INSTANT,
+        CHARGE,
+        CHANNEL,
+        PASSIVE,
         ITEM_USE; // This one is never produced by mapping, only manually from SpellHotbar logic
         public static Mode from(Spell spell) {
-            if (spell.cast.duration <= 0) {
-                return INSTANT;
+            if (spell.active != null) {
+                if (spell.active.cast.duration <= 0) {
+                    return INSTANT;
+                }
+                return SpellHelper.isChanneled(spell) ? CHANNEL : CHARGE;
+            } else {
+                return PASSIVE;
             }
-            return SpellHelper.isChanneled(spell) ? CHANNEL : CHARGE;
         }
     }
 

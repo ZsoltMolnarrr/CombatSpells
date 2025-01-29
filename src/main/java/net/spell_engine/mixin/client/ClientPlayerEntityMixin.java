@@ -112,7 +112,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
                 // Cancel previous spell
                 cancelSpellCast(false);
             }
-            var instant = spell.cast.duration <= 0;
+            var instant = spell.active.cast.duration <= 0;
             if (instant) {
                 // Release instant spell
                 var process = new SpellCast.Process(spellEntry, itemStack.getItem(), 1, 0, caster.getWorld().getTime());
@@ -133,7 +133,8 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         if (duration > 0) {
             for (var slot: SpellHotbar.INSTANCE.slots) {
                 var spellEntry = slot.spell();
-                if (spellEntry.value().cast != null && spellEntry.value().cast.duration <= 0) {
+                var spell = spellEntry.value();
+                if (spell.active != null && spell.active.cast != null && spell.active.cast.duration <= 0) {
                     getCooldownManager().set(spellEntry.getKey().get().getValue(), duration, false);
                 }
             }
@@ -178,16 +179,16 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
                 return;
             }
             var spell = process.spell().value();
-
+            var cast = spell.active.cast;
             spellTarget = findTargets(spell);
 
             var spellCastTicks = process.spellCastTicksSoFar(player.getWorld().getTime());
             if (SpellHelper.isChanneled(spell)) {
                 // Is channel tick due?
-                var offset = Math.round(spell.cast.channel_ticks * 0.5F);
+                var offset = Math.round(cast.channel_ticks * 0.5F);
                 var currentTick = spellCastTicks + offset;
-                var isDue = currentTick >= spell.cast.channel_ticks
-                        && (currentTick % spell.cast.channel_ticks) == 0;
+                var isDue = currentTick >= cast.channel_ticks
+                        && (currentTick % cast.channel_ticks) == 0;
                 if (isDue) {
                     // Channel spell
                     releaseSpellCast(process, SpellCast.Action.CHANNEL);

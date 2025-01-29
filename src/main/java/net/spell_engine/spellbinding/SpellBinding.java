@@ -108,7 +108,7 @@ public class SpellBinding {
                 .filter(entry ->  {
                     var spell = entry.getValue();
                     if (finalScrollMode) {
-                        return spell.scroll != null;
+                        return spell.active.scroll != null;
                     } else {
                         return spell.learn != null
                                 && spell.learn.enabled
@@ -119,8 +119,8 @@ public class SpellBinding {
                 .map(entry -> {
                     var spell = entry.getValue();
                     if (finalScrollMode) {
-                        var cost = spell.learn.tier * spell.scroll.level_cost_per_tier + spell.scroll.apply_cost_base;
-                        var levelRequirement = spell.learn.tier * spell.scroll.level_requirement_per_tier;
+                        var cost = spell.learn.tier * spell.active.scroll.level_cost_per_tier + spell.active.scroll.apply_cost_base;
+                        var levelRequirement = spell.learn.tier * spell.active.scroll.level_requirement_per_tier;
                         return new Offer(
                                 rawSpellId(world, entry.getKey()),
                                 cost,

@@ -88,7 +88,7 @@ public class ModelPredicateHelper {
         if (entity instanceof SpellCasterEntity caster && entity.getMainHandStack() == itemStack) {
             var process = caster.getSpellCastProcess();
             // Watch out! This condition check is duplicated
-            if (process != null && process.spell().value().cast.animates_ranged_weapon) {
+            if (process != null && process.spell().value().active.cast.animates_ranged_weapon) {
                 return process.progress(entity.getWorld().getTime());
             }
         }
@@ -99,7 +99,7 @@ public class ModelPredicateHelper {
         if (entity instanceof SpellCasterEntity caster && entity.getMainHandStack() == itemStack) {
             var process = caster.getSpellCastProcess();
             // Watch out! This condition check is duplicated
-            if (process != null && process.spell().value().cast.animates_ranged_weapon) {
+            if (process != null && process.spell().value().active.cast.animates_ranged_weapon) {
                 return true;
             }
         }

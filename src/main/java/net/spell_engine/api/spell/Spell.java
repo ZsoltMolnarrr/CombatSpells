@@ -21,7 +21,6 @@ public class Spell {
     @Nullable public String group;
     // The rank of the spell, used to determine which spell to use when multiple spells with the same `group` are available
     public int rank = 1;
-
     public Learn learn = new Learn();
     public static class Learn { public Learn() {}
         /// Whether the spell can be obtained from Spell Binding Table
@@ -31,29 +30,40 @@ public class Spell {
         public int level_requirement_per_tier = 10;
     }
 
-    public Scroll scroll = new Scroll();
-    public static class Scroll { public Scroll() {}
-        public boolean generate = true;
-        /// Cost of experience levels to apply the scroll
-        public int apply_cost_base = 0;
-        public int level_cost_per_tier = 1;
-        public int level_requirement_per_tier = 0;
-        @Nullable public Rarity custom_rarity = null;
+    public Type type = Type.ACTIVE;
+    public enum Type { ACTIVE, PASSIVE }
+
+    public Active active;
+    public static class Active {
+        public Scroll scroll = new Scroll();
+        public static class Scroll { public Scroll() {}
+            public boolean generate = true;
+            /// Cost of experience levels to apply the scroll
+            public int apply_cost_base = 0;
+            public int level_cost_per_tier = 1;
+            public int level_requirement_per_tier = 0;
+            @Nullable public Rarity custom_rarity = null;
+        }
+
+        public Cast cast = new Cast();
+        public static class Cast { public Cast() { }
+            public boolean haste_affected = true;
+            public float duration = 0;
+            public int channel_ticks = 0;
+            public String animation;
+            public boolean animation_pitch = true;
+            public boolean animates_ranged_weapon = false;
+            /// Default `0.2` matches the same as movement speed during vanilla item usage (such as bow)"
+            public float movement_speed = 0.2F;
+            public Sound start_sound;
+            public Sound sound;
+            public ParticleBatch[] particles = new ParticleBatch[]{};
+        }
     }
 
-    public Cast cast = new Cast();
-    public static class Cast { public Cast() { }
-        public boolean haste_affected = true;
-        public float duration = 0;
-        public int channel_ticks = 0;
-        public String animation;
-        public boolean animation_pitch = true;
-        public boolean animates_ranged_weapon = false;
-        /// Default `0.2` matches the same as movement speed during vanilla item usage (such as bow)"
-        public float movement_speed = 0.2F;
-        public Sound start_sound;
-        public Sound sound;
-        public ParticleBatch[] particles = new ParticleBatch[]{};
+    public Passive passive;
+    public static class Passive {
+
     }
 
     public Release release;

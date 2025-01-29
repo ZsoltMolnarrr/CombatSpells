@@ -92,17 +92,18 @@ public class SpellHelper {
     }
 
     public static float getCastDuration(LivingEntity caster, Spell spell, ItemStack provisionedWeapon) {
-        if (spell.cast == null) {
+        if (spell.active != null && spell.active.cast == null) {
             return 0;
         }
-        return hasteAffectedValue(caster, spell.school, spell.cast.duration, provisionedWeapon);
+        return hasteAffectedValue(caster, spell.school, spell.active.cast.duration, provisionedWeapon);
     }
 
     public static SpellCast.Duration getCastTimeDetails(LivingEntity caster, Spell spell) {
-        var haste = spell.cast.haste_affected
+        if (spell.active == null) { return SpellCast.Duration.EMPTY; }
+        var haste = spell.active.cast.haste_affected
                 ? (float) SpellPower.getHaste(caster, spell.school)
                 : 1F;
-        var duration =  hasteAffectedValue(spell.cast.duration, haste);
+        var duration =  hasteAffectedValue(spell.active.cast.duration, haste);
         return new SpellCast.Duration(haste, Math.round(duration * 20F));
     }
 
@@ -125,11 +126,13 @@ public class SpellHelper {
     }
 
     public static boolean isInstant(Spell spell) {
-        return spell.cast.duration == 0;
+        if (spell.active == null) { return true; }
+        return spell.active.cast.duration == 0;
     }
 
     public static float channelValueMultiplier(Spell spell) {
-        var ticks = spell.cast.channel_ticks;
+        if (spell.active == null) { return 0F; }
+        var ticks = spell.active.cast.channel_ticks;
         if (ticks <= 0) {
             return 0;
         }
@@ -142,6 +145,9 @@ public class SpellHelper {
             return;
         }
         var spell = spellEntry.value();
+        if (spell.active == null) {
+            return;
+        }
         var itemStack = player.getMainHandStack();
         var attempt = attemptCasting(player, itemStack, spellId);
         if (!attempt.isSuccess()) {
@@ -151,7 +157,7 @@ public class SpellHelper {
         // var details = SpellHelper.getCastTimeDetails(player, spell);
         var process = new SpellCast.Process(spellEntry, itemStack.getItem(), speed, length, player.getWorld().getTime());
         SpellCastSyncHelper.setCasting(player, process);
-        SoundHelper.playSound(player.getWorld(), player, spell.cast.start_sound);
+        SoundHelper.playSound(player.getWorld(), player, spell.active.cast.start_sound);
     }
 
     public static void performSpell(World world, PlayerEntity player, Identifier spellId, TargetHelper.SpellTargetResult targetResult, SpellCast.Action action, float progress) {
