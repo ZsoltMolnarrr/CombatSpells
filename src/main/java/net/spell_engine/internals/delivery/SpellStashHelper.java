@@ -81,8 +81,10 @@ public class SpellStashHelper {
                         var impactContext = new SpellHelper.ImpactContext(1F, 1F, null, power, TargetHelper.FocusMode.DIRECT, 0);
                         if (target != null) {
                             impactContext = impactContext.position(target.getPos());
-                        } else {
+                        } else if (event.aoeSource != null) {
                             impactContext = impactContext.position(event.aoeSource.getPos());
+                        } else {
+                            impactContext = impactContext.position(caster.getPos());
                         }
                         SpellHelper.performImpacts(world, caster, target, event.aoeSource, spellEntry, spellEntry.value().impact, impactContext);
                     }

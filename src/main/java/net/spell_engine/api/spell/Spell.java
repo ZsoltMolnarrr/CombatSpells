@@ -359,13 +359,23 @@ public class Spell {
             ARROW_SHOT, ARROW_IMPACT,
             MELEE_IMPACT,
             SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC,
+            DAMAGE_TAKEN,
             ROLL  /// Only works when Combat Roll mod is installed
         }
         public Type type;
-        public static class SpellImpact { public SpellImpact() { }
-            // ID or tag to match the spell
-            @Nullable public String spell_id;
+        /// Chance to trigger. 0 = 0%, 1 = 100%
+        public float chance = 1;
 
+        public SpellImpact spell_impact;
+        public static class SpellImpact { public SpellImpact() { }
+            // Spell school regex
+            @Nullable public String school;
+            // ID or tag to match the spell
+            @Nullable public String id;
+            // Impact type regex
+            @Nullable public String impact_type;
+            // Maybe add predicate, that can be registered in java, and resolved by this id
+            // public String spell_predicate
         }
     }
 

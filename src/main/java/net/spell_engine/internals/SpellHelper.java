@@ -703,6 +703,9 @@ public class SpellHelper {
             lookupAndPerformAreaImpact(area_impact, spellEntry, caster, target, aoeSource, impacts, context, false);
         }
 
+        if (anyPerformed) {
+            SpellTriggers.onSpellImpactAny((PlayerEntity) caster, target, aoeSource, spellEntry);
+        }
 
         return anyPerformed;
     }
@@ -963,6 +966,7 @@ public class SpellHelper {
                 if (impact.sound != null) {
                     SoundHelper.playSound(world, target, impact.sound);
                 }
+                SpellTriggers.onSpellImpactSpecific((PlayerEntity) caster, target, spellEntry, impact);
             }
         } catch (Exception e) {
             System.err.println("Failed to perform impact effect");

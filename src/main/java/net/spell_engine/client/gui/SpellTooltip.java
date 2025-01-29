@@ -396,11 +396,6 @@ public class SpellTooltip {
         }
     }
 
-    private static <T> T coalesce(T ...items) {
-        for (T i : items) if (i != null) return i;
-        return null;
-    }
-
     public interface DescriptionMutator {
         record Args(String description, PlayerEntity player) { }
         String mutate(Args args);
