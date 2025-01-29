@@ -69,6 +69,8 @@ public class Spell {
         public enum Type {
             NONE, CASTER, CURSOR, BEAM, AREA
         }
+        // The number of maximum targets, applied when greater than zero
+        public int cap = 0;
 
         public Cursor cursor;
         public static class Cursor { public Cursor() { }

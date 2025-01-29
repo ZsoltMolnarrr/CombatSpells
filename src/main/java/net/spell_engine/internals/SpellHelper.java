@@ -214,61 +214,58 @@ public class SpellHelper {
                         SpellPower.getSpellPower(spell.school, player),
                         focusMode(spell),
                         channelTickIndex);
-
-//                if (spell.release.custom_impact) {
-//                    var handler = CustomSpellHandler.handlers.get(spellId);
-//                    released = false;
-//                    if (handler != null) {
-//                        released = handler.apply(new CustomSpellHandler.Data(
-//                                player, targets, heldItemStack, action, progress, context));
-//                    }
-//                } else {
-                    switch (targeting.type) {
-                        case NONE -> {
-                            success = deliver(world, spellEntry, player, List.of(), context, null);
+                if (targeting.cap > 0) {
+                    targets = targets.stream()
+                            .sorted(Comparator.comparingDouble(target -> target.squaredDistanceTo(player.getPos())))
+                            .limit(targeting.cap)
+                            .toList();
+                }
+                switch (targeting.type) {
+                    case NONE -> {
+                        success = deliver(world, spellEntry, player, List.of(), context, null);
+                    }
+                    case CASTER -> {
+                        var targetsWithContext = List.of(new TargetedEntity(player, context.position(player.getPos())));
+                        success = deliver(world, spellEntry, player, targetsWithContext, context, null);
+                    }
+                    case CURSOR -> {
+                        var cursor = targeting.cursor;
+                        var firstTarget = targets.stream().findFirst();
+                        List<TargetedEntity> targetsWithContext = List.of();
+                        if (firstTarget.isPresent()) {
+                            var target = firstTarget.get();
+                            var targetSpecificContext = context.position(target.getPos());
+                            targetsWithContext = List.of(new TargetedEntity(target, targetSpecificContext));
                         }
-                        case CASTER -> {
-                            var targetsWithContext = List.of(new TargetedEntity(player, context.position(player.getPos())));
-                            success = deliver(world, spellEntry, player, targetsWithContext, context, null);
-                        }
-                        case CURSOR -> {
-                            var cursor = targeting.cursor;
-                            var firstTarget = targets.stream().findFirst();
-                            List<TargetedEntity> targetsWithContext = List.of();
-                            if (firstTarget.isPresent()) {
-                                var target = firstTarget.get();
-                                var targetSpecificContext = context.position(target.getPos());
-                                targetsWithContext = List.of(new TargetedEntity(target, targetSpecificContext));
-                            }
-                            if (!cursor.required || firstTarget.isPresent()) {
-                                success = deliver(world, spellEntry, player, targetsWithContext, context, targetResult.location());
-                            }
-                        }
-                        case AREA -> {
-                            var center = player.getPos().add(0, player.getHeight() / 2F, 0);
-                            var area = spell.target.area;
-                            var range = getRange(player, spell) * player.getScale();
-                            final var centeredContext = context.position(center);
-                            double squaredRange = range * range;
-                            var targetsWithContext = targets.stream().map(target -> {
-                                float distanceBasedMultiplier = 1F;
-                                switch (area.distance_dropoff) {
-                                    case NONE -> { }
-                                    case SQUARED -> {
-                                        distanceBasedMultiplier = (float) ((squaredRange - target.squaredDistanceTo(center)) / squaredRange);
-                                        distanceBasedMultiplier = Math.max(distanceBasedMultiplier, 0F);
-                                    }
-                                }
-                                return new TargetedEntity(target, centeredContext.distance(distanceBasedMultiplier));
-                            }).toList();
-                            deliver(world, spellEntry, player, targetsWithContext, context, null);
-                            success = true; // Always true, otherwise area spells don't go to CD without targets
-                        }
-                        case BEAM -> {
-                            var targetsWithContext = targets.stream().map(target -> new TargetedEntity(target, context.position(target.getPos()))).toList();
-                            success = deliver(world, spellEntry, player, targetsWithContext, context, null);
+                        if (!cursor.required || firstTarget.isPresent()) {
+                            success = deliver(world, spellEntry, player, targetsWithContext, context, targetResult.location());
                         }
                     }
+                    case AREA -> {
+                        var center = player.getPos().add(0, player.getHeight() / 2F, 0);
+                        var area = spell.target.area;
+                        var range = getRange(player, spell) * player.getScale();
+                        final var centeredContext = context.position(center);
+                        double squaredRange = range * range;
+                        var targetsWithContext = targets.stream().map(target -> {
+                            float distanceBasedMultiplier = 1F;
+                            switch (area.distance_dropoff) {
+                                case NONE -> { }
+                                case SQUARED -> {
+                                    distanceBasedMultiplier = (float) ((squaredRange - target.squaredDistanceTo(center)) / squaredRange);
+                                    distanceBasedMultiplier = Math.max(distanceBasedMultiplier, 0F);
+                                }
+                            }
+                            return new TargetedEntity(target, centeredContext.distance(distanceBasedMultiplier));
+                        }).toList();
+                        deliver(world, spellEntry, player, targetsWithContext, context, null);
+                        success = true; // Always true, otherwise area spells don't go to CD without targets
+                    }
+                    case BEAM -> {
+                        var targetsWithContext = targets.stream().map(target -> new TargetedEntity(target, context.position(target.getPos()))).toList();
+                        success = deliver(world, spellEntry, player, targetsWithContext, context, null);
+                    }
+                }
                 caster.setChannelTickIndex(channelTickIndex + incrementChannelTicks);
             }
             if (released && success) {
