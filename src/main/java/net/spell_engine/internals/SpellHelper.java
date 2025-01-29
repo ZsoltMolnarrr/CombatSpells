@@ -161,14 +161,10 @@ public class SpellHelper {
         SoundHelper.playSound(player.getWorld(), player, spell.active.cast.start_sound);
     }
 
-    public static void performSpell(World world, PlayerEntity player, Identifier spellId, TargetHelper.SpellTargetResult targetResult, SpellCast.Action action, float progress) {
+    public static void performSpell(World world, PlayerEntity player, RegistryEntry<Spell> spellEntry, TargetHelper.SpellTargetResult targetResult, SpellCast.Action action, float progress) {
         if (player.isSpectator()) { return; }
-        var optionalSpellEntry = SpellRegistry.from(world).getEntry(spellId);
-        if (optionalSpellEntry.isEmpty()) {
-            return;
-        }
-        var spellEntry = optionalSpellEntry.get();
         var spell = spellEntry.value();
+        var spellId = spellEntry.getKey().get().getValue();
 
         var heldItemStack = player.getMainHandStack();
         var spellSource = SpellContainerSource.getFirstSourceOfSpell(spellId, player);
@@ -205,6 +201,9 @@ public class SpellHelper {
                     channelMultiplier = (progress >= 1) ? 1 : 0;
                 }
                 SpellCastSyncHelper.clearCasting(player);
+            }
+            case TRIGGER -> {
+                // Nothing to do, defaults are okay
             }
         }
         var ammoResult = Ammo.ammoForSpell(player, spell, heldItemStack);

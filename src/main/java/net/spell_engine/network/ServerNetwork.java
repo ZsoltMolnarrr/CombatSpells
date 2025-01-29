@@ -8,6 +8,7 @@ import net.minecraft.server.network.ServerPlayerConfigurationTask;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.spell_engine.SpellEngineMod;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.config.ServerConfig;
 import net.spell_engine.internals.casting.SpellCastSyncHelper;
 import net.spell_engine.internals.SpellHelper;
@@ -107,7 +108,11 @@ public class ServerNetwork {
                     }
                 }
                 var target = new TargetHelper.SpellTargetResult(targets, packet.location());
-                SpellHelper.performSpell(world, player, packet.spellId(), target, packet.action(), packet.progress());
+                var spellEntry = SpellRegistry.from(world).getEntry(packet.spellId());
+                if (spellEntry.isEmpty()) {
+                    return;
+                }
+                SpellHelper.performSpell(world, player, spellEntry.get(), target, packet.action(), packet.progress());
             });
         });
     }

@@ -16,6 +16,7 @@ import net.spell_engine.api.spell.ExternalSpellSchools;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.config.ServerConfig;
 import net.spell_engine.config.ServerConfigWrapper;
+import net.spell_engine.internals.SpellTriggers;
 import net.spell_engine.internals.container.SpellAssignments;
 import net.spell_engine.internals.criteria.EnchantmentSpecificCriteria;
 import net.spell_engine.internals.delivery.SpellStashHelper;
@@ -57,6 +58,7 @@ public class SpellEngineMod {
         ExternalSpellSchools.initialize();
         RPGSeriesCore.initialize();
         SpellStashHelper.initialize();
+        SpellTriggers.initialize();
     }
 
     public static void registerSpellBinding() {

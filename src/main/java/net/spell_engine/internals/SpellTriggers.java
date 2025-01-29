@@ -9,16 +9,19 @@ import net.spell_engine.api.event.CombatEvents;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
+import net.spell_engine.internals.casting.SpellCast;
+import net.spell_engine.internals.container.SpellContainerSource;
 import net.spell_engine.internals.delivery.SpellStashHelper;
 import net.spell_engine.mixin.entity.LivingEntityAccessor;
 import net.spell_engine.utils.ObjectHelper;
 import net.spell_engine.utils.PatternMatching;
+import net.spell_engine.utils.TargetHelper;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Random;
 
 public class SpellTriggers {
-
     public static class Event {
         /// Type of the trigger
         public final Spell.Trigger.Type type;
@@ -106,11 +109,21 @@ public class SpellTriggers {
         // Iterate stash effects
         SpellStashHelper.useStashes(event);
         // Iterate passive spells
-        // TODO ...
+        var player = event.player;
+        for(var spellEntry: SpellContainerSource.passiveSpellsOf(event.player)) {
+            var spell = spellEntry.value();
+            if (spell.passive != null && execute(spell.passive.trigger, event)) {
+                // TODO: Perform actual target lookup, similar to ClientSpellCasterEntity
+                var target = ObjectHelper.coalesce(event.target, event.aoeSource, event.player);
+                SpellHelper.performSpell(player.getWorld(), player, spellEntry,
+                        new TargetHelper.SpellTargetResult(List.of(target), null),
+                        SpellCast.Action.TRIGGER, 1);
+            }
+        }
     }
 
     private static final Random random = new Random();
-    public static boolean matches(Spell.Trigger trigger, Event event) {
+    public static boolean execute(Spell.Trigger trigger, Event event) {
         if (trigger.type != event.type) {
             return false;
         }

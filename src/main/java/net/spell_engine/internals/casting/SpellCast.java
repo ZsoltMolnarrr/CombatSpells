@@ -116,7 +116,8 @@ public class SpellCast {
 
     public enum Action {
         CHANNEL,
-        RELEASE
+        RELEASE,
+        TRIGGER
     }
 
     public enum Animation {
