@@ -18,6 +18,7 @@ import net.spell_engine.internals.container.SpellContainerHelper;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.casting.SpellCasterClient;
+import net.spell_engine.internals.container.SpellContainerSource;
 import net.spell_engine.mixin.client.control.KeybindingAccessor;
 import net.spell_engine.network.Packets;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +49,8 @@ public class SpellHotbar {
     public boolean update(ClientPlayerEntity player, GameOptions options) {
         var changed = false;
         var initialSlotCount = slots.size();
-        var mergedContainer = SpellContainerHelper.getAvailable(player);
+        var mergedContainer = SpellContainerSource.activeSpellsOf(player);
+                //SpellContainerHelper.getAvailable(player);
 
         var slots = new ArrayList<Slot>();
         var otherSlots = new ArrayList<Slot>();

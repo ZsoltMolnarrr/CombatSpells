@@ -11,6 +11,7 @@ import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.compat.ContainerCompat;
 import net.spell_engine.internals.container.SpellContainerHelper;
+import net.spell_engine.internals.container.SpellContainerSource;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +36,9 @@ public class TrinketsCompat {
                 return TriState.DEFAULT;
             });
             ContainerCompat.addProvider(TrinketsCompat::getAll);
+            SpellContainerSource.addSource(
+                    new SpellContainerSource.Entry("trinkets", TrinketsCompat::getSpellContainers),
+                    SpellContainerSource.MAIN_HAND.name());
         }
         intialized = true;
     }
@@ -52,54 +56,13 @@ public class TrinketsCompat {
         return enabled;
     }
 
-    public static List<SpellContainer> getEquippedSpells(PlayerEntity player) {
-        if (!enabled) {
-            return Collections.emptyList();
-        }
-
-        var component = TrinketsApi.getTrinketComponent(player);
-
-        if (component.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        var trinketComponent = component.get();
-        var items = new LinkedHashSet<ItemStack>();
-        var spellBookSlot = trinketComponent.getInventory().get("spell").get("book");
-
-        // Add the spell book slot first
-        items.add(spellBookSlot.getStack(0));
-
-        // Add all other equipped items
-        trinketComponent.getAllEquipped().forEach(pair -> {
-            if (pair.getLeft().getId().contains("spell/book")) { return; } // Spell book slot is already added
-            items.add(pair.getRight());
-        });
-
-        // Extract spell IDs from the containers
-        // Using LinkedHashSet to preserve order and remove duplicates
-        var containers = new ArrayList<SpellContainer>();
-        for (ItemStack stack : items) {
-            if (stack.isEmpty()) continue;
-            var container = SpellContainerHelper.containerFromItemStack(stack);
-            if (container != null && container.isValid()) {
-                containers.add(container);
-            }
-        }
-
-        return containers;
-    }
-
-    public static SpellContainerHelper.Query getSpellContainers(PlayerEntity player) {
-        if (!enabled) {
-            return SpellContainerHelper.Query.EMPTY;
-        }
+    public static List<SpellContainerSource.SourcedContainer> getSpellContainers(PlayerEntity player) {
         var component = TrinketsApi.getTrinketComponent(player);
         if (component.isEmpty()) {
-            return SpellContainerHelper.Query.EMPTY;
+            return List.of();
         }
-        var spellBooks = new ArrayList<SpellContainerHelper.Source>();
-        var others = new ArrayList<SpellContainerHelper.Source>();
+        var spellBooks = new ArrayList<SpellContainerSource.SourcedContainer>();
+        var others = new ArrayList<SpellContainerSource.SourcedContainer>();
         var trinketComponent = component.get();
         trinketComponent.getAllEquipped().forEach(pair -> {
             var stack = pair.getRight();
@@ -109,13 +72,15 @@ public class TrinketsCompat {
             var container = SpellContainerHelper.containerFromItemStack(stack);
             if (container != null && container.isValid()) {
                 if (pair.getLeft().getId().contains("spell/book")) {
-                    spellBooks.add(new SpellContainerHelper.Source(stack, container));
+                    spellBooks.add(new SpellContainerSource.SourcedContainer(stack, container));
                 } else {
-                    others.add(new SpellContainerHelper.Source(stack, container));
+                    others.add(new SpellContainerSource.SourcedContainer(stack, container));
                 }
             }
         });
-        return new SpellContainerHelper.Query(spellBooks, others);
+
+        spellBooks.addAll(others);
+        return spellBooks;
     }
 
     public static ItemStack getSpellBookStack(PlayerEntity player) {

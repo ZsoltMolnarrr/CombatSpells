@@ -34,6 +34,7 @@ import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.casting.SpellCastSyncHelper;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.internals.container.SpellContainerHelper;
+import net.spell_engine.internals.container.SpellContainerSource;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.*;
 import net.spell_power.api.SpellSchool;
@@ -170,7 +171,7 @@ public class SpellHelper {
         var spell = spellEntry.value();
 
         var heldItemStack = player.getMainHandStack();
-        var spellSource = SpellContainerHelper.getFirstSourceOfSpell(spellId, player);
+        var spellSource = SpellContainerSource.getFirstSourceOfSpell(spellId, player);
         if (spellSource == null) {
             return;
         }
@@ -379,7 +380,7 @@ public class SpellHelper {
         return delivered;
     }
 
-    public static void imposeCooldown(PlayerEntity player, SpellContainerHelper.Source source, Identifier spellId, Spell spell, float progress) {
+    public static void imposeCooldown(PlayerEntity player, SpellContainerSource.SourcedContainer source, Identifier spellId, Spell spell, float progress) {
         var duration = cooldownToSet(player, spell, progress);
         var durationTicks = Math.round(duration * 20F);
         if (duration > 0) {

@@ -33,6 +33,7 @@
     "entity.LivingEntityKnockback",
     "entity.PlayerEntityEvents",
     "entity.PlayerEntityMixin",
+    "entity.PlayerSpellContainerMixin",
     "item.ArmorMaterialLayerAccessor",
     "item.RangedWeaponAccessor",
     "registry.DataComponentTypesMixin"

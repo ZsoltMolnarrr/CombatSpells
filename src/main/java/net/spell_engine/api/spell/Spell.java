@@ -63,7 +63,7 @@ public class Spell {
 
     public Passive passive;
     public static class Passive {
-
+        public Trigger trigger = new Trigger();
     }
 
     public Release release;
