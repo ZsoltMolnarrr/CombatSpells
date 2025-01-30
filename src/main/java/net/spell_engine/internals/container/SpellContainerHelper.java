@@ -165,14 +165,12 @@ public class SpellContainerHelper {
         if (itemStack.isEmpty()) {
             return null;
         }
-        var object = (Object) itemStack;
-        if (object instanceof SpellCasterItemStack stack) {
-            var container = stack.getSpellContainer();
-            if (container != null && container.isValid()) {
-                return container;
-            }
+        var component = itemStack.get(SpellDataComponents.SPELL_CONTAINER);
+        if (component != null) {
+            return component;
         }
-        return null;
+        var id = itemStack.getItem().getRegistryEntry().getKey().get().getValue();
+        return SpellAssignments.containerForItem(id);
     }
 
     public static boolean contains(SpellContainer container, Identifier spellId) {

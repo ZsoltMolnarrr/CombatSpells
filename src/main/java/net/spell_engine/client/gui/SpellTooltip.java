@@ -18,8 +18,8 @@ import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.Keybindings;
 import net.spell_engine.internals.Ammo;
-import net.spell_engine.internals.container.SpellCasterItemStack;
 import net.spell_engine.internals.SpellHelper;
+import net.spell_engine.internals.container.SpellContainerHelper;
 import net.spell_power.api.SpellPower;
 
 import java.util.ArrayList;
@@ -47,78 +47,76 @@ public class SpellTooltip {
         }
         var config = SpellEngineClient.config;
         var spellEntry = new ArrayList<Text>();
-        if ((Object)itemStack instanceof SpellCasterItemStack stack) {
-            var container = stack.getSpellContainer();
-            if(container != null && container.isValid()) {
-                if (container.is_proxy() && config.showSpellBookSuppportTooltip) {
+        var container = SpellContainerHelper.containerFromItemStack(itemStack);
+        if (container != null && container.isValid()) {
+            if (container.is_proxy() && config.showSpellBookSuppportTooltip) {
+                switch (container.content()) {
+                    case MAGIC -> {
+                        spellEntry.add(Text.translatable("spell.tooltip.host.proxy.spell")
+                                .formatted(Formatting.GRAY));
+                    }
+                    case ARCHERY -> {
+                        spellEntry.add(Text.translatable("spell.tooltip.host.proxy.arrow")
+                                .formatted(Formatting.GRAY));
+                    }
+                }
+            }
+
+            boolean showListHeader = !itemStack.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE);
+
+            if (!container.spell_ids().isEmpty() && showListHeader) {
+                if (container.pool() == null) {
+                    spellEntry.add(Text.translatable(container.is_proxy() ? "spell.tooltip.host.additional" : "spell.tooltip.host.pre_loaded")
+                            .formatted(Formatting.GRAY));
+                } else {
+                    String limit = "";
+                    if (container.max_spell_count() > 0) {
+                        limit = I18n.translate("spell.tooltip.host.limit")
+                                .replace(placeholder("current"), "" + container.spell_ids().size())
+                                .replace(placeholder("max"), "" + container.max_spell_count());
+                    }
+
+                    var key = "spell.tooltip.host.list.spell";
                     switch (container.content()) {
                         case MAGIC -> {
-                            spellEntry.add(Text.translatable("spell.tooltip.host.proxy.spell")
-                                    .formatted(Formatting.GRAY));
+                            key = "spell.tooltip.host.list.spell";
                         }
                         case ARCHERY -> {
-                            spellEntry.add(Text.translatable("spell.tooltip.host.proxy.arrow")
-                                    .formatted(Formatting.GRAY));
+                            key = "spell.tooltip.host.list.arrow";
                         }
                     }
+                    spellEntry.add(Text.translatable(key)
+                            .append(Text.literal(" " + limit))
+                            .formatted(Formatting.GRAY));
                 }
-
-                boolean showListHeader = !itemStack.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE);
-
-                if (!container.spell_ids().isEmpty() && showListHeader) {
-                    if (container.pool() == null) {
-                        spellEntry.add(Text.translatable(container.is_proxy() ? "spell.tooltip.host.additional" : "spell.tooltip.host.pre_loaded")
-                                .formatted(Formatting.GRAY));
-                    } else {
-                        String limit = "";
-                        if (container.max_spell_count() > 0) {
-                            limit = I18n.translate("spell.tooltip.host.limit")
-                                    .replace(placeholder("current"), "" + container.spell_ids().size())
-                                    .replace(placeholder("max"), "" + container.max_spell_count());
-                        }
-
-                        var key = "spell.tooltip.host.list.spell";
-                        switch (container.content()) {
-                            case MAGIC -> {
-                                key = "spell.tooltip.host.list.spell";
-                            }
-                            case ARCHERY -> {
-                                key = "spell.tooltip.host.list.arrow";
-                            }
-                        }
-                        spellEntry.add(Text.translatable(key)
-                                .append(Text.literal(" " + limit))
-                                .formatted(Formatting.GRAY));
+            }
+            var keybinding = Keybindings.bypass_spell_hotbar;
+            var showDetails = config.alwaysShowFullTooltip
+                    || (!keybinding.isUnbound() && InputUtil.isKeyPressed(
+                    MinecraftClient.getInstance().getWindow().getHandle(),
+                    ((KeyBindingAccessor) keybinding).fabric_getBoundKey().getCode())
+            );
+            for (int i = 0; i < container.spell_ids().size(); i++) {
+                var spellId = Identifier.of(container.spell_ids().get(i));
+                var info = spellEntry(spellId, player, itemStack, showDetails, showListHeader);
+                if (!info.isEmpty()) {
+                    if (i > 0 && showDetails) {
+                        spellEntry.add(Text.literal(" ")); // Separator: empty line
                     }
+                    spellEntry.addAll(info);
                 }
-                var keybinding = Keybindings.bypass_spell_hotbar;
-                var showDetails = config.alwaysShowFullTooltip
-                        || (!keybinding.isUnbound() && InputUtil.isKeyPressed(
-                                MinecraftClient.getInstance().getWindow().getHandle(),
-                                ((KeyBindingAccessor) keybinding).fabric_getBoundKey().getCode())
-                        );
-                for (int i = 0; i < container.spell_ids().size(); i++) {
-                    var spellId = Identifier.of(container.spell_ids().get(i));
-                    var info = spellEntry(spellId, player, itemStack, showDetails, showListHeader);
-                    if (!info.isEmpty()) {
-                        if (i > 0 && showDetails) {
-                            spellEntry.add(Text.literal(" ")); // Separator: empty line
-                        }
-                        spellEntry.addAll(info);
-                    }
+            }
+            if (!showDetails) {
+                if (!keybinding.isUnbound() && container.spell_ids().size() > 0) {
+                    spellEntry.add(Text.translatable("spell.tooltip.hold_for_details",
+                                    keybinding.getBoundKeyLocalizedText())
+                            .formatted(Formatting.GRAY));
                 }
-                if (!showDetails) {
-                    if (!keybinding.isUnbound() && container.spell_ids().size() > 0) {
-                        spellEntry.add(Text.translatable("spell.tooltip.hold_for_details",
-                                        keybinding.getBoundKeyLocalizedText())
-                                .formatted(Formatting.GRAY));
-                    }
-                    if (config.showSpellBindingTooltip
-                            && container.pool() != null && !container.pool().isEmpty()
-                            && container.spell_ids().isEmpty()) {
-                        spellEntry.add(Text.translatable("spell.tooltip.spell_binding_tip")
-                                .formatted(Formatting.GRAY));
-                    }
+                if (config.showSpellBindingTooltip
+                        && container.pool() != null && !container.pool().isEmpty()
+                        && container.spell_ids().isEmpty()) {
+                    spellEntry.add(Text.translatable("spell.tooltip.spell_binding_tip")
+                            .formatted(Formatting.GRAY));
                 }
             }
         }
