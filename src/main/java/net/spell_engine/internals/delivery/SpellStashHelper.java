@@ -9,7 +9,7 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.SpellTriggers;
-import net.spell_engine.utils.TargetHelper;
+import net.spell_engine.internals.target.SpellTarget;
 import net.spell_power.api.SpellPower;
 
 import java.util.HashMap;
@@ -78,7 +78,7 @@ public class SpellStashHelper {
                         var target = event.target;
                         var spell = stash.spell().value();
                         var power = SpellPower.getSpellPower(spell.school, event.player);
-                        var impactContext = new SpellHelper.ImpactContext(1F, 1F, null, power, TargetHelper.FocusMode.DIRECT, 0);
+                        var impactContext = new SpellHelper.ImpactContext(1F, 1F, null, power, SpellTarget.FocusMode.DIRECT, 0);
                         if (target != null) {
                             impactContext = impactContext.position(target.getPos());
                         } else if (event.aoeSource != null) {

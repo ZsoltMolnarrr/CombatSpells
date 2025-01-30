@@ -4,7 +4,7 @@ import net.minecraft.util.Rarity;
 import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.api.spell.fx.ParticleBatch;
 import net.spell_engine.api.spell.fx.Sound;
-import net.spell_engine.utils.TargetHelper;
+import net.spell_engine.internals.target.SpellTarget;
 import net.spell_power.api.SpellPower;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
@@ -294,7 +294,7 @@ public class Spell {
                 public enum Mode { FORWARD, BEHIND_TARGET }
                 public Mode mode;
                 public int required_clearance_block_y = 1;
-                public TargetHelper.Intent intent = TargetHelper.Intent.HELPFUL;
+                public SpellTarget.Intent intent = SpellTarget.Intent.HELPFUL;
                 public Forward forward;
                 public static class Forward { public Forward() { }
                     public float distance = 10;

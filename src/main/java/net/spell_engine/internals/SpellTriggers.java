@@ -12,10 +12,10 @@ import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.container.SpellContainerSource;
 import net.spell_engine.internals.delivery.SpellStashHelper;
+import net.spell_engine.internals.target.SpellTarget;
 import net.spell_engine.mixin.entity.LivingEntityAccessor;
 import net.spell_engine.utils.ObjectHelper;
 import net.spell_engine.utils.PatternMatching;
-import net.spell_engine.utils.TargetHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -116,7 +116,7 @@ public class SpellTriggers {
                 // TODO: Perform actual target lookup, similar to ClientSpellCasterEntity
                 var target = ObjectHelper.coalesce(event.target, event.aoeSource, event.player);
                 SpellHelper.performSpell(player.getWorld(), player, spellEntry,
-                        new TargetHelper.SpellTargetResult(List.of(target), null),
+                        new SpellTarget.SearchResult(List.of(target), null),
                         SpellCast.Action.TRIGGER, 1);
             }
         }

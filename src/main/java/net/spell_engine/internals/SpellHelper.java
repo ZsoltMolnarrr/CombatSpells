@@ -33,8 +33,9 @@ import net.spell_engine.internals.arrow.ArrowHelper;
 import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.casting.SpellCastSyncHelper;
 import net.spell_engine.internals.casting.SpellCasterEntity;
-import net.spell_engine.internals.container.SpellContainerHelper;
 import net.spell_engine.internals.container.SpellContainerSource;
+import net.spell_engine.internals.target.EntityRelations;
+import net.spell_engine.internals.target.SpellTarget;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.*;
 import net.spell_power.api.SpellSchool;
@@ -161,7 +162,7 @@ public class SpellHelper {
         SoundHelper.playSound(player.getWorld(), player, spell.active.cast.start_sound);
     }
 
-    public static void performSpell(World world, PlayerEntity player, RegistryEntry<Spell> spellEntry, TargetHelper.SpellTargetResult targetResult, SpellCast.Action action, float progress) {
+    public static void performSpell(World world, PlayerEntity player, RegistryEntry<Spell> spellEntry, SpellTarget.SearchResult targetResult, SpellCast.Action action, float progress) {
         if (player.isSpectator()) { return; }
         var spell = spellEntry.value();
         var spellId = spellEntry.getKey().get().getValue();
@@ -604,7 +605,7 @@ public class SpellHelper {
             targets.remove(exclude);
         }
         applyAreaImpact(aoeSource.getWorld(), caster, targets, radius, area_impact.area, spellEntry, impacts,
-                context.target(TargetHelper.FocusMode.AREA), additionalTargetLookup);
+                context.target(SpellTarget.FocusMode.AREA), additionalTargetLookup);
         ParticleHelper.sendBatches(aoeSource, area_impact.particles);
         SoundHelper.playSound(aoeSource.getWorld(), aoeSource, area_impact.sound);
     }
@@ -630,9 +631,9 @@ public class SpellHelper {
         }
     }
 
-    public record ImpactContext(float channel, float distance, @Nullable Vec3d position, SpellPower.Result power, TargetHelper.FocusMode focusMode, int channelTickIndex) {
+    public record ImpactContext(float channel, float distance, @Nullable Vec3d position, SpellPower.Result power, SpellTarget.FocusMode focusMode, int channelTickIndex) {
         public ImpactContext() {
-            this(1, 1, null, null, TargetHelper.FocusMode.DIRECT, 0);
+            this(1, 1, null, null, SpellTarget.FocusMode.DIRECT, 0);
         }
 
         public ImpactContext channeled(float multiplier) {
@@ -651,7 +652,7 @@ public class SpellHelper {
             return new ImpactContext(channel, distance, position, spellPower, focusMode, channelTickIndex);
         }
 
-        public ImpactContext target(TargetHelper.FocusMode focusMode) {
+        public ImpactContext target(SpellTarget.FocusMode focusMode) {
             return new ImpactContext(channel, distance, position, power, focusMode, channelTickIndex);
         }
 
@@ -681,7 +682,7 @@ public class SpellHelper {
         var trackers = target != null ? PlayerLookup.tracking(target) : null;
         var spell = spellEntry.value();
         var anyPerformed = false;
-        TargetHelper.Intent selectedIntent = null;
+        SpellTarget.Intent selectedIntent = null;
         for (var impact: impacts) {
             var intent = impactIntent(impact.action);
             if (!impact.action.apply_to_caster // Only filtering for cases when another entity is actually targeted
@@ -729,11 +730,11 @@ public class SpellHelper {
                 target = caster;
             } else {
                 var intent = impactIntent(impact.action);
-                if (!TargetHelper.actionAllowed(context.focusMode(), intent, caster, target)) {
+                if (!EntityRelations.actionAllowed(context.focusMode(), intent, caster, target)) {
                     return false;
                 }
-                if (intent == TargetHelper.Intent.HARMFUL
-                        && context.focusMode() == TargetHelper.FocusMode.AREA
+                if (intent == SpellTarget.Intent.HARMFUL
+                        && context.focusMode() == SpellTarget.FocusMode.AREA
                         && ((EntityImmunity)target).isImmuneTo(EntityImmunity.Type.AREA_EFFECT)) {
                     return false;
                 }
@@ -1108,20 +1109,20 @@ public class SpellHelper {
         entity.setPosition(position.getX(), position.getY(), position.getZ());
     }
 
-    public static TargetHelper.FocusMode focusMode(Spell spell) {
+    public static SpellTarget.FocusMode focusMode(Spell spell) {
         switch (spell.target.type) {
             case AREA, BEAM -> {
-                return TargetHelper.FocusMode.AREA;
+                return SpellTarget.FocusMode.AREA;
             }
             case NONE, CASTER, CURSOR -> {
-                return TargetHelper.FocusMode.DIRECT;
+                return SpellTarget.FocusMode.DIRECT;
             }
         }
         assert true;
         return null;
     }
 
-    public static Optional<TargetHelper.Intent> deliveryIntent(Spell spell) {
+    public static Optional<SpellTarget.Intent> deliveryIntent(Spell spell) {
         switch (spell.deliver.type) {
             case STASH_EFFECT -> {
                 var intent = intentForStatusEffect(spell.deliver.stash_effect.id);
@@ -1133,8 +1134,8 @@ public class SpellHelper {
         }
     }
 
-    public static EnumSet<TargetHelper.Intent> impactIntents(Spell spell) {
-        var intents = new HashSet<TargetHelper.Intent>();
+    public static EnumSet<SpellTarget.Intent> impactIntents(Spell spell) {
+        var intents = new HashSet<SpellTarget.Intent>();
         for (var impact: spell.impact) {
             intents.add(impactIntent(impact.action));
             //return intent(impact.action);
@@ -1142,13 +1143,13 @@ public class SpellHelper {
         return EnumSet.copyOf(intents);
     }
 
-    public static TargetHelper.Intent impactIntent(Spell.Impact.Action action) {
+    public static SpellTarget.Intent impactIntent(Spell.Impact.Action action) {
         switch (action.type) {
             case DAMAGE, FIRE -> {
-                return TargetHelper.Intent.HARMFUL;
+                return SpellTarget.Intent.HARMFUL;
             }
             case HEAL, SPAWN -> {
-                return TargetHelper.Intent.HELPFUL;
+                return SpellTarget.Intent.HELPFUL;
             }
             case STATUS_EFFECT -> {
                 return intentForStatusEffect(action.status_effect.effect_id);
@@ -1161,10 +1162,10 @@ public class SpellHelper {
         return null;
     }
 
-    private static TargetHelper.Intent intentForStatusEffect(String idString) {
+    private static SpellTarget.Intent intentForStatusEffect(String idString) {
         var id = Identifier.of(idString);
         var effect = Registries.STATUS_EFFECT.get(id);
-        return effect.isBeneficial() ? TargetHelper.Intent.HELPFUL : TargetHelper.Intent.HARMFUL;
+        return effect.isBeneficial() ? SpellTarget.Intent.HELPFUL : SpellTarget.Intent.HARMFUL;
     }
 
     public static boolean underApplyLimit(SpellPower.Result spellPower, LivingEntity target, SpellSchool school, Spell.Impact.Action.StatusEffect.ApplyLimit limit) {

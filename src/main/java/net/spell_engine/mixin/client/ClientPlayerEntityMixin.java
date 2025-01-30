@@ -9,17 +9,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityActionsAllowed;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.SpellHotbar;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.casting.SpellCast;
 import net.spell_engine.internals.casting.SpellCasterClient;
+import net.spell_engine.internals.target.SpellTarget;
 import net.spell_engine.network.Packets;
-import net.spell_engine.utils.TargetHelper;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,12 +28,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 @Mixin(ClientPlayerEntity.class)
 public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
     @Shadow @Final public ClientPlayNetworkHandler networkHandler;
-    private TargetHelper.SpellTargetResult spellTarget = TargetHelper.SpellTargetResult.empty();
+    private SpellTarget.SearchResult spellTarget = SpellTarget.SearchResult.empty();
 
     private ClientPlayerEntity player() {
         return (ClientPlayerEntity) ((Object) this);
@@ -163,7 +160,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         }
 
         setSpellCastProcess(null, syncProcess);
-        spellTarget = TargetHelper.SpellTargetResult.empty();
+        spellTarget = SpellTarget.SearchResult.empty();
     }
 
     private void updateSpellCast() {
@@ -180,7 +177,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             }
             var spell = process.spell().value();
             var cast = spell.active.cast;
-            spellTarget = findTargets(spell);
+            spellTarget = SpellTarget.findTargets(player, spell, spellTarget);
 
             var spellCastTicks = process.spellCastTicksSoFar(player.getWorld().getTime());
             if (SpellHelper.isChanneled(spell)) {
@@ -201,7 +198,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
                 }
             }
         } else {
-            spellTarget = TargetHelper.SpellTargetResult.empty();
+            spellTarget = SpellTarget.SearchResult.empty();
         }
     }
 
@@ -245,6 +242,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         return firstTarget();
     }
 
+    @Deprecated
     private int findSlot(PlayerEntity player, ItemStack stack) {
         for(int i = 0; i < player.getInventory().size(); ++i) {
             ItemStack itemStack = player.getInventory().getStack(i);
@@ -253,83 +251,6 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             }
         }
         return -1;
-    }
-
-    private TargetHelper.SpellTargetResult findTargets(Spell currentSpell) {
-        var caster = player();
-        var previousTargets = spellTarget.entities();
-        List<Entity> targets = List.of();
-        Vec3d location = null;
-        if (currentSpell == null || currentSpell.impact == null) {
-            return new TargetHelper.SpellTargetResult(targets, location);
-        }
-        boolean fallbackToPreviousTargets = false;
-        var focusMode = SpellHelper.focusMode(currentSpell);
-        var targetType = currentSpell.target.type;
-        var range = SpellHelper.getRange(caster, currentSpell) * player().getScale();
-
-        Predicate<Entity> selectionPredicate = (target) -> {
-            var deliveryIntent = SpellHelper.deliveryIntent(currentSpell);
-            boolean intentAllows = deliveryIntent.isPresent()
-                    ? TargetHelper.actionAllowed(focusMode, deliveryIntent.get(), caster, target)
-                    : false;
-            for (var impact: currentSpell.impact) {
-                var intent = SpellHelper.impactIntent(impact.action);
-                var newValue = impact.action.apply_to_caster
-                        ? target == caster
-                        : TargetHelper.actionAllowed(focusMode, intent, caster, target);
-                intentAllows = intentAllows || newValue;
-            }
-            return !SpellEngineClient.config.filterInvalidTargets || intentAllows;
-        };
-
-        switch (targetType) {
-            case NONE -> {
-            }
-            case CASTER -> {
-                targets = List.of(caster);
-            }
-            case CURSOR -> {
-                fallbackToPreviousTargets = currentSpell.target.cursor.sticky;
-                var target = TargetHelper.targetFromRaycast(caster, range, selectionPredicate);
-                if (target != null) {
-                    targets = List.of(target);
-                } else {
-                    targets = List.of();
-                }
-            }
-            case BEAM -> {
-                targets = TargetHelper.targetsFromRaycast(caster, range, selectionPredicate);
-            }
-            case AREA -> {
-                targets = TargetHelper.targetsFromArea(caster, range, currentSpell.target.area, selectionPredicate);
-                var area = currentSpell.target.area;
-                if (area != null && area.include_caster) {
-                    targets.add(caster);
-                }
-            }
-        }
-
-        if (fallbackToPreviousTargets && targets.isEmpty()) {
-            targets = previousTargets.stream()
-                    .filter(entity -> {
-                        return TargetHelper.isInLineOfSight(caster, entity) && !entity.isRemoved();
-                    })
-                    .toList();
-        }
-
-        var cursor = currentSpell.target.cursor;
-        if (cursor != null) {
-            if (cursor.use_caster_as_fallback && targets.isEmpty()) {
-                targets = List.of(caster);
-            }
-            /// If no targets are found, use cursor location for meteor style spells
-            if (cursor.required && targets.isEmpty()) {
-                location = TargetHelper.locationFromRayCast(caster, range);
-            }
-        }
-
-        return new TargetHelper.SpellTargetResult(targets, location);
     }
 
     @Inject(method = "tick", at = @At("TAIL"))

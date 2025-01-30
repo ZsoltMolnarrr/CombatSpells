@@ -30,6 +30,8 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.render.FlyingSpellEntity;
 import net.spell_engine.internals.SpellHelper;
+import net.spell_engine.internals.target.EntityRelations;
+import net.spell_engine.internals.target.SpellTarget;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.SoundHelper;
 import net.spell_engine.utils.TargetHelper;
@@ -280,7 +282,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
 
                                     boolean intentAllows = false;
                                     for (var intent: intents) {
-                                        intentAllows = intentAllows || TargetHelper.actionAllowed(TargetHelper.FocusMode.DIRECT, intent, owner, target);
+                                        intentAllows = intentAllows || EntityRelations.actionAllowed(SpellTarget.FocusMode.DIRECT, intent, owner, target);
                                     }
                                     shouldCollideWithEntity = intentAllows;
                                 }
@@ -460,7 +462,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         Predicate<Entity> intentMatches = (entity) -> {
             boolean intentAllows = false;
             for (var intent: intents) {
-                intentAllows = intentAllows || TargetHelper.actionAllowed(TargetHelper.FocusMode.AREA, intent, caster, entity);
+                intentAllows = intentAllows || EntityRelations.actionAllowed(SpellTarget.FocusMode.AREA, intent, caster, entity);
             }
             return intentAllows;
         };

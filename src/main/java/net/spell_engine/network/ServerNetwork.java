@@ -13,7 +13,7 @@ import net.spell_engine.config.ServerConfig;
 import net.spell_engine.internals.casting.SpellCastSyncHelper;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.container.SpellAssignments;
-import net.spell_engine.utils.TargetHelper;
+import net.spell_engine.internals.target.SpellTarget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,7 +107,7 @@ public class ServerNetwork {
                         System.err.println("Spell Engine: Trying to perform spell " + packet.spellId().toString() + " Entity not found: " + targetId);
                     }
                 }
-                var target = new TargetHelper.SpellTargetResult(targets, packet.location());
+                var target = new SpellTarget.SearchResult(targets, packet.location());
                 var spellEntry = SpellRegistry.from(world).getEntry(packet.spellId());
                 if (spellEntry.isEmpty()) {
                     return;

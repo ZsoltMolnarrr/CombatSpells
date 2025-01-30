@@ -3,7 +3,7 @@ package net.spell_engine.config;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
-import net.spell_engine.utils.TargetHelper;
+import net.spell_engine.internals.target.EntityRelation;
 
 import java.util.LinkedHashMap;
 
@@ -72,19 +72,19 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
             - `player_relation_to_other`
             (The first relation to be found for the target will be applied.)
             """)
-    public LinkedHashMap<String, TargetHelper.Relation> player_relations = new LinkedHashMap<>() {{
-        put("minecraft:player", TargetHelper.Relation.FRIENDLY);
-        put("minecraft:villager", TargetHelper.Relation.FRIENDLY);
-        put("minecraft:allay", TargetHelper.Relation.FRIENDLY);
-        put("minecraft:iron_golem", TargetHelper.Relation.FRIENDLY);
-        put("guardvillagers:guard", TargetHelper.Relation.FRIENDLY);
-        put("minecraft:cat", TargetHelper.Relation.FRIENDLY);
+    public LinkedHashMap<String, EntityRelation> player_relations = new LinkedHashMap<>() {{
+        put("minecraft:player", EntityRelation.FRIENDLY);
+        put("minecraft:villager", EntityRelation.FRIENDLY);
+        put("minecraft:allay", EntityRelation.FRIENDLY);
+        put("minecraft:iron_golem", EntityRelation.FRIENDLY);
+        put("guardvillagers:guard", EntityRelation.FRIENDLY);
+        put("minecraft:cat", EntityRelation.FRIENDLY);
     }};
 
     @Comment("Relation to unspecified entities those are instance of PassiveEntity(Yarn)")
-    public TargetHelper.Relation player_relation_to_passives = TargetHelper.Relation.HOSTILE;
+    public EntityRelation player_relation_to_passives = EntityRelation.HOSTILE;
     @Comment("Relation to unspecified entities those are instance of HostileEntity(Yarn)")
-    public TargetHelper.Relation player_relation_to_hostiles = TargetHelper.Relation.HOSTILE;
+    public EntityRelation player_relation_to_hostiles = EntityRelation.HOSTILE;
     @Comment("Fallback relation")
-    public TargetHelper.Relation player_relation_to_other = TargetHelper.Relation.HOSTILE;
+    public EntityRelation player_relation_to_other = EntityRelation.HOSTILE;
 }
