@@ -16,7 +16,6 @@ import net.spell_engine.internals.target.SpellTarget;
 import net.spell_engine.mixin.entity.LivingEntityAccessor;
 import net.spell_engine.utils.ObjectHelper;
 import net.spell_engine.utils.PatternMatching;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -29,9 +28,9 @@ public class SpellTriggers {
         /// Player that triggers the event
         public final PlayerEntity player;
         /// Entity to be used as the source of the area of effect
-        public final Entity aoeSource;
+        @Nullable private final Entity aoeSource;
         /// Target of the player, or the entity that deals damage against the player
-        @Nullable public final Entity target;
+        @Nullable private final Entity target;
         /// Arrow that was fired
         public ArrowExtension arrow;
 
@@ -41,11 +40,41 @@ public class SpellTriggers {
         @Nullable public DamageSource damageSource;
         public float damageAmount = 0;
 
-        public Event(Spell.Trigger.Type type, PlayerEntity player, Entity aoeSource, @Nullable Entity target) {
+        public Event(Spell.Trigger.Type type, PlayerEntity player, @Nullable Entity aoeSource, @Nullable Entity target) {
             this.type = type;
             this.player = player;
             this.aoeSource = aoeSource;
             this.target = target;
+        }
+
+        private Entity entityFromSelector(Spell.Trigger.TargetSelector selector) {
+            switch (selector) {
+                case CASTER -> {
+                    return player;
+                }
+                case AOE_SOURCE -> {
+                    return aoeSource;
+                }
+                case TARGET -> {
+                    return target;
+                }
+            }
+            assert true;
+            return null;
+        }
+
+        public Entity target(Spell.Trigger trigger) {
+            if (trigger.target_override != null) {
+                return entityFromSelector(trigger.target_override);
+            }
+            return ObjectHelper.coalesce(target, aoeSource, player);
+        }
+
+        public Entity aoeSource(Spell.Trigger trigger) {
+            if (trigger.aoe_source_override != null) {
+                return entityFromSelector(trigger.aoe_source_override);
+            }
+            return ObjectHelper.coalesce(aoeSource, target, player);
         }
     }
 
@@ -116,7 +145,7 @@ public class SpellTriggers {
             if (spell.passive != null && execute(spell.passive.trigger, event)) {
                 SpellTarget.SearchResult targetResult;
                 if (spell.target.type == Spell.Target.Type.FROM_TRIGGER && spell.target.from_trigger != null) {
-                    List<Entity> targets = targetsFromTrigger(event, spell);
+                    List<Entity> targets = List.of(event.target(spell.passive.trigger));
                     targetResult = SpellTarget.SearchResult.of(targets);
                 } else {
                     targetResult = SpellTarget.findTargets(player, spell, SpellTarget.SearchResult.empty());
@@ -124,22 +153,6 @@ public class SpellTriggers {
                 SpellHelper.performSpell(player.getWorld(), player, spellEntry, targetResult, SpellCast.Action.TRIGGER, 1);
             }
         }
-    }
-
-    private static @NotNull List<Entity> targetsFromTrigger(Event event, Spell spell) {
-        List<Entity> targets = List.of();
-        switch (spell.target.from_trigger.source) {
-            case CASTER -> {
-                targets = List.of(ObjectHelper.coalesce(event.player, event.aoeSource, event.target));
-            }
-            case AOESOURCE -> {
-                targets = List.of(ObjectHelper.coalesce(event.aoeSource, event.target, event.player));
-            }
-            case TARGET -> {
-                targets = List.of(ObjectHelper.coalesce(event.target, event.aoeSource, event.player));
-            }
-        }
-        return targets;
     }
 
     private static final Random random = new Random();

@@ -116,8 +116,6 @@ public class Spell {
 
         public FromTrigger from_trigger;
         public static class FromTrigger { public FromTrigger() { }
-            public enum Source { CASTER, AOESOURCE, TARGET }
-            public Source source = Source.TARGET;
         }
     }
 
@@ -383,6 +381,10 @@ public class Spell {
         public Type type;
         /// Chance to trigger. 0 = 0%, 1 = 100%
         public float chance = 1;
+
+        public enum TargetSelector { CASTER, AOE_SOURCE, TARGET }
+        @Nullable public TargetSelector target_override;
+        @Nullable public TargetSelector aoe_source_override;
 
         public SpellImpact spell_impact;
         public static class SpellImpact { public SpellImpact() { }

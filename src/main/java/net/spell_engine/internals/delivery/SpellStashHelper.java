@@ -75,18 +75,19 @@ public class SpellStashHelper {
 
                 switch (stash.impactMode()) {
                     case PERFORM -> {
-                        var target = event.target;
+                        var target = event.target(trigger);
+                        var aoeSource = event.aoeSource(trigger);
                         var spell = stash.spell().value();
                         var power = SpellPower.getSpellPower(spell.school, event.player);
                         var impactContext = new SpellHelper.ImpactContext(1F, 1F, null, power, SpellTarget.FocusMode.DIRECT, 0);
                         if (target != null) {
                             impactContext = impactContext.position(target.getPos());
-                        } else if (event.aoeSource != null) {
-                            impactContext = impactContext.position(event.aoeSource.getPos());
+                        } else if (aoeSource != null) {
+                            impactContext = impactContext.position(aoeSource.getPos());
                         } else {
                             impactContext = impactContext.position(caster.getPos());
                         }
-                        SpellHelper.performImpacts(world, caster, target, event.aoeSource, spellEntry, spellEntry.value().impact, impactContext);
+                        SpellHelper.performImpacts(world, caster, target, aoeSource, spellEntry, spellEntry.value().impact, impactContext);
                     }
                     case TRANSFER -> {
                         var arrow = event.arrow;

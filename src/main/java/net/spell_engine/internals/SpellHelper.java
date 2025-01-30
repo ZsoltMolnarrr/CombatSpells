@@ -268,10 +268,11 @@ public class SpellHelper {
                         deliver(world, spellEntry, player, targetsWithContext, context, null);
                         success = true; // Always true, otherwise area spells don't go to CD without targets
                     }
-                    case BEAM -> {
+                    case BEAM, FROM_TRIGGER -> {
                         var targetsWithContext = targets.stream().map(target -> new TargetedEntity(target, context.position(target.getPos()))).toList();
                         success = deliver(world, spellEntry, player, targetsWithContext, context, null);
                     }
+                    default -> throw new IllegalStateException("Unexpected value: " + targeting.type);
                 }
                 caster.setChannelTickIndex(channelTickIndex + incrementChannelTicks);
             }
@@ -1114,7 +1115,7 @@ public class SpellHelper {
             case AREA, BEAM -> {
                 return SpellTarget.FocusMode.AREA;
             }
-            case NONE, CASTER, CURSOR -> {
+            case NONE, CASTER, CURSOR, FROM_TRIGGER -> {
                 return SpellTarget.FocusMode.DIRECT;
             }
         }
