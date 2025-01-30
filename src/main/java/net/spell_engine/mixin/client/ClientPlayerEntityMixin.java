@@ -242,17 +242,6 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
         return firstTarget();
     }
 
-    @Deprecated
-    private int findSlot(PlayerEntity player, ItemStack stack) {
-        for(int i = 0; i < player.getInventory().size(); ++i) {
-            ItemStack itemStack = player.getInventory().getStack(i);
-            if (stack == itemStack) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick_TAIL_SpellEngine(CallbackInfo ci) {
         updateSpellCast();

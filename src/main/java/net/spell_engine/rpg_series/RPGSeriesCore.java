@@ -29,7 +29,7 @@ public class RPGSeriesCore {
             .build();
 
 
-    public static void initialize() {
+    public static void init() {
         lootEquipmentConfig.refresh();
         lootScrollsConfig.refresh();
         LootHelper.TAG_CACHE.refresh();

@@ -39,7 +39,6 @@ public class SpellContainerSource {
         ((Owner)player).spellContainerCache().remove(source);
     }
 
-
     public record SourcedContainer(ItemStack itemStack, SpellContainer container) { }
     public interface Source {
         List<SourcedContainer> getSpellContainers(PlayerEntity player);
@@ -47,18 +46,14 @@ public class SpellContainerSource {
     public interface DirtyChecker {
         Object current(PlayerEntity player);
     }
-    public record Entry(String name, Source source) { }
-    private static final List<Entry> sources = new ArrayList<>();
-    public static final Map<String, DirtyChecker> dirtyCheckers = new HashMap<>();
+    public record Entry(String name, Source source, @Nullable DirtyChecker checker) { }
+    public static final List<Entry> sources = new ArrayList<>();
     private static Entry entry(String name, Source source) {
         return entry(name, source, null);
     }
     private static Entry entry(String name, Source source, @Nullable DirtyChecker dirtyChecker) {
-        var newEntry = new Entry(name, source);
+        var newEntry = new Entry(name, source, dirtyChecker);
         sources.add(newEntry);
-        if (dirtyChecker != null) {
-            dirtyCheckers.put(name, dirtyChecker);
-        }
         return newEntry;
     }
     public static final Entry MAIN_HAND = entry("main_hand", player -> {
@@ -67,18 +62,17 @@ public class SpellContainerSource {
         addSourceIfValid(heldItemStack, sources);
         return sources;
     });
-    public static final Entry OFF_HAND = entry("off_hand", player -> {
-        var offhandStack = SpellEngineMod.config.spell_container_from_offhand_ignore_dual_wielding ?
-                SpellContainerHelper.getOffhandItemStack(player) : player.getOffHandStack();
+    public static final Entry OFF_HAND = new Entry("off_hand", player -> {
+        var offhandStack = player.getInventory().offHand.get(0);
         var sources = new ArrayList<SourcedContainer>();
-        if (SpellEngineMod.config.spell_container_from_offhand) {
+        if (SpellEngineMod.config.spell_container_from_offhand_any) {
             addSourceIfValid(offhandStack, sources);
         } else {
             addSourceIfValid(offhandStack, sources, EquipmentSlot.OFFHAND.asString());
         }
         return sources;
-    });
-    public static final Entry EQUIPMENT = entry("equipment", player -> {
+    }, player -> player.getInventory().offHand.get(0));
+    public static final Entry EQUIPMENT = new Entry("equipment", player -> {
         var sources = new ArrayList<SourcedContainer>();
         if (SpellEngineMod.config.spell_container_from_equipment) {
             for (var slot : player.getInventory().armor) {
@@ -123,8 +117,14 @@ public class SpellContainerSource {
             sources.add(entry);
         }
     }
-    public static void addDirtyChecker(String name, DirtyChecker checker) {
-        dirtyCheckers.put(name, checker);
+
+    public static void init() {
+        if (SpellEngineMod.config.spell_container_from_offhand) {
+            addSource(OFF_HAND);
+        }
+        if (SpellEngineMod.config.spell_container_from_equipment) {
+            addSource(EQUIPMENT);
+        }
     }
 
     public static void update(PlayerEntity player) {

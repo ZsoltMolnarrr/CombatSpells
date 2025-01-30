@@ -24,7 +24,7 @@ public class SpellAssignments {
     public static final Map<Identifier, SpellContainer> containers = new HashMap<>();
     public static final Map<Identifier, SpellContainer> book_containers = new HashMap<>();
 
-    public static void initialize() {
+    public static void init() {
         ServerLifecycleEvents.SERVER_STARTING.register(SpellAssignments::load);
     }
 

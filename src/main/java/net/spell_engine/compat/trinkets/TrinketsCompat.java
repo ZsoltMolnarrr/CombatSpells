@@ -42,19 +42,22 @@ public class TrinketsCompat {
 
             final var sourceName = "trinkets";
             SpellContainerSource.addSource(
-                    new SpellContainerSource.Entry(sourceName, TrinketsCompat::getSpellContainers),
+                    new SpellContainerSource.Entry(
+                            sourceName,
+                            TrinketsCompat::getSpellContainers,
+                            TrinketsCompat::getAll // DirtyChecker is necessary because TrinketUnequipCallback.EVENT doesn't work at all
+                    ),
                     SpellContainerSource.MAIN_HAND.name());
-            SpellContainerSource.addDirtyChecker(sourceName, TrinketsCompat::getAll); // This is necessary because TrinketUnequipCallback.EVENT doesn't work at all
-            TrinketEquipCallback.EVENT.register((stack, slot, entity) -> {
-                if (entity instanceof PlayerEntity player) {
-                    SpellContainerSource.setDirty(player, sourceName);
-                }
-            });
-            TrinketUnequipCallback.EVENT.register((stack, slot, entity) -> {
-                if (entity instanceof PlayerEntity player) {
-                    SpellContainerSource.setDirty(player, sourceName);
-                }
-            });
+//            TrinketEquipCallback.EVENT.register((stack, slot, entity) -> {
+//                if (entity instanceof PlayerEntity player) {
+//                    SpellContainerSource.setDirty(player, sourceName);
+//                }
+//            });
+//            TrinketUnequipCallback.EVENT.register((stack, slot, entity) -> {
+//                if (entity instanceof PlayerEntity player) {
+//                    SpellContainerSource.setDirty(player, sourceName);
+//                }
+//            });
         }
         intialized = true;
     }

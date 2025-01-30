@@ -33,9 +33,6 @@ public class PlayerSpellContainerMixin implements SpellContainerSource.Owner {
     }
 
     private ItemStack lastMainHandStack = ItemStack.EMPTY;
-    private ItemStack lastOffHandStack = ItemStack.EMPTY;
-    private List<ItemStack> lastArmorStacks = List.of();
-
     public Map<String, Object> lastProviderStates = new HashMap<>();
 
     @Inject(method = "tick", at = @At("TAIL"))
@@ -52,28 +49,17 @@ public class PlayerSpellContainerMixin implements SpellContainerSource.Owner {
                 ) {
             SpellContainerSource.setDirty(player, SpellContainerSource.MAIN_HAND);
         }
-        var offHandStack = player.getInventory().offHand.get(0);
-        if (offHandStack != lastOffHandStack) {
-            SpellContainerSource.setDirty(player, SpellContainerSource.OFF_HAND);
-        }
-        var armor = List.of(player.getInventory().armor.get(0), player.getInventory().armor.get(1),
-                player.getInventory().armor.get(2), player.getInventory().armor.get(3));
-        if (!armor.equals(lastArmorStacks)) {
-            SpellContainerSource.setDirty(player, SpellContainerSource.EQUIPMENT);
-        }
-
-        for (var entry: SpellContainerSource.dirtyCheckers.entrySet()) {
-            var currentState = entry.getValue().current(player);
-            if (!currentState.equals(lastProviderStates.get(entry.getKey()))){
-                SpellContainerSource.setDirty(player, entry.getKey());
+        for (var entry: SpellContainerSource.sources) {
+            if (entry.checker() == null) { continue; }
+            var currentState = entry.checker().current(player);
+            if (!currentState.equals(lastProviderStates.get(entry.name()))){
+                SpellContainerSource.setDirty(player, entry.name());
             }
-            lastProviderStates.put(entry.getKey(), currentState);
+            lastProviderStates.put(entry.name(), currentState);
         }
 
         SpellContainerSource.update(player);
 
         lastMainHandStack = mainHandStack;
-        lastOffHandStack = offHandStack;
-        lastArmorStacks = armor;
     }
 }

@@ -78,7 +78,7 @@ public class SpellTriggers {
         }
     }
 
-    public static void initialize() {
+    public static void init() {
         CombatEvents.PLAYER_MELEE_ATTACK.register(args -> {
             onMeleeImpact(args.player(), args.target());
         });

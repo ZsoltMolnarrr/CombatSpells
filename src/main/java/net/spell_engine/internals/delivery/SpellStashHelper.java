@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SpellStashHelper {
-    public static void initialize() {
+    public static void init() {
         ServerLifecycleEvents.SERVER_STARTING.register(SpellStashHelper::link);
     }
 

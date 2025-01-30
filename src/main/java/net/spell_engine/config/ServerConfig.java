@@ -35,13 +35,13 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     public int spell_binding_level_cost_multiplier = 1;
     @Comment("Spell binding lapis lazuli levelCost multiplier")
     public int spell_binding_lapis_cost_multiplier = 1;
-    @Comment("Should spell containers be cached for faster improved server performance. Might be buggy.")
+    @Comment("Allow spell containers be cached for faster improved server performance. Might be buggy.")
     public boolean spell_container_caching = true;
-    @Comment("Should spells on the offhand item be collected and used.")
-    public boolean spell_container_from_offhand = false;
-    @Comment("Should be used in compatibility mode, when Trinkets is not installed.")
-    public boolean spell_container_from_offhand_ignore_dual_wielding = false;
-    @Comment("Should spells on the offhand item be collected and used.")
+    @Comment("Allow spells on the offhand item be collected and used.")
+    public boolean spell_container_from_offhand = true;
+    @Comment("Allow any spell containers to be resolved from the offhand not just offhand specific ones.")
+    public boolean spell_container_from_offhand_any = false;
+    @Comment("Allow spell containers be resolved from the equipment slots.")
     public boolean spell_container_from_equipment = true;
     @Comment("If set true, a Fireball doesn't collide with an ally, a healing projectile doesn't collide with an enemy")
     public boolean projectiles_pass_thru_irrelevant_targets = true;

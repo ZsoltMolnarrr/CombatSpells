@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ServerNetwork {
-    public static void initializeHandlers() {
+    public static void init() {
 
         // Config stage
 
