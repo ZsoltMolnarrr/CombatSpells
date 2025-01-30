@@ -1,6 +1,9 @@
 package net.spell_engine.compat.trinkets;
 
 import dev.emi.trinkets.api.TrinketsApi;
+import dev.emi.trinkets.api.event.TrinketDropCallback;
+import dev.emi.trinkets.api.event.TrinketEquipCallback;
+import dev.emi.trinkets.api.event.TrinketUnequipCallback;
 import net.fabricmc.fabric.api.util.TriState;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,14 +39,27 @@ public class TrinketsCompat {
                 return TriState.DEFAULT;
             });
             ContainerCompat.addProvider(TrinketsCompat::getAll);
+
+            final var sourceName = "trinkets";
             SpellContainerSource.addSource(
-                    new SpellContainerSource.Entry("trinkets", TrinketsCompat::getSpellContainers),
+                    new SpellContainerSource.Entry(sourceName, TrinketsCompat::getSpellContainers),
                     SpellContainerSource.MAIN_HAND.name());
+            SpellContainerSource.addDirtyChecker(sourceName, TrinketsCompat::getAll); // This is necessary because TrinketUnequipCallback.EVENT doesn't work at all
+            TrinketEquipCallback.EVENT.register((stack, slot, entity) -> {
+                if (entity instanceof PlayerEntity player) {
+                    SpellContainerSource.setDirty(player, sourceName);
+                }
+            });
+            TrinketUnequipCallback.EVENT.register((stack, slot, entity) -> {
+                if (entity instanceof PlayerEntity player) {
+                    SpellContainerSource.setDirty(player, sourceName);
+                }
+            });
         }
         intialized = true;
     }
 
-    public static List<ItemStack> getAll(PlayerEntity player) {
+    private static List<ItemStack> getAll(PlayerEntity player) {
         var component = TrinketsApi.getTrinketComponent(player);
         if (component.isEmpty()) {
             return List.of();

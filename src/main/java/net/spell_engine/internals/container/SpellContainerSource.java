@@ -12,19 +12,14 @@ import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 public class SpellContainerSource {
     public record Result(SpellContainer actives, List<RegistryEntry<Spell>> passives, List<SpellContainerSource.SourcedContainer> sources) {
         public static final Result EMPTY = new Result(SpellContainer.EMPTY, List.of(), List.of());
     }
     public interface Owner {
-//        boolean isSpellContainerSourceDirty();
-//        void setSpellContainerSourceDirty(boolean dirty);
-
+        Map<String, List<SourcedContainer>> spellContainerCache();
         void setSpellContainers(Result result);
         Result getSpellContainers();
     }
@@ -37,17 +32,33 @@ public class SpellContainerSource {
     public static Result getSpellsOf(PlayerEntity player) {
         return ((Owner)player).getSpellContainers();
     }
+    public static void setDirty(PlayerEntity player, Entry source) {
+        setDirty(player, source.name());
+    }
+    public static void setDirty(PlayerEntity player, String source) {
+        ((Owner)player).spellContainerCache().remove(source);
+    }
 
 
     public record SourcedContainer(ItemStack itemStack, SpellContainer container) { }
     public interface Source {
         List<SourcedContainer> getSpellContainers(PlayerEntity player);
     }
+    public interface DirtyChecker {
+        Object current(PlayerEntity player);
+    }
     public record Entry(String name, Source source) { }
     private static final List<Entry> sources = new ArrayList<>();
+    public static final Map<String, DirtyChecker> dirtyCheckers = new HashMap<>();
     private static Entry entry(String name, Source source) {
+        return entry(name, source, null);
+    }
+    private static Entry entry(String name, Source source, @Nullable DirtyChecker dirtyChecker) {
         var newEntry = new Entry(name, source);
         sources.add(newEntry);
+        if (dirtyChecker != null) {
+            dirtyCheckers.put(name, dirtyChecker);
+        }
         return newEntry;
     }
     public static final Entry MAIN_HAND = entry("main_hand", player -> {
@@ -75,7 +86,9 @@ public class SpellContainerSource {
             }
         }
         return sources;
-    });
+    }, player -> List.of(player.getInventory().armor.get(0), player.getInventory().armor.get(1),
+            player.getInventory().armor.get(2), player.getInventory().armor.get(3))
+    );
     private static void addSourceIfValid(ItemStack fromItemStack, List<SourcedContainer> sources) {
         addSourceIfValid(fromItemStack, sources, null);
     }
@@ -110,28 +123,42 @@ public class SpellContainerSource {
             sources.add(entry);
         }
     }
+    public static void addDirtyChecker(String name, DirtyChecker checker) {
+        dirtyCheckers.put(name, checker);
+    }
 
     public static void update(PlayerEntity player) {
-        var actives = SpellContainer.EMPTY;
-        var passives = SpellContainer.EMPTY;
-
-        var heldItemStack = player.getMainHandStack();
-        var heldContainer = SpellContainerHelper.containerFromItemStack(heldItemStack);
-
+        var owner = (Owner)player;
         var allContainers = new ArrayList<SourcedContainer>();
+        boolean updated = false;
         for (var entry : sources) {
-            allContainers.addAll(entry.source().getSpellContainers(player));
+            if (owner.spellContainerCache().containsKey(entry.name())) {
+                allContainers.addAll(owner.spellContainerCache().get(entry.name()));
+            } else {
+                System.out.println("Container source dirty: " + entry.name() + " for " + player.getName());
+                var freshContainers = entry.source().getSpellContainers(player);
+                allContainers.addAll(freshContainers);
+                owner.spellContainerCache().put(entry.name(), freshContainers);
+                updated = true;
+            }
         }
 
-        if (heldContainer != null && heldContainer.is_proxy()) {
-            actives = mergedContainerSources(allContainers, heldContainer.is_proxy(), heldContainer.content(), Spell.Type.ACTIVE, player.getWorld());
-        }
-        passives = mergedContainerSources(allContainers, false, null, Spell.Type.PASSIVE, player.getWorld());
-        var passiveList = passives.spell_ids()
-                .stream().map(id -> (RegistryEntry<Spell>) SpellRegistry.from(player.getWorld()).getEntry(Identifier.of(id)).orElse(null))
-                .toList();
+        if (updated) {
+            System.out.println("Updating spell containers for " + player.getName());
+            var heldItemStack = player.getMainHandStack();
+            var heldContainer = SpellContainerHelper.containerFromItemStack(heldItemStack);
+            var actives = SpellContainer.EMPTY;
+            var passives = SpellContainer.EMPTY;
+            if (heldContainer != null && heldContainer.is_proxy()) {
+                actives = mergedContainerSources(allContainers, heldContainer.is_proxy(), heldContainer.content(), Spell.Type.ACTIVE, player.getWorld());
+            }
+            passives = mergedContainerSources(allContainers, false, null, Spell.Type.PASSIVE, player.getWorld());
+            var passiveList = passives.spell_ids()
+                    .stream().map(id -> (RegistryEntry<Spell>) SpellRegistry.from(player.getWorld()).getEntry(Identifier.of(id)).orElse(null))
+                    .toList();
 
-        ((Owner)player).setSpellContainers(new Result(actives, passiveList, allContainers));
+            ((Owner) player).setSpellContainers(new Result(actives, passiveList, allContainers));
+        }
     }
 
     public static SpellContainer mergedContainerSources(List<SourcedContainer> sources, boolean proxy, @Nullable SpellContainer.ContentType contentType, Spell.Type type, World world) {

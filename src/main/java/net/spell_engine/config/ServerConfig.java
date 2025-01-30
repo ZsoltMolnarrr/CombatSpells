@@ -35,6 +35,8 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     public int spell_binding_level_cost_multiplier = 1;
     @Comment("Spell binding lapis lazuli levelCost multiplier")
     public int spell_binding_lapis_cost_multiplier = 1;
+    @Comment("Should spell containers be cached for faster improved server performance. Might be buggy.")
+    public boolean spell_container_caching = true;
     @Comment("Should spells on the offhand item be collected and used.")
     public boolean spell_container_from_offhand = false;
     @Comment("Should be used in compatibility mode, when Trinkets is not installed.")

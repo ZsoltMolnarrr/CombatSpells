@@ -133,24 +133,24 @@ public class SpellContainerHelper {
 //        return new SpellContainer(heldContainer.content(), heldContainer.is_proxy(), null, 0, new ArrayList<>(spellIds));
 //    }
 
-    private static void addContainerIfValid(ItemStack fromItemStack, List<SpellContainer> intoContainers) {
-        SpellContainer container = containerFromItemStack(fromItemStack);
-        if (container != null && container.isValid()) {
-            intoContainers.add(container);
-        }
-    }
+//    private static void addContainerIfValid(ItemStack fromItemStack, List<SpellContainer> intoContainers) {
+//        SpellContainer container = containerFromItemStack(fromItemStack);
+//        if (container != null && container.isValid()) {
+//            intoContainers.add(container);
+//        }
+//    }
+//
+//    private static void addSourceIfValid(ItemStack fromItemStack, List<SpellContainerSource.SourcedContainer> sources) {
+//        addSourceIfValid(fromItemStack, sources, null);
+//    }
 
-    private static void addSourceIfValid(ItemStack fromItemStack, List<SpellContainerSource.SourcedContainer> sources) {
-        addSourceIfValid(fromItemStack, sources, null);
-    }
-
-    private static void addSourceIfValid(ItemStack fromItemStack, List<SpellContainerSource.SourcedContainer> sources, @Nullable String requiredSlot) {
-        SpellContainer container = containerFromItemStack(fromItemStack);
-        if (container != null && container.isValid()
-                && (requiredSlot == null || container.slot().contains(requiredSlot)) ) {
-            sources.add(new SpellContainerSource.SourcedContainer(fromItemStack, container));
-        }
-    }
+//    private static void addSourceIfValid(ItemStack fromItemStack, List<SpellContainerSource.SourcedContainer> sources, @Nullable String requiredSlot) {
+//        SpellContainer container = containerFromItemStack(fromItemStack);
+//        if (container != null && container.isValid()
+//                && (requiredSlot == null || container.slot().contains(requiredSlot)) ) {
+//            sources.add(new SpellContainerSource.SourcedContainer(fromItemStack, container));
+//        }
+//    }
 
     /**
      * Get the item stack in the offhand slot of the player's inventory

@@ -123,6 +123,9 @@ public class SpellTriggers {
 
     public static void onDamageTaken(PlayerEntity player, DamageSource source, float amount) {
         Entity sourceEntity = source.getAttacker();
+        if (sourceEntity == null) {
+            return; // No event without attacker (environmental damage)
+        }
         Entity aoeSourceEntity = ObjectHelper.coalesce(sourceEntity, player);
         var event = new Event(Spell.Trigger.Type.DAMAGE_TAKEN, player, aoeSourceEntity, sourceEntity);
         event.damageSource = source;
