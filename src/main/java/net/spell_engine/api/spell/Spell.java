@@ -77,7 +77,7 @@ public class Spell {
     public static class Target {
         public Type type = Type.CASTER;
         public enum Type {
-            NONE, CASTER, CURSOR, BEAM, AREA
+            NONE, CASTER, CURSOR, BEAM, AREA, FROM_TRIGGER
         }
         // The number of maximum targets, applied when greater than zero
         public int cap = 0;
@@ -112,6 +112,12 @@ public class Spell {
             public float vertical_range_multiplier = 1F;
             public float angle_degrees = 0F;
             public boolean include_caster = false;
+        }
+
+        public FromTrigger from_trigger;
+        public static class FromTrigger { public FromTrigger() { }
+            public enum Source { CASTER, AOESOURCE, TARGET }
+            public Source source = Source.TARGET;
         }
     }
 

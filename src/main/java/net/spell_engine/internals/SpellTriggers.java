@@ -16,6 +16,7 @@ import net.spell_engine.internals.target.SpellTarget;
 import net.spell_engine.mixin.entity.LivingEntityAccessor;
 import net.spell_engine.utils.ObjectHelper;
 import net.spell_engine.utils.PatternMatching;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class SpellTriggers {
         @Nullable public DamageSource damageSource;
         public float damageAmount = 0;
 
-        public Event(Spell.Trigger.Type type, PlayerEntity player, Entity aoeSource, Entity target) {
+        public Event(Spell.Trigger.Type type, PlayerEntity player, Entity aoeSource, @Nullable Entity target) {
             this.type = type;
             this.player = player;
             this.aoeSource = aoeSource;
@@ -113,13 +114,32 @@ public class SpellTriggers {
         for(var spellEntry: SpellContainerSource.passiveSpellsOf(event.player)) {
             var spell = spellEntry.value();
             if (spell.passive != null && execute(spell.passive.trigger, event)) {
-                // TODO: Perform actual target lookup, similar to ClientSpellCasterEntity
-                var target = ObjectHelper.coalesce(event.target, event.aoeSource, event.player);
-                SpellHelper.performSpell(player.getWorld(), player, spellEntry,
-                        new SpellTarget.SearchResult(List.of(target), null),
-                        SpellCast.Action.TRIGGER, 1);
+                SpellTarget.SearchResult targetResult;
+                if (spell.target.type == Spell.Target.Type.FROM_TRIGGER && spell.target.from_trigger != null) {
+                    List<Entity> targets = targetsFromTrigger(event, spell);
+                    targetResult = SpellTarget.SearchResult.of(targets);
+                } else {
+                    targetResult = SpellTarget.findTargets(player, spell, SpellTarget.SearchResult.empty());
+                }
+                SpellHelper.performSpell(player.getWorld(), player, spellEntry, targetResult, SpellCast.Action.TRIGGER, 1);
             }
         }
+    }
+
+    private static @NotNull List<Entity> targetsFromTrigger(Event event, Spell spell) {
+        List<Entity> targets = List.of();
+        switch (spell.target.from_trigger.source) {
+            case CASTER -> {
+                targets = List.of(ObjectHelper.coalesce(event.player, event.aoeSource, event.target));
+            }
+            case AOESOURCE -> {
+                targets = List.of(ObjectHelper.coalesce(event.aoeSource, event.target, event.player));
+            }
+            case TARGET -> {
+                targets = List.of(ObjectHelper.coalesce(event.target, event.aoeSource, event.player));
+            }
+        }
+        return targets;
     }
 
     private static final Random random = new Random();
