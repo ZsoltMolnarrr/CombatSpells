@@ -131,16 +131,24 @@ public class SpellContainerSource {
         var owner = (Owner)player;
         var allContainers = new ArrayList<SourcedContainer>();
         boolean updated = false;
-        for (var entry : sources) {
-            if (owner.spellContainerCache().containsKey(entry.name())) {
-                allContainers.addAll(owner.spellContainerCache().get(entry.name()));
-            } else {
-                System.out.println("Container source dirty: " + entry.name() + " for " + player.getName());
+        if (SpellEngineMod.config.spell_container_caching) {
+            for (var entry : sources) {
+                if (owner.spellContainerCache().containsKey(entry.name())) {
+                    allContainers.addAll(owner.spellContainerCache().get(entry.name()));
+                } else {
+                    System.out.println("Container source dirty: " + entry.name() + " for " + player.getName());
+                    var freshContainers = entry.source().getSpellContainers(player);
+                    allContainers.addAll(freshContainers);
+                    owner.spellContainerCache().put(entry.name(), freshContainers);
+                    updated = true;
+                }
+            }
+        } else {
+            for (var entry : sources) {
                 var freshContainers = entry.source().getSpellContainers(player);
                 allContainers.addAll(freshContainers);
-                owner.spellContainerCache().put(entry.name(), freshContainers);
-                updated = true;
             }
+            updated = true;
         }
 
         if (updated) {
