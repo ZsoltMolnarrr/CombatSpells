@@ -34,7 +34,6 @@ import net.spell_engine.internals.target.EntityRelations;
 import net.spell_engine.internals.target.SpellTarget;
 import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.SoundHelper;
-import net.spell_engine.utils.TargetHelper;
 import net.spell_engine.utils.VectorHelper;
 import net.spell_power.api.SpellPower;
 import org.jetbrains.annotations.Nullable;

@@ -144,7 +144,7 @@ public class SpellTriggers {
             var spell = spellEntry.value();
             if (spell.passive != null && execute(spell.passive.trigger, event)) {
                 SpellTarget.SearchResult targetResult;
-                if (spell.target.type == Spell.Target.Type.FROM_TRIGGER && spell.target.from_trigger != null) {
+                if (spell.target.type == Spell.Target.Type.FROM_TRIGGER) {
                     List<Entity> targets = List.of(event.target(spell.passive.trigger));
                     targetResult = SpellTarget.SearchResult.of(targets);
                 } else {

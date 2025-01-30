@@ -449,26 +449,32 @@ public class SpellHelper {
         }
         var velocity = mutableLaunchProperties.velocity;
         var divergence = projectileData.divergence;
-        var casterPitch = caster.getPitch();
-        var casterYaw = caster.getYaw();
+        var directionPitch = caster.getPitch();
+        var directionYaw = caster.getYaw();
+        if (data.direct_towards_target && target != null) {
+            var directionVector = target.getPos().subtract(caster.getPos()).normalize();
+            // Yaw and pitch from distance vector
+            directionPitch = (float) VectorHelper.pitchFromNormalized(directionVector);
+            directionYaw = (float) VectorHelper.yawFromNormalized(directionVector);
+        }
         if (data.inherit_shooter_velocity) {
-            projectile.setVelocity(caster, casterPitch, casterYaw, 0, velocity, divergence);
+            projectile.setVelocity(caster, directionPitch, directionYaw, 0, velocity, divergence);
         } else {
             if (data.direction_offsets != null && data.direction_offsets.length > 0
                 && (!data.direction_offsets_require_target || target != null)) {
                 var baseIndex = context.isChanneled() ? context.channelTickIndex() : sequenceIndex;
                 var index = baseIndex % data.direction_offsets.length;
                 var offset = data.direction_offsets[index];
-                casterPitch += offset.pitch;
-                casterYaw += offset.yaw;
+                directionPitch += offset.pitch;
+                directionYaw += offset.yaw;
             }
             // var look = caster.getRotationVector().normalize();
-            var look = caster.getRotationVector(casterPitch, casterYaw).normalize();
+            var look = caster.getRotationVector(directionPitch, directionYaw).normalize();
             projectile.setVelocity(look.x, look.y, look.z, velocity, divergence);
         }
         projectile.range = spell.range;
-        projectile.setPitch(casterPitch);
-        projectile.setYaw(casterYaw);
+        projectile.setPitch(directionPitch);
+        projectile.setYaw(directionYaw);
 
         projectile.setFollowedTarget(target);
         world.spawnEntity(projectile);
