@@ -30,6 +30,22 @@ public class Spell {
         public int level_requirement_per_tier = 10;
     }
 
+    public Tooltip tooltip = new Tooltip();
+    public static class Tooltip { public Tooltip() { }
+        public LineOptions name = new LineOptions(true, true);
+        public LineOptions description = new LineOptions(false, true);
+        public static class LineOptions { public LineOptions() { }
+            /// Vanilla enum Formatting value by name
+            public String color = "GRAY";
+            public boolean show_in_compact = true;
+            public boolean show_in_details = true;
+            public LineOptions(boolean show_in_compact, boolean show_in_details) {
+                this.show_in_compact = show_in_compact;
+                this.show_in_details = show_in_details;
+            }
+        }
+    }
+
     public Type type = Type.ACTIVE;
     public enum Type { ACTIVE, PASSIVE }
 

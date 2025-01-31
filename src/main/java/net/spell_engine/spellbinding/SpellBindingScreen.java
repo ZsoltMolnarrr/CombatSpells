@@ -164,7 +164,7 @@ public class SpellBindingScreen extends HandledScreen<SpellBindingScreenHandler>
                 }
                 if (showSpellDetails) {
                     tooltip.add(Text.literal(" "));
-                    tooltip.addAll(SpellTooltip.spellEntry(button.spell.id(), player, itemStack, true, false));
+                    tooltip.addAll(SpellTooltip.spellEntry(button.spell.id(), player, itemStack, true, 0));
                 }
                 if (button.isDetailsPublic) {
                     context.drawTooltip(textRenderer, tooltip, mouseX, mouseY);
