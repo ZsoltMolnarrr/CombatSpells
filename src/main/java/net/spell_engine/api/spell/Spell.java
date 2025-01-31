@@ -215,6 +215,7 @@ public class Spell {
 
         public Custom custom;
         public static class Custom { public Custom() { }
+            /// ID of the handler
             public String handler;
         }
     }
@@ -317,6 +318,7 @@ public class Spell {
             public Custom custom;
             public static class Custom { public Custom() { }
                 public SpellTarget.Intent intent = SpellTarget.Intent.HELPFUL;
+                /// ID of the handler
                 public String handler;
             }
         }
