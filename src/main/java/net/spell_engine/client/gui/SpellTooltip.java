@@ -39,6 +39,7 @@ public class SpellTooltip {
     private static final String impactRangeToken = "impact_range";
     private static final String teleportDistanceToken = "teleport_distance";
     private static final String countToken = "count";
+    private static final String trigger_chance = "trigger_chance";
     public static String placeholder(String token) { return "{" + token + "}"; }
 
     public static void addSpellLines(ItemStack itemStack, TooltipType tooltipType, List<Text> lines) {
@@ -278,6 +279,10 @@ public class SpellTooltip {
     private static String createDescription(Identifier spellId, PlayerEntity player, ItemStack itemStack, Spell spell, SpellPower.Result primaryPower) {
         var description = I18n.translate(spellKeyPrefix(spellId) + ".description");
 
+        List<Spell.Trigger> triggers = new ArrayList<>();
+        if (spell.passive != null) {
+            triggers.add(spell.passive.trigger);
+        }
         if (spell.deliver != null) {
             Spell.ProjectileData projectile = null;
             if (spell.deliver.projectile != null) {
@@ -326,6 +331,10 @@ public class SpellTooltip {
                 var radius = cloud.volume.combinedRadius(primaryPower);
                 description = description.replace(placeholder("cloud_radius"), formattedNumber(radius));
             }
+            if (spell.deliver.stash_effect != null) {
+                var stash = spell.deliver.stash_effect;
+                triggers.add(stash.trigger);
+            }
         }
 
         if (spell.impact != null) {
@@ -333,10 +342,10 @@ public class SpellTooltip {
             for (var impact : spell.impact) {
                 switch (impact.action.type) {
                     case DAMAGE -> {
-                        description = replaceTokens(description, damageToken, estimatedOutput.damage());
+                        description = replaceDamageTokens(description, damageToken, estimatedOutput.damage());
                     }
                     case HEAL -> {
-                        description = replaceTokens(description, healToken, estimatedOutput.heal());
+                        description = replaceDamageTokens(description, healToken, estimatedOutput.heal());
                     }
                     case STATUS_EFFECT -> {
                         var statusEffect = impact.action.status_effect;
@@ -361,6 +370,9 @@ public class SpellTooltip {
             }
         }
 
+        var triggerChances = triggers.stream().map(trigger -> (int)(trigger.chance * 100) + "%").toList();
+        description = replaceTokens(description, trigger_chance, triggerChances);
+
         var mutator = descriptionMutators.get(spellId);
         if (mutator != null) {
             var args = new DescriptionMutator.Args(description, player);
@@ -373,12 +385,21 @@ public class SpellTooltip {
         return Text.literal(level > 0 ? " ".repeat(level) : "");
     }
 
-    private static String replaceTokens(String text, String token, List<SpellHelper.EstimatedValue> values) {
+    private static String replaceDamageTokens(String text, String token, List<SpellHelper.EstimatedValue> values) {
         boolean indexTokens = values.size() > 1;
         for (int i = 0; i < values.size(); ++i) {
             var range = values.get(i);
             var actualToken = indexTokens ? placeholder(token + "_" + (i + 1)) : placeholder(token);
             text = text.replace(actualToken, formattedRange(range.min(), range.max()));
+        }
+        return text;
+    }
+
+    private static String replaceTokens(String text, String token, List<String> values) {
+        boolean indexTokens = values.size() > 1;
+        for (int i = 0; i < values.size(); ++i) {
+            var actualToken = indexTokens ? placeholder(token + "_" + (i + 1)) : placeholder(token);
+            text = text.replace(actualToken, values.get(i));
         }
         return text;
     }
