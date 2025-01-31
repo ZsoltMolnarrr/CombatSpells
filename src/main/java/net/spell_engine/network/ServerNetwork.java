@@ -97,6 +97,10 @@ public class ServerNetwork {
             }
 
             world.getServer().executeSync(() -> {
+                var spellEntry = SpellRegistry.from(world).getEntry(packet.spellId());
+                if (spellEntry.isEmpty()) {
+                    return;
+                }
                 List<Entity> targets = new ArrayList<>();
                 for (var targetId: packet.targets()) {
                     // var entity = world.getEntityById(targetId);
@@ -108,10 +112,6 @@ public class ServerNetwork {
                     }
                 }
                 var target = new SpellTarget.SearchResult(targets, packet.location());
-                var spellEntry = SpellRegistry.from(world).getEntry(packet.spellId());
-                if (spellEntry.isEmpty()) {
-                    return;
-                }
                 SpellHelper.performSpell(world, player, spellEntry.get(), target, packet.action(), packet.progress());
             });
         });

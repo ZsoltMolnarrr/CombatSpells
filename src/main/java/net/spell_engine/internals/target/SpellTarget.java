@@ -103,7 +103,7 @@ public class SpellTarget {
                 targets = List.of(caster);
             }
             /// If no targets are found, use cursor location for meteor style spells
-            if (cursor.required && targets.isEmpty()) {
+            if (!cursor.required && targets.isEmpty()) {
                 location = TargetHelper.locationFromRayCast(caster, range);
             }
         }
