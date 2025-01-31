@@ -440,7 +440,7 @@ public class SpellHelper {
 
         var projectile = new SpellProjectile(world, caster,
                 launchPoint.getX(), launchPoint.getY(), launchPoint.getZ(),
-                SpellProjectile.Behaviour.FLY, spellEntry.getKey().get().getValue(), target, context, mutablePerks);
+                SpellProjectile.Behaviour.FLY, spellEntry, context, mutablePerks);
 
         var mutableLaunchProperties = data.launch_properties.copy();
         if (SpellEvents.PROJECTILE_SHOOT.isListened()) {
@@ -519,7 +519,7 @@ public class SpellHelper {
 
         var projectile = new SpellProjectile(world, caster,
                 launchPoint.getX(), launchPoint.getY(), launchPoint.getZ(),
-                SpellProjectile.Behaviour.FALL, spellEntry.getKey().get().getValue(), target, context, mutablePerks);
+                SpellProjectile.Behaviour.FALL, spellEntry, context, mutablePerks);
 
         if (SpellEvents.PROJECTILE_FALL.isListened()) {
             SpellEvents.PROJECTILE_FALL.invoke((listener) -> listener.onProjectileLaunch(new SpellEvents.ProjectileLaunchEvent(projectile, mutableLaunchProperties, caster, target, spellEntry, context, sequenceIndex)));

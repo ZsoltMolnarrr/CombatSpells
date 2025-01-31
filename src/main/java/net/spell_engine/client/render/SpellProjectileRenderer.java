@@ -93,21 +93,18 @@ public class SpellProjectileRenderer<T extends Entity & FlyingItemEntity> extend
             Identifier modelId = null;
             ItemStack modelItemStack = null;
             if (entity instanceof SpellProjectile spellProjectile && spellProjectile.getItemStackModel() != null) {
-                modelId = spellProjectile.getItemModelId();
                 modelItemStack = spellProjectile.getItemStackModel();
             } else if (renderData.model_id != null && !renderData.model_id.isEmpty()) {
                 modelId = Identifier.of(renderData.model_id);
             }
 
             var layer = SpellModelHelper.LAYERS.get(renderData.light_emission);
-            if (modelId != null) {
-                if (modelItemStack != null) {
-                    var model = itemRenderer.getModel(modelItemStack, entity.getWorld(), null, entity.getId());
-                    model.getTransformation().getTransformation(ModelTransformationMode.FIXED).apply(false, matrices);
-                    CustomModels.render(layer, itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
-                } else {
-                    CustomModels.render(layer, itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
-                }
+            if (modelItemStack != null) {
+                var model = itemRenderer.getModel(modelItemStack, entity.getWorld(), null, entity.getId());
+                model.getTransformation().getTransformation(ModelTransformationMode.FIXED).apply(false, matrices);
+                CustomModels.render(layer, itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
+            } else if (modelId != null) {
+                CustomModels.render(layer, itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
             }
             matrices.pop();
             return true;

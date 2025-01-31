@@ -51,10 +51,6 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
     public float range = 128;
     private Spell.ProjectileData.Perks perks;
     private SpellHelper.ImpactContext context;
-    private Entity followedTarget;
-    private Identifier spellId;
-    private Identifier itemModelId;
-    private ItemStack itemStackModel;
     public Vec3d previousVelocity;
 
     public SpellProjectile(EntityType<? extends ProjectileEntity> entityType, World world) {
@@ -71,23 +67,22 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
     }
 
     public SpellProjectile(World world, LivingEntity caster, double x, double y, double z,
-                           Behaviour behaviour, Identifier spellId, Entity target, SpellHelper.ImpactContext context, Spell.ProjectileData.Perks mutablePerks) {
+                           Behaviour behaviour, RegistryEntry<Spell> spellEntry, SpellHelper.ImpactContext context, Spell.ProjectileData.Perks mutablePerks) {
         this(world, caster);
         this.setPosition(x, y, z);
-        this.spellId = spellId;
+        this.setBehaviour(behaviour);
+        this.setSpell(spellEntry);
+
         this.perks = mutablePerks;
-        var projectileData = projectileData();
-        var gson = new Gson();
         this.context = context;
-        this.getDataTracker().set(CLIENT_DATA, gson.toJson(projectileData));
-        this.getDataTracker().set(BEHAVIOUR, behaviour.toString());
+
+        var projectileData = projectileData();
         if (projectileData.client_data != null && projectileData.client_data.model != null) {
             var model = projectileData.client_data.model;
             if (model.use_held_item) {
                 setItemStackModel(caster.getMainHandStack());
             }
         }
-        // setFollowedTarget(target);
     }
 
     /**
@@ -98,53 +93,18 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
     }
 
     public Spell.ProjectileData projectileData() {
-        if (getWorld().isClient) {
-            return clientSyncedData;
-        } else {
-            var spell = getSpellEntry().value();
-            var release = spell.deliver;
-            switch (release.type) {
-                case PROJECTILE -> {
-                    return release.projectile.projectile;
-                }
-                case METEOR -> {
-                    return release.meteor.projectile;
-                }
+        var spell = getSpellEntry().value();
+        var release = spell.deliver;
+        switch (release.type) {
+            case PROJECTILE -> {
+                return release.projectile.projectile;
             }
-            assert true;
-            return null;
-        }
-    }
-    private Spell.ProjectileData clientSyncedData;
-
-    private void updateClientSideData() {
-        if (clientSyncedData == null) {
-            try {
-                var gson = new Gson();
-                var json = this.getDataTracker().get(CLIENT_DATA);
-                var data = gson.fromJson(json, Spell.ProjectileData.class);
-                clientSyncedData = data;
-            } catch (Exception e) {
-                System.err.println("Spell Projectile - Failed to read clientSyncedData");
+            case METEOR -> {
+                return release.meteor.projectile;
             }
         }
-        if (itemModelId == null) {
-            var idString = this.getDataTracker().get(ITEM_MODEL_ID);
-            updateItemModel(idString);
-        }
-    }
-
-    private void updateItemModel(String idString) {
-        if (idString != null && !idString.isEmpty()) {
-            itemModelId = Identifier.of(this.getDataTracker().get(ITEM_MODEL_ID));
-            itemStackModel = Registries.ITEM.get(itemModelId).getDefaultStack();
-        }
-    }
-
-    public void setItemStackModel(ItemStack itemStack) {
-        var modelId = Registries.ITEM.getId(itemStack.getItem());
-        this.itemModelId = modelId;
-        this.getDataTracker().set(ITEM_MODEL_ID, modelId.toString());
+        assert true;
+        return null;
     }
 
     public void setVelocity(double x, double y, double z, float speed, float spread, float divergence) {
@@ -162,27 +122,10 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         this.prevPitch = this.getPitch();
     }
 
-    private double distanceToFollow = 0;
-    public void setFollowedTarget(Entity target) {
-        followedTarget = target;
-        if (target != null) {
-            distanceToFollow = target.distanceTo(this);
-        } else {
-            distanceToFollow = 0;
-        }
-        var id = -1;
-        if (!getWorld().isClient) {
-            if (target != null) {
-                id = target.getId();
-            }
-            this.getDataTracker().set(TARGET_ID, id);
-        }
-    }
-
     public Entity getFollowedTarget() {
         Entity entityReference = null;
         if (getWorld().isClient) {
-            var id = this.getDataTracker().get(TARGET_ID);
+            var id = this.getDataTracker().get(TRACKER_TARGET_ID);
             if (id != null && id > 0) {
                 entityReference = getWorld().getEntityById(id);
             }
@@ -211,28 +154,17 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         return result;
     }
 
-    public Behaviour behaviour() {
-        var string = this.getDataTracker().get(BEHAVIOUR);
-        if (string == null || string.isEmpty()) {
-            return Behaviour.FLY;
-        }
-        return Behaviour.valueOf(string);
-    }
-
     private boolean skipTravel = false;
 
     public void tick() {
         skipTravel = false;
         Entity entity = this.getOwner();
-        var behaviour = behaviour();
-        if (getWorld().isClient) {
-            updateClientSideData();
-        }
+        var behaviour = getBehaviour();
         var spellEntry = getSpellEntry();
         if (!this.getWorld().isClient) {
             // Server side
             if (spellEntry == null) {
-                System.err.println("Spell Projectile safeguard termination, failed to resolve spell: " + spellId);
+                System.err.println("Spell Projectile safeguard termination, failed to resolve spell: " + spellId());
                 this.kill();
                 return;
             }
@@ -594,7 +526,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         for (int i = 0; i < spawnCount; i++) {
             var projectile = new SpellProjectile(getWorld(), (LivingEntity)this.getOwner(),
                     position.getX(), position.getY(), position.getZ(),
-                    this.behaviour(), spellId, null, context, this.perks.copy());
+                    this.getBehaviour(), null, context, this.perks.copy());
 
             var angle = launchAngle * i + launchAngleOffset;
             projectile.setVelocity(launchVector.rotateY((float) Math.toRadians(angle)));
@@ -607,16 +539,8 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
 
     // MARK: Helper
 
-    @Nullable public RegistryEntry<Spell> getSpellEntry() {
-        return SpellRegistry.from(this.getWorld()).getEntry(spellId).orElse(null);
-    }
-
     public SpellHelper.ImpactContext getImpactContext() {
         return context;
-    }
-
-    public Identifier getItemModelId() {
-        return itemModelId;
     }
 
     public ItemStack getItemStackModel() {
@@ -642,13 +566,6 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         return ItemStack.EMPTY;
     }
 
-    // MARK: NBT (Persistence)
-
-    private static String NBT_SPELL_ID = "Spell.ID";
-    private static String NBT_PERKS = "Perks";
-    private static String NBT_IMPACT_CONTEXT = "Impact.Context";
-    private static String NBT_ITEM_MODEL_ID = "Item.Model.ID";
-
     @Override
     protected void onBlockHit(BlockHitResult blockHitResult) {
         super.onBlockHit(blockHitResult);
@@ -666,16 +583,90 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
 
     private Gson gson = new Gson();
 
+
+    // MARK: Stored data
+
+    public void setBehaviour(Behaviour behaviour) {
+        this.getDataTracker().set(TRACKER_BEHAVIOUR, behaviour.toString());
+    }
+    public Behaviour getBehaviour() {
+        var string = this.getDataTracker().get(TRACKER_BEHAVIOUR);
+        if (string == null || string.isEmpty()) {
+            return Behaviour.FLY;
+        }
+        return Behaviour.valueOf(string);
+    }
+
+    private RegistryEntry<Spell> spellEntry;
+    public void setSpell(RegistryEntry<Spell> entry) {
+        this.spellEntry = entry;
+        if (!getWorld().isClient) {
+            this.getDataTracker().set(TRACKER_SPELL_ID, spellId().toString());
+        }
+    }
+    @Nullable public RegistryEntry<Spell> getSpellEntry() {
+        return spellEntry;
+    }
+    private Identifier spellId() {
+        if (spellEntry != null) {
+            return spellEntry.getKey().get().getValue();
+        }
+        return null;
+    }
+
+
+    private Entity followedTarget;
+    private double distanceToFollow = 0;
+    public void setFollowedTarget(Entity target) {
+        followedTarget = target;
+        if (target != null) {
+            distanceToFollow = target.distanceTo(this);
+        } else {
+            distanceToFollow = 0;
+        }
+        var id = -1;
+        if (!getWorld().isClient) {
+            if (target != null) {
+                id = target.getId();
+            }
+            this.getDataTracker().set(TRACKER_TARGET_ID, id);
+        }
+    }
+
+    private ItemStack itemStackModel;
+    public void setItemStackModel(ItemStack itemStack) {
+        var modelId = Registries.ITEM.getId(itemStack.getItem());
+        this.getDataTracker().set(TRACKER_ITEM_MODEL_ID, modelId.toString());
+    }
+    private void updateItemModel(String idString) {
+        if (idString != null && !idString.isEmpty()) {
+            var id = Identifier.of(this.getDataTracker().get(TRACKER_ITEM_MODEL_ID));
+            itemStackModel = Registries.ITEM.get(id).getDefaultStack();
+        }
+    }
+
+    // MARK: NBT (Persistence)
+
+    private static String NBT_BEHAVIOUR = "Behaviour";
+    private static String NBT_SPELL_ID = "Spell.ID";
+    private static String NBT_PERKS = "Perks";
+    private static String NBT_IMPACT_CONTEXT = "Impact.Context";
+    private static String NBT_ITEM_MODEL_ID = "Item.Model.ID";
+
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
-        if (this.spellId != null) {
-            nbt.putString(NBT_SPELL_ID, this.spellId.toString());
+        nbt.putString(NBT_BEHAVIOUR, this.getBehaviour().toString());
+
+        if (this.spellId() != null) {
+            nbt.putString(NBT_SPELL_ID, this.spellId().toString());
         }
         nbt.putString(NBT_IMPACT_CONTEXT, gson.toJson(this.context));
         nbt.putString(NBT_PERKS, gson.toJson(this.perks));
-        if (itemModelId != null) {
-            nbt.putString(NBT_ITEM_MODEL_ID, itemModelId.toString());
+
+        var itemModelId = getDataTracker().get(TRACKER_ITEM_MODEL_ID);
+        if (!itemModelId.isEmpty()) {
+            nbt.putString(NBT_ITEM_MODEL_ID, itemModelId);
         }
     }
 
@@ -684,7 +675,12 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         super.readCustomDataFromNbt(nbt);
         if (nbt.contains(NBT_SPELL_ID, NbtElement.STRING_TYPE)) {
             try {
-                this.spellId = Identifier.of(nbt.getString(NBT_SPELL_ID));
+                var behaviour = Behaviour.valueOf(nbt.getString(NBT_BEHAVIOUR));
+                this.setBehaviour(behaviour);
+
+                var spellId = Identifier.of(nbt.getString(NBT_SPELL_ID));
+                this.setSpell(SpellRegistry.from(this.getWorld()).getEntry(spellId).orElse(null));
+
                 this.context = gson.fromJson(nbt.getString(NBT_IMPACT_CONTEXT), SpellHelper.ImpactContext.class);
                 this.perks = gson.fromJson(nbt.getString(NBT_PERKS), Spell.ProjectileData.Perks.class);
 
@@ -701,35 +697,37 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
 
     @Override
     protected void initDataTracker(DataTracker.Builder builder) {
-        builder.add(CLIENT_DATA, "");
-        builder.add(TARGET_ID, 0);
-        builder.add(BEHAVIOUR, Behaviour.FLY.toString());
-        builder.add(ITEM_MODEL_ID, "");
+        builder.add(TRACKER_SPELL_ID, "");
+        builder.add(TRACKER_BEHAVIOUR, Behaviour.FLY.toString());
+        builder.add(TRACKER_TARGET_ID, 0);
+        builder.add(TRACKER_ITEM_MODEL_ID, "");
     }
 
-    private static final TrackedData<String> BEHAVIOUR;
-    private static final TrackedData<String> CLIENT_DATA;
-    private static final TrackedData<Integer> TARGET_ID;
-    private static final TrackedData<String> ITEM_MODEL_ID;
+    private static final TrackedData<String> TRACKER_SPELL_ID;
+    private static final TrackedData<String> TRACKER_BEHAVIOUR;
+    private static final TrackedData<Integer> TRACKER_TARGET_ID;
+    private static final TrackedData<String> TRACKER_ITEM_MODEL_ID;
 
     static {
-        CLIENT_DATA = DataTracker.registerData(SpellProjectile.class, TrackedDataHandlerRegistry.STRING);
-        TARGET_ID = DataTracker.registerData(SpellProjectile.class, TrackedDataHandlerRegistry.INTEGER);
-        BEHAVIOUR = DataTracker.registerData(SpellProjectile.class, TrackedDataHandlerRegistry.STRING);
-        ITEM_MODEL_ID = DataTracker.registerData(SpellProjectile.class, TrackedDataHandlerRegistry.STRING);
+        TRACKER_SPELL_ID = DataTracker.registerData(SpellProjectile.class, TrackedDataHandlerRegistry.STRING);
+        TRACKER_BEHAVIOUR = DataTracker.registerData(SpellProjectile.class, TrackedDataHandlerRegistry.STRING);
+        TRACKER_TARGET_ID = DataTracker.registerData(SpellProjectile.class, TrackedDataHandlerRegistry.INTEGER);
+        TRACKER_ITEM_MODEL_ID = DataTracker.registerData(SpellProjectile.class, TrackedDataHandlerRegistry.STRING);
     }
 
     public void onTrackedDataSet(TrackedData<?> data) {
         super.onTrackedDataSet(data);
         if (this.getWorld().isClient) {
-            if (data.equals(CLIENT_DATA)) {
-                updateClientSideData();
+            if (data.equals(TRACKER_SPELL_ID)) {
+                var spellId = this.getDataTracker().get(TRACKER_SPELL_ID);
+                var spellEntry = SpellRegistry.from(this.getWorld()).getEntry(Identifier.of(spellId)).orElse(null);
+                this.setSpell(spellEntry);
             }
-            if (data.equals(ITEM_MODEL_ID)) {
-                updateItemModel(this.getDataTracker().get(ITEM_MODEL_ID));
+            if (data.equals(TRACKER_ITEM_MODEL_ID)) {
+                updateItemModel(this.getDataTracker().get(TRACKER_ITEM_MODEL_ID));
             }
-            if (data.equals(TARGET_ID)) {
-                var id = this.getDataTracker().get(TARGET_ID);
+            if (data.equals(TRACKER_TARGET_ID)) {
+                var id = this.getDataTracker().get(TRACKER_TARGET_ID);
                 var target = id > 0 ? this.getWorld().getEntityById(id) : null;
                 this.setFollowedTarget(target);
             }
