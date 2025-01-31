@@ -3,7 +3,7 @@ package net.spell_engine.api.spell.registry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.*;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -31,9 +32,9 @@ public class SpellRegistry {
     public static Registry<Spell> from(World world) {
         return world.getRegistryManager().get(KEY);
     }
-
+    
     private static final Gson gson = new GsonBuilder().create();
-    public static final Codec<Spell> CODEC = Codecs.exceptionCatching(Codecs.JSON_ELEMENT.xmap(
+    public static final Codec<Spell> LOCAL_CODEC = Codecs.JSON_ELEMENT.xmap(
             json -> {
                 return gson.fromJson(json, Spell.class);
             },
@@ -41,7 +42,21 @@ public class SpellRegistry {
                 JsonElement jsonElement = gson.toJsonTree(spell);
                 return jsonElement;
             }
-    ));
+    );
+
+    public static final Codec<Spell> NETWORK_CODEC = Codec.STRING.comapFlatMap(
+            encoded -> {
+                var bytes = encoded.getBytes();
+                var json = new String(Base64.getDecoder().decode(bytes));
+                var spell = gson.fromJson(json, Spell.class);
+                return DataResult.success(spell);
+            },
+            spell -> {
+                var json = gson.toJson(spell);
+                var bytes = json.getBytes();
+                return Base64.getEncoder().encodeToString(bytes);
+            }
+    );
 
     public static RegistryEntryList.Named<Spell> find(World world, Identifier tagId) {
         var manager = world.getRegistryManager();
