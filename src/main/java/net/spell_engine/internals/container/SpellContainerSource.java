@@ -136,7 +136,7 @@ public class SpellContainerSource {
                 if (owner.spellContainerCache().containsKey(entry.name())) {
                     allContainers.addAll(owner.spellContainerCache().get(entry.name()));
                 } else {
-                    System.out.println("Container source dirty: " + entry.name() + " for " + player.getName());
+                    // System.out.println("Container source dirty: " + entry.name() + " for " + player.getName());
                     var freshContainers = entry.source().getSpellContainers(player);
                     allContainers.addAll(freshContainers);
                     owner.spellContainerCache().put(entry.name(), freshContainers);
@@ -152,7 +152,7 @@ public class SpellContainerSource {
         }
 
         if (updated) {
-            System.out.println("Updating spell containers for " + player.getName());
+            // System.out.println("Updating spell containers for " + player.getName());
             var heldItemStack = player.getMainHandStack();
             var heldContainer = SpellContainerHelper.containerFromItemStack(heldItemStack);
             var actives = SpellContainer.EMPTY;
