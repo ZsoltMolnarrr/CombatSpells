@@ -25,6 +25,7 @@ import net.spell_engine.api.event.CombatEvents;
 import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.event.SpellEvents;
+import net.spell_engine.api.spell.event.SpellHandlers;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.entity.ConfigurableKnockback;
 import net.spell_engine.entity.SpellCloud;
@@ -232,17 +233,17 @@ public class SpellHelper {
                         success = deliver(world, spellEntry, player, List.of(), context, null);
                     }
                     case CASTER -> {
-                        var targetsWithContext = List.of(new TargetedEntity(player, context.position(player.getPos())));
+                        var targetsWithContext = List.of(new TargetWithContext(player, context.position(player.getPos())));
                         success = deliver(world, spellEntry, player, targetsWithContext, context, null);
                     }
                     case CURSOR -> {
                         var cursor = targeting.cursor;
                         var firstTarget = targets.stream().findFirst();
-                        List<TargetedEntity> targetsWithContext = List.of();
+                        List<TargetWithContext> targetsWithContext = List.of();
                         if (firstTarget.isPresent()) {
                             var target = firstTarget.get();
                             var targetSpecificContext = context.position(target.getPos());
-                            targetsWithContext = List.of(new TargetedEntity(target, targetSpecificContext));
+                            targetsWithContext = List.of(new TargetWithContext(target, targetSpecificContext));
                         }
                         if (!cursor.required || firstTarget.isPresent()) {
                             success = deliver(world, spellEntry, player, targetsWithContext, context, targetResult.location());
@@ -263,13 +264,13 @@ public class SpellHelper {
                                     distanceBasedMultiplier = Math.max(distanceBasedMultiplier, 0F);
                                 }
                             }
-                            return new TargetedEntity(target, centeredContext.distance(distanceBasedMultiplier));
+                            return new TargetWithContext(target, centeredContext.distance(distanceBasedMultiplier));
                         }).toList();
                         deliver(world, spellEntry, player, targetsWithContext, context, null);
                         success = true; // Always true, otherwise area spells don't go to CD without targets
                     }
                     case BEAM, FROM_TRIGGER -> {
-                        var targetsWithContext = targets.stream().map(target -> new TargetedEntity(target, context.position(target.getPos()))).toList();
+                        var targetsWithContext = targets.stream().map(target -> new TargetWithContext(target, context.position(target.getPos()))).toList();
                         success = deliver(world, spellEntry, player, targetsWithContext, context, null);
                     }
                     default -> throw new IllegalStateException("Unexpected value: " + targeting.type);
@@ -307,8 +308,8 @@ public class SpellHelper {
         }
     }
 
-    public record TargetedEntity(Entity entity, ImpactContext context) {}
-    public static boolean deliver(World world, RegistryEntry<Spell> spellEntry, PlayerEntity caster, List<TargetedEntity> targets, ImpactContext context, @Nullable Vec3d targetLocation) {
+    public record TargetWithContext(Entity entity, ImpactContext context) {}
+    public static boolean deliver(World world, RegistryEntry<Spell> spellEntry, PlayerEntity caster, List<TargetWithContext> targets, ImpactContext context, @Nullable Vec3d targetLocation) {
         var spell = spellEntry.value();
         var delivered = false;
         switch (spell.deliver.type) {
@@ -376,6 +377,14 @@ public class SpellHelper {
                     }
                 }
                 delivered = anyAdded;
+            }
+            case CUSTOM -> {
+                if (spell.deliver.custom != null) {
+                    var handler = SpellHandlers.customDelivery.get(spell.deliver.custom.handler);
+                    if (handler != null) {
+                        delivered = handler.onSpellDelivery(world, spellEntry, caster, targets, context, targetLocation);
+                    }
+                }
             }
         }
         return delivered;
@@ -969,6 +978,14 @@ public class SpellHelper {
                         }
                     }
                 }
+                case CUSTOM -> {
+                    if (impact.action.custom != null) {
+                        var handler = SpellHandlers.customImpact.get(impact.action.custom.handler);
+                        if (handler != null) {
+                            success = handler.onSpellImpact(spellEntry, power, caster, target, context);
+                        }
+                    }
+                }
             }
             if (success) {
                 if (impact.particles != null) {
@@ -1163,6 +1180,9 @@ public class SpellHelper {
             }
             case TELEPORT -> {
                 return action.teleport.intent;
+            }
+            case CUSTOM -> {
+                return action.custom.intent;
             }
         }
         assert true;

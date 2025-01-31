@@ -119,7 +119,7 @@ public class Spell {
     public static class Delivery {
         public Type type = Type.DIRECT;
         public enum Type {
-            DIRECT, PROJECTILE, METEOR, CLOUD, SHOOT_ARROW, STASH_EFFECT
+            DIRECT, PROJECTILE, METEOR, CLOUD, SHOOT_ARROW, STASH_EFFECT, CUSTOM
         }
 
         public ShootProjectile projectile;
@@ -212,6 +212,11 @@ public class Spell {
                 TRANSFER    /// Pass the impacts onto a projectile, that will be launched at the time of triggering
             }
         }
+
+        public Custom custom;
+        public static class Custom { public Custom() { }
+            public String handler;
+        }
     }
 
     public Impact[] impact;
@@ -243,7 +248,7 @@ public class Spell {
             public boolean apply_to_caster = false;
             public float min_power = 1;
             public enum Type {
-                DAMAGE, HEAL, STATUS_EFFECT, FIRE, SPAWN, TELEPORT
+                DAMAGE, HEAL, STATUS_EFFECT, FIRE, SPAWN, TELEPORT, CUSTOM
             }
             public Damage damage;
             public static class Damage { public Damage() { }
@@ -307,6 +312,12 @@ public class Spell {
                 }
                 @Nullable public ParticleBatch[] depart_particles;
                 @Nullable public ParticleBatch[] arrive_particles;
+            }
+
+            public Custom custom;
+            public static class Custom { public Custom() { }
+                public SpellTarget.Intent intent = SpellTarget.Intent.HELPFUL;
+                public String handler;
             }
         }
 
