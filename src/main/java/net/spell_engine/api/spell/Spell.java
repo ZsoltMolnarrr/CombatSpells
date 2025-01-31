@@ -66,7 +66,7 @@ public class Spell {
         public Trigger trigger = new Trigger();
     }
 
-    public Release release;
+    public Release release = new Release();
     public static class Release { public Release() { }
         public String animation;
         public ParticleBatch[] particles;

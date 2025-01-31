@@ -211,7 +211,7 @@ public class SpellHelper {
 
         if (channelMultiplier > 0 && ammoResult.satisfied()) {
             var targeting = spell.target;
-            boolean released = action == SpellCast.Action.RELEASE;
+            boolean released = action == SpellCast.Action.RELEASE || action == SpellCast.Action.TRIGGER;
             boolean success = true;
             if (shouldPerformImpact) {
                 success = false;
