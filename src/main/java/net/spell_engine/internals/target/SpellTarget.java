@@ -68,8 +68,8 @@ public class SpellTarget {
             case CASTER -> {
                 targets = List.of(caster);
             }
-            case CURSOR -> {
-                fallbackToPreviousTargets = currentSpell.target.cursor.sticky;
+            case AIM -> {
+                fallbackToPreviousTargets = currentSpell.target.aim.sticky;
                 var target = TargetHelper.targetFromRaycast(caster, range, selectionPredicate);
                 if (target != null) {
                     targets = List.of(target);
@@ -97,13 +97,13 @@ public class SpellTarget {
                     .toList();
         }
 
-        var cursor = currentSpell.target.cursor;
-        if (cursor != null) {
-            if (cursor.use_caster_as_fallback && targets.isEmpty()) {
+        var aim = currentSpell.target.aim;
+        if (aim != null) {
+            if (aim.use_caster_as_fallback && targets.isEmpty()) {
                 targets = List.of(caster);
             }
-            /// If no targets are found, use cursor location for meteor style spells
-            if (!cursor.required && targets.isEmpty()) {
+            /// If no targets are found, use aim location for meteor style spells
+            if (!aim.required && targets.isEmpty()) {
                 location = TargetHelper.locationFromRayCast(caster, range);
             }
         }

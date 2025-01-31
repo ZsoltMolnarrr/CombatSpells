@@ -236,8 +236,8 @@ public class SpellHelper {
                         var targetsWithContext = List.of(new TargetWithContext(player, context.position(player.getPos())));
                         success = deliver(world, spellEntry, player, targetsWithContext, context, null);
                     }
-                    case CURSOR -> {
-                        var cursor = targeting.cursor;
+                    case AIM -> {
+                        var aim = targeting.aim;
                         var firstTarget = targets.stream().findFirst();
                         List<TargetWithContext> targetsWithContext = List.of();
                         if (firstTarget.isPresent()) {
@@ -245,7 +245,7 @@ public class SpellHelper {
                             var targetSpecificContext = context.position(target.getPos());
                             targetsWithContext = List.of(new TargetWithContext(target, targetSpecificContext));
                         }
-                        if (!cursor.required || firstTarget.isPresent()) {
+                        if (!aim.required || firstTarget.isPresent()) {
                             success = deliver(world, spellEntry, player, targetsWithContext, context, targetResult.location());
                         }
                     }
@@ -1138,7 +1138,7 @@ public class SpellHelper {
             case AREA, BEAM -> {
                 return SpellTarget.FocusMode.AREA;
             }
-            case NONE, CASTER, CURSOR, FROM_TRIGGER -> {
+            case NONE, CASTER, AIM, FROM_TRIGGER -> {
                 return SpellTarget.FocusMode.DIRECT;
             }
         }

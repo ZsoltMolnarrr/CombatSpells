@@ -93,13 +93,13 @@ public class Spell {
     public static class Target {
         public Type type = Type.CASTER;
         public enum Type {
-            NONE, CASTER, CURSOR, BEAM, AREA, FROM_TRIGGER
+            NONE, CASTER, AIM, BEAM, AREA, FROM_TRIGGER
         }
         // The number of maximum targets, applied when greater than zero
         public int cap = 0;
 
-        public Cursor cursor;
-        public static class Cursor { public Cursor() { }
+        public Aim aim;
+        public static class Aim { public Aim() { }
             /// Whether an entity must be targeted to cast the spell
             public boolean required = false;
             /// Whether the spell casting process keeps an entity that was targeted already
