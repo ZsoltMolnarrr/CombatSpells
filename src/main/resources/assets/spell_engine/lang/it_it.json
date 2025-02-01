@@ -15,11 +15,11 @@
   
   "spell.group.primary": "(Incantesimo primario)",  
   "spell.tooltip.host.proxy.spell": "Lancia incantesimi dall'attuale tomo magico",
-  "spell.tooltip.host.proxy.arrow": "Usa abilità da acriere dall'attuale libro abilità",
+  "spell.tooltip.host.proxy.archery": "Usa abilità da acriere dall'attuale libro abilità",
   "spell.tooltip.host.additional": "Incantesimi aggiuntivi:",
   "spell.tooltip.host.pre_loaded": "Lancia l'incantesimo dopo l'uso",
   "spell.tooltip.host.list.spell": "Incantesimi:",
-  "spell.tooltip.host.list.arrow": "Abilità:",  
+  "spell.tooltip.host.list.archery": "Abilità:",
   "spell.tooltip.host.limit": "({corrente}/{max})",
   "spell.tooltip.cast_instant": "Lancio immediato",
   "spell.tooltip.cast_time": "Tempo di lancio: {durata} secondi",

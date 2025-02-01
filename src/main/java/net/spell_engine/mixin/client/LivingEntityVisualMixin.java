@@ -5,7 +5,7 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.effect.CustomParticleStatusEffect;
 import net.spell_engine.api.effect.Synchronized;
 import net.spell_engine.client.beam.BeamEmitterEntity;
-import net.spell_engine.internals.Beam;
+import net.spell_engine.internals.delivery.Beam;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.particle.ParticleHelper;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +31,7 @@ public class LivingEntityVisualMixin implements BeamEmitterEntity {
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick_TAIL_spawnBeamParticles(CallbackInfo ci) {
         var livingEntity = livingEntity();
-        Spell.Release.Target.Beam beam = null;
+        Spell.Target.Beam beam = null;
         if (livingEntity instanceof SpellCasterEntity caster) {
             beam = caster.getBeam();
         }

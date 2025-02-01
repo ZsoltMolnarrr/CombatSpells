@@ -36,8 +36,7 @@ public abstract class ProjectileEntityRendererMixin extends EntityRenderer {
     )
     private void render_HEAD_SpellEngine(Entity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
         if (entity instanceof ArrowExtension arrowExtension) {
-            var spellEntry = arrowExtension.getCarriedSpell();
-            if (spellEntry != null) {
+            for (var spellEntry: arrowExtension.getCarriedSpells()) {
                 var arrowPerks = spellEntry.value().arrow_perks;
                 if (arrowPerks != null) {
                     var renderData = arrowPerks.override_render;
@@ -50,6 +49,7 @@ public abstract class ProjectileEntityRendererMixin extends EntityRenderer {
                         if (rendered) {
                             super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
                         }
+                        return;
                     }
                 }
             }

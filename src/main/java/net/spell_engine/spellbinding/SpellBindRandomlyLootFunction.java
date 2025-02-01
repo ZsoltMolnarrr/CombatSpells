@@ -16,7 +16,7 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.SpellDataComponents;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.api.spell.registry.SpellTags;
-import net.spell_engine.internals.SpellContainerHelper;
+import net.spell_engine.internals.container.SpellContainerHelper;
 import net.spell_engine.item.ScrollItem;
 import net.spell_engine.item.SpellEngineItems;
 

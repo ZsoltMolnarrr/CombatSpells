@@ -1,5 +1,7 @@
 package net.spell_engine.mixin.arrow;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.Entity;
@@ -8,6 +10,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -17,6 +20,7 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.entity.ConfigurableKnockback;
 import net.spell_engine.internals.SpellHelper;
+import net.spell_engine.internals.SpellTriggers;
 import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.particle.ParticleHelper;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +29,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(PersistentProjectileEntity.class)
 public abstract class PersistentProjectileEntityMixin implements ArrowExtension {
@@ -38,35 +46,50 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
 
     @Shadow public abstract double getDamage();
 
-    private boolean arrowPerksAlreadyApplied = false;
-    private Identifier spellId = null;
-
     private PersistentProjectileEntity arrow() {
          return (PersistentProjectileEntity)(Object)this;
     }
 
-    private RegistryEntry<Spell> cachedSpellEntry = null;
-    @Nullable RegistryEntry<Spell> spellEntry() {
-        if (spellId == null) {
-            return null;
+    private List<Identifier> spellIds = new ArrayList<>();
+    private void addSpellId(Identifier id) {
+        if (!spellIds.contains(id)) {
+            spellIds.add(id);
         }
-        if (cachedSpellEntry != null) {
-            return cachedSpellEntry;
+        var stringList = this.spellIds.stream().map(Identifier::toString).toList();
+        var json = gson.toJson(stringList);
+        arrow().getDataTracker().set(SPELL_ID_TRACKER, json);
+    }
+
+    private List<RegistryEntry<Spell>> cachedSpellEntry = List.of();
+    @Nullable List<RegistryEntry<Spell>> spellEntries() {
+        if (cachedSpellEntry.size() != spellIds.size()) {
+            var entries = spellIds.stream()
+                    .map(id -> {
+                        var reference = SpellRegistry.from(arrow().getWorld()).getEntry(id).orElse(null);
+                        return (RegistryEntry<Spell>)reference;
+                    })
+                    .toList();
+            cachedSpellEntry = entries;
         }
-        var entry = SpellRegistry.from(arrow().getWorld()).getEntry(spellId).orElse(null);
-        cachedSpellEntry = entry;
-        return entry;
+        return cachedSpellEntry;
+    }
+
+    private boolean arrowPerksAlreadyApplied(RegistryEntry<Spell> spell) {
+        var id = spell.getKey().get().getValue().toString();
+        return spellIds.contains(id);
     }
 
     // MARK: Persist extra data
 
+    private static final Gson gson = new Gson();
+    private static final Type stringListType = new TypeToken<ArrayList<String>>(){}.getType();
     private static final String NBT_KEY_SPELL_ID = "spell_id";
 
     @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
     public void writeCustomDataToNbt_TAIL_SpellEngine(NbtCompound nbt, CallbackInfo ci) {
-        if (spellId != null) {
-            nbt.putString(NBT_KEY_SPELL_ID, spellId.toString());
-        }
+        var stringList = this.spellIds.stream().map(Identifier::toString).toList();
+        var json = gson.toJson(stringList);
+        nbt.putString(NBT_KEY_SPELL_ID, json);
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
@@ -74,7 +97,8 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
         if (nbt.contains(NBT_KEY_SPELL_ID)) {
             var string = nbt.getString(NBT_KEY_SPELL_ID);
             if (string != null && !string.isEmpty()) {
-                spellId = Identifier.of(nbt.getString(NBT_KEY_SPELL_ID));
+                List<String> stringList = new Gson().fromJson(string, stringListType);
+                this.spellIds = stringList.stream().map(Identifier::of).toList();
             }
         }
     }
@@ -93,20 +117,24 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
     private void tick_HEAD_SpellEngine(CallbackInfo ci) {
         var arrow = arrow();
         var world = arrow.getWorld();
-        if (world.isClient && this.spellId == null) {
-            var idString = arrow().getDataTracker().get(SPELL_ID_TRACKER);
-            if (idString.isEmpty()) {
+        if (world.isClient && this.spellIds.isEmpty()) {
+            var json = arrow().getDataTracker().get(SPELL_ID_TRACKER);
+            if (json.isEmpty()) {
                 return;
             }
-            this.spellId = Identifier.of(idString);
-            this.spellEntry();
+            try {
+                List<String> stringList = new Gson().fromJson(json, stringListType);
+                this.spellIds = stringList.stream().map(Identifier::of).toList();
+                this.spellEntries();
+            } catch (Exception e) {
+                System.err.println("Spell Engine: Failed to parse spell id from arrow data tracker: " + json);
+            }
         }
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void tick_TAIL_SpellEngine(CallbackInfo ci) {
-        var spellEntry = spellEntry();
-        if (spellEntry != null) {
+        for (var spellEntry : spellEntries()) {
             var spell = spellEntry.value();
             var perks = spell.arrow_perks;
             if (perks != null && perks.travel_particles != null) {
@@ -120,24 +148,24 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
 
     // MARK: ArrowExtension
 
-    private boolean allowByPassingIFrames = true; // This doesn't mean it will bypass, arrowPerks also need to allow it
-    @Override
-    public void allowByPassingIFrames_SpellEngine(boolean allow) {
-        allowByPassingIFrames = allow;
-    }
+//    private boolean allowByPassingIFrames = true; // This doesn't mean it will bypass, arrowPerks also need to allow it
+//    @Override
+//    public void allowByPassingIFrames_SpellEngine(boolean allow) {
+//        allowByPassingIFrames = allow;
+//    }
 
     @Override
     public boolean isInGround_SpellEngine() {
         return inGround;
     }
 
-    @Nullable public RegistryEntry<Spell> getCarriedSpell() {
-        return spellEntry();
+    @Nullable public List<RegistryEntry<Spell>> getCarriedSpells() {
+        return spellEntries();
     }
 
     @Override
     public void applyArrowPerks(RegistryEntry<Spell> spellEntry) {
-        if(arrowPerksAlreadyApplied) {
+        if(arrowPerksAlreadyApplied(spellEntry)) {
             return;
         }
         var arrow = arrow();
@@ -146,7 +174,6 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
             if (perks.velocity_multiplier != 1.0F) {
                 arrow.setVelocity(arrow.getVelocity().multiply(perks.velocity_multiplier));
             }
-            arrowPerksAlreadyApplied = true;
             if (perks.pierce > 0) {
                 var newPierce = (byte)(getPierceLevel() + perks.pierce);
                 setPierceLevel(newPierce);
@@ -154,16 +181,14 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
             this.setDamage(this.getDamage() * perks.damage_multiplier);
         }
         var spellId = spellEntry.getKey().get().getValue();
-        this.spellId = spellId;
-        arrow.getDataTracker().set(SPELL_ID_TRACKER, spellId.toString());
+        this.addSpellId(spellId);
     }
 
     // MARK: Apply impact effects
 
     @Inject(method = "onEntityHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"), cancellable = true)
     private void onEntityHit_BeforeDamage_SpellEngine(EntityHitResult entityHitResult, CallbackInfo ci) {
-        var spellEntry = spellEntry();
-        if (spellEntry != null) {
+        for (var spellEntry : spellEntries()) {
             var spell = spellEntry.value();
             var arrowPerks = spell.arrow_perks;
             if (arrowPerks != null) {
@@ -172,7 +197,7 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
                     arrow().discard();
                     var entity = entityHitResult.getEntity();
                     if (entity != null) {
-                        performImpacts(entity, entityHitResult);
+                        performImpacts(spellEntry, entity, entityHitResult);
                     }
                 }
             }
@@ -185,30 +210,50 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
             Entity entity, DamageSource damageSource, float amount, Operation<Boolean> original,
             // Context Parameters
             EntityHitResult entityHitResult) {
-        var spellEnrty = spellEntry();
-        if (entity.getWorld().isClient() || spellEnrty == null) {
+        var spellEntries = spellEntries();
+        if (entity.getWorld().isClient() || spellEntries.isEmpty()) {
             return original.call(entity, damageSource, amount);
         } else {
-            var spell = spellEnrty.value();
-            var arrowPerks = spell.arrow_perks;
-            var pushedKnockback = false;
             int iFrameToRestore = 0;
-            if (entity instanceof LivingEntity livingEntity && arrowPerks != null) {
-                if (arrowPerks.knockback != 1.0F) {
-                    ((ConfigurableKnockback) livingEntity).pushKnockbackMultiplier_SpellEngine(arrowPerks.knockback);
+            var originalIFrame = entity.timeUntilRegen;
+            float knockbackMultiplier = 1.0F;
+
+            for (var spellEnrty : spellEntries) {
+                var spell = spellEnrty.value();
+                var arrowPerks = spell.arrow_perks;
+                if (arrowPerks != null) {
+                    if (arrowPerks.knockback != 1.0F) {
+                        knockbackMultiplier *= arrowPerks.knockback;
+                    }
+                    if (arrowPerks.bypass_iframes) {
+                        if (entity.timeUntilRegen == originalIFrame) {
+                            iFrameToRestore = entity.timeUntilRegen;
+                        }
+                        entity.timeUntilRegen = 0;
+                    }
+                    if (arrowPerks.iframe_to_set > 0) {
+                        iFrameToRestore = arrowPerks.iframe_to_set;
+                    }
+                }
+            }
+
+            var pushedKnockback = false;
+            if (entity instanceof LivingEntity livingEntity) {
+                if (knockbackMultiplier != 1.0F) {
+                    ((ConfigurableKnockback) livingEntity).pushKnockbackMultiplier_SpellEngine(knockbackMultiplier);
                     pushedKnockback = true;
-                }
-                if (allowByPassingIFrames && arrowPerks.bypass_iframes) {
-                    iFrameToRestore = entity.timeUntilRegen;
-                    entity.timeUntilRegen = 0;
-                }
-                if (arrowPerks.iframe_to_set > 0) {
-                    iFrameToRestore = arrowPerks.iframe_to_set;
                 }
             }
 
             var result = original.call(entity, damageSource, amount);
-            performImpacts(entity, entityHitResult);
+            for (var spellEnrty : spellEntries) {
+                performImpacts(spellEnrty, entity, entityHitResult);
+            }
+            var arrow = arrow();
+            var owner = arrow.getOwner();
+            if (owner instanceof PlayerEntity shooter) {
+                SpellTriggers.onArrowImpact((ArrowExtension) arrow, shooter, entity);
+            }
 
             if (pushedKnockback) {
                 ((ConfigurableKnockback) entity).popKnockbackMultiplier_SpellEngine();
@@ -220,8 +265,7 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
         }
     }
 
-    private void performImpacts(Entity target, EntityHitResult entityHitResult) {
-        var spellEntry = spellEntry();
+    private void performImpacts(RegistryEntry<Spell> spellEntry, Entity target, EntityHitResult entityHitResult) {
         var arrow = arrow();
         var owner = arrow.getOwner();
         if (spellEntry != null

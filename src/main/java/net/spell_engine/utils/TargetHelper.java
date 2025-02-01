@@ -2,15 +2,9 @@ package net.spell_engine.utils;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Tameable;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
-import net.minecraft.entity.decoration.AbstractDecorationEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.registry.Registries;
-import net.minecraft.scoreboard.AbstractTeam;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -18,10 +12,8 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.compat.MultipartEntityCompat;
-import net.spell_engine.internals.Beam;
+import net.spell_engine.internals.delivery.Beam;
 import net.spell_engine.internals.casting.SpellCasterClient;
 import net.spell_engine.internals.SpellHelper;
 import org.jetbrains.annotations.Nullable;
@@ -33,127 +25,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public class TargetHelper {
-    public enum Intent {
-        HELPFUL, HARMFUL
-    }
-    public enum TargetingMode {
-        DIRECT, AREA
-    }
-    public enum Relation {
-        ALLY, FRIENDLY, NEUTRAL, HOSTILE, MIXED;
-
-        public static Relation coalesce(Relation value, Relation fallback) {
-            if (value != null) {
-                return value;
-            }
-            return fallback;
-        }
-    }
-
-    public static Relation getRelation(LivingEntity attacker, Entity target) {
-        if (attacker == target) {
-            return Relation.ALLY;
-        }
-        target = MultipartEntityCompat.coalesce(target);
-
-        var casterTeam = attacker.getScoreboardTeam();
-        var targetTeam = target.getScoreboardTeam();
-        if (target instanceof Tameable tameable) {
-            var owner = tameable.getOwner();
-            if (owner != null) {
-                return getRelation(attacker, owner);
-            }
-        }
-        if (target instanceof AbstractDecorationEntity) {
-            return Relation.NEUTRAL;
-        }
-        var config = SpellEngineMod.config;
-        if (casterTeam == null || targetTeam == null) {
-            var id = Registries.ENTITY_TYPE.getId(target.getType());
-            var mappedRelation = config.player_relations.get(id.toString());
-            if (mappedRelation != null) {
-                return mappedRelation;
-            }
-            if (target instanceof PassiveEntity) {
-                return Relation.coalesce(config.player_relation_to_passives, Relation.HOSTILE);
-            }
-            if (target instanceof HostileEntity) {
-                return Relation.coalesce(config.player_relation_to_hostiles, Relation.HOSTILE);
-            }
-            return Relation.coalesce(config.player_relation_to_other, Relation.HOSTILE);
-        } else {
-            return attacker.isTeammate(target)
-                    ? (casterTeam.isFriendlyFireAllowed() ? Relation.FRIENDLY : Relation.ALLY)
-                    : Relation.HOSTILE;
-        }
-    }
-
-    // Make sure this complies with comment in `ServerConfig`
-    private static final boolean[][] TABLE_OF_ULTIMATE_JUSTICE = {
-            // ALLY     FRIENDLY        NEUTRAL HOSTILE MIXED
-            { false,    true,           true,   true,   true }, // Direct Damage
-            { false,    false,          false,  true,   true }, // Area Damage
-            { true,     true,           true,   false,  true }, // Direct Healing
-            { true,     true,           false,  false,  true }, // Area Healing
-    };
-
-    public static boolean actionAllowed(TargetingMode targetingMode, Intent intent, LivingEntity attacker, Entity target) {
-        var relation = getRelation(attacker, target);
-
-        int row = 0;
-        if (intent == Intent.HELPFUL) {
-            row += 2;
-        }
-        if (targetingMode == TargetingMode.AREA) {
-            row += 1;
-        }
-
-        int column = 0;
-        switch (relation) {
-            case ALLY -> {
-                column = 0;
-            }
-            case FRIENDLY -> {
-                column = 1;
-            }
-            case NEUTRAL -> {
-                column = 2;
-            }
-            case HOSTILE -> {
-                column = 3;
-            }
-            case MIXED -> {
-                column = 4;
-            }
-        }
-        return TABLE_OF_ULTIMATE_JUSTICE[row][column];
-    }
-
-    // Generalized copy of shouldDamagePlayer
-    public static boolean allowedToHurt(Entity e1, Entity e2) {
-        AbstractTeam abstractTeam = e1.getScoreboardTeam();
-        AbstractTeam abstractTeam2 = e2.getScoreboardTeam();
-        if (abstractTeam == null) {
-            return true;
-        } else {
-            return !abstractTeam.isEqual(abstractTeam2) || abstractTeam.isFriendlyFireAllowed();
-        }
-    }
-
-    public record SpellTargetResult(List<Entity> entities, @Nullable Vec3d location) {
-        public static SpellTargetResult empty() {
-            return new SpellTargetResult(List.of(), null);
-        }
-        public static SpellTargetResult of(List<Entity> entities) {
-            return new SpellTargetResult(entities, null);
-        }
-        public static SpellTargetResult of(Entity entity) {
-            return new SpellTargetResult(List.of(entity), null);
-        }
-        public static SpellTargetResult of(Vec3d location) {
-            return new SpellTargetResult(List.of(), location);
-        }
-    }
 
     public static Vec3d locationFromRayCast(Entity caster, float range) {
         Vec3d start = caster.getEyePos();
@@ -252,12 +123,12 @@ public class TargetHelper {
         return entities;
     }
 
-    public static List<Entity> targetsFromArea(Entity caster, float range, Spell.Release.Target.Area area, @Nullable Predicate<Entity> predicate) {
+    public static List<Entity> targetsFromArea(Entity caster, float range, Spell.Target.Area area, @Nullable Predicate<Entity> predicate) {
         var origin = caster.getEyePos();
         return targetsFromArea(caster, origin, range, area, predicate);
     }
 
-    public static List<Entity> targetsFromArea(Entity centerEntity, Vec3d origin, float range, Spell.Release.Target.Area area, @Nullable Predicate<Entity> predicate) {
+    public static List<Entity> targetsFromArea(Entity centerEntity, Vec3d origin, float range, Spell.Target.Area area, @Nullable Predicate<Entity> predicate) {
         var horizontal = range * area.horizontal_range_multiplier;
         var vertical = range * area.vertical_range_multiplier;
         var box = centerEntity.getBoundingBox().expand(
@@ -344,7 +215,7 @@ public class TargetHelper {
         return new Beam.Position(start, end, length, hitBlock);
     }
 
-    @Nullable public static Vec3d findSolidBlockBelow(LivingEntity entity, Vec3d position, World world, float height) {
+    @Nullable public static Vec3d findSolidBlockBelow(Entity entity, Vec3d position, World world, float height) {
         var hit = world.raycast(new RaycastContext(position, position.add(0, height, 0),
                 RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity));
         if (hit.getType() == HitResult.Type.BLOCK) {

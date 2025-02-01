@@ -4,12 +4,10 @@ import net.minecraft.util.Rarity;
 import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.api.spell.fx.ParticleBatch;
 import net.spell_engine.api.spell.fx.Sound;
-import net.spell_engine.utils.TargetHelper;
+import net.spell_engine.internals.target.SpellTarget;
 import net.spell_power.api.SpellPower;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class Spell {
     // Structure
@@ -23,7 +21,6 @@ public class Spell {
     @Nullable public String group;
     // The rank of the spell, used to determine which spell to use when multiple spells with the same `group` are available
     public int rank = 1;
-
     public Learn learn = new Learn();
     public static class Learn { public Learn() {}
         /// Whether the spell can be obtained from Spell Binding Table
@@ -33,166 +30,210 @@ public class Spell {
         public int level_requirement_per_tier = 10;
     }
 
-    public Scroll scroll = new Scroll();
-    public static class Scroll { public Scroll() {}
-        public boolean generate = true;
-        /// Cost of experience levels to apply the scroll
-        public int apply_cost_base = 0;
-        public int level_cost_per_tier = 1;
-        public int level_requirement_per_tier = 0;
-        @Nullable public Rarity custom_rarity = null;
-    }
-
-    public Cast cast = new Cast();
-    public static class Cast { public Cast() { }
-        public boolean haste_affected = true;
-        public float duration = 0;
-        public int channel_ticks = 0;
-        public String animation;
-        public boolean animation_pitch = true;
-        public boolean animates_ranged_weapon = false;
-        /// Default `0.2` matches the same as movement speed during vanilla item usage (such as bow)"
-        public float movement_speed = 0.2F;
-        public Sound start_sound;
-        public Sound sound;
-        public ParticleBatch[] particles = new ParticleBatch[]{};
-    }
-
-    @Deprecated(forRemoval = true)
-    public enum Mode { CAST, ITEM_USE }
-    @Deprecated(forRemoval = true)
-    public Mode mode = Mode.CAST;
-    @Deprecated(forRemoval = true)
-    public ItemUse item_use = new ItemUse();
-    @Deprecated(forRemoval = true)
-    public static class ItemUse { public ItemUse() { }
-        public boolean shows_item_as_icon = false;
-        public boolean requires_offhand_item = false;
-    }
-
-    @Nullable public ArrowPerks arrow_perks = null;
-    public static class ArrowPerks { public ArrowPerks() { }
-        public float damage_multiplier = 1F;
-        public float velocity_multiplier = 1F;
-        public boolean bypass_iframes = false;
-        public int iframe_to_set = 0;
-        public boolean skip_arrow_damage = false;
-        public int pierce = 0;
-        public float knockback = 1;
-        @Nullable public Impact[] impact;
-        @Nullable public ParticleBatch[] travel_particles;
-        @Nullable public ProjectileModel override_render;
-    }
-
-    public Release release;
-    public static class Release { public Release() { }
-        public Target target;
-        public boolean custom_impact = false;
-        public static class Target { public Target() { }
-            public Type type;
-            public enum Type {
-                AREA, BEAM, CURSOR, SELF,
-
-                // To be refactored into `Action` in the future
-                PROJECTILE, METEOR, CLOUD, SHOOT_ARROW
-            }
-
-            public Area area;
-            public static class Area { public Area() { }
-                public enum DropoffCurve { NONE, SQUARED }
-                public DropoffCurve distance_dropoff = DropoffCurve.NONE;
-                public float horizontal_range_multiplier = 1F;
-                public float vertical_range_multiplier = 1F;
-                public float angle_degrees = 0F;
-                public boolean include_caster = false;
-            }
-
-            public Beam beam;
-            public static class Beam { public Beam() { }
-                public enum Luminance { LOW, MEDIUM, HIGH }
-                public Luminance luminance = Luminance.HIGH;
-                public String texture_id = "textures/entity/beacon_beam.png";
-                public long color_rgba = 0xFFFFFFFFL;
-                public long inner_color_rgba = 0xFFFFFFFFL;
-                public float width = 0.1F;
-                public float flow = 1;
-                public ParticleBatch[] block_hit_particles = new ParticleBatch[]{};
-            }
-
-            // Populate either `cloud` or `clouds` but not both
-            public Cloud cloud;
-            public Cloud[] clouds = new Cloud[]{};
-            public static class Cloud { public Cloud() { }
-                // Custom entity type id to spawn, must be a subclass of `SpellCloud`
-                @Nullable public String entity_type_id;
-                public AreaImpact volume = new AreaImpact();
-                public float time_to_live_seconds = 0;
-
-                /// The number of ticks between looking for targets and trying to apply impact
-                public int impact_tick_interval = 5;
-                public int delay_ticks = 0;
-                public EntityPlacement placement = new EntityPlacement();
-                @Nullable public Sound presence_sound;
-                public ClientData client_data = new ClientData();
-                public static class ClientData {
-                    public int light_level = 0;
-                    public ParticleBatch[] particles = new ParticleBatch[]{};
-                    public ProjectileModel model;
-                }
-                public Spawn spawn = new Spawn();
-                public static class Spawn {
-                    public Sound sound;
-                    public ParticleBatch[] particles = new ParticleBatch[]{};
-                }
-            }
-
-            public Cursor cursor;
-            public static class Cursor { public Cursor() { }
-                public boolean use_caster_as_fallback = false;
-            }
-
-            public ShootProjectile projectile;
-            public static class ShootProjectile {
-                public boolean inherit_shooter_velocity = false;
-                public static class DirectionOffset {  public float yaw = 0; public float pitch = 0; }
-                public DirectionOffset[] direction_offsets;
-                public boolean direction_offsets_require_target = false;
-                /// Launch properties of the spell projectile
-                public LaunchProperties launch_properties = new LaunchProperties();
-                /// The projectile to be launched
-                public ProjectileData projectile;
-            }
-
-            public Meteor meteor;
-            public static class Meteor { public Meteor() { }
-                /// Determines whether the it can be casted on the ground, without a targeted entity
-                public boolean requires_entity = false;
-                /// How high the falling projectile is launched from compared to the position of the target
-                public float launch_height = 10;
-                public int offset_requires_sequence = 1;
-                public int divergence_requires_sequence = 1;
-                public int follow_target_requires_sequence = -1;
-                /// How far horizontally the falling projectile is launched from the target
-                public float launch_radius = 0;
-                /// Launch properties of the falling projectile
-                public LaunchProperties launch_properties = new LaunchProperties();
-                /// The projectile to be launched
-                public ProjectileData projectile;
-            }
-
-            public ShootArrow shoot_arrow;
-            public static class ShootArrow { public ShootArrow() { }
-                public boolean consume_arrow = true;
-                public float divergence = 5F;
-                public boolean arrow_critical_strike = true;
-                /// Launch properties of the arrow
-                /// (vanilla default velocity for crossbows is 3.15)
-                public LaunchProperties launch_properties = new LaunchProperties().velocity(3.15F);
+    public Tooltip tooltip = new Tooltip();
+    public static class Tooltip { public Tooltip() { }
+        public LineOptions name = new LineOptions(true, true);
+        public LineOptions description = new LineOptions(false, true);
+        public static class LineOptions { public LineOptions() { }
+            /// Vanilla enum Formatting value by name
+            public String color = "GRAY";
+            public boolean show_in_compact = true;
+            public boolean show_in_details = true;
+            public LineOptions(boolean show_in_compact, boolean show_in_details) {
+                this.show_in_compact = show_in_compact;
+                this.show_in_details = show_in_details;
             }
         }
+    }
+
+    public Type type = Type.ACTIVE;
+    public enum Type { ACTIVE, PASSIVE }
+
+    public Active active;
+    public static class Active {
+        public Scroll scroll = new Scroll();
+        public static class Scroll { public Scroll() {}
+            public boolean generate = true;
+            /// Cost of experience levels to apply the scroll
+            public int apply_cost_base = 0;
+            public int level_cost_per_tier = 1;
+            public int level_requirement_per_tier = 0;
+            @Nullable public Rarity custom_rarity = null;
+        }
+
+        public Cast cast = new Cast();
+        public static class Cast { public Cast() { }
+            public boolean haste_affected = true;
+            public float duration = 0;
+            public int channel_ticks = 0;
+            public String animation;
+            public boolean animation_pitch = true;
+            public boolean animates_ranged_weapon = false;
+            /// Default `0.2` matches the same as movement speed during vanilla item usage (such as bow)"
+            public float movement_speed = 0.2F;
+            public Sound start_sound;
+            public Sound sound;
+            public ParticleBatch[] particles = new ParticleBatch[]{};
+        }
+    }
+
+    public Passive passive;
+    public static class Passive {
+        public Trigger trigger = new Trigger();
+    }
+
+    public Release release = new Release();
+    public static class Release { public Release() { }
         public String animation;
         public ParticleBatch[] particles;
         public Sound sound;
+    }
+
+    public Target target = new Target();
+    public static class Target {
+        public Type type = Type.CASTER;
+        public enum Type {
+            NONE, CASTER, AIM, BEAM, AREA, FROM_TRIGGER
+        }
+        // The number of maximum targets, applied when greater than zero
+        public int cap = 0;
+
+        public Aim aim;
+        public static class Aim { public Aim() { }
+            /// Whether an entity must be targeted to cast the spell
+            public boolean required = false;
+            /// Whether the spell casting process keeps an entity that was targeted already
+            public boolean sticky = false;
+            /// Whether the spell casting process uses the caster as a fallback target
+            public boolean use_caster_as_fallback = false;
+        }
+
+        public Beam beam;
+        public static class Beam { public Beam() { }
+            public enum Luminance { LOW, MEDIUM, HIGH }
+            public Beam.Luminance luminance = Beam.Luminance.HIGH;
+            public String texture_id = "textures/entity/beacon_beam.png";
+            public long color_rgba = 0xFFFFFFFFL;
+            public long inner_color_rgba = 0xFFFFFFFFL;
+            public float width = 0.1F;
+            public float flow = 1;
+            public ParticleBatch[] block_hit_particles = new ParticleBatch[]{};
+        }
+
+        public Area area;
+        public static class Area { public Area() { }
+            public enum DropoffCurve { NONE, SQUARED }
+            public DropoffCurve distance_dropoff = DropoffCurve.NONE;
+            public float horizontal_range_multiplier = 1F;
+            public float vertical_range_multiplier = 1F;
+            public float angle_degrees = 0F;
+            public boolean include_caster = false;
+        }
+    }
+
+    public Delivery deliver = new Delivery();
+    public static class Delivery {
+        public Type type = Type.DIRECT;
+        public enum Type {
+            DIRECT, PROJECTILE, METEOR, CLOUD, SHOOT_ARROW, STASH_EFFECT, CUSTOM
+        }
+
+        public ShootProjectile projectile;
+        public static class ShootProjectile {
+            public boolean inherit_shooter_velocity = false;
+            public static class DirectionOffset { public float yaw = 0; public float pitch = 0; }
+            public ShootProjectile.DirectionOffset[] direction_offsets;
+            public boolean direction_offsets_require_target = false;
+            /// Turns the projectile immediately towards the target
+            public boolean direct_towards_target = false;
+            /// Launch properties of the spell projectile
+            public LaunchProperties launch_properties = new LaunchProperties();
+            /// The projectile to be launched
+            public ProjectileData projectile;
+        }
+
+        public Meteor meteor;
+        public static class Meteor { public Meteor() { }
+            /// How high the falling projectile is launched from compared to the position of the target
+            public float launch_height = 10;
+            public int offset_requires_sequence = 1;
+            public int divergence_requires_sequence = 1;
+            public int follow_target_requires_sequence = -1;
+            /// How far horizontally the falling projectile is launched from the target
+            public float launch_radius = 0;
+            /// Launch properties of the falling projectile
+            public LaunchProperties launch_properties = new LaunchProperties();
+            /// The projectile to be launched
+            public ProjectileData projectile;
+        }
+
+        public ShootArrow shoot_arrow;
+        public static class ShootArrow { public ShootArrow() { }
+            public boolean consume_arrow = true;
+            public float divergence = 5F;
+            public boolean arrow_critical_strike = true;
+            /// Launch properties of the arrow
+            /// (vanilla default velocity for crossbows is 3.15)
+            public LaunchProperties launch_properties = new LaunchProperties().velocity(3.15F);
+        }
+
+        public Cloud cloud;
+        public Cloud[] clouds = new Cloud[]{};
+        public static class Cloud { public Cloud() { }
+            // Custom entity type id to spawn, must be a subclass of `SpellCloud`
+            @Nullable public String entity_type_id;
+            public AreaImpact volume = new AreaImpact();
+            public float time_to_live_seconds = 0;
+
+            /// The number of ticks between looking for targets and trying to apply impact
+            public int impact_tick_interval = 5;
+            public int delay_ticks = 0;
+            public EntityPlacement placement = new EntityPlacement();
+            @Nullable public Sound presence_sound;
+            public Cloud.ClientData client_data = new Cloud.ClientData();
+            public static class ClientData {
+                public int light_level = 0;
+                public ParticleBatch[] particles = new ParticleBatch[]{};
+                public ProjectileModel model;
+            }
+            public Cloud.Spawn spawn = new Cloud.Spawn();
+            public static class Spawn {
+                public Sound sound;
+                public ParticleBatch[] particles = new ParticleBatch[]{};
+            }
+        }
+
+        public StashEffect stash_effect;
+        public static class StashEffect {
+            /// Spells with valid `stash_effect` get automatically linked
+            /// to the status effect specified below.
+            /// No java code required.
+
+            /// ID of the status effect, that will stash this spell.
+            public String id;
+            /// Stacks to apply (-1)
+            public int amplifier = 0;
+            /// Duration of the status effect in seconds
+            public float duration = 10;
+            public boolean show_particles = false;
+
+            /// Trigger of the status effect
+            public Trigger trigger = new Trigger();
+            /// Status effect stacks to consume upon triggering
+            public int consume = 1;
+            /// Determines what happens to the impacts of the spell when using this stash
+            public ImpactMode impact_mode = ImpactMode.PERFORM;
+            public enum ImpactMode {
+                PERFORM,    /// Perform the impacts, on the target that is available at the time of triggering
+                TRANSFER    /// Pass the impacts onto a projectile, that will be launched at the time of triggering
+            }
+        }
+
+        public Custom custom;
+        public static class Custom { public Custom() { }
+            /// ID of the handler
+            public String handler;
+        }
     }
 
     public Impact[] impact;
@@ -224,7 +265,7 @@ public class Spell {
             public boolean apply_to_caster = false;
             public float min_power = 1;
             public enum Type {
-                DAMAGE, HEAL, STATUS_EFFECT, FIRE, SPAWN, TELEPORT
+                DAMAGE, HEAL, STATUS_EFFECT, FIRE, SPAWN, TELEPORT, CUSTOM
             }
             public Damage damage;
             public static class Damage { public Damage() { }
@@ -277,7 +318,7 @@ public class Spell {
                 public enum Mode { FORWARD, BEHIND_TARGET }
                 public Mode mode;
                 public int required_clearance_block_y = 1;
-                public TargetHelper.Intent intent = TargetHelper.Intent.HELPFUL;
+                public SpellTarget.Intent intent = SpellTarget.Intent.HELPFUL;
                 public Forward forward;
                 public static class Forward { public Forward() { }
                     public float distance = 10;
@@ -289,6 +330,13 @@ public class Spell {
                 @Nullable public ParticleBatch[] depart_particles;
                 @Nullable public ParticleBatch[] arrive_particles;
             }
+
+            public Custom custom;
+            public static class Custom { public Custom() { }
+                public SpellTarget.Intent intent = SpellTarget.Intent.HELPFUL;
+                /// ID of the handler
+                public String handler;
+            }
         }
 
         public ParticleBatch[] particles = new ParticleBatch[]{};
@@ -296,6 +344,19 @@ public class Spell {
     }
     /// Apply this impact to other entities nearby
     @Nullable public AreaImpact area_impact;
+
+    @Nullable public ArrowPerks arrow_perks = null;
+    public static class ArrowPerks { public ArrowPerks() { }
+        public float damage_multiplier = 1F;
+        public float velocity_multiplier = 1F;
+        public boolean bypass_iframes = false;
+        public int iframe_to_set = 0;
+        public boolean skip_arrow_damage = false;
+        public int pierce = 0;
+        public float knockback = 1;
+        @Nullable public ParticleBatch[] travel_particles;
+        @Nullable public ProjectileModel override_render;
+    }
 
     /// Applied to the caster, once the spell casting process finishes
     public Cost cost = new Cost();
@@ -336,6 +397,35 @@ public class Spell {
 
     // MARK: Shared structures (used from multiple places in the spell structure)
 
+    public static class Trigger {
+        public enum Type {
+            ARROW_SHOT, ARROW_IMPACT,
+            MELEE_IMPACT,
+            SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC,
+            DAMAGE_TAKEN, SHIELD_BLOCK,
+            ROLL  /// Only works when Combat Roll mod is installed
+        }
+        public Type type;
+        /// Chance to trigger. 0 = 0%, 1 = 100%
+        public float chance = 1;
+
+        public enum TargetSelector { CASTER, AOE_SOURCE, TARGET }
+        @Nullable public TargetSelector target_override;
+        @Nullable public TargetSelector aoe_source_override;
+
+        public SpellImpact spell_impact;
+        public static class SpellImpact { public SpellImpact() { }
+            // Spell school regex
+            @Nullable public String school;
+            // ID or tag to match the spell
+            @Nullable public String id;
+            // Impact type regex
+            @Nullable public String impact_type;
+            // Maybe add predicate, that can be registered in java, and resolved by this id
+            // public String spell_predicate
+        }
+    }
+
     public static class AreaImpact { public AreaImpact() { }
         public float radius = 1F;
         public ExtraRadius extra_radius = new ExtraRadius();
@@ -343,7 +433,7 @@ public class Spell {
             public float power_coefficient = 0;
             public float power_cap = 0;
         }
-        public Release.Target.Area area = new Release.Target.Area();
+        public Target.Area area = new Target.Area();
         public ParticleBatch[] particles = new ParticleBatch[]{};
         @Nullable
         public Sound sound;

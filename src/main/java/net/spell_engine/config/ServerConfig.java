@@ -3,7 +3,7 @@ package net.spell_engine.config;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
-import net.spell_engine.utils.TargetHelper;
+import net.spell_engine.internals.target.EntityRelation;
 
 import java.util.LinkedHashMap;
 
@@ -35,11 +35,13 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
     public int spell_binding_level_cost_multiplier = 1;
     @Comment("Spell binding lapis lazuli levelCost multiplier")
     public int spell_binding_lapis_cost_multiplier = 1;
-    @Comment("Should spells on the offhand item be collected and used.")
-    public boolean spell_container_from_offhand = false;
-    @Comment("Should be used in compatibility mode, when Trinkets is not installed.")
-    public boolean spell_container_from_offhand_ignore_dual_wielding = false;
-    @Comment("Should spells on the offhand item be collected and used.")
+    @Comment("Allow spell containers be cached for faster improved server performance. Might be buggy.")
+    public boolean spell_container_caching = true;
+    @Comment("Allow spells on the offhand item be collected and used.")
+    public boolean spell_container_from_offhand = true;
+    @Comment("Allow any spell containers to be resolved from the offhand not just offhand specific ones.")
+    public boolean spell_container_from_offhand_any = false;
+    @Comment("Allow spell containers be resolved from the equipment slots.")
     public boolean spell_container_from_equipment = true;
     @Comment("If set true, a Fireball doesn't collide with an ally, a healing projectile doesn't collide with an enemy")
     public boolean projectiles_pass_thru_irrelevant_targets = true;
@@ -72,19 +74,19 @@ public class ServerConfig implements ConfigData { public ServerConfig() {}
             - `player_relation_to_other`
             (The first relation to be found for the target will be applied.)
             """)
-    public LinkedHashMap<String, TargetHelper.Relation> player_relations = new LinkedHashMap<>() {{
-        put("minecraft:player", TargetHelper.Relation.FRIENDLY);
-        put("minecraft:villager", TargetHelper.Relation.FRIENDLY);
-        put("minecraft:allay", TargetHelper.Relation.FRIENDLY);
-        put("minecraft:iron_golem", TargetHelper.Relation.FRIENDLY);
-        put("guardvillagers:guard", TargetHelper.Relation.FRIENDLY);
-        put("minecraft:cat", TargetHelper.Relation.FRIENDLY);
+    public LinkedHashMap<String, EntityRelation> player_relations = new LinkedHashMap<>() {{
+        put("minecraft:player", EntityRelation.FRIENDLY);
+        put("minecraft:villager", EntityRelation.FRIENDLY);
+        put("minecraft:allay", EntityRelation.FRIENDLY);
+        put("minecraft:iron_golem", EntityRelation.FRIENDLY);
+        put("guardvillagers:guard", EntityRelation.FRIENDLY);
+        put("minecraft:cat", EntityRelation.FRIENDLY);
     }};
 
     @Comment("Relation to unspecified entities those are instance of PassiveEntity(Yarn)")
-    public TargetHelper.Relation player_relation_to_passives = TargetHelper.Relation.HOSTILE;
+    public EntityRelation player_relation_to_passives = EntityRelation.HOSTILE;
     @Comment("Relation to unspecified entities those are instance of HostileEntity(Yarn)")
-    public TargetHelper.Relation player_relation_to_hostiles = TargetHelper.Relation.HOSTILE;
+    public EntityRelation player_relation_to_hostiles = EntityRelation.HOSTILE;
     @Comment("Fallback relation")
-    public TargetHelper.Relation player_relation_to_other = TargetHelper.Relation.HOSTILE;
+    public EntityRelation player_relation_to_other = EntityRelation.HOSTILE;
 }

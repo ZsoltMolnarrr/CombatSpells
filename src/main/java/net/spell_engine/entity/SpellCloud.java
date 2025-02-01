@@ -41,7 +41,7 @@ public class SpellCloud extends Entity implements Ownable {
         this.noClip = true;
     }
 
-    public void onCreatedFromSpell(Identifier spellId, Spell.Release.Target.Cloud cloudData, SpellHelper.ImpactContext context) {
+    public void onCreatedFromSpell(Identifier spellId, Spell.Delivery.Cloud cloudData, SpellHelper.ImpactContext context) {
         this.spellId = spellId;
         this.context = context;
 
@@ -49,7 +49,7 @@ public class SpellCloud extends Entity implements Ownable {
         if (spellEntry != null) {
             var spell = spellEntry.value();
             var index = -1;
-            var dataList = List.of(spell.release.target.clouds);
+            var dataList = List.of(spell.deliver.clouds);
             if (!dataList.isEmpty()) {
                 index = dataList.indexOf(cloudData);
             }
@@ -214,14 +214,14 @@ public class SpellCloud extends Entity implements Ownable {
         }
     }
 
-    @Nullable public Spell.Release.Target.Cloud getCloudData() {
+    @Nullable public Spell.Delivery.Cloud getCloudData() {
         var spellEntry = getSpellEntry();
         if (spellEntry != null) {
             var spell = spellEntry.value();
-            if (spell.release.target.clouds.length > 0) {
-                return spell.release.target.clouds[dataIndex];
+            if (spell.deliver.clouds.length > 0) {
+                return spell.deliver.clouds[dataIndex];
             } else {
-                return spell.release.target.cloud;
+                return spell.deliver.cloud;
             }
         }
         return null;

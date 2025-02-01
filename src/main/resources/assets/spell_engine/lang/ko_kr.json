@@ -15,11 +15,11 @@
 
   "spell.group.primary": "(기본 주문)",
   "spell.tooltip.host.proxy.spell": "장착된 주문서에서 주문을 시전합니다",
-  "spell.tooltip.host.proxy.arrow": "장착된 주문서에서 궁술 기술을 사용합니다",
+  "spell.tooltip.host.proxy.archery": "장착된 주문서에서 궁술 기술을 사용합니다",
   "spell.tooltip.host.additional": "추가 주문:",
   "spell.tooltip.host.pre_loaded": "사용 시 주문 시전",
   "spell.tooltip.host.list.spell": "주문:",
-  "spell.tooltip.host.list.arrow": "기술:",
+  "spell.tooltip.host.list.archery": "기술:",
   "spell.tooltip.host.limit": "({current}/{max})",
   "spell.tooltip.cast_instant": "즉시 시전",
   "spell.tooltip.cast_time": "시전 시간: {duration}초",

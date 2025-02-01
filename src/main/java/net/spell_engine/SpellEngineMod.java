@@ -16,8 +16,11 @@ import net.spell_engine.api.spell.ExternalSpellSchools;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.config.ServerConfig;
 import net.spell_engine.config.ServerConfigWrapper;
-import net.spell_engine.internals.SpellAssignments;
+import net.spell_engine.internals.SpellTriggers;
+import net.spell_engine.internals.container.SpellAssignments;
+import net.spell_engine.internals.container.SpellContainerSource;
 import net.spell_engine.internals.criteria.EnchantmentSpecificCriteria;
+import net.spell_engine.internals.delivery.SpellStashHelper;
 import net.spell_engine.network.ServerNetwork;
 import net.spell_engine.particle.Particles;
 import net.spell_engine.rpg_series.RPGSeriesCore;
@@ -39,8 +42,8 @@ public class SpellEngineMod {
 
         DynamicRegistries.registerSynced(SpellRegistry.KEY, SpellRegistry.LOCAL_CODEC, SpellRegistry.NETWORK_CODEC);
 
-        SpellAssignments.initialize();
-        ServerNetwork.initializeHandlers();
+        SpellAssignments.init();
+        ServerNetwork.init();
         Particles.register();
 
         Criteria.register(EnchantmentSpecificCriteria.ID.toString(), EnchantmentSpecificCriteria.INSTANCE);
@@ -53,8 +56,11 @@ public class SpellEngineMod {
             return TriState.DEFAULT;
         });
 
-        ExternalSpellSchools.initialize();
-        RPGSeriesCore.initialize();
+        ExternalSpellSchools.init();
+        RPGSeriesCore.init();
+        SpellStashHelper.init();
+        SpellTriggers.init();
+        SpellContainerSource.init();
     }
 
     public static void registerSpellBinding() {

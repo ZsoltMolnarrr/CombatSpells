@@ -15,11 +15,11 @@
 
     "spell.group.primary": "(Hechizo primario)",
     "spell.tooltip.host.proxy.spell": "Lanza hechizos del Libro de Hechizos equipado",
-    "spell.tooltip.host.proxy.arrow": "Usa habilidades de tiro con arco del Libro de Hechizos equipado",
+    "spell.tooltip.host.proxy.archery": "Usa habilidades de tiro con arco del Libro de Hechizos equipado",
     "spell.tooltip.host.additional": "Hechizos adicionales:",
     "spell.tooltip.host.pre_loaded": "Lanzar hechizo al usar",
     "spell.tooltip.host.list.spell": "Hechizos:",
-    "spell.tooltip.host.list.arrow": "Habilidades:",
+    "spell.tooltip.host.list.archery": "Habilidades:",
     "spell.tooltip.host.limit": "({actual}/{máximo})",
     "spell.tooltip.cast_instant": "Lanzamiento Instantáneo",
     "spell.tooltip.cast_time": "Tiempo de Lanzamiento: {duración} segundo",

@@ -36,7 +36,7 @@ public class ExternalSpellSchools {
     );
 
     private static boolean initialized = false;
-    public static void initialize() {
+    public static void init() {
         if (initialized) { return; }
 
         // Sync attack power to client so physical attack damage spells can be estimated.

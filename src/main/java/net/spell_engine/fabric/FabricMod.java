@@ -10,6 +10,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.RemoveOnHit;
+import net.spell_engine.compat.CompatFeatures;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
 import net.spell_engine.entity.SpellCloud;
 import net.spell_engine.entity.SpellProjectile;
@@ -45,7 +46,7 @@ public class FabricMod implements ModInitializer {
         SpellEngineMod.init();
         SpellEngineMod.registerSpellBinding();
         SoundHelper.registerSounds();
-        TrinketsCompat.init();
+        CompatFeatures.initialize();
         SpellEngineItems.register();
 
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {

@@ -11,11 +11,9 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.WorldScheduler;
+import net.spell_engine.utils.WorldScheduler;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.mixin.item.RangedWeaponAccessor;
-
-import java.util.List;
 
 public class ArrowHelper {
     public static void shootArrow(World world, LivingEntity shooter, RegistryEntry<Spell> spellEntry, SpellHelper.ImpactContext context) {
@@ -24,7 +22,7 @@ public class ArrowHelper {
 
     public static void shootArrow(World world, LivingEntity shooter, RegistryEntry<Spell> spellEntry, SpellHelper.ImpactContext context, int sequenceIndex) {
         var spell = spellEntry.value();
-        var shoot_arrow = spell.release.target.shoot_arrow;
+        var shoot_arrow = spell.deliver.shoot_arrow;
         var weaponStack = shooter.getMainHandStack();
 
         // var weapon = weaponStack.getItem();

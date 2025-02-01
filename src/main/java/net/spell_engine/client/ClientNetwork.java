@@ -6,7 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.client.animation.AnimatablePlayer;
 import net.spell_engine.internals.casting.SpellCasterEntity;
-import net.spell_engine.internals.SpellAssignments;
+import net.spell_engine.internals.container.SpellAssignments;
 import net.spell_engine.network.Packets;
 import net.spell_engine.network.ServerNetwork;
 import net.spell_engine.particle.ParticleHelper;

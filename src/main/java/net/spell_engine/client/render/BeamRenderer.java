@@ -16,7 +16,7 @@ import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.beam.BeamEmitterEntity;
 import net.spell_engine.client.compatibility.ShaderCompatibility;
 import net.spell_engine.client.util.Color;
-import net.spell_engine.internals.Beam;
+import net.spell_engine.internals.delivery.Beam;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.utils.TargetHelper;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class BeamRenderer extends RenderLayer {
     public record LayerSet(RenderLayer inner, RenderLayer outer) { }
     private static final Map<String, LayerSet> layerCache = new HashMap<>();
-    public static LayerSet layerSetFor(Identifier texture, Spell.Release.Target.Beam.Luminance luminance) {
+    public static LayerSet layerSetFor(Identifier texture, Spell.Target.Beam.Luminance luminance) {
         var key = texture.toString() + luminance.toString();
         if (layerCache.containsKey(key)) {
             return layerCache.get(key);
@@ -129,7 +129,7 @@ public class BeamRenderer extends RenderLayer {
     }
 
     private static void renderBeamFromPlayer(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider,
-                                             Spell.Release.Target.Beam beam,
+                                             Spell.Target.Beam beam,
                                              Vec3d from, Vec3d to, Vec3d offset, long time, float tickDelta) {
         var absoluteTime = (float)Math.floorMod(time, 40) + tickDelta;
 
@@ -154,8 +154,8 @@ public class BeamRenderer extends RenderLayer {
         var innerColor = Color.IntFormat.fromLongRGBA(beam.inner_color_rgba);
 
         var luminance = ShaderCompatibility.isShaderPackInUse()
-                ? (SpellEngineClient.config.renderBeamsHighLuminance ? beam.luminance : Spell.Release.Target.Beam.Luminance.MEDIUM)
-                : Spell.Release.Target.Beam.Luminance.LOW;
+                ? (SpellEngineClient.config.renderBeamsHighLuminance ? beam.luminance : Spell.Target.Beam.Luminance.MEDIUM)
+                : Spell.Target.Beam.Luminance.LOW;
         LayerSet renderLayers = layerSetFor(texture, luminance);
         BeamRenderer.renderBeam(matrixStack, vertexConsumerProvider,
                 time, tickDelta, beam.flow, true,

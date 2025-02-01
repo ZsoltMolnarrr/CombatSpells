@@ -1,3 +1,21 @@
+# 1.5.0
+
+API Changes:
+- BREAKING CHANGES! 
+  - Add spell `type` do differentiate between `ACTIVE` and `PASSIVE` spells
+  - Spell structure: `cast` and `scroll` moved into `active` object
+  - Spell structure: `cost` reworked
+  - Spell structure: `release.target` split into `target` and `deliver`
+  - Completely rewrite spell stashes, now powered by unified spell triggers, stash effects are now automatically linked
+- Add support for passive spells
+- Add spell triggers (for passives and stashes): ARROW_SHOT, ARROW_IMPACT, MELEE_IMPACT, SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC, DAMAGE_TAKEN, ROLL
+- Add support for multiple ammo item cost
+- Add support for ammo lookup in container items (Bundle) 
+- Add `spell/quiver` slot for future use (disabled by default)
+- Add spell container `slot` field, to allow offhand containers
+- Impact.apply_to_caster now overrides all intent checks, add effect remove action
+- Add spell container caching
+
 # 1.4.5
 
 - Fix Spell Registry synchronization, datapacks should no longer cause connection failure

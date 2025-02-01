@@ -46,8 +46,6 @@ public class ClientConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public boolean highlightTarget = true;
     @ConfigEntry.Gui.Tooltip
-    public boolean stickyTarget = true;
-    @ConfigEntry.Gui.Tooltip
     public boolean filterInvalidTargets = true;
     @ConfigEntry.Gui.Tooltip
     public boolean alwaysShowFullTooltip = false;

@@ -129,4 +129,12 @@ public class VectorHelper {
         double w = q1[3] * q2[3] - q1[0] * q2[0] - q1[1] * q2[1] - q1[2] * q2[2];
         return new double[]{x, y, z, w};
     }
+
+    public static double yawFromNormalized(Vec3d vector) {
+        return Math.toDegrees(Math.atan2(-vector.x, vector.z));
+    }
+
+    public static double pitchFromNormalized(Vec3d vector) {
+        return Math.toDegrees(-Math.asin(vector.y));
+    }
 }

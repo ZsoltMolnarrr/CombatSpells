@@ -8,18 +8,19 @@ import net.minecraft.server.network.ServerPlayerConfigurationTask;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.spell_engine.SpellEngineMod;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.config.ServerConfig;
-import net.spell_engine.internals.SpellCastSyncHelper;
+import net.spell_engine.internals.casting.SpellCastSyncHelper;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.SpellAssignments;
-import net.spell_engine.utils.TargetHelper;
+import net.spell_engine.internals.container.SpellAssignments;
+import net.spell_engine.internals.target.SpellTarget;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class ServerNetwork {
-    public static void initializeHandlers() {
+    public static void init() {
 
         // Config stage
 
@@ -96,6 +97,10 @@ public class ServerNetwork {
             }
 
             world.getServer().executeSync(() -> {
+                var spellEntry = SpellRegistry.from(world).getEntry(packet.spellId());
+                if (spellEntry.isEmpty()) {
+                    return;
+                }
                 List<Entity> targets = new ArrayList<>();
                 for (var targetId: packet.targets()) {
                     // var entity = world.getEntityById(targetId);
@@ -106,8 +111,8 @@ public class ServerNetwork {
                         System.err.println("Spell Engine: Trying to perform spell " + packet.spellId().toString() + " Entity not found: " + targetId);
                     }
                 }
-                var target = new TargetHelper.SpellTargetResult(targets, packet.location());
-                SpellHelper.performSpell(world, player, packet.spellId(), target, packet.action(), packet.progress());
+                var target = new SpellTarget.SearchResult(targets, packet.location());
+                SpellHelper.performSpell(world, player, spellEntry.get(), target, packet.action(), packet.progress());
             });
         });
     }

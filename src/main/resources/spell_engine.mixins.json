@@ -4,7 +4,6 @@
   "package": "net.spell_engine.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ItemStackMixin",
     "ServerWorldMixin",
     "action_impair.AbstractHorseEntityMixin",
     "action_impair.LivingEntityActionImpairing",
@@ -31,7 +30,9 @@
     "entity.LivingEntityAccessor",
     "entity.LivingEntityEvents",
     "entity.LivingEntityKnockback",
+    "entity.PlayerEntityEvents",
     "entity.PlayerEntityMixin",
+    "entity.PlayerSpellContainerMixin",
     "item.ArmorMaterialLayerAccessor",
     "item.RangedWeaponAccessor",
     "registry.DataComponentTypesMixin",
