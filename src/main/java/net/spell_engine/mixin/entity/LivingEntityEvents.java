@@ -1,5 +1,7 @@
 package net.spell_engine.mixin.entity;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -54,5 +56,33 @@ public class LivingEntityEvents {
             var args = new CombatEvents.ItemUse.Args(entity, CombatEvents.ItemUse.Stage.TICK);
             CombatEvents.ITEM_USE.invoke(listener -> listener.onItemUseStart(args));
         }
+    }
+
+
+    /**
+     * `damageShield` is the first thing that is called when a shield block happens
+     */
+    @WrapOperation(
+            method = "damage",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;damageShield(F)V")
+    )
+    private void damage_WRAP_damageShield(
+            // Mixin parameters
+            LivingEntity instance, float durabilityAmount, Operation<Void> original,
+            // Context parameters
+            DamageSource source, float damageAmount
+    ) {
+        // Seems like `damageAmount` and `durabilityAmount` are the same
+        if (CombatEvents.ENTITY_SHIELD_BLOCK.isListened()) {
+            var args = new CombatEvents.EntityShieldBlock.Args(instance, source, durabilityAmount);
+            CombatEvents.ENTITY_SHIELD_BLOCK.invoke(listener -> listener.onShieldBlock(args));
+        }
+        if (instance instanceof PlayerEntity player) {
+            if (CombatEvents.PLAYER_SHIELD_BLOCK.isListened()) {
+                var args = new CombatEvents.PlayerShieldBlock.Args(player, source, durabilityAmount);
+                CombatEvents.PLAYER_SHIELD_BLOCK.invoke(listener -> listener.onShieldBlock(args));
+            }
+        }
+        original.call(instance, durabilityAmount);
     }
 }

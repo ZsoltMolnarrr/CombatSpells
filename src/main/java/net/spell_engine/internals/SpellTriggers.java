@@ -85,6 +85,9 @@ public class SpellTriggers {
         CombatEvents.PLAYER_DAMAGE_TAKEN.register(args -> {
             onDamageTaken(args.player(), args.source(), args.amount());
         });
+        CombatEvents.PLAYER_SHIELD_BLOCK.register(args -> {
+            onShieldBlock(args.player(), args.source(), args.amount());
+        });
     }
 
     public static void onArrowShot(ArrowExtension arrow, PlayerEntity player) {
@@ -128,6 +131,17 @@ public class SpellTriggers {
         }
         Entity aoeSourceEntity = ObjectHelper.coalesce(sourceEntity, player);
         var event = new Event(Spell.Trigger.Type.DAMAGE_TAKEN, player, aoeSourceEntity, sourceEntity);
+        event.damageSource = source;
+        event.damageAmount = amount;
+        fireTriggers(event);
+    }
+
+    public static void onShieldBlock(PlayerEntity player, DamageSource source, float amount) {
+        Entity sourceEntity = source.getAttacker();
+        if (sourceEntity == null) {
+            return; // No event without attacker (environmental damage)
+        }
+        var event = new Event(Spell.Trigger.Type.SHIELD_BLOCK, player, player, sourceEntity);
         event.damageSource = source;
         event.damageAmount = amount;
         fireTriggers(event);

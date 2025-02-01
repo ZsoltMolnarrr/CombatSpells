@@ -46,4 +46,16 @@ public class CombatEvents {
         record Args(PlayerEntity player, DamageSource source, float amount) {}
         void onPlayerDamageTaken(Args args);
     }
+
+    public static final Event<EntityShieldBlock> ENTITY_SHIELD_BLOCK = new Event<EntityShieldBlock>();
+    public interface EntityShieldBlock {
+        record Args(LivingEntity entity, DamageSource source, float amount) {}
+        void onShieldBlock(Args args);
+    }
+
+    public static final Event<PlayerShieldBlock> PLAYER_SHIELD_BLOCK = new Event<PlayerShieldBlock>();
+    public interface PlayerShieldBlock {
+        record Args(PlayerEntity player, DamageSource source, float amount) {}
+        void onShieldBlock(Args args);
+    }
 }

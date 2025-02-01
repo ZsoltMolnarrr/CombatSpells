@@ -402,7 +402,7 @@ public class Spell {
             ARROW_SHOT, ARROW_IMPACT,
             MELEE_IMPACT,
             SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC,
-            DAMAGE_TAKEN,
+            DAMAGE_TAKEN, SHIELD_BLOCK,
             ROLL  /// Only works when Combat Roll mod is installed
         }
         public Type type;
