@@ -1,10 +1,13 @@
 # 1.5.0
 
+IMPORTANT DISCLAIMER:
+- This update requires content mods to be updated, due to major API changes
+
 API Changes:
 - BREAKING CHANGES! 
   - Add spell `type` do differentiate between `ACTIVE` and `PASSIVE` spells
   - Spell structure: `cast` and `scroll` moved into `active` object
-  - Spell structure: `cost` reworked
+  - Spell structure: `cost` reworked to be more structured
   - Spell structure: `release.target` split into `target` and `deliver`
   - Completely rewrite spell stashes, now powered by unified spell triggers, stash effects are now automatically linked
 - Add support for passive spells
@@ -15,6 +18,7 @@ API Changes:
 - Add spell container `slot` field, to allow offhand containers
 - Impact.apply_to_caster now overrides all intent checks, add effect remove action
 - Add spell container caching
+- Add quiver slot for Quivers and Rune Pouches
 
 # 1.4.5
 

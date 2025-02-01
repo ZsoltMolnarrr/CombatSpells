@@ -71,6 +71,8 @@
 
   "trinkets.slot.spell.book": "Spell Book",
   "trinkets.slot.spell.scroll": "Spell Scroll",
+  "trinkets.slot.spell.quiver": "Quiver",
+  "trinkets.slot.misc.quiver": "Quiver",
 
   "text.autoconfig.spell_engine.title" : "Spell Engine",
 

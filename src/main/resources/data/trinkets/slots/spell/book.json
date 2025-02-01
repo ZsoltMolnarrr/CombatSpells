@@ -1,5 +1,6 @@
 {
   "icon": "spell_engine:gui/spell_book_slot",
+  "order": 0,
   "drop_rule": "keep",
   "validator_predicates": [ "spell_engine:spell_book", "trinkets:tag" ]
 }
