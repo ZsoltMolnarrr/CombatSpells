@@ -153,6 +153,7 @@ public class SpellTriggers {
     }
 
     private static void fireTriggers(Event event) {
+        if (event.player.getWorld().isClient()) { return; }
         // Iterate stash effects
         SpellStashHelper.useStashes(event);
         // Iterate passive spells
