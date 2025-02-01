@@ -34,7 +34,8 @@
     "entity.PlayerEntityMixin",
     "item.ArmorMaterialLayerAccessor",
     "item.RangedWeaponAccessor",
-    "registry.DataComponentTypesMixin"
+    "registry.DataComponentTypesMixin",
+    "registry.RegistryLoaderMixin"
   ],
   "client": [
     "client.AbstractClientPlayerEntityMixin",

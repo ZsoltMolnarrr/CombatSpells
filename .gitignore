@@ -121,4 +121,5 @@ forge/run/
 
 *.blend1
 /src/main/resources/data/spell_engine/spells/test*
+/src/main/resources/data/spell_engine/spell/test*
 /src/main/resources/data/spell_engine/spell_pools/test*

@@ -1,3 +1,7 @@
+# 1.4.5
+
+- Fix Spell Registry synchronization, datapacks should no longer cause connection failure
+
 # 1.4.4
 
 - Fix Spell Projectiles sometimes visually glitching after piercing a target
