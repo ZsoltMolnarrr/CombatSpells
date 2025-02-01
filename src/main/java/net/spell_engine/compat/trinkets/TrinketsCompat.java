@@ -1,9 +1,6 @@
 package net.spell_engine.compat.trinkets;
 
 import dev.emi.trinkets.api.TrinketsApi;
-import dev.emi.trinkets.api.event.TrinketDropCallback;
-import dev.emi.trinkets.api.event.TrinketEquipCallback;
-import dev.emi.trinkets.api.event.TrinketUnequipCallback;
 import net.fabricmc.fabric.api.util.TriState;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,14 +8,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.trinket.ISpellBookItem;
-import net.spell_engine.api.spell.SpellContainer;
-import net.spell_engine.compat.ContainerCompat;
+import net.spell_engine.compat.container.ContainerCompat;
 import net.spell_engine.internals.container.SpellContainerHelper;
 import net.spell_engine.internals.container.SpellContainerSource;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 public class TrinketsCompat {

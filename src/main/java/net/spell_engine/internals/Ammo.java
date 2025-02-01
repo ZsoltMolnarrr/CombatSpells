@@ -1,7 +1,5 @@
 package net.spell_engine.internals;
 
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,7 +12,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.compat.ContainerCompat;
+import net.spell_engine.compat.container.ContainerCompat;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -136,7 +134,7 @@ public class Ammo {
 
     public static int findInContainer(ItemStack containerStack, Predicate<ItemStack> consumedItem) {
         int found = 0;
-        var bundle = containerStack.get(DataComponentTypes.BUNDLE_CONTENTS);
+        var bundle = ContainerCompat.getContainerComponent(containerStack);
         if (bundle != null) {
             for (int i = 0; i < bundle.size(); i++) {
                 var storedStack = bundle.get(i);
@@ -149,7 +147,7 @@ public class Ammo {
     }
 
     public static ItemStack findFirstInContainer(ItemStack containerStack, Predicate<ItemStack> consumedItem) {
-        var bundle = containerStack.get(DataComponentTypes.BUNDLE_CONTENTS);
+        var bundle = ContainerCompat.getContainerComponent(containerStack);
         if (bundle != null) {
             for (int i = 0; i < bundle.size(); i++) {
                 var storedStack = bundle.get(i);
@@ -182,7 +180,7 @@ public class Ammo {
 
     public static int takeFromContainer(ItemStack containerStack, Predicate<ItemStack> consumedItem, int amount) {
         int taken = 0;
-        var bundle = containerStack.get(DataComponentTypes.BUNDLE_CONTENTS);
+        var bundle = ContainerCompat.getContainerComponent(containerStack);
         var toDecreement = amount;
         if (bundle != null) {
             var putBack = new ArrayList<ItemStack>();
@@ -198,11 +196,8 @@ public class Ammo {
                     putBack.add(storedStack);
                 }
             }
-            var newBundle = new BundleContentsComponent.Builder(bundle).clear();
-            for (var stackToAdd : putBack.reversed()) { // Reversed as putting items manually results reversed order
-                newBundle.add(stackToAdd);
-            }
-            containerStack.set(DataComponentTypes.BUNDLE_CONTENTS, newBundle.build());
+            var newBundle = bundle.createNewWithContents(putBack.reversed());
+            newBundle.attachTo(containerStack);
         }
         return taken;
     }
