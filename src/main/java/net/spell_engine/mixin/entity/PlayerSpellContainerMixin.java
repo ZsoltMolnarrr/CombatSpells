@@ -3,6 +3,7 @@ package net.spell_engine.mixin.entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
+import net.spell_engine.api.spell.SpellContainer;
 import net.spell_engine.internals.container.SpellContainerHelper;
 import net.spell_engine.internals.container.SpellContainerSource;
 import org.spongepowered.asm.mixin.Mixin;
@@ -32,7 +33,7 @@ public class PlayerSpellContainerMixin implements SpellContainerSource.Owner {
         return currentSpellContainers;
     }
 
-    private ItemStack lastMainHandStack = ItemStack.EMPTY;
+    private SpellContainer lastMainHandContainer = SpellContainer.EMPTY;
     public Map<String, Object> lastProviderStates = new HashMap<>();
 
     @Inject(method = "tick", at = @At("TAIL"))
@@ -41,14 +42,13 @@ public class PlayerSpellContainerMixin implements SpellContainerSource.Owner {
 
         // Special treatment for main hand stack
         // as it changes the most frequently
-        var mainHandStack = player.getMainHandStack();
-        if (mainHandStack != lastMainHandStack
-                && !Objects.equals(
-                        SpellContainerHelper.containerFromItemStack(mainHandStack),
-                        SpellContainerHelper.containerFromItemStack(lastMainHandStack))
-                ) {
+        // Checking Container instead of ItemStack, as ItemStack instances sometimes
+        // get their contents replaced, without a reference update
+        var mainHandContainer = SpellContainerHelper.containerFromItemStack(player.getMainHandStack());
+        if (!Objects.equals(mainHandContainer, lastMainHandContainer)) {
             SpellContainerSource.setDirty(player, SpellContainerSource.MAIN_HAND);
         }
+        
         for (var entry: SpellContainerSource.sources) {
             if (entry.checker() == null) { continue; }
             var currentState = entry.checker().current(player);
@@ -60,6 +60,6 @@ public class PlayerSpellContainerMixin implements SpellContainerSource.Owner {
 
         SpellContainerSource.update(player);
 
-        lastMainHandStack = mainHandStack;
+        lastMainHandContainer = mainHandContainer;
     }
 }
