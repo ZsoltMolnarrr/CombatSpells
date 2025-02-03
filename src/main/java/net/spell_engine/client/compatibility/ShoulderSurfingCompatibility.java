@@ -4,7 +4,7 @@ import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingPlugin;
 import com.github.exopandora.shouldersurfing.api.plugin.IShoulderSurfingRegistrar;
 import net.minecraft.client.MinecraftClient;
 import net.spell_engine.client.SpellEngineClient;
-import net.spell_engine.internals.container.SpellContainerHelper;
+import net.spell_engine.api.spell.container.SpellContainerHelper;
 import net.spell_engine.internals.casting.SpellCasterClient;
 
 public class ShoulderSurfingCompatibility implements IShoulderSurfingPlugin {

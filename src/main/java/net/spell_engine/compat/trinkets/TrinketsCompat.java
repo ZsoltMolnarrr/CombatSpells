@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.compat.container.ContainerCompat;
-import net.spell_engine.internals.container.SpellContainerHelper;
+import net.spell_engine.api.spell.container.SpellContainerHelper;
 import net.spell_engine.internals.container.SpellContainerSource;
 
 import java.util.ArrayList;

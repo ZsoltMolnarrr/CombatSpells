@@ -1,10 +1,8 @@
 package net.spell_engine.mixin.entity;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
-import net.spell_engine.api.spell.SpellContainer;
-import net.spell_engine.internals.container.SpellContainerHelper;
+import net.spell_engine.api.spell.container.SpellContainer;
+import net.spell_engine.api.spell.container.SpellContainerHelper;
 import net.spell_engine.internals.container.SpellContainerSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

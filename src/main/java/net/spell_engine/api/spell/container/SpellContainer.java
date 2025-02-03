@@ -1,4 +1,4 @@
-package net.spell_engine.api.spell;
+package net.spell_engine.api.spell.container;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -39,20 +39,6 @@ public record SpellContainer(ContentType content, boolean is_proxy, String pool,
     }
 
     // MARK: Helpers
-
-    public int cappedIndex(int selected) {
-        if (spell_ids.isEmpty()) { return 0; }
-        var remainder = selected % spell_ids.size();
-        return (remainder >= 0) ? remainder : (remainder + spell_ids.size());
-    }
-
-    public String spellId(int selected) {
-        if (spell_ids == null || spell_ids.isEmpty()) {
-            return null;
-        }
-        var index = cappedIndex(selected);
-        return spell_ids.get(index);
-    }
 
     public boolean isValid() {
         if (is_proxy) {

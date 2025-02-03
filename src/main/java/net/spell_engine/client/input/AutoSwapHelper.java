@@ -11,9 +11,9 @@ import net.minecraft.network.packet.c2s.play.PlayerActionC2SPacket;
 import net.minecraft.util.UseAction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.spell_engine.api.spell.SpellContainer;
+import net.spell_engine.api.spell.container.SpellContainer;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
-import net.spell_engine.internals.container.SpellContainerHelper;
+import net.spell_engine.api.spell.container.SpellContainerHelper;
 import net.spell_engine.utils.AttributeModifierHelper;
 import org.jetbrains.annotations.Nullable;
 

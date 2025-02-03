@@ -6,7 +6,7 @@ import net.minecraft.item.SwordItem;
 import net.minecraft.item.TridentItem;
 import net.minecraft.registry.Registries;
 import net.spell_engine.SpellEngineMod;
-import net.spell_engine.api.spell.SpellContainer;
+import net.spell_engine.api.spell.container.SpellContainer;
 import net.spell_engine.internals.container.SpellAssignments;
 
 import java.util.List;

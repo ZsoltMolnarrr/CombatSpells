@@ -8,7 +8,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.spell_engine.api.spell.SpellContainer;
+import net.spell_engine.api.spell.container.SpellContainer;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.compat.trinkets.SpellBookTrinketItem;
 import net.spell_engine.compat.trinkets.TrinketsCompat;

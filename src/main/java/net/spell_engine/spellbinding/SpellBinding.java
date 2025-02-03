@@ -13,7 +13,7 @@ import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.item.trinket.SpellBooks;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
-import net.spell_engine.internals.container.SpellContainerHelper;
+import net.spell_engine.api.spell.container.SpellContainerHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;

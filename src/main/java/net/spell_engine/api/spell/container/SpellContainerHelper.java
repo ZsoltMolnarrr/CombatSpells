@@ -1,6 +1,5 @@
-package net.spell_engine.internals.container;
+package net.spell_engine.api.spell.container;
 
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
@@ -11,8 +10,8 @@ import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.*;
 import net.spell_engine.api.spell.registry.SpellRegistry;
+import net.spell_engine.internals.container.SpellAssignments;
 import net.spell_power.api.SpellSchool;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,15 +22,6 @@ public class SpellContainerHelper {
             return Identifier.of(container.pool());
         }
         return null;
-    }
-
-    /**
-     * Get the item stack in the offhand slot of the player's inventory
-     * This method is used for BetterCombat mod compatibility.
-     * BetterCombat overrides player.getOffHandStack() to return empty stack when player is dual wielding.
-     */
-    static ItemStack getOffhandItemStack(PlayerEntity player) {
-        return player.getInventory().offHand.get(0);
     }
 
     public static SpellContainer containerFromItemStack(ItemStack itemStack) {
@@ -48,21 +38,6 @@ public class SpellContainerHelper {
 
     public static boolean contains(SpellContainer container, Identifier spellId) {
         return container != null && container.spell_ids().contains(spellId.toString());
-    }
-
-    public static void addContainerToItemStack(SpellContainer container, ItemStack itemStack) {
-        if (itemStack.isEmpty()) {
-            return;
-        }
-        itemStack.set(SpellDataComponents.SPELL_CONTAINER, container);
-    }
-
-    @Nullable
-    public static Identifier spellId(SpellContainer container, int selectedIndex) {
-        if (container == null || !container.isUsable()) {
-            return null;
-        }
-        return Identifier.of(container.spellId(selectedIndex));
     }
 
     public static SpellContainer addSpell(World world, Identifier spellId, SpellContainer container) {
@@ -144,5 +119,26 @@ public class SpellContainerHelper {
                 .map(entry -> entry.getKey().get().getValue().toString())
                 .toList();
         return new SpellContainer(contentType, isProxy, "", spellIds.size(), spellIds);
+    }
+
+    public static SpellContainer createForRangedWeapon() {
+        return createForWeapon(SpellContainer.ContentType.ARCHERY, List.of());
+    }
+
+    public static SpellContainer createForMagicWeapon() {
+        return createForWeapon(SpellContainer.ContentType.MAGIC, List.of());
+    }
+
+    public static SpellContainer createForMagicWeapon(Identifier spellId) {
+        return createForWeapon(SpellContainer.ContentType.MAGIC, List.of(spellId));
+    }
+
+    public static SpellContainer createForMeleeWeapon() {
+        return createForWeapon(SpellContainer.ContentType.MAGIC, List.of());
+    }
+
+    public static SpellContainer createForWeapon(SpellContainer.ContentType contentType, List<Identifier> spellIds) {
+        var spellIdStrings = spellIds.stream().map(Identifier::toString).toList();
+        return new SpellContainer(contentType, true, "", 0, spellIdStrings);
     }
 }

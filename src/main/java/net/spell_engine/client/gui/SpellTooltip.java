@@ -20,7 +20,7 @@ import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.Keybindings;
 import net.spell_engine.internals.Ammo;
 import net.spell_engine.internals.SpellHelper;
-import net.spell_engine.internals.container.SpellContainerHelper;
+import net.spell_engine.api.spell.container.SpellContainerHelper;
 import net.spell_power.api.SpellPower;
 
 import java.util.ArrayList;

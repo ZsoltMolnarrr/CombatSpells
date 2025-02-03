@@ -8,7 +8,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.api.spell.SpellContainer;
+import net.spell_engine.api.spell.container.SpellContainer;
+import net.spell_engine.api.spell.container.SpellContainerHelper;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import org.jetbrains.annotations.Nullable;
 

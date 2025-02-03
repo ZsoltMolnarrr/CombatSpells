@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
-import net.spell_engine.api.spell.SpellContainer;
+import net.spell_engine.api.spell.container.SpellContainer;
 import net.spell_engine.utils.WeaponCompatibility;
 
 import java.io.InputStreamReader;
