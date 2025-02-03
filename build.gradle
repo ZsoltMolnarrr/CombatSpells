@@ -66,8 +66,7 @@ dependencies {
     modCompileOnly("maven.modrinth:iris:${project.iris_version}")
     modCompileOnly("maven.modrinth:lambdynamiclights:${project.lamb_dynamic_lights_version}")
     modImplementation("maven.modrinth:combat-roll:${project.combat_roll_version}")
-
-    modImplementation(files("run/mods/dev/bundle-api-${project.bundle_api_version}.jar"))
+    modImplementation("maven.modrinth:bundle-api:${project.bundle_api_version}")
 }
 
 processResources {
