@@ -17,12 +17,47 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class SpellContainerHelper {
-    public static Identifier getPoolId(SpellContainer container) {
-        if (container != null && container.pool() != null) {
-            return Identifier.of(container.pool());
-        }
-        return null;
+
+    // Construction helpers for common use cases
+
+    public static SpellContainer createForRangedWeapon() {
+        return createForWeapon(SpellContainer.ContentType.ARCHERY, List.of());
     }
+
+    public static SpellContainer createForRangedWeapon(Identifier spellId) {
+        return createForWeapon(SpellContainer.ContentType.ARCHERY, List.of(spellId));
+    }
+
+    public static SpellContainer createForMagicWeapon() {
+        return createForWeapon(SpellContainer.ContentType.MAGIC, List.of());
+    }
+
+    public static SpellContainer createForMagicWeapon(Identifier spellId) {
+        return createForWeapon(SpellContainer.ContentType.MAGIC, List.of(spellId));
+    }
+
+    public static SpellContainer createForMeleeWeapon() {
+        return createForWeapon(SpellContainer.ContentType.MAGIC, List.of());
+    }
+
+    public static SpellContainer createForMeleeWeapon(Identifier spellId) {
+        return createForWeapon(SpellContainer.ContentType.MAGIC, List.of(spellId));
+    }
+
+    public static SpellContainer createForWeapon(SpellContainer.ContentType contentType, List<Identifier> spellIds) {
+        var spellIdStrings = spellIds.stream().map(Identifier::toString).toList();
+        return new SpellContainer(contentType, true, "", 0, spellIdStrings);
+    }
+
+    public static SpellContainer createForShield(Identifier spellId) {
+        return new SpellContainer(SpellContainer.ContentType.MAGIC, false, "", "offhand", 0, List.of(spellId.toString()));
+    }
+
+    public static SpellContainer createForRelic(Identifier spellId) {
+        return new SpellContainer(SpellContainer.ContentType.MAGIC, false, "", 0, List.of(spellId.toString()));
+    }
+
+    // Read helpers
 
     public static SpellContainer containerFromItemStack(ItemStack itemStack) {
         if (itemStack.isEmpty()) {
@@ -36,9 +71,18 @@ public class SpellContainerHelper {
         return SpellAssignments.containerForItem(id);
     }
 
+    public static Identifier getPoolId(SpellContainer container) {
+        if (container != null && container.pool() != null) {
+            return Identifier.of(container.pool());
+        }
+        return null;
+    }
+
     public static boolean contains(SpellContainer container, Identifier spellId) {
         return container != null && container.spell_ids().contains(spellId.toString());
     }
+
+    // Misc helpers (Spell Binding)
 
     public static SpellContainer addSpell(World world, Identifier spellId, SpellContainer container) {
         var spellIds = new ArrayList<String>(container.spell_ids());
@@ -95,6 +139,8 @@ public class SpellContainerHelper {
         return container != null && (container.isUsable() || container.is_proxy());
     }
 
+    // Misc helpers (Scrolls)
+
     public static boolean isSpellValidForItem(Item item, RegistryEntry<Spell> spell) {
         var spellType = spell.value().school.archetype == SpellSchool.Archetype.ARCHERY
                 ? SpellContainer.ContentType.ARCHERY : SpellContainer.ContentType.MAGIC;
@@ -119,26 +165,5 @@ public class SpellContainerHelper {
                 .map(entry -> entry.getKey().get().getValue().toString())
                 .toList();
         return new SpellContainer(contentType, isProxy, "", spellIds.size(), spellIds);
-    }
-
-    public static SpellContainer createForRangedWeapon() {
-        return createForWeapon(SpellContainer.ContentType.ARCHERY, List.of());
-    }
-
-    public static SpellContainer createForMagicWeapon() {
-        return createForWeapon(SpellContainer.ContentType.MAGIC, List.of());
-    }
-
-    public static SpellContainer createForMagicWeapon(Identifier spellId) {
-        return createForWeapon(SpellContainer.ContentType.MAGIC, List.of(spellId));
-    }
-
-    public static SpellContainer createForMeleeWeapon() {
-        return createForWeapon(SpellContainer.ContentType.MAGIC, List.of());
-    }
-
-    public static SpellContainer createForWeapon(SpellContainer.ContentType contentType, List<Identifier> spellIds) {
-        var spellIdStrings = spellIds.stream().map(Identifier::toString).toList();
-        return new SpellContainer(contentType, true, "", 0, spellIdStrings);
     }
 }
