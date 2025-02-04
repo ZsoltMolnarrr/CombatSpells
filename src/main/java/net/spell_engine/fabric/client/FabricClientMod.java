@@ -79,19 +79,7 @@ public class FabricClientMod implements ClientModInitializer {
             );
         }
 
-        ParticleFactoryRegistry.getInstance().register(Particles.arcane_hit.particleType, SpellHitParticle.ArcaneFactory::new);
-        ParticleFactoryRegistry.getInstance().register(Particles.arcane_spell.particleType, GenericSpellParticle.ArcaneSpellFactory::new);
-        ParticleFactoryRegistry.getInstance().register(Particles.healing_ascend.particleType, SpellFlameParticle.HealingFactory::new);
-        ParticleFactoryRegistry.getInstance().register(Particles.holy_hit.particleType, SpellHitParticle.HolyFactory::new);
-        ParticleFactoryRegistry.getInstance().register(Particles.holy_ascend.particleType, SpellFlameParticle.HolyFactory::new);
-        ParticleFactoryRegistry.getInstance().register(Particles.holy_spark_mini.particleType, SpellFlameParticle.HolyFactory::new);
         ParticleFactoryRegistry.getInstance().register(Particles.holy_spark.particleType, SpellSnowflakeParticle.HolyFactory::new);
-        ParticleFactoryRegistry.getInstance().register(Particles.holy_spell.particleType, GenericSpellParticle.HolySpellFactory::new);
-        ParticleFactoryRegistry.getInstance().register(Particles.nature_spark_mini.particleType, SpellFlameParticle.NatureFactory::new);
-        ParticleFactoryRegistry.getInstance().register(Particles.nature_spark_mini_slowing.particleType, SpellFlameParticle.NatureSlowingFactory::new);
-        ParticleFactoryRegistry.getInstance().register(Particles.white_spark_mini.particleType, SpellFlameParticle.WhiteFactory::new);
-        ParticleFactoryRegistry.getInstance().register(Particles.frost_hit.particleType, SpellHitParticle.FrostFactory::new);
-        ParticleFactoryRegistry.getInstance().register(Particles.buff_rage.particleType, SpellFlameParticle.BuffRageFactory::new);
 
         // Elemental
 

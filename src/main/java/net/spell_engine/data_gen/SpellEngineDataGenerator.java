@@ -17,11 +17,6 @@ public class SpellEngineDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(ParticlesGen::new);
     }
 
-//    @Override
-//    public @Nullable String getEffectiveModId() {
-//        return SpellEngineMod.ID;
-//    }
-
     public static class ParticlesGen extends SimpleParticleGenerator {
         public ParticlesGen(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
             super(dataOutput, registryLookup);
@@ -31,22 +26,32 @@ public class SpellEngineDataGenerator implements DataGeneratorEntrypoint {
         public void generateSimpleParticles(Builder builder) {
             for (var variant: Particles.MAGIC_FAMILY_VARIANTS.get()) {
                 var textures = new ArrayList<String>();
+                int frameCount = variant.frameCount();
+                String texture = "";
                 switch (variant.shape()) {
                     case SPELL -> {
-                        for (int i = 0; i < 8; i++) {
-                            textures.add("minecraft:spell_" + i);
-                        }
+                        texture = "minecraft:spell";
                     }
                     case IMPACT -> {
-                        textures.add("spell_engine:magic/impact_" + variant.family());
+                        texture = "spell_engine:magic/impact_" + variant.family();
                     }
                     case SPARK -> {
-                        textures.add("minecraft:generic_0");
+                        texture = "minecraft:generic_0";
                     }
                     case STRIPE -> {
-                        textures.add("spell_engine:magic/vertical_stripe");
+                        texture = "spell_engine:magic/vertical_stripe";
                     }
                 }
+
+                if (frameCount > 1) {
+                    for (int i = 0; i < frameCount; i++) {
+                        var reversedIndex = frameCount - 1 - i;
+                        textures.add(texture + "_" + reversedIndex);
+                    }
+                } else {
+                    textures.add(texture);
+                }
+
                 if (textures.isEmpty())  {
                     assert true;
                 }

@@ -32,6 +32,7 @@ public class SpellVariantParticle extends SpriteBillboardParticle  {
                 if (motion == Particles.MagicParticleFamily.Motion.DECELERATE) {
                     this.velocityMultiplier *= 0.8F;
                 }
+                this.maxAge = (int)(8.0 / (Math.random() * 0.8 + 0.2));
             }
             case ASCEND -> {
                 this.velocityMultiplier = 0.96F;
@@ -53,12 +54,9 @@ public class SpellVariantParticle extends SpriteBillboardParticle  {
                 this.velocityX += velocityX * 0.4;
                 this.velocityY += velocityY * 0.4;
                 this.velocityZ += velocityZ * 0.4;
-                this.scale *= 0.75f;
                 this.maxAge = Math.max((int)(6.0 / (Math.random() * 0.8 + 0.6)), 1);
             }
         }
-
-        this.maxAge = (int)(8.0 / (Math.random() * 0.8 + 0.2));
 
         this.setSpriteForAge(spriteProvider);
     }
@@ -90,9 +88,17 @@ public class SpellVariantParticle extends SpriteBillboardParticle  {
             float j = clientWorld.random.nextFloat() * 0.5F + 0.35F;
             var color = particleVariant.color();
             particle.setColor(color.red() * j, color.green() * j, color.blue() * j);
-            particle.alpha = 0.75F;
             particle.scale *= 0.75f;
             particle.collidesWithWorld = false;
+
+            switch (particleVariant.shape()) {
+                case SPELL, STRIPE -> {
+                    particle.alpha = 1F;
+                }
+                default -> {
+                    particle.alpha = 0.75F;
+                }
+            }
 
             return particle;
         }
