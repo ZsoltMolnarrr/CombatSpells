@@ -63,16 +63,6 @@ public class FabricClientMod implements ClientModInitializer {
          * Second argument is the particle's factory. The factory controls how the particle behaves.
          * In this example, we'll use FlameParticle's Factory.*/
 
-        /**
-         * Properties of particles:
-         * - color
-         * - texture: spell, spell_hit/impact, spark, sparkling, buff stripe
-         * - motion: constant, ascend (vanilla spell), dropping (smite hit), slowing (magic arrow)
-         *
-         * - formula: magic_ arcane_spellhit_constant
-         */
-
-
         for (var variant: Particles.MAGIC_FAMILY_VARIANTS.get()) {
             ParticleFactoryRegistry.getInstance().register(
                     variant.particleType(), (provider) -> new SpellVariantParticle.Factory(provider, variant)
