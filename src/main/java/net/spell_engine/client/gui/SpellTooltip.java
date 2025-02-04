@@ -29,17 +29,17 @@ import java.util.List;
 import java.util.Map;
 
 public class SpellTooltip {
-    private static final String damageToken = "damage";
-    private static final String healToken = "heal";
-    private static final String rangeToken = "range";
-    private static final String durationToken = "duration";
-    private static final String itemToken = "item";
-    private static final String effectDurationToken = "effect_duration";
-    private static final String effectAmplifierToken = "effect_amplifier";
-    private static final String impactRangeToken = "impact_range";
-    private static final String teleportDistanceToken = "teleport_distance";
-    private static final String countToken = "count";
-    private static final String trigger_chance = "trigger_chance";
+    public static final String damageToken = "damage";
+    public static final String healToken = "heal";
+    public static final String rangeToken = "range";
+    public static final String durationToken = "duration";
+    public static final String itemToken = "item";
+    public static final String effectDurationToken = "effect_duration";
+    public static final String effectAmplifierToken = "effect_amplifier";
+    public static final String impactRangeToken = "impact_range";
+    public static final String teleportDistanceToken = "teleport_distance";
+    public static final String countToken = "count";
+    public static final String trigger_chance = "trigger_chance";
     public static String placeholder(String token) { return "{" + token + "}"; }
 
     public static void addSpellLines(ItemStack itemStack, TooltipType tooltipType, List<Text> lines) {
@@ -66,7 +66,10 @@ public class SpellTooltip {
                 addSectionDivider += 1;
             }
 
-            boolean showListHeader = !itemStack.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE);
+            boolean showListHeader = !container.pool().isEmpty()
+                    || container.spell_ids().size() > 1
+                    || container.is_proxy();
+            // !itemStack.isIn(SpellEngineItemTags.SPELL_BOOK_MERGEABLE);
             int indentLevel = showListHeader ? 1 : 0;
 
             if (!container.spell_ids().isEmpty() && showListHeader) {
