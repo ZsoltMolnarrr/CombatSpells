@@ -8,6 +8,13 @@ plugins {
 version = project.mod_version + "+" + project.minecraft_version
 group = project.maven_group
 
+fabricApi {
+    configureDataGeneration() {
+        client = true
+        modId = "spell_engine"
+    }
+}
+
 repositories {
     maven { url 'https://maven.kosmx.dev/' }
     maven { url 'https://maven.shedaniel.me/' }
@@ -62,7 +69,7 @@ dependencies {
 
     // Compatibility
     modImplementation("com.terraformersmc:modmenu:${project.mod_menu_version}")
-    modImplementation("maven.modrinth:shoulder-surfing-reloaded:${project.shoulder_surfing_version}")
+    modCompileOnly("maven.modrinth:shoulder-surfing-reloaded:${project.shoulder_surfing_version}")
     modCompileOnly("maven.modrinth:iris:${project.iris_version}")
     modCompileOnly("maven.modrinth:lambdynamiclights:${project.lamb_dynamic_lights_version}")
     modImplementation("maven.modrinth:combat-roll:${project.combat_roll_version}")

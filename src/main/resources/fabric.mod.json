@@ -22,6 +22,9 @@
     "main": [
       "net.spell_engine.fabric.FabricMod"
     ],
+    "fabric-datagen": [
+      "net.spell_engine.data_gen.SpellEngineDataGenerator"
+    ],
     "modmenu": [
       "net.spell_engine.client.compatibility.ModMenuCompatibility"
     ],
