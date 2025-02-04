@@ -4,6 +4,7 @@ IMPORTANT DISCLAIMER:
 - This update requires content mods to be updated, due to major API changes
 
 API Changes:
+- Build with Fabric Loom 1.9
 - BREAKING CHANGES! 
   - Add spell `type` do differentiate between `ACTIVE` and `PASSIVE` spells
   - Spell structure: `cast` and `scroll` moved into `active` object
