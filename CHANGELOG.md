@@ -19,6 +19,7 @@ API Changes:
 - Impact.apply_to_caster now overrides all intent checks, add effect remove action
 - Add spell container caching
 - Add quiver slot for Quivers and Rune Pouches
+- Add SpellGenerator for spell data file generation
 
 # 1.4.5
 

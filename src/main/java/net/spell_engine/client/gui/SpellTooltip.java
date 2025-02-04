@@ -13,7 +13,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
-import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.client.SpellEngineClient;
@@ -22,6 +21,7 @@ import net.spell_engine.internals.Ammo;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.api.spell.container.SpellContainerHelper;
 import net.spell_power.api.SpellPower;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -373,7 +373,7 @@ public class SpellTooltip {
             }
         }
 
-        var triggerChances = triggers.stream().map(trigger -> (int)(trigger.chance * 100) + "%").toList();
+        var triggerChances = triggers.stream().map(trigger -> percent(trigger.chance)).toList();
         description = replaceTokens(description, trigger_chance, triggerChances);
 
         var mutator = descriptionMutators.get(spellId);
@@ -382,6 +382,10 @@ public class SpellTooltip {
             description = mutator.mutate(args);
         }
         return description;
+    }
+
+    public static String percent(float chance) {
+        return (int) (chance * 100) + "%";
     }
 
     private static MutableText indentation(int level) {
