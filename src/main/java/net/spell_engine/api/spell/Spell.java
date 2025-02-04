@@ -290,7 +290,7 @@ public class Spell {
                     public float health_base = 0;
                     public float spell_power_multiplier = 0;
                 }
-                public boolean show_particles = true;
+                public boolean show_particles = false;
             }
 
             public Fire fire;

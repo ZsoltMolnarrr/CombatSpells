@@ -8,17 +8,21 @@ import net.spell_engine.particle.ParticleHelper;
 public class BuffParticleSpawner implements CustomParticleStatusEffect.Spawner {
     private final ParticleBatch particles;
 
-    public BuffParticleSpawner(String particleId, int particleCount) {
+    public BuffParticleSpawner(String particleId, int particleCount, float min_speed, float max_speed) {
         this.particles = new ParticleBatch(
                 particleId,
                 ParticleBatch.Shape.PIPE,
                 ParticleBatch.Origin.FEET,
                 null,
                 particleCount,
-                0.11F,
-                0.12F,
+                min_speed,
+                max_speed,
                 0,
                 -0.2F);
+    }
+
+    public BuffParticleSpawner(String particleId, int particleCount) {
+        this(particleId, particleCount, 0.11F, 0.12F);
     }
 
     @Override
