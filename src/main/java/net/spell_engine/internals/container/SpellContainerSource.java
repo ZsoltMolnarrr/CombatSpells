@@ -178,7 +178,7 @@ public class SpellContainerSource {
         var registry = SpellRegistry.from(world);
         for (var source : sources) {
             var container = source.container();
-            if (contentType == null || container.content() == contentType) {
+            if (contentType == null || container.content() == SpellContainer.ContentType.ANY || container.content() == contentType) {
                 for (var idString : container.spell_ids()) {
                     var id = Identifier.of(idString);
                     var spell = registry.getEntry(id).orElse(null);

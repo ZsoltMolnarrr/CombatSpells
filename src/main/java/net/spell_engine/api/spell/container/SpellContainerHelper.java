@@ -54,7 +54,7 @@ public class SpellContainerHelper {
     }
 
     public static SpellContainer createForRelic(Identifier spellId) {
-        return new SpellContainer(SpellContainer.ContentType.MAGIC, false, "", 0, List.of(spellId.toString()));
+        return new SpellContainer(SpellContainer.ContentType.ANY, false, "", 0, List.of(spellId.toString()));
     }
 
     // Read helpers

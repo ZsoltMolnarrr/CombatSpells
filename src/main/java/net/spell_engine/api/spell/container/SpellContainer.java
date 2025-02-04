@@ -9,7 +9,7 @@ import java.util.List;
 
 public record SpellContainer(ContentType content, boolean is_proxy, String pool, String slot, int max_spell_count, List<String> spell_ids) {
     public enum ContentType {
-        MAGIC, ARCHERY;
+        ANY, MAGIC, ARCHERY;
         public static Codec<ContentType> CODEC = Codec.STRING.xmap(ContentType::valueOf, ContentType::name);
     }
 
