@@ -11,6 +11,7 @@ import net.spell_engine.api.spell.event.SpellEvents;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.internals.casting.SpellCast;
+import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.internals.container.SpellContainerSource;
 import net.spell_engine.internals.delivery.SpellStashHelper;
 import net.spell_engine.internals.target.SpellTarget;
@@ -171,9 +172,13 @@ public class SpellTriggers {
         SpellStashHelper.useStashes(event);
         // Iterate passive spells
         var player = event.player;
+        var caster = (SpellCasterEntity)player;
         for(var spellEntry: SpellContainerSource.passiveSpellsOf(event.player)) {
             var spell = spellEntry.value();
-            if (spell.passive != null && execute(spell.passive.trigger, event)) {
+            var spellId = spellEntry.getKey().get().getValue();
+            if (spell.passive != null
+                    && !caster.getCooldownManager().isCoolingDown(spellId)
+                    && execute(spell.passive.trigger, event)) {
                 SpellTarget.SearchResult targetResult;
                 if (spell.target.type == Spell.Target.Type.FROM_TRIGGER) {
                     List<Entity> targets = List.of(event.target(spell.passive.trigger));
