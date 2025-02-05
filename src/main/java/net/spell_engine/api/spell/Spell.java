@@ -403,7 +403,7 @@ public class Spell {
         public enum Type {
             ARROW_SHOT, ARROW_IMPACT,
             MELEE_IMPACT,
-            SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC,
+            SPELL_CAST, SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC,
             DAMAGE_TAKEN, SHIELD_BLOCK,
             ROLL  /// Only works when Combat Roll mod is installed
         }
@@ -415,6 +415,7 @@ public class Spell {
         @Nullable public TargetSelector target_override;
         @Nullable public TargetSelector aoe_source_override;
 
+        /// Evaluated for: SPELL_CAST, SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC
         public SpellImpact spell_impact;
         public static class SpellImpact { public SpellImpact() { }
             // Spell school regex

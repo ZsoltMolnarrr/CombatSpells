@@ -301,10 +301,9 @@ public class SpellHelper {
                         player.removeStatusEffect(effect.get());
                     }
                 }
-                if (CombatEvents.SPELL_CAST.isListened()) {
-                    var args = new CombatEvents.SpellCast.Args(player, spellEntry, targets, action, progress);
-                    CombatEvents.SPELL_CAST.invoke((listener) -> listener.onSpellCast(args));
-                }
+
+                var args = new SpellEvents.SpellCastEvent.Args(player, spellEntry, targets, action, progress);
+                SpellEvents.SPELL_CAST.invoke((listener) -> listener.onSpellCast(args));
             }
         }
     }

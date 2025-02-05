@@ -7,6 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.spell_engine.api.event.CombatEvents;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.api.spell.event.SpellEvents;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.internals.arrow.ArrowExtension;
 import net.spell_engine.internals.casting.SpellCast;
@@ -88,6 +89,9 @@ public class SpellTriggers {
         CombatEvents.PLAYER_SHIELD_BLOCK.register(args -> {
             onShieldBlock(args.player(), args.source(), args.amount());
         });
+        SpellEvents.SPELL_CAST.register(args -> {
+            onSpellCast(args.caster(), args.spell(), args.targets());
+        });
     }
 
     public static void onArrowShot(ArrowExtension arrow, PlayerEntity player) {
@@ -121,6 +125,14 @@ public class SpellTriggers {
         var event = new Event(Spell.Trigger.Type.SPELL_IMPACT_ANY, player, target, target);
         event.spell = spell;
         event.impact = impact;
+        fireTriggers(event);
+    }
+
+    public static void onSpellCast(PlayerEntity player, RegistryEntry<Spell> spell, List<Entity> targets) {
+        var firstTarget = targets.isEmpty() ? null : targets.get(0);
+        var target = ObjectHelper.coalesce(firstTarget, player);
+        var event = new Event(Spell.Trigger.Type.SPELL_CAST, player, player, target);
+        event.spell = spell;
         fireTriggers(event);
     }
 
@@ -182,7 +194,7 @@ public class SpellTriggers {
             return false;
         }
         switch (trigger.type) {
-            case SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC -> {
+            case SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC, SPELL_CAST -> {
                 var spell_impact = trigger.spell_impact;
                 if (spell_impact != null) {
                     var spellEntry = event.spell;
