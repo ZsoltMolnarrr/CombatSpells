@@ -15,10 +15,7 @@ import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.api.spell.container.SpellContainerHelper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SpellBinding {
@@ -105,41 +102,37 @@ public class SpellBinding {
         final var finalScrollMode = scrollMode;
         return new OfferResult(Mode.SPELL,
                 spellMap.entrySet().stream()
-                .filter(entry ->  {
-                    var spell = entry.getValue();
-                    if (finalScrollMode) {
-                        return spell.active.scroll != null;
-                    } else {
-                        return spell.learn != null
-                                && spell.learn.enabled
-                                && spell.tier > 0;
-                    }
-                })
                 .sorted(SpellContainerHelper.spellSorter)
                 .map(entry -> {
                     var spell = entry.getValue();
                     if (finalScrollMode) {
-                        var cost = spell.tier * spell.active.scroll.level_cost_per_tier + spell.active.scroll.apply_cost_base;
-                        var levelRequirement = spell.tier * spell.active.scroll.level_requirement_per_tier;
-                        return new Offer(
-                                rawSpellId(world, entry.getKey()),
-                                cost,
-                                levelRequirement,
-                                0,
-                                true);
+                        if (spell.active != null && spell.active.scroll != null) {
+                            var cost = spell.tier * spell.active.scroll.level_cost_per_tier + spell.active.scroll.apply_cost_base;
+                            var levelRequirement = spell.tier * spell.active.scroll.level_requirement_per_tier;
+                            return new Offer(
+                                    rawSpellId(world, entry.getKey()),
+                                    cost,
+                                    levelRequirement,
+                                    0,
+                                    true);
+                        }
                     } else {
-                        var cost = spell.tier * spell.learn.level_cost_per_tier;
-                        var levelRequirement = spell.tier * spell.learn.level_requirement_per_tier;
-                        return new Offer(
-                                rawSpellId(world, entry.getKey()),
-                                cost * SpellEngineMod.config.spell_binding_level_cost_multiplier,
-                                levelRequirement,
-                                cost * SpellEngineMod.config.spell_binding_lapis_cost_multiplier,
-                                (libraryPower == LIBRARY_POWER_CAP)
-                                        || ((LIBRARY_POWER_BASE + libraryPower * LIBRARY_POWER_MULTIPLIER) >= levelRequirement)
-                        );
+                        if (spell.learn != null && spell.tier > 0) {
+                            var cost = spell.tier * spell.learn.level_cost_per_tier;
+                            var levelRequirement = spell.tier * spell.learn.level_requirement_per_tier;
+                            return new Offer(
+                                    rawSpellId(world, entry.getKey()),
+                                    cost * SpellEngineMod.config.spell_binding_level_cost_multiplier,
+                                    levelRequirement,
+                                    cost * SpellEngineMod.config.spell_binding_lapis_cost_multiplier,
+                                    (libraryPower == LIBRARY_POWER_CAP)
+                                            || ((LIBRARY_POWER_BASE + libraryPower * LIBRARY_POWER_MULTIPLIER) >= levelRequirement)
+                            );
+                        }
                     }
+                    return null;
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList())
         );
     }

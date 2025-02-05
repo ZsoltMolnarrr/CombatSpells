@@ -32,7 +32,7 @@ public class ScrollItem extends Item {
         var spell = spellEntry.value();
         if (spell.active == null) { return false; }
         var scroll = spell.active.scroll;
-        if (scroll != null && scroll.generate) {
+        if (scroll != null) {
 //            if (poolId != null) {
 //                var translationKey = "item." + poolId.getNamespace() + "." + poolId.getPath() + ".spell_scroll";
 //                if (I18n.hasTranslation(translationKey)) {

@@ -9,11 +9,14 @@ import net.spell_power.api.SpellPower;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class Spell {
-    // Structure
     public SpellSchool school;
     public float range = 50;
-    public boolean range_melee = false;
+    /// Provide a value for a non-static range mechanic
+    @Nullable public RangeMechanic range_mechanic;
+    public enum RangeMechanic { MELEE }
 
     /// Group classifier
     /// Can be any arbitrary string, commonly used: `primary` (recommended for main attack or healing spells)
@@ -24,10 +27,9 @@ public class Spell {
     /// Secondary quality classifier, used for sorting spells, in an increasing order
     public int sub_tier = 1;
 
-    public Learn learn = new Learn();
+    /// If this can be obtained from Spell Binding Table, provide an object
+    @Nullable public Learn learn;
     public static class Learn { public Learn() {}
-        /// Whether the spell can be obtained from Spell Binding Table
-        public boolean enabled = true;
         public int level_cost_per_tier = 3;
         public int level_requirement_per_tier = 10;
     }
@@ -53,9 +55,8 @@ public class Spell {
 
     public Active active;
     public static class Active {
-        public Scroll scroll = new Scroll();
+        @Nullable public Scroll scroll;
         public static class Scroll { public Scroll() {}
-            public boolean generate = true;
             /// Cost of experience levels to apply the scroll
             public int apply_cost_base = 0;
             public int level_cost_per_tier = 1;
@@ -179,8 +180,7 @@ public class Spell {
             public LaunchProperties launch_properties = new LaunchProperties().velocity(3.15F);
         }
 
-        public Cloud cloud;
-        public Cloud[] clouds = new Cloud[]{};
+        public List<Cloud> clouds;
         public static class Cloud { public Cloud() { }
             // Custom entity type id to spawn, must be a subclass of `SpellCloud`
             @Nullable public String entity_type_id;
@@ -238,12 +238,11 @@ public class Spell {
         }
     }
 
-    public Impact[] impact;
+    public List<Impact> impacts = List.of();
     public static class Impact { public Impact() { }
-        public Action action;
         /// Magic school of this specific impact, if null then spell school is used
         @Nullable public SpellSchool school;
-        public TargetCondition[] target_conditions = new TargetCondition[]{};
+        public List<TargetCondition> target_conditions = List.of();
         public static class TargetCondition {
             // If true = AND, if false = OR
             public boolean all_required = false;
@@ -262,6 +261,8 @@ public class Spell {
             // Combined as `ADD_VALUE` in `EntityAttributeModifier.Operation`
             public float critical_damage_bonus = 0;
         }
+
+        public Action action;
         public static class Action { public Action() { }
             public Type type;
             public boolean apply_to_caster = false;
@@ -306,8 +307,7 @@ public class Spell {
             }
 
             // Populate either `spawn` or `spawns` but not both
-            public Spawn spawn;
-            public Spawn[] spawns = new Spawn[]{};
+            public List<Spawn> spawns;
             public static class Spawn {
                 public String entity_type_id;
                 public int time_to_live_seconds = 0;

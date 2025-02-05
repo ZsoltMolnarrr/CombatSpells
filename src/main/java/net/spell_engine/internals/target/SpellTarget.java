@@ -39,7 +39,7 @@ public class SpellTarget {
         List<Entity> targets = List.of();
         var previousTargets = previous.entities;
         Vec3d location = null;
-        if (currentSpell == null || currentSpell.impact == null) {
+        if (currentSpell == null || currentSpell.impacts == null) {
             return new SearchResult(targets, location);
         }
         boolean fallbackToPreviousTargets = false;
@@ -52,7 +52,7 @@ public class SpellTarget {
             boolean intentAllows = deliveryIntent.isPresent()
                     ? EntityRelations.actionAllowed(focusMode, deliveryIntent.get(), caster, target)
                     : false;
-            for (var impact: currentSpell.impact) {
+            for (var impact: currentSpell.impacts) {
                 var intent = SpellHelper.impactIntent(impact.action);
                 var newValue = impact.action.apply_to_caster
                         ? target == caster

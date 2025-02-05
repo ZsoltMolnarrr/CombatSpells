@@ -87,7 +87,7 @@ public class SpellStashHelper {
                         } else {
                             impactContext = impactContext.position(caster.getPos());
                         }
-                        SpellHelper.performImpacts(world, caster, target, aoeSource, spellEntry, spellEntry.value().impact, impactContext);
+                        SpellHelper.performImpacts(world, caster, target, aoeSource, spellEntry, spellEntry.value().impacts, impactContext);
                     }
                     case TRANSFER -> {
                         var arrow = event.arrow;

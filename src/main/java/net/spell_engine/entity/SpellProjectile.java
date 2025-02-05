@@ -207,7 +207,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                                 var spell = spellEntry.value();
                                 if (SpellEngineMod.config.projectiles_pass_thru_irrelevant_targets
                                         && spell != null
-                                        && spell.impact.length > 0
+                                        && !spell.impacts.isEmpty()
                                         && getOwner() instanceof LivingEntity owner) {
                                     var intents = SpellHelper.impactIntents(spell);
 

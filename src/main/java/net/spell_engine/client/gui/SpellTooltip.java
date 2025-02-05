@@ -21,7 +21,6 @@ import net.spell_engine.internals.Ammo;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.api.spell.container.SpellContainerHelper;
 import net.spell_power.api.SpellPower;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -219,15 +218,19 @@ public class SpellTooltip {
                         .formatted(Formatting.GOLD));
             }
 
-            if (spell.range > 0 || spell.range_melee) {
-                String rangeText;
-                if (spell.range_melee) {
-                    if (spell.range == 0) {
-                        rangeText = I18n.translate("spell.tooltip.range.melee");
-                    } else {
-                        var key = spell.range > 0 ? "spell.tooltip.range.melee.plus" : "spell.tooltip.range.melee.minus";
-                        var rangeKey = keyWithPlural(key, spell.range);
-                        rangeText = I18n.translate(rangeKey).replace(placeholder(rangeToken), formattedNumber(Math.abs(spell.range))); // Abs to avoid "--1"
+            if (spell.range > 0 || spell.range_mechanic != null) {
+                String rangeText = "";
+                if (spell.range_mechanic != null) {
+                    switch (spell.range_mechanic) {
+                        case MELEE -> {
+                            if (spell.range == 0) {
+                                rangeText = I18n.translate("spell.tooltip.range.melee");
+                            } else {
+                                var key = spell.range > 0 ? "spell.tooltip.range.melee.plus" : "spell.tooltip.range.melee.minus";
+                                var rangeKey = keyWithPlural(key, spell.range);
+                                rangeText = I18n.translate(rangeKey).replace(placeholder(rangeToken), formattedNumber(Math.abs(spell.range))); // Abs to avoid "--1"
+                            }
+                        }
                     }
                 } else {
                     var rangeKey = keyWithPlural("spell.tooltip.range", spell.range);
@@ -322,17 +325,17 @@ public class SpellTooltip {
                     description = description.replace(placeholder("extra_launch"), formattedNumber(extra_launch_count));
                 }
             }
-            var cloud = spell.deliver.cloud;
-            if (spell.deliver.clouds.length > 0) {
-                cloud = spell.deliver.clouds[0];
-            }
-            if (cloud != null) {
-                var cloud_duration = cloud.time_to_live_seconds;
-                if (cloud_duration > 0) {
-                    description = description.replace(placeholder("cloud_duration"), formattedNumber(cloud_duration));
+
+            if (spell.deliver.clouds != null && spell.deliver.clouds.isEmpty()) {
+                var cloud = spell.deliver.clouds.get(0);
+                if (cloud != null) {
+                    var cloud_duration = cloud.time_to_live_seconds;
+                    if (cloud_duration > 0) {
+                        description = description.replace(placeholder("cloud_duration"), formattedNumber(cloud_duration));
+                    }
+                    var radius = cloud.volume.combinedRadius(primaryPower);
+                    description = description.replace(placeholder("cloud_radius"), formattedNumber(radius));
                 }
-                var radius = cloud.volume.combinedRadius(primaryPower);
-                description = description.replace(placeholder("cloud_radius"), formattedNumber(radius));
             }
             if (spell.deliver.stash_effect != null) {
                 var stash = spell.deliver.stash_effect;
@@ -340,9 +343,9 @@ public class SpellTooltip {
             }
         }
 
-        if (spell.impact != null) {
+        if (spell.impacts != null) {
             var estimatedOutput = SpellHelper.estimate(spell, player, itemStack);
-            for (var impact : spell.impact) {
+            for (var impact : spell.impacts) {
                 switch (impact.action.type) {
                     case DAMAGE -> {
                         description = replaceDamageTokens(description, damageToken, estimatedOutput.damage());

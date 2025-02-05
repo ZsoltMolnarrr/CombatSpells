@@ -18,7 +18,6 @@ import net.spell_engine.particle.ParticleHelper;
 import net.spell_engine.utils.SoundPlayerWorld;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.UUID;
 
 public class SpellCloud extends Entity implements Ownable {
@@ -48,8 +47,8 @@ public class SpellCloud extends Entity implements Ownable {
         var spellEntry = getSpellEntry();
         if (spellEntry != null) {
             var spell = spellEntry.value();
-            var index = -1;
-            var dataList = List.of(spell.deliver.clouds);
+            var index = 0;
+            var dataList = spell.deliver.clouds;
             if (!dataList.isEmpty()) {
                 index = dataList.indexOf(cloudData);
             }
@@ -208,7 +207,7 @@ public class SpellCloud extends Entity implements Ownable {
                         context = new SpellHelper.ImpactContext();
                     }
                     SpellHelper.lookupAndPerformAreaImpact(area_impact, spellEntry, owner,null,
-                            this, spell.impact, context.position(this.getPos()), true);
+                            this, spell.impacts, context.position(this.getPos()), true);
                 }
             }
         }
@@ -218,11 +217,7 @@ public class SpellCloud extends Entity implements Ownable {
         var spellEntry = getSpellEntry();
         if (spellEntry != null) {
             var spell = spellEntry.value();
-            if (spell.deliver.clouds.length > 0) {
-                return spell.deliver.clouds[dataIndex];
-            } else {
-                return spell.deliver.cloud;
-            }
+            return spell.deliver.clouds.get(dataIndex);
         }
         return null;
     }
