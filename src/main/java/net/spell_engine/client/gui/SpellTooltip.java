@@ -8,6 +8,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -172,11 +173,12 @@ public class SpellTooltip {
         if (world == null) {
             return lines;
         }
-        var spellEntry = SpellRegistry.from(world).getEntry(spellId);
-        if (spellEntry.isEmpty()) {
+        var optionalSpellEntry = SpellRegistry.from(world).getEntry(spellId);
+        if (optionalSpellEntry.isEmpty()) {
             return lines;
         }
-        var spell = spellEntry.get().value();
+        var spellEntry = optionalSpellEntry.get();
+        var spell = spellEntry.value();
         var primaryPower = SpellPower.getSpellPower(spell.school, player);
 
         if (shouldShow(spell.tooltip.name, details)) {
@@ -198,7 +200,7 @@ public class SpellTooltip {
 
         if (shouldShow(spell.tooltip.description, details)) {
             var color = Formatting.byName(spell.tooltip.description.color);
-            var description = createDescription(spellId, player, itemStack, spell, primaryPower);
+            var description = createDescription(spellEntry, spellId, player, itemStack, spell, primaryPower);
             lines.add(indentation(indentLevel)
                     .append(Text.translatable(description))
                     .formatted(color));
@@ -282,7 +284,7 @@ public class SpellTooltip {
         return details ? options.show_in_details : options.show_in_compact;
     }
 
-    private static String createDescription(Identifier spellId, PlayerEntity player, ItemStack itemStack, Spell spell, SpellPower.Result primaryPower) {
+    private static String createDescription(RegistryEntry<Spell> spellEntry, Identifier spellId, PlayerEntity player, ItemStack itemStack, Spell spell, SpellPower.Result primaryPower) {
         var description = I18n.translate(spellKeyPrefix(spellId) + ".description");
 
         List<Spell.Trigger> triggers = new ArrayList<>();
@@ -381,7 +383,7 @@ public class SpellTooltip {
 
         var mutator = descriptionMutators.get(spellId);
         if (mutator != null) {
-            var args = new DescriptionMutator.Args(description, player);
+            var args = new DescriptionMutator.Args(description, player, spellEntry);
             description = mutator.mutate(args);
         }
         return description;
@@ -453,7 +455,7 @@ public class SpellTooltip {
     }
 
     public interface DescriptionMutator {
-        record Args(String description, PlayerEntity player) { }
+        record Args(String description, PlayerEntity player, RegistryEntry<Spell> spellEntry) { }
         String mutate(Args args);
     }
 
