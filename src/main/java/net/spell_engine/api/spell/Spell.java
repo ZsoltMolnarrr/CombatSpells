@@ -424,7 +424,7 @@ public class Spell {
             // Spell school regex
             @Nullable public String school;
             // Exact archetype of the spell school
-            @Nullable public String archetype;
+            @Nullable public SpellSchool.Archetype archetype;
             // ID or tag to match the spell
             @Nullable public String id;
             // Maybe add predicate, that can be registered in java, and resolved by this id

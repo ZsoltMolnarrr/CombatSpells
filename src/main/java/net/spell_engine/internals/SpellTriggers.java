@@ -229,7 +229,7 @@ public class SpellTriggers {
             return false;
         }
         if (condition.archetype != null
-                && !Objects.equals(condition.archetype.toLowerCase(), spell.school.archetype.toString().toLowerCase())) {
+                && condition.archetype != spell.school.archetype) {
             return false;
         }
         return true;
