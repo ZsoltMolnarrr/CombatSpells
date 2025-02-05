@@ -772,6 +772,11 @@ public class SpellHelper {
             if (power == null || power.school() != school) {
                 power = SpellPower.getSpellPower(school, caster);
             }
+            if (impact.attribute != null) {
+                var attributeOverride = Registries.ATTRIBUTE.getEntry(Identifier.of(impact.attribute)).get();
+                var value = caster.getAttributeValue(attributeOverride);
+                power = new SpellPower.Result(power.school(), value, power.criticalChance(), power.criticalDamage());
+            }
 
             var bonusPower = 1 + (conditionResult.modifiers().stream().map(modifier -> modifier.power_multiplier).reduce(0F, Float::sum));
             var bonusCritChance = conditionResult.modifiers().stream().map(modifier -> modifier.critical_chance_bonus).reduce(0F, Float::sum);
