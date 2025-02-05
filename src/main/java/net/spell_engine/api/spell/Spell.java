@@ -269,6 +269,7 @@ public class Spell {
             public Type type;
             public boolean apply_to_caster = false;
             public float min_power = 1;
+            public float max_power = 999999;
             public enum Type {
                 DAMAGE, HEAL, STATUS_EFFECT, FIRE, SPAWN, TELEPORT, CUSTOM
             }
@@ -422,6 +423,8 @@ public class Spell {
         public static class SpellCondition { public SpellCondition() { }
             // Spell school regex
             @Nullable public String school;
+            // Exact archetype of the spell school
+            @Nullable public String archetype;
             // ID or tag to match the spell
             @Nullable public String id;
             // Maybe add predicate, that can be registered in java, and resolved by this id

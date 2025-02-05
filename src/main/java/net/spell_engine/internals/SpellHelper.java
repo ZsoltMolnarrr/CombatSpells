@@ -15,6 +15,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
@@ -786,8 +787,9 @@ public class SpellHelper {
                     power.criticalChance() + bonusCritChance,
                     power.criticalDamage() + bonusCritDamage);
 
-            if (power.baseValue() < impact.action.min_power) {
-                power = new SpellPower.Result(power.school(), impact.action.min_power, power.criticalChance(), power.criticalDamage());
+            if (power.baseValue() < impact.action.min_power || power.baseValue() > impact.action.max_power) {
+                var clampedValue = MathHelper.clamp(power.baseValue(), impact.action.min_power, impact.action.max_power);
+                power = new SpellPower.Result(power.school(), clampedValue, power.criticalChance(), power.criticalDamage());
             }
 
             // Action execution

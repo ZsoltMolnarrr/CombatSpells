@@ -223,6 +223,10 @@ public class SpellTriggers {
                 && !PatternMatching.matches(spellEntry, SpellRegistry.KEY, condition.id)) {
             return false;
         }
+        if (condition.archetype != null
+                && !Objects.equals(condition.archetype.toLowerCase(), spell.school.archetype.toString().toLowerCase())) {
+            return false;
+        }
         return true;
     }
 
