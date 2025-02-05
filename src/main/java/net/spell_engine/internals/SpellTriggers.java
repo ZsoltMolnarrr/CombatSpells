@@ -20,6 +20,7 @@ import net.spell_engine.utils.PatternMatching;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class SpellTriggers {
@@ -194,34 +195,48 @@ public class SpellTriggers {
             return false;
         }
         switch (trigger.type) {
-            case SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC, SPELL_CAST -> {
-                var spell_impact = trigger.spell_impact;
-                if (spell_impact != null) {
-                    var spellEntry = event.spell;
-                    if (spellEntry != null)  {
-                        var spell = spellEntry.value();
-                        if (spell_impact.school != null
-                                && !spell.school.id.toString().contains(spell_impact.school.toLowerCase())) {
-                            return false;
-                        }
-                        if (spell_impact.id != null
-                                && !PatternMatching.matches(spellEntry, SpellRegistry.KEY, spell_impact.id)) {
-                            return false;
-                        }
-                    }
-                    var impact = event.impact;
-                    if (impact != null) {
-                        if (spell_impact.impact_type != null
-                                && !impact.action.type.toString().equals(spell_impact.impact_type.toLowerCase())) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
+            case SPELL_CAST, SPELL_IMPACT_ANY -> {
+                return evaluate(event.spell, trigger.spell);
+            }
+            case SPELL_IMPACT_SPECIFIC -> {
+                return evaluate(event.spell, trigger.spell) && evaluate(event.impact, trigger.impact);
             }
             default -> {
                 return true;
             }
         }
+    }
+
+    private static boolean evaluate(@Nullable RegistryEntry<Spell> spellEntry, @Nullable Spell.Trigger.SpellCondition condition) {
+        if (condition == null) {
+            return true;
+        }
+        if (spellEntry == null) {
+            return false;
+        }
+        var spell = spellEntry.value();
+        if (condition.school != null
+                && !spell.school.id.toString().contains(condition.school.toLowerCase())) {
+            return false;
+        }
+        if (condition.id != null
+                && !PatternMatching.matches(spellEntry, SpellRegistry.KEY, condition.id)) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean evaluate(@Nullable Spell.Impact impact, @Nullable Spell.Trigger.ImpactCondition condition) {
+        if (condition == null) {
+            return true;
+        }
+        if (impact == null) {
+            return false;
+        }
+        if (condition.impact_type != null
+                && !Objects.equals(condition.impact_type.toLowerCase(), impact.action.type.toString().toLowerCase()) ) {
+            return false;
+        }
+        return true;
     }
 }

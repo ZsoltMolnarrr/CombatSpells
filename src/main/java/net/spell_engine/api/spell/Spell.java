@@ -416,16 +416,20 @@ public class Spell {
         @Nullable public TargetSelector aoe_source_override;
 
         /// Evaluated for: SPELL_CAST, SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC
-        public SpellImpact spell_impact;
-        public static class SpellImpact { public SpellImpact() { }
+        public SpellCondition spell;
+        public static class SpellCondition { public SpellCondition() { }
             // Spell school regex
             @Nullable public String school;
             // ID or tag to match the spell
             @Nullable public String id;
-            // Impact type regex
-            @Nullable public String impact_type;
             // Maybe add predicate, that can be registered in java, and resolved by this id
             // public String spell_predicate
+        }
+        /// Evaluated for: SPELL_IMPACT_SPECIFIC
+        public ImpactCondition impact;
+        public static class ImpactCondition { public ImpactCondition() { }
+            // Impact type regex
+            @Nullable public String impact_type;
         }
     }
 
