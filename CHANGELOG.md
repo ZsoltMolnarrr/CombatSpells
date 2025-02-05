@@ -3,9 +3,17 @@
 IMPORTANT DISCLAIMER:
 - This update requires content mods to be updated, due to major API changes
 
+Functional changes:
+- Built in trinket slots
+  - Spell Book slot `spell/book` (enabled by default)
+  - Spell Scroll slot `spell/scroll` (disabled by default)
+  - Quiver slot (in standalone group) `misc/quiver` (enabled by default)
+  - Quiver slot (in the `spell group`) `spell/quiver` (disabled by default)
+
 API Changes:
 - Build with Fabric Loom 1.9
-- BREAKING CHANGES! 
+- BREAKING CHANGES!
+  - Completely refreshed spell data structure 
   - Add spell `type` do differentiate between `ACTIVE` and `PASSIVE` spells
   - Spell structure: `cast` and `scroll` moved into `active` object
   - Spell structure: `cost` reworked to be more structured
@@ -20,7 +28,10 @@ API Changes:
 - Impact.apply_to_caster now overrides all intent checks, add effect remove action
 - Add spell container caching
 - Add quiver slot for Quivers and Rune Pouches
-- Add SpellGenerator for spell data file generation
+- Add generic data file providers to be used by any content mod
+  - SpellGenerator
+  - SimpleParticleGenerator
+  - SimpleSoundGenerator
 
 # 1.4.5
 
