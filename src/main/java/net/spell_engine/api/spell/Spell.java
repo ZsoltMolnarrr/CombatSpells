@@ -15,17 +15,19 @@ public class Spell {
     public float range = 50;
     public boolean range_melee = false;
 
-    // An arbitrary group to group spells by
-    // Spells with the same group override each other, prioritized by tier
-    // For primary spells (such as hard bound spells of weapons, and first spells of spell books) the recommended group is "primary"
+    /// Group classifier
+    /// Can be any arbitrary string, commonly used: `primary` (recommended for main attack or healing spells)
+    /// Spells with the same group override each other, prioritized by tier and rank
     @Nullable public String group;
-    // The rank of the spell, used to determine which spell to use when multiple spells with the same `group` are available
-    public int rank = 1;
+    /// Quality classifier, used for sorting spells, in an increasing order
+    public int tier = 1;
+    /// Secondary quality classifier, used for sorting spells, in an increasing order
+    public int sub_tier = 1;
+
     public Learn learn = new Learn();
     public static class Learn { public Learn() {}
         /// Whether the spell can be obtained from Spell Binding Table
         public boolean enabled = true;
-        public int tier = 1;
         public int level_cost_per_tier = 3;
         public int level_requirement_per_tier = 10;
     }

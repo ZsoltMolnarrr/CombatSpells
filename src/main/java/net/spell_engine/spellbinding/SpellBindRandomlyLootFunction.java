@@ -62,7 +62,7 @@ public class SpellBindRandomlyLootFunction extends ConditionalLootFunction {
     public ItemStack process(ItemStack stack, LootContext context) {
         final var selectedTier = this.tier.nextInt(context);
         var spells = SpellRegistry.stream(context.getWorld())
-                .filter(entry -> entry.value().learn.tier == selectedTier && entry.isIn(SpellTags.TREASURE))
+                .filter(entry -> entry.value().tier == selectedTier && entry.isIn(SpellTags.TREASURE))
                 .toList();
         if (spells.size() > 0) {
             var spell = spells.get(context.getRandom().nextInt(spells.size()));

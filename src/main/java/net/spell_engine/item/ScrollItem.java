@@ -43,7 +43,7 @@ public class ScrollItem extends Item {
 
             var rarity = scroll.custom_rarity;
             if (rarity == null) {
-                var ordinal = Math.max(spell.learn.tier - 1, 0); // minimum 0
+                var ordinal = Math.max(spell.tier - 1, 0); // minimum 0
                 rarity = Rarity.values().length > ordinal ? Rarity.values()[ordinal] : Rarity.EPIC;
             }
             itemStack.set(DataComponentTypes.RARITY, rarity);

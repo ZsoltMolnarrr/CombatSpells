@@ -112,15 +112,15 @@ public class SpellBinding {
                     } else {
                         return spell.learn != null
                                 && spell.learn.enabled
-                                && spell.learn.tier > 0;
+                                && spell.tier > 0;
                     }
                 })
                 .sorted(SpellContainerHelper.spellSorter)
                 .map(entry -> {
                     var spell = entry.getValue();
                     if (finalScrollMode) {
-                        var cost = spell.learn.tier * spell.active.scroll.level_cost_per_tier + spell.active.scroll.apply_cost_base;
-                        var levelRequirement = spell.learn.tier * spell.active.scroll.level_requirement_per_tier;
+                        var cost = spell.tier * spell.active.scroll.level_cost_per_tier + spell.active.scroll.apply_cost_base;
+                        var levelRequirement = spell.tier * spell.active.scroll.level_requirement_per_tier;
                         return new Offer(
                                 rawSpellId(world, entry.getKey()),
                                 cost,
@@ -128,8 +128,8 @@ public class SpellBinding {
                                 0,
                                 true);
                     } else {
-                        var cost = spell.learn.tier * spell.learn.level_cost_per_tier;
-                        var levelRequirement = spell.learn.tier * spell.learn.level_requirement_per_tier;
+                        var cost = spell.tier * spell.learn.level_cost_per_tier;
+                        var levelRequirement = spell.tier * spell.learn.level_requirement_per_tier;
                         return new Offer(
                                 rawSpellId(world, entry.getKey()),
                                 cost * SpellEngineMod.config.spell_binding_level_cost_multiplier,

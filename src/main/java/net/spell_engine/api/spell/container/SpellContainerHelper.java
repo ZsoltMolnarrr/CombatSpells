@@ -116,9 +116,9 @@ public class SpellContainerHelper {
     }
 
     public static final Comparator<Map.Entry<Identifier, Spell>> spellSorter = (spell1, spell2) -> {
-        if (spell1.getValue().learn.tier > spell2.getValue().learn.tier) {
+        if (spell1.getValue().tier > spell2.getValue().tier) {
             return 1;
-        } else if (spell1.getValue().learn.tier < spell2.getValue().learn.tier) {
+        } else if (spell1.getValue().tier < spell2.getValue().tier) {
             return -1;
         } else {
             return spell1.getKey().toString().compareTo(spell2.getKey().toString());

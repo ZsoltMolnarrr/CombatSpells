@@ -48,7 +48,7 @@ public class SpellEngineItems {
 
             var registryWrapper = content.getContext().lookup().getWrapperOrThrow(SpellRegistry.KEY);
             registryWrapper.streamEntries()
-                    .sorted(Comparator.comparing(a -> a.getKey().get().getValue().getNamespace() + "_" + a.value().learn.tier + "_" + a.getKey().get().getValue().getPath()))
+                    .sorted(Comparator.comparing(a -> a.getKey().get().getValue().getNamespace() + "_" + a.value().tier + "_" + a.getKey().get().getValue().getPath()))
                     .forEach((entry) -> {
                         var scroll = new ItemStack(SCROLL.get());
                         if (ScrollItem.applySpell(scroll, entry, true)) {

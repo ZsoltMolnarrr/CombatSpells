@@ -205,12 +205,12 @@ public class SpellContainerSource {
                     var otherId = other.getKey().get().getValue();
                     if (spellId.equals(otherId)) continue;
                     if (tag.equals(other.value().group)) {
-                        if (spellEntry.value().learn.tier == other.value().learn.tier) {
-                            if (spellEntry.value().rank > other.value().rank) {
+                        if (spellEntry.value().tier == other.value().tier) {
+                            if (spellEntry.value().sub_tier > other.value().sub_tier) {
                                 toRemove.add(otherId.toString());
                             }
                         }
-                        if (spellEntry.value().learn.tier > other.value().learn.tier) {
+                        if (spellEntry.value().tier > other.value().tier) {
                             toRemove.add(otherId.toString());
                         }
                     }
