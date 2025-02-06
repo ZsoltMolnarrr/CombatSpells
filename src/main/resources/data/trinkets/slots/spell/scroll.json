@@ -1,3 +1,4 @@
 {
-  "icon": "spell_engine:gui/spell_scroll_slot"
+  "icon": "spell_engine:gui/spell_scroll_slot",
+  "order": 3
 }
