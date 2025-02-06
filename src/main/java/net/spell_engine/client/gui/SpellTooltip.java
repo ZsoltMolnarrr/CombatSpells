@@ -37,7 +37,7 @@ public class SpellTooltip {
     public static final String teleportDistanceToken = "teleport_distance";
     public static final String countToken = "count";
     public static final String trigger_chance = "trigger_chance";
-    public static final String trigger_list = "trigger_chance";
+    public static final String trigger_list = "trigger_list";
     public static String placeholder(String token) { return "{" + token + "}"; }
 
     public static void addSpellLines(ItemStack itemStack, TooltipType tooltipType, List<Text> lines) {
