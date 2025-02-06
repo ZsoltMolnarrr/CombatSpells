@@ -21,7 +21,6 @@ import net.spell_engine.utils.PatternMatching;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 public class SpellTriggers {
@@ -124,7 +123,7 @@ public class SpellTriggers {
     }
 
     public static void onSpellImpactSpecific(PlayerEntity player, Entity target, RegistryEntry<Spell> spell, Spell.Impact impact) {
-        var event = new Event(Spell.Trigger.Type.SPELL_IMPACT_ANY, player, target, target);
+        var event = new Event(Spell.Trigger.Type.SPELL_IMPACT_SPECIFIC, player, target, target);
         event.spell = spell;
         event.impact = impact;
         fireTriggers(event);
@@ -224,7 +223,7 @@ public class SpellTriggers {
         }
         var spell = spellEntry.value();
         if (condition.school != null
-                && !spell.school.id.toString().contains(condition.school.toLowerCase())) {
+                && !PatternMatching.regexMatches(spell.school.id.toString(), condition.school.toLowerCase()) ) {
             return false;
         }
         if (condition.id != null
@@ -246,7 +245,7 @@ public class SpellTriggers {
             return false;
         }
         if (condition.impact_type != null
-                && !Objects.equals(condition.impact_type.toLowerCase(), impact.action.type.toString().toLowerCase()) ) {
+                && PatternMatching.regexMatches(condition.impact_type.toLowerCase(), impact.action.type.toString().toLowerCase())) {
             return false;
         }
         return true;
