@@ -28,8 +28,9 @@ public class SpellHandlers {
     }
 
     public static final Map<String, CustomImpact> customImpact = new HashMap<>();
+    public record ImpactResult(boolean success, boolean critical) { }
     public interface CustomImpact {
-        boolean onSpellImpact(RegistryEntry<Spell> spellEntry, SpellPower.Result spellPower,
+        ImpactResult onSpellImpact(RegistryEntry<Spell> spellEntry, SpellPower.Result spellPower,
                            LivingEntity caster, @Nullable Entity target,
                            SpellHelper.ImpactContext context);
     }

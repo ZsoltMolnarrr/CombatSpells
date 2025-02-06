@@ -742,6 +742,7 @@ public class SpellHelper {
             return false;
         }
         var success = false;
+        var critical = false;
         boolean isKnockbackPushed = false;
         var spell = spellEntry.value();
         try {
@@ -808,7 +809,9 @@ public class SpellHelper {
                         }
                         vulnerability = SpellPower.getVulnerability(livingEntity, school);
                     }
-                    var amount = power.randomValue(vulnerability);
+                    var result = power.random(vulnerability);
+                    critical = result.isCritical();
+                    var amount = result.amount();
                     amount *= damageData.spell_power_coefficient;
                     amount *= context.total();
                     if (context.isChanneled()) {
@@ -834,7 +837,9 @@ public class SpellHelper {
                     if (target instanceof LivingEntity livingTarget) {
                         var healData = impact.action.heal;
                         particleMultiplier = power.criticalDamage();
-                        var amount = power.randomValue();
+                        var result = power.random();
+                        critical = result.isCritical();
+                        var amount = result.amount();
                         amount *= healData.spell_power_coefficient;
                         amount *= context.total();
                         if (context.isChanneled()) {
@@ -991,19 +996,23 @@ public class SpellHelper {
                     if (impact.action.custom != null) {
                         var handler = SpellHandlers.customImpact.get(impact.action.custom.handler);
                         if (handler != null) {
-                            success = handler.onSpellImpact(spellEntry, power, caster, target, context);
+                            var result = handler.onSpellImpact(spellEntry, power, caster, target, context);
+                            particleMultiplier = power.criticalDamage();
+                            success = result.success();
+                            critical = result.critical();
                         }
                     }
                 }
             }
             if (success) {
                 if (impact.particles != null) {
-                    ParticleHelper.sendBatches(target, impact.particles, (float) particleMultiplier * caster.getScale(), trackers);
+                    float countMultiplier = critical ? (float) particleMultiplier : 1F;
+                    ParticleHelper.sendBatches(target, impact.particles, countMultiplier * caster.getScale(), trackers);
                 }
                 if (impact.sound != null) {
                     SoundHelper.playSound(world, target, impact.sound);
                 }
-                SpellTriggers.onSpellImpactSpecific((PlayerEntity) caster, target, spellEntry, impact);
+                SpellTriggers.onSpellImpactSpecific((PlayerEntity) caster, target, spellEntry, impact, critical);
             }
         } catch (Exception e) {
             System.err.println("Failed to perform impact effect");

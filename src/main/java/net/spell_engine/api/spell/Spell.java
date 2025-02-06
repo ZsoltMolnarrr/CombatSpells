@@ -435,6 +435,7 @@ public class Spell {
         public static class ImpactCondition { public ImpactCondition() { }
             // Impact type regex
             @Nullable public String impact_type;
+            @Nullable public Boolean critical;
         }
     }
 

@@ -38,6 +38,7 @@ public class SpellTriggers {
 
         @Nullable public RegistryEntry<Spell> spell;
         @Nullable public Spell.Impact impact;
+        boolean criticalImpact = false;
 
         @Nullable public DamageSource damageSource;
         public float damageAmount = 0;
@@ -122,10 +123,11 @@ public class SpellTriggers {
         fireTriggers(event);
     }
 
-    public static void onSpellImpactSpecific(PlayerEntity player, Entity target, RegistryEntry<Spell> spell, Spell.Impact impact) {
+    public static void onSpellImpactSpecific(PlayerEntity player, Entity target, RegistryEntry<Spell> spell, Spell.Impact impact, boolean critical) {
         var event = new Event(Spell.Trigger.Type.SPELL_IMPACT_SPECIFIC, player, target, target);
         event.spell = spell;
         event.impact = impact;
+        event.criticalImpact = critical;
         fireTriggers(event);
     }
 
@@ -206,7 +208,7 @@ public class SpellTriggers {
                 return evaluate(event.spell, trigger.spell);
             }
             case SPELL_IMPACT_SPECIFIC -> {
-                return evaluate(event.spell, trigger.spell) && evaluate(event.impact, trigger.impact);
+                return evaluate(event.spell, trigger.spell) && evaluate(event.impact, event.criticalImpact, trigger.impact);
             }
             default -> {
                 return true;
@@ -237,7 +239,7 @@ public class SpellTriggers {
         return true;
     }
 
-    private static boolean evaluate(@Nullable Spell.Impact impact, @Nullable Spell.Trigger.ImpactCondition condition) {
+    private static boolean evaluate(@Nullable Spell.Impact impact, boolean eventImpactIsCritical, @Nullable Spell.Trigger.ImpactCondition condition) {
         if (condition == null) {
             return true;
         }
@@ -246,6 +248,10 @@ public class SpellTriggers {
         }
         if (condition.impact_type != null
                 && !PatternMatching.regexMatches(condition.impact_type.toLowerCase(), impact.action.type.toString().toLowerCase())) {
+            return false;
+        }
+        if (condition.critical != null
+                && condition.critical != eventImpactIsCritical) {
             return false;
         }
         return true;
