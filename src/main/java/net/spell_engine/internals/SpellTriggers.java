@@ -245,7 +245,7 @@ public class SpellTriggers {
             return false;
         }
         if (condition.impact_type != null
-                && PatternMatching.regexMatches(condition.impact_type.toLowerCase(), impact.action.type.toString().toLowerCase())) {
+                && !PatternMatching.regexMatches(condition.impact_type.toLowerCase(), impact.action.type.toString().toLowerCase())) {
             return false;
         }
         return true;
