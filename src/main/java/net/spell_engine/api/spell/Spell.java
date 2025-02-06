@@ -82,7 +82,7 @@ public class Spell {
 
     public Passive passive;
     public static class Passive {
-        public Trigger trigger = new Trigger();
+        public List<Trigger> triggers = List.of();
     }
 
     public Release release = new Release();

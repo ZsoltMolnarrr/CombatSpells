@@ -176,17 +176,20 @@ public class SpellTriggers {
         for(var spellEntry: SpellContainerSource.passiveSpellsOf(event.player)) {
             var spell = spellEntry.value();
             var spellId = spellEntry.getKey().get().getValue();
-            if (spell.passive != null
-                    && !caster.getCooldownManager().isCoolingDown(spellId)
-                    && execute(spell.passive.trigger, event)) {
-                SpellTarget.SearchResult targetResult;
-                if (spell.target.type == Spell.Target.Type.FROM_TRIGGER) {
-                    List<Entity> targets = List.of(event.target(spell.passive.trigger));
-                    targetResult = SpellTarget.SearchResult.of(targets);
-                } else {
-                    targetResult = SpellTarget.findTargets(player, spell, SpellTarget.SearchResult.empty());
+            if (spell.passive != null && !caster.getCooldownManager().isCoolingDown(spellId)) {
+                for (var trigger : spell.passive.triggers) {
+                    if (execute(trigger, event)) {
+                        SpellTarget.SearchResult targetResult;
+                        if (spell.target.type == Spell.Target.Type.FROM_TRIGGER) {
+                            List<Entity> targets = List.of(event.target(trigger));
+                            targetResult = SpellTarget.SearchResult.of(targets);
+                        } else {
+                            targetResult = SpellTarget.findTargets(player, spell, SpellTarget.SearchResult.empty());
+                        }
+                        SpellHelper.performSpell(player.getWorld(), player, spellEntry, targetResult, SpellCast.Action.TRIGGER, 1);
+                        break;
+                    }
                 }
-                SpellHelper.performSpell(player.getWorld(), player, spellEntry, targetResult, SpellCast.Action.TRIGGER, 1);
             }
         }
     }

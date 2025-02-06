@@ -23,10 +23,7 @@ import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.api.spell.container.SpellContainerHelper;
 import net.spell_power.api.SpellPower;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SpellTooltip {
     public static final String damageToken = "damage";
@@ -40,6 +37,7 @@ public class SpellTooltip {
     public static final String teleportDistanceToken = "teleport_distance";
     public static final String countToken = "count";
     public static final String trigger_chance = "trigger_chance";
+    public static final String trigger_list = "trigger_chance";
     public static String placeholder(String token) { return "{" + token + "}"; }
 
     public static void addSpellLines(ItemStack itemStack, TooltipType tooltipType, List<Text> lines) {
@@ -207,17 +205,38 @@ public class SpellTooltip {
         }
 
         if (details) {
-            if (SpellHelper.isInstant(spell)) {
-                lines.add(indentation(indentLevel)
-                        .append(Text.translatable("spell.tooltip.cast_instant"))
-                        .formatted(Formatting.GOLD));
-            } else {
-                var castDuration = SpellHelper.getCastDuration(player, spell, itemStack);
-                var castTimeKey = keyWithPlural("spell.tooltip.cast_time", castDuration);
-                var castTime = I18n.translate(castTimeKey).replace(placeholder(durationToken), formattedNumber(castDuration));
-                lines.add(indentation(indentLevel)
-                        .append(Text.literal(castTime))
-                        .formatted(Formatting.GOLD));
+            var active = spell.active;
+            if (active != null) {
+                if (active.cast != null) {
+                    if (SpellHelper.isInstant(spell)) {
+                        lines.add(indentation(indentLevel)
+                                .append(Text.translatable("spell.tooltip.cast_instant"))
+                                .formatted(Formatting.GOLD));
+                    } else {
+                        var castDuration = SpellHelper.getCastDuration(player, spell, itemStack);
+                        var castTimeKey = keyWithPlural("spell.tooltip.cast_time", castDuration);
+                        var castTime = I18n.translate(castTimeKey).replace(placeholder(durationToken), formattedNumber(castDuration));
+                        lines.add(indentation(indentLevel)
+                                .append(Text.literal(castTime))
+                                .formatted(Formatting.GOLD));
+                    }
+                }
+            }
+            var passive = spell.passive;
+            if (passive != null) {
+                if (!passive.triggers.isEmpty()) {
+                    var triggerList = passive.triggers.stream()
+                            .map(trigger -> "spell.tooltip.trigger." + trigger.type.toString().toLowerCase(Locale.ENGLISH))
+                            .map(I18n::translate)
+                            .toList();
+                    var joinedTriggers = String.join(", ", triggerList);
+                    var triggerText = I18n.translate("spell.tooltip.trigger.base")
+                        .replace(placeholder(trigger_list), joinedTriggers);
+
+                    lines.add(indentation(indentLevel)
+                            .append(Text.literal(triggerText))
+                            .formatted(Formatting.GOLD));
+                }
             }
 
             if (spell.range > 0 || spell.range_mechanic != null) {
@@ -289,7 +308,7 @@ public class SpellTooltip {
 
         List<Spell.Trigger> triggers = new ArrayList<>();
         if (spell.passive != null) {
-            triggers.add(spell.passive.trigger);
+            triggers.addAll(spell.passive.triggers);
         }
         if (spell.deliver != null) {
             Spell.ProjectileData projectile = null;
