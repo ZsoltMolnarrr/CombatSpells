@@ -442,13 +442,13 @@ public class SpellTooltip {
         return formattedNumber((float) min) + " - " + formattedNumber((float) max);
     }
 
-    private static String formattedNumber(float number) {
+    public static String formattedNumber(float number) {
         DecimalFormat formatter = new DecimalFormat();
         formatter.setMaximumFractionDigits(1);
         return formatter.format(number);
     }
 
-    private static String keyWithPlural(String key, float value) {
+    public static String keyWithPlural(String key, float value) {
         if (value != 1) {
             return key + ".plural";
         }

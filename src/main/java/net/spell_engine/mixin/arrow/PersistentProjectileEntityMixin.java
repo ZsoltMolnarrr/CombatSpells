@@ -211,8 +211,15 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
             // Context Parameters
             EntityHitResult entityHitResult) {
         var spellEntries = spellEntries();
+        var arrow = arrow();
+        var owner = arrow.getOwner();
         if (entity.getWorld().isClient() || spellEntries.isEmpty()) {
-            return original.call(entity, damageSource, amount);
+
+            var result =  original.call(entity, damageSource, amount);
+            if (owner instanceof PlayerEntity shooter) {
+                SpellTriggers.onArrowImpact((ArrowExtension) arrow, shooter, entity);
+            }
+            return result;
         } else {
             int iFrameToRestore = 0;
             var originalIFrame = entity.timeUntilRegen;
@@ -249,8 +256,6 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
             for (var spellEnrty : spellEntries) {
                 performImpacts(spellEnrty, entity, entityHitResult);
             }
-            var arrow = arrow();
-            var owner = arrow.getOwner();
             if (owner instanceof PlayerEntity shooter) {
                 SpellTriggers.onArrowImpact((ArrowExtension) arrow, shooter, entity);
             }
