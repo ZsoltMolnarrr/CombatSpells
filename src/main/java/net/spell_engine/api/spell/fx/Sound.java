@@ -1,5 +1,7 @@
 package net.spell_engine.api.spell.fx;
 
+import net.minecraft.util.Identifier;
+
 import java.util.Objects;
 import java.util.Random;
 
@@ -36,6 +38,10 @@ public final class Sound {
 
     public Sound(String id) {
         this.id = id;
+    }
+
+    public Sound(Identifier id) {
+        this(id.toString());
     }
 
     /**
