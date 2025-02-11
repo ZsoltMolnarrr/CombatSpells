@@ -403,6 +403,10 @@ public class Spell {
     // MARK: Shared structures (used from multiple places in the spell structure)
 
     public static class Trigger {
+        @Nullable public TargetSelector target_override;
+        @Nullable public TargetSelector aoe_source_override;
+        public enum TargetSelector { CASTER, AOE_SOURCE, TARGET }
+
         public enum Type {
             ARROW_SHOT, ARROW_IMPACT,
             MELEE_IMPACT,
@@ -414,9 +418,18 @@ public class Spell {
         /// Chance to trigger. 0 = 0%, 1 = 100%
         public float chance = 1;
 
-        public enum TargetSelector { CASTER, AOE_SOURCE, TARGET }
-        @Nullable public TargetSelector target_override;
-        @Nullable public TargetSelector aoe_source_override;
+        @Nullable public List<TargetCondition> caster_conditions;
+        @Nullable public List<TargetCondition> target_conditions;
+        public static class TargetCondition {
+            public float health_percent_above = 0;
+            public float health_percent_below = 1;
+            /// ID of a registered SpellEntityPredicate
+            /// Check out `SpellEntityPredicates` class for options, or new registration
+            @Nullable public String entity_predicate_id;
+            /// Parameter to pass to the predicate
+            /// Each predicate handles this differently
+            @Nullable public String entity_predicate_param;
+        }
 
         /// Evaluated for: SPELL_CAST, SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC
         public SpellCondition spell;
