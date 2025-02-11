@@ -37,6 +37,7 @@ API Changes:
 - Removed `HealthImpacting` status effect configuration interface. Replaced by new attributes:
   - `spell_engine:healing_taken`
   - `spell_engine:damage_taken`
+- Included sound entries are now available as static references in `SpellEngineSounds`
 
 # 1.4.5
 
