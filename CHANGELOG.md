@@ -38,6 +38,7 @@ API Changes:
   - `spell_engine:healing_taken`
   - `spell_engine:damage_taken`
 - Included sound entries are now available as static references in `SpellEngineSounds`
+- StatusEffect impact can now be used for helpful and harmful dispels
 
 # 1.4.5
 

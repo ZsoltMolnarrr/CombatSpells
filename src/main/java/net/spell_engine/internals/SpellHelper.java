@@ -1216,6 +1216,9 @@ public class SpellHelper {
                 return SpellTarget.Intent.HELPFUL;
             }
             case STATUS_EFFECT -> {
+                if (action.status_effect.remove != null) {
+                    return action.status_effect.remove.select_beneficial ? SpellTarget.Intent.HARMFUL : SpellTarget.Intent.HELPFUL;
+                }
                 return intentForStatusEffect(action.status_effect.effect_id);
             }
             case TELEPORT -> {
