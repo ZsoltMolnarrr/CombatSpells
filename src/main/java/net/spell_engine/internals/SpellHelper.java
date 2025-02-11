@@ -896,15 +896,21 @@ public class SpellHelper {
                                     var currentEffect = livingTarget.getStatusEffect(effect);
                                     int newAmplifier = 0;
                                     if (currentEffect != null) {
-                                        var incrementedAmplifier = currentEffect.getAmplifier() + 1;
+                                        var currentAmplifier = currentEffect.getAmplifier();
+                                        var incrementedAmplifier = currentAmplifier + 1;
                                         newAmplifier = Math.min(incrementedAmplifier, amplifier);
+                                        if (!data.refresh_duration) {
+                                            if (currentAmplifier == newAmplifier) {
+                                                return false;
+                                            }
+                                            duration = currentEffect.getDuration();
+                                        }
                                     }
                                     amplifier = newAmplifier;
                                 }
 
-                                livingTarget.addStatusEffect(
-                                        new StatusEffectInstance(effect, duration, amplifier, false, showParticles, true),
-                                        caster);
+                                var instance = new StatusEffectInstance(effect, duration, amplifier, false, showParticles, true);
+                                livingTarget.addStatusEffect(instance, caster);
                                 success = true;
                             }
                             case REMOVE -> {

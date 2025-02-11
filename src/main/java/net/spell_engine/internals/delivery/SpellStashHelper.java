@@ -56,7 +56,7 @@ public class SpellStashHelper {
         var caster = event.player;
         var world = caster.getWorld();
         Map<StatusEffectInstance, Integer> updateEffectStacks = new HashMap<>();
-        var activeEffects = caster.getActiveStatusEffects();
+        var activeEffects = Map.copyOf(caster.getActiveStatusEffects()); // Create copy to avoid concurrent modification
         for(var entry: activeEffects.entrySet()) {
             var effect = entry.getKey().value();
             var stack = entry.getValue();

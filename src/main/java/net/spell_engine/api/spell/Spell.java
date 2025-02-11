@@ -287,6 +287,7 @@ public class Spell {
                 public float duration = 10;
                 public int amplifier = 0;
                 public float amplifier_power_multiplier = 0;
+                public boolean refresh_duration = true;
                 public ApplyMode apply_mode = ApplyMode.SET;
                 public enum ApplyMode { SET, ADD, REMOVE }
                 @Nullable public ApplyLimit apply_limit;
