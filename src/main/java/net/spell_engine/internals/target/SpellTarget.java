@@ -1,11 +1,15 @@
 package net.spell_engine.internals.target;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.math.Vec3d;
+import net.spell_engine.api.entity.SpellEntityPredicates;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.internals.SpellHelper;
+import net.spell_engine.utils.PatternMatching;
 import net.spell_engine.utils.TargetHelper;
 import org.jetbrains.annotations.Nullable;
 
@@ -109,5 +113,37 @@ public class SpellTarget {
         }
 
         return new SearchResult(targets, location);
+    }
+
+    public static boolean evaluate(Entity testedEntity, @Nullable Entity otherEntity, @Nullable Spell.TargetCondition condition) {
+        if (condition == null) {
+            return true;
+        }
+
+        if (testedEntity instanceof LivingEntity livingEntity) {
+            var healthPercent = livingEntity.getHealth() / livingEntity.getMaxHealth();
+            // Watch out, inverse checks, to `return false`
+            if (healthPercent < condition.health_percent_above || healthPercent > condition.health_percent_below) {
+                return false;
+            }
+        }
+
+        if (condition.entity_type != null) {
+            if (!PatternMatching.matches(testedEntity.getType().getRegistryEntry(), RegistryKeys.ENTITY_TYPE, condition.entity_type)) {
+                return false;
+            }
+        }
+
+        if (condition.entity_predicate_id != null) {
+            var predicate = SpellEntityPredicates.get(condition.entity_predicate_id);
+            if (predicate == null) {
+                return false;
+            }
+            var args = new SpellEntityPredicates.Input(testedEntity, otherEntity, condition.entity_predicate_param);
+            if (!predicate.predicate().test(args)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

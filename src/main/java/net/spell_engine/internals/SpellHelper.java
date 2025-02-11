@@ -764,7 +764,7 @@ public class SpellHelper {
                     return false;
                 }
             }
-            var conditionResult = evaluateImpactConditions(target, impact.target_conditions);
+            var conditionResult = evaluateImpactConditions(target, caster, impact.target_modifiers);
             if (!conditionResult.allowed) {
                 return false;
             }
@@ -1053,39 +1053,25 @@ public class SpellHelper {
         public static final TargetConditionResult ALLOWED = new TargetConditionResult(true, List.of());
         public static final TargetConditionResult DENIED = new TargetConditionResult(false, List.of());
     }
-    public static TargetConditionResult evaluateImpactConditions(Entity target, List<Spell.Impact.TargetCondition> target_conditions) {
-        if (target_conditions == null) {
+    public static TargetConditionResult evaluateImpactConditions(Entity target, LivingEntity caster, List<Spell.Impact.TargetModifier> target_modifiers) {
+        if (target_modifiers == null) {
             return TargetConditionResult.ALLOWED;
         }
         var modifiers = new ArrayList<Spell.Impact.Modifier>();
-        for (var condition: target_conditions) {
-            var entityTypeMatches = false;
-            if (condition.entity_type != null && !condition.entity_type.isEmpty()) {
-                var invert = condition.entity_type.startsWith("!");
-                if (invert) {
-                    entityTypeMatches = !entityTypeMatches(condition.entity_type.substring(1), target);
-                } else {
-                    entityTypeMatches = entityTypeMatches(condition.entity_type, target);
-                }
+        for (var entry: target_modifiers) {
+            var conditionMet = true;
+            for (var condition: entry.conditions) {
+                var newResult = SpellTarget.evaluate(target, caster, condition);
+                conditionMet = entry.all_required
+                        ? conditionMet && newResult
+                        : conditionMet || newResult;
             }
-            var hasStatusEffect = false;
-            if (condition.has_effect != null && !condition.has_effect.isEmpty() && target instanceof LivingEntity livingTarget) {
-                var invert = condition.has_effect.startsWith("!");
-                var idString = invert ? condition.has_effect.substring(1) : condition.has_effect;
-                var id = Identifier.of(idString);
-                var effect = Registries.STATUS_EFFECT.getEntry(id);
-                hasStatusEffect = effect.isPresent() && livingTarget.hasStatusEffect(effect.get());
-            }
-
-            var conditionMet = condition.all_required
-                    ? entityTypeMatches && hasStatusEffect
-                    : entityTypeMatches || hasStatusEffect;
             if (conditionMet) {
-                if (!condition.allow_action) {
+                if (!entry.allow_action) {
                     return TargetConditionResult.DENIED;
                 }
-                if (condition.modifier != null) {
-                    modifiers.add(condition.modifier);
+                if (entry.modifier != null) {
+                    modifiers.add(entry.modifier);
                 }
             }
         }

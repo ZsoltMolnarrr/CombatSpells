@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.spell_engine.api.entity.SpellEntityPredicates;
 import net.spell_engine.api.event.CombatEvents;
@@ -206,14 +207,14 @@ public class SpellTriggers {
         }
         if (trigger.caster_conditions != null) {
             for (var condition : trigger.caster_conditions) {
-                if (!evaluate(event.player, event.target, condition)) {
+                if (!SpellTarget.evaluate(event.player, event.target, condition)) {
                     return false;
                 }
             }
         }
         if (event.target != null && trigger.target_conditions != null) {
             for (var condition : trigger.target_conditions) {
-                if (!evaluate(event.target, event.player, condition)) {
+                if (!SpellTarget.evaluate(event.target, event.player, condition)) {
                     return false;
                 }
             }
@@ -229,32 +230,6 @@ public class SpellTriggers {
                 return true;
             }
         }
-    }
-
-    private static boolean evaluate(Entity testedEntity, @Nullable Entity otherEntity, @Nullable Spell.Trigger.TargetCondition condition) {
-        if (condition == null) {
-            return true;
-        }
-
-        if (testedEntity instanceof LivingEntity livingEntity) {
-            var healthPercent = livingEntity.getHealth() / livingEntity.getMaxHealth();
-            // Watch out, inverse checks, to `return false`
-            if (healthPercent < condition.health_percent_above || healthPercent > condition.health_percent_below) {
-                return false;
-            }
-        }
-
-        if (condition.entity_predicate_id != null) {
-            var predicate = SpellEntityPredicates.get(condition.entity_predicate_id);
-            if (predicate == null) {
-                return false;
-            }
-            var args = new SpellEntityPredicates.Input(testedEntity, otherEntity, condition.entity_predicate_param);
-            if (!predicate.predicate().test(args)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     private static boolean evaluate(@Nullable RegistryEntry<Spell> spellEntry, @Nullable Spell.Trigger.SpellCondition condition) {

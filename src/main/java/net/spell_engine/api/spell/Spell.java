@@ -244,13 +244,11 @@ public class Spell {
         @Nullable public SpellSchool school;
         /// Attribute the value of which to override the power
         @Nullable public String attribute;
-        public List<TargetCondition> target_conditions = List.of();
-        public static class TargetCondition {
+        public List<TargetModifier> target_modifiers = List.of();
+        public static class TargetModifier {
             // If true = AND, if false = OR
             public boolean all_required = false;
-            @Nullable public String entity_type;
-            @Nullable public String has_effect;
-            // @Nullable public String predicate ?
+            public List<TargetCondition> conditions = List.of();
 
             public boolean allow_action = true;
             @Nullable public Modifier modifier;
@@ -429,26 +427,18 @@ public class Spell {
 
         @Nullable public List<TargetCondition> caster_conditions;
         @Nullable public List<TargetCondition> target_conditions;
-        public static class TargetCondition {
-            public float health_percent_above = 0;
-            public float health_percent_below = 1;
-            /// ID of a registered SpellEntityPredicate
-            /// Check out `SpellEntityPredicates` class for options, or new registration
-            @Nullable public String entity_predicate_id;
-            /// Parameter to pass to the predicate
-            /// Each predicate handles this differently
-            @Nullable public String entity_predicate_param;
-        }
 
         /// Evaluated for: SPELL_CAST, SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC
         public SpellCondition spell;
         public static class SpellCondition { public SpellCondition() { }
-            // Spell school regex
+            /// Spell school regex
             @Nullable public String school;
-            // Exact archetype of the spell school
+            /// Exact archetype of the spell school
             @Nullable public SpellSchool.Archetype archetype;
-            // ID or tag to match the spell
+            /// ID of the spell
+            /// (Universal pattern matcher: `#` prefix checks tag, `~` prefix checks regex, no prefix checks exact match)
             @Nullable public String id;
+
             // Maybe add predicate, that can be registered in java, and resolved by this id
             // public String spell_predicate
         }
@@ -581,5 +571,19 @@ public class Spell {
         public float location_offset_x = 0;
         public float location_offset_y = 0;
         public float location_offset_z = 0;
+    }
+
+    public static class TargetCondition {
+        public float health_percent_above = 0;
+        public float health_percent_below = 1;
+        /// ID of the entity type
+        /// (Universal pattern matcher: `#` prefix checks tag, `~` prefix checks regex, no prefix checks exact match)
+        @Nullable public String entity_type;
+        /// ID of a registered SpellEntityPredicate
+        /// Check out `SpellEntityPredicates` class for options, or new registration
+        @Nullable public String entity_predicate_id;
+        /// Parameter to pass to the predicate
+        /// Each predicate handles this differently
+        @Nullable public String entity_predicate_param;
     }
 }
