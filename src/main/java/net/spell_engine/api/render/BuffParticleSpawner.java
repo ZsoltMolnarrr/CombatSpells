@@ -3,7 +3,7 @@ package net.spell_engine.api.render;
 import net.minecraft.entity.LivingEntity;
 import net.spell_engine.api.effect.CustomParticleStatusEffect;
 import net.spell_engine.api.spell.fx.ParticleBatch;
-import net.spell_engine.particle.ParticleHelper;
+import net.spell_engine.fx.ParticleHelper;
 
 public class BuffParticleSpawner implements CustomParticleStatusEffect.Spawner {
     private final ParticleBatch particles;

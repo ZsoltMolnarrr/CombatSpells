@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -37,7 +38,7 @@ import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.internals.container.SpellContainerSource;
 import net.spell_engine.internals.target.EntityRelations;
 import net.spell_engine.internals.target.SpellTarget;
-import net.spell_engine.particle.ParticleHelper;
+import net.spell_engine.fx.ParticleHelper;
 import net.spell_engine.utils.*;
 import net.spell_power.api.SpellSchool;
 import net.spell_power.api.SpellDamageSource;
@@ -853,12 +854,28 @@ public class SpellHelper {
                 case STATUS_EFFECT -> {
                     var data = impact.action.status_effect;
                     if (target instanceof LivingEntity livingTarget) {
-                        var id = Identifier.of(data.effect_id);
-                        var effectQuery = Registries.STATUS_EFFECT.getEntry(id);
-                        if (effectQuery.isEmpty()) {
+                        Optional<RegistryEntry<StatusEffect>> optionalEffect = Optional.empty();
+                        if (data.remove != null) {
+                            var effects = livingTarget.getStatusEffects()
+                                    .stream().filter(instance -> instance.getEffectType().value().isBeneficial() == data.remove.select_beneficial)
+                                    .toList();
+                            switch (data.remove.selector) {
+                                case RANDOM -> {
+                                    optionalEffect = Optional.of(effects.get(world.random.nextInt(effects.size()))).map(StatusEffectInstance::getEffectType);
+                                }
+                                case FIRST -> {
+                                    optionalEffect = Optional.of(effects.getFirst()).map(StatusEffectInstance::getEffectType);
+                                }
+                            }
+                        } else {
+                            var id = Identifier.of(data.effect_id);
+                            optionalEffect = Optional.of(Registries.STATUS_EFFECT.getEntry(id).get());
+                        }
+                        if (optionalEffect.isEmpty()) {
                             return false;
                         }
-                        var effect = effectQuery.get();
+                        var effect = optionalEffect.get();
+
                         if(!underApplyLimit(power, livingTarget, school, data.apply_limit)) {
                             return false;
                         }

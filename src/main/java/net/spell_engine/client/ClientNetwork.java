@@ -9,7 +9,7 @@ import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.internals.container.SpellAssignments;
 import net.spell_engine.network.Packets;
 import net.spell_engine.network.ServerNetwork;
-import net.spell_engine.particle.ParticleHelper;
+import net.spell_engine.fx.ParticleHelper;
 
 public class ClientNetwork {
     public static void initializeHandlers() {

@@ -1,4 +1,4 @@
-package net.spell_engine.particle;
+package net.spell_engine.fx;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.particle.SimpleParticleType;

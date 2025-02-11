@@ -297,6 +297,13 @@ public class Spell {
                     public float spell_power_multiplier = 0;
                 }
                 public boolean show_particles = false;
+
+                public Remove remove;
+                public static class Remove { public Remove() { }
+                    public enum Selector { RANDOM, FIRST }
+                    @Nullable public Selector selector = Selector.RANDOM;
+                    public boolean select_beneficial = false;
+                }
             }
 
             public Fire fire;

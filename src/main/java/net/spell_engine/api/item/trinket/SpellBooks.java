@@ -12,6 +12,7 @@ import net.spell_engine.api.spell.container.SpellContainer;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.compat.trinkets.SpellBookTrinketItem;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
+import net.spell_engine.fx.SpellEngineSounds;
 import net.spell_engine.internals.container.SpellAssignments;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class SpellBooks {
         ISpellBookItem book = null;
         TrinketsCompat.init();
         if (TrinketsCompat.isEnabled()) {
-            book = new SpellBookTrinketItem(new Item.Settings().maxCount(1), poolId, SpellBookItem.EQUIP_SOUND);
+            book = new SpellBookTrinketItem(new Item.Settings().maxCount(1), poolId, SpellEngineSounds.SPELLBOOK_EQUIP.soundEvent());
         }
         // TODO: Add support for Curios
         else {

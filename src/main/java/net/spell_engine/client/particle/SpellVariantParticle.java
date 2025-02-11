@@ -6,9 +6,7 @@ import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.random.Random;
-import net.spell_engine.client.util.Color;
-import net.spell_engine.particle.Particles;
-import net.spell_power.api.SpellSchools;
+import net.spell_engine.fx.Particles;
 
 public class SpellVariantParticle extends SpriteBillboardParticle  {
     private static final Random RANDOM = Random.create();

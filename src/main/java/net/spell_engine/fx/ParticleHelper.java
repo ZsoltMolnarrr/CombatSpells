@@ -1,4 +1,4 @@
-package net.spell_engine.particle;
+package net.spell_engine.fx;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;

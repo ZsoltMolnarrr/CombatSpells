@@ -16,6 +16,7 @@ import net.spell_engine.api.item.trinket.SpellBookItem;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.compat.trinkets.SpellScrollTrinketItem;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
+import net.spell_engine.fx.SpellEngineSounds;
 import net.spell_engine.spellbinding.SpellBinding;
 import net.spell_engine.spellbinding.SpellBindingBlock;
 
@@ -33,7 +34,7 @@ public class SpellEngineItems {
 
     public static final Lazy<Item> SCROLL = new Lazy<>(() -> {
         if (TrinketsCompat.isEnabled()) {
-            return new SpellScrollTrinketItem(new Item.Settings().maxCount(1), SpellBookItem.EQUIP_SOUND);
+            return new SpellScrollTrinketItem(new Item.Settings().maxCount(1), SpellEngineSounds.SPELLBOOK_EQUIP.soundEvent());
         } else {
             return new ScrollItem(new Item.Settings().maxCount(1));
         }

@@ -14,6 +14,7 @@ import net.spell_engine.compat.CompatFeatures;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
 import net.spell_engine.entity.SpellCloud;
 import net.spell_engine.entity.SpellProjectile;
+import net.spell_engine.fx.SpellEngineSounds;
 import net.spell_engine.item.SpellEngineItems;
 import net.spell_engine.utils.SoundHelper;
 
@@ -45,7 +46,7 @@ public class FabricMod implements ModInitializer {
     public void onInitialize() {
         SpellEngineMod.init();
         SpellEngineMod.registerSpellBinding();
-        SoundHelper.registerSounds();
+        SpellEngineSounds.register();
         CompatFeatures.initialize();
         SpellEngineItems.register();
 

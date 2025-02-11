@@ -22,7 +22,7 @@ import net.spell_engine.internals.container.SpellContainerSource;
 import net.spell_engine.internals.criteria.EnchantmentSpecificCriteria;
 import net.spell_engine.internals.delivery.SpellStashHelper;
 import net.spell_engine.network.ServerNetwork;
-import net.spell_engine.particle.Particles;
+import net.spell_engine.fx.Particles;
 import net.spell_engine.rpg_series.RPGSeriesCore;
 import net.spell_engine.spellbinding.*;
 

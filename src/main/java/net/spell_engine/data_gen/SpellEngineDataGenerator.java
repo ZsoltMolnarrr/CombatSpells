@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.registry.RegistryWrapper;
 import net.spell_engine.api.data_gen.SimpleParticleGenerator;
-import net.spell_engine.particle.Particles;
+import net.spell_engine.fx.Particles;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;

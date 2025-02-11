@@ -20,6 +20,7 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.item.SpellEngineItemTags;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.api.spell.container.SpellContainerHelper;
+import net.spell_engine.fx.SpellEngineSounds;
 
 import java.util.Arrays;
 
@@ -203,9 +204,6 @@ public class SpellBindingScreenHandler extends ScreenHandler {
         return itemStack;
     }
 
-    public static Identifier soundId = Identifier.of(SpellEngineMod.ID, "bind_spell");
-    public static SoundEvent soundEvent = SoundEvent.of(soundId);
-
     @Override
     public boolean onButtonClick(PlayerEntity player, int id) {
         this.creative = player.isCreative();
@@ -253,7 +251,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                         applyLevelCost(player, binding.requirements.levelCost());
                         this.inventory.markDirty();
                         this.onContentChanged(this.inventory);
-                        world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
+                        world.playSound(null, pos, SpellEngineSounds.BIND_SPELL.soundEvent(), SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
                         if (player instanceof ServerPlayerEntity serverPlayer) {
                             var container = SpellContainerHelper.containerFromItemStack(mainStack);
                             var poolId = SpellContainerHelper.getPoolId(container);
@@ -292,7 +290,7 @@ public class SpellBindingScreenHandler extends ScreenHandler {
                         applyLevelCost(player, binding.requirements.levelCost());
                         this.inventory.markDirty();
                         this.onContentChanged(this.inventory);
-                        world.playSound(null, pos, soundEvent, SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
+                        world.playSound(null, pos, SpellEngineSounds.BIND_SPELL.soundEvent(), SoundCategory.BLOCKS, 1.0f, world.random.nextFloat() * 0.1f + 0.9f);
 
                         if (player instanceof ServerPlayerEntity serverPlayer) {
                             SpellBookCreationCriteria.INSTANCE.trigger(serverPlayer, poolId);

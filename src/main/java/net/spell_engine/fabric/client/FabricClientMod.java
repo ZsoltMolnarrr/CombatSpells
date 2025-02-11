@@ -6,12 +6,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.spell_engine.client.SpellEngineClient;
-import net.spell_engine.client.gui.HudRenderHelper;
 import net.spell_engine.client.gui.SpellTooltip;
 import net.spell_engine.client.input.Keybindings;
 import net.spell_engine.client.particle.*;
@@ -20,7 +15,7 @@ import net.spell_engine.client.render.SpellCloudRenderer;
 import net.spell_engine.client.render.SpellProjectileRenderer;
 import net.spell_engine.entity.SpellCloud;
 import net.spell_engine.entity.SpellProjectile;
-import net.spell_engine.particle.Particles;
+import net.spell_engine.fx.Particles;
 
 public class FabricClientMod implements ClientModInitializer {
     @Override

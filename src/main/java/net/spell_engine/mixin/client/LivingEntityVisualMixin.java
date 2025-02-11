@@ -7,7 +7,7 @@ import net.spell_engine.api.effect.Synchronized;
 import net.spell_engine.client.beam.BeamEmitterEntity;
 import net.spell_engine.internals.delivery.Beam;
 import net.spell_engine.internals.casting.SpellCasterEntity;
-import net.spell_engine.particle.ParticleHelper;
+import net.spell_engine.fx.ParticleHelper;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
