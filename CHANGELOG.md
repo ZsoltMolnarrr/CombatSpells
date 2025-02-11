@@ -34,6 +34,9 @@ API Changes:
   - SimpleParticleGenerator
   - SimpleSoundGenerator
 - Add StatusEffectClassification to check action impairing effects
+- Removed `HealthImpacting` status effect configuration interface. Replaced by new attributes:
+  - `spell_engine:healing_taken`
+  - `spell_engine:damage_taken`
 
 # 1.4.5
 

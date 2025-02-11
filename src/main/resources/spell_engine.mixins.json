@@ -18,9 +18,8 @@
     "effect.EntityImmunityMixin",
     "effect.LivingEntityEffectRemoval",
     "effect.LivingEntityStatusEffectSync",
-    "effect.LivingEntityStatusHealthImpacting",
+    "effect.LivingEntityHealthImpacting",
     "effect.StatusEffectActionImpairing",
-    "effect.StatusEffectHealthImpacting",
     "effect.StatusEffectOnRemoval",
     "effect.StatusEffectRemoveOnHit",
     "effect.StatusEffectSpellStash",
@@ -36,6 +35,8 @@
     "item.ArmorMaterialLayerAccessor",
     "item.RangedWeaponAccessor",
     "registry.DataComponentTypesMixin",
+    "registry.EntityAttributesMixin",
+    "registry.LivingEntityAttributesMixin",
     "registry.RegistryLoaderMixin"
   ],
   "client": [
