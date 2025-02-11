@@ -97,7 +97,9 @@ public class SpellStashHelper {
                         }
                     }
 
-                    updateEffectStacks.put(stack, stacksAvailable - consume);
+                    if (consume != 0) {
+                        updateEffectStacks.put(stack, stacksAvailable - consume);
+                    }
                     break; // Stop processing other triggers for this effect
                 }
             }
