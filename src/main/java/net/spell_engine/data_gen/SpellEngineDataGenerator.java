@@ -4,8 +4,11 @@ import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.registry.RegistryWrapper;
+import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.data_gen.SimpleParticleGenerator;
+import net.spell_engine.api.data_gen.SimpleSoundGenerator;
 import net.spell_engine.fx.Particles;
+import net.spell_engine.fx.SpellEngineSounds;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
@@ -15,6 +18,7 @@ public class SpellEngineDataGenerator implements DataGeneratorEntrypoint {
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
         FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
         pack.addProvider(ParticlesGen::new);
+        pack.addProvider(SoundGen::new);
     }
 
     public static class ParticlesGen extends SimpleParticleGenerator {
@@ -59,4 +63,17 @@ public class SpellEngineDataGenerator implements DataGeneratorEntrypoint {
             }
         }
     }
+
+    public static class SoundGen extends SimpleSoundGenerator {
+        public SoundGen(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+            super(dataOutput, registryLookup);
+        }
+
+        @Override
+        public void generateSounds(Builder builder) {
+            builder.entries.add(new Entry(SpellEngineMod.ID,
+                    SpellEngineSounds.entries.stream().map(entry -> entry.id().getPath()).toList()));
+        }
+    }
+
 }

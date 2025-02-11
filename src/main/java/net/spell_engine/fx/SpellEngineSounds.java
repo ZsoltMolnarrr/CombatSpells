@@ -5,8 +5,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
-import net.spell_engine.api.item.trinket.SpellBookItem;
-import net.spell_engine.spellbinding.SpellBindingScreenHandler;
 
 import java.util.ArrayList;
 import java.util.List;
