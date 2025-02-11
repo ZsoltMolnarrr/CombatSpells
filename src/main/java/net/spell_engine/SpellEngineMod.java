@@ -11,6 +11,7 @@ import net.minecraft.client.resource.language.I18n;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.spell_engine.api.effect.StatusEffectClassification;
 import net.spell_engine.api.item.weapon.StaffItem;
 import net.spell_engine.api.spell.ExternalSpellSchools;
 import net.spell_engine.api.spell.registry.SpellRegistry;
@@ -61,6 +62,7 @@ public class SpellEngineMod {
         SpellStashHelper.init();
         SpellTriggers.init();
         SpellContainerSource.init();
+        StatusEffectClassification.init();
     }
 
     public static void registerSpellBinding() {

@@ -9,6 +9,7 @@ Functional changes:
   - Spell Scroll slot `spell/scroll` (disabled by default)
   - Quiver slot (in standalone group) `misc/quiver` (enabled by default)
   - Quiver slot (in the `spell group`) `spell/quiver` (disabled by default)
+- Add engine level immunity against slowing, rooting and stunning effects for bosses
 
 API Changes:
 - Build with Fabric Loom 1.9
@@ -32,6 +33,7 @@ API Changes:
   - SpellGenerator
   - SimpleParticleGenerator
   - SimpleSoundGenerator
+- Add StatusEffectClassification to check action impairing effects
 
 # 1.4.5
 

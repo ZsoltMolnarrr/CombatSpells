@@ -22,6 +22,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityImmunity;
+import net.spell_engine.api.effect.StatusEffectClassification;
+import net.spell_engine.api.entity.SpellEngineEntityTags;
 import net.spell_engine.api.entity.SpellSpawnedEntity;
 import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.Spell;
@@ -882,6 +884,11 @@ public class SpellHelper {
                         var amplifier = data.amplifier + (int)(data.amplifier_power_multiplier * power.nonCriticalValue());
                         switch (data.apply_mode) {
                             case ADD, SET -> {
+                                if (target.getType().isIn(SpellEngineEntityTags.bosses)
+                                        && (StatusEffectClassification.isMovementImpairing(effect) || StatusEffectClassification.disablesMobAI(effect) ) ) {
+                                    return false;
+                                }
+
                                 var duration = Math.round(data.duration * 20F);
                                 var showParticles = data.show_particles;
 
