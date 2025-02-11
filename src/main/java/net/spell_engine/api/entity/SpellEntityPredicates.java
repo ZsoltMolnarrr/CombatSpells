@@ -9,6 +9,7 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.utils.PatternMatching;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -16,7 +17,7 @@ public class SpellEntityPredicates {
     public record Input(Entity entity, Entity other, @Nullable String param) { }
     public record Entry(Identifier id, Predicate<Input> predicate) { }
 
-    private static final Map<String, Entry> entries = Map.of();
+    private static final Map<String, Entry> entries = new HashMap<>();
     public static Entry register(Identifier id, Predicate<Input> predicate) {
         var entry = new Entry(id, predicate);
         entries.put(id.toString(), entry);

@@ -20,6 +20,7 @@ API Changes:
   - Spell structure: `cost` reworked to be more structured
   - Spell structure: `release.target` split into `target` and `deliver`
   - Completely rewrite spell stashes, now powered by unified spell triggers, stash effects are now automatically linked
+  - Rewrite spell impact target conditions, now unified with spell trigger target conditions
 - Add support for passive spells
 - Add spell triggers (for passives and stashes): ARROW_SHOT, ARROW_IMPACT, MELEE_IMPACT, SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC, DAMAGE_TAKEN, ROLL
 - Add support for multiple ammo item cost
