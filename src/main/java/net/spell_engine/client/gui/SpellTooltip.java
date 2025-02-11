@@ -360,7 +360,7 @@ public class SpellTooltip {
             }
             if (spell.deliver.stash_effect != null) {
                 var stash = spell.deliver.stash_effect;
-                triggers.add(stash.trigger);
+                triggers.addAll(stash.triggers);
             }
         }
 

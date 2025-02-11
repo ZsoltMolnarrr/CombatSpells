@@ -4,9 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.spell_engine.api.entity.SpellEntityPredicates;
 import net.spell_engine.api.event.CombatEvents;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.event.SpellEvents;
@@ -181,7 +179,7 @@ public class SpellTriggers {
             var spellId = spellEntry.getKey().get().getValue();
             if (spell.passive != null && !caster.getCooldownManager().isCoolingDown(spellId)) {
                 for (var trigger : spell.passive.triggers) {
-                    if (execute(trigger, event)) {
+                    if (evaluateTrigger(trigger, event)) {
                         SpellTarget.SearchResult targetResult;
                         if (spell.target.type == Spell.Target.Type.FROM_TRIGGER) {
                             List<Entity> targets = List.of(event.target(trigger));
@@ -198,7 +196,7 @@ public class SpellTriggers {
     }
 
     private static final Random random = new Random();
-    public static boolean execute(Spell.Trigger trigger, Event event) {
+    public static boolean evaluateTrigger(Spell.Trigger trigger, Event event) {
         if (trigger.type != event.type) {
             return false;
         }

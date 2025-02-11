@@ -220,7 +220,7 @@ public class Spell {
             public boolean show_particles = false;
 
             /// Trigger of the status effect
-            public Trigger trigger = new Trigger();
+            public List<Trigger> triggers = List.of();
             /// Status effect stacks to consume upon triggering
             public int consume = 1;
             /// Determines what happens to the impacts of the spell when using this stash

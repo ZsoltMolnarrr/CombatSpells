@@ -36,8 +36,8 @@ public class SpellStashHelper {
                     System.err.println("Spell Engine: Stash spell linking error! Spell:" + id + " is missing `stash_effect.id`!");
                     return;
                 }
-                var trigger = stashEffect.trigger;
-                if (trigger == null) {
+                var trigger = stashEffect.triggers;
+                if (trigger == null || trigger.isEmpty()) {
                     System.err.println("Spell Engine: Stash spell linking error! Spell:" + id + " is missing `stash_effect.trigger`!");
                     return;
                 }
@@ -47,7 +47,7 @@ public class SpellStashHelper {
                     System.err.println("Spell Engine: Stash spell linking error! Spell:" + id + " found no status effect for `stash_effect.id`: " + stashEffect.id);
                     return;
                 }
-                SpellStash.configure(statusEffect, entry, stashEffect.trigger, stashEffect.impact_mode, stashEffect.consume);
+                SpellStash.configure(statusEffect, entry, stashEffect.triggers, stashEffect.impact_mode, stashEffect.consume);
             }
         });
     }
@@ -63,41 +63,43 @@ public class SpellStashHelper {
 
             for (var stash: ((SpellStash) effect).getStashedSpells()) {
                 var spellEntry = stash.spell();
-                var trigger = stash.trigger();
-                if (spellEntry == null || trigger == null) { continue; }
-                if (!SpellTriggers.execute(trigger, event)) { continue; }
+                for (var trigger: stash.triggers()) {
+                    if (spellEntry == null || trigger == null) { continue; }
+                    if (!SpellTriggers.evaluateTrigger(trigger, event)) { continue; }
 
-                var consume = stash.consume();
-                var stacksAvailable = updateEffectStacks.getOrDefault(stack, stack.getAmplifier());
-                if ((stacksAvailable + 1) < consume) {
-                    continue;
-                }
-
-                switch (stash.impactMode()) {
-                    case PERFORM -> {
-                        var target = event.target(trigger);
-                        var aoeSource = event.aoeSource(trigger);
-                        var spell = stash.spell().value();
-                        var power = SpellPower.getSpellPower(spell.school, event.player);
-                        var impactContext = new SpellHelper.ImpactContext(1F, 1F, null, power, SpellTarget.FocusMode.DIRECT, 0);
-                        if (target != null) {
-                            impactContext = impactContext.position(target.getPos());
-                        } else if (aoeSource != null) {
-                            impactContext = impactContext.position(aoeSource.getPos());
-                        } else {
-                            impactContext = impactContext.position(caster.getPos());
-                        }
-                        SpellHelper.performImpacts(world, caster, target, aoeSource, spellEntry, spellEntry.value().impacts, impactContext);
+                    var consume = stash.consume();
+                    var stacksAvailable = updateEffectStacks.getOrDefault(stack, stack.getAmplifier());
+                    if ((stacksAvailable + 1) < consume) {
+                        continue;
                     }
-                    case TRANSFER -> {
-                        var arrow = event.arrow;
-                        if (arrow != null && spellEntry.value().arrow_perks != null) {
-                            arrow.applyArrowPerks(spellEntry);
+
+                    switch (stash.impactMode()) {
+                        case PERFORM -> {
+                            var target = event.target(trigger);
+                            var aoeSource = event.aoeSource(trigger);
+                            var spell = stash.spell().value();
+                            var power = SpellPower.getSpellPower(spell.school, event.player);
+                            var impactContext = new SpellHelper.ImpactContext(1F, 1F, null, power, SpellTarget.FocusMode.DIRECT, 0);
+                            if (target != null) {
+                                impactContext = impactContext.position(target.getPos());
+                            } else if (aoeSource != null) {
+                                impactContext = impactContext.position(aoeSource.getPos());
+                            } else {
+                                impactContext = impactContext.position(caster.getPos());
+                            }
+                            SpellHelper.performImpacts(world, caster, target, aoeSource, spellEntry, spellEntry.value().impacts, impactContext);
+                        }
+                        case TRANSFER -> {
+                            var arrow = event.arrow;
+                            if (arrow != null && spellEntry.value().arrow_perks != null) {
+                                arrow.applyArrowPerks(spellEntry);
+                            }
                         }
                     }
-                }
 
-                updateEffectStacks.put(stack, stacksAvailable - consume);
+                    updateEffectStacks.put(stack, stacksAvailable - consume);
+                    break; // Stop processing other triggers for this effect
+                }
             }
         }
 
