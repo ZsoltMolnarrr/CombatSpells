@@ -21,25 +21,29 @@ API Changes:
   - Spell structure: `release.target` split into `target` and `deliver`
   - Completely rewrite spell stashes, now powered by unified spell triggers, stash effects are now automatically linked
   - Rewrite spell impact target conditions, now unified with spell trigger target conditions
+- Rewrite spell container merge logic
+  - Spell containers are now resolved from: main-hand, off-hand, equipment, trinkets (plugin)
+  - Custom spell container sources can be added
+  - Spell containers are cached for improved performance
+  - Add spell container `slot` field, to allow offhand containers
+- Rewrite ammo handling
+  - Add support for ammo lookup in container items (Bundle) 
+  - Add support for multiple ammo item cost
+  - Add quiver slot for Quivers and Rune Pouches
 - Add support for passive spells
-- Add spell triggers (for passives and stashes): ARROW_SHOT, ARROW_IMPACT, MELEE_IMPACT, SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC, DAMAGE_TAKEN, ROLL
-- Add support for multiple ammo item cost
-- Add support for ammo lookup in container items (Bundle) 
-- Add `spell/quiver` slot for future use (disabled by default)
-- Add spell container `slot` field, to allow offhand containers
-- Impact.apply_to_caster now overrides all intent checks, add effect remove action
-- Add spell container caching
-- Add quiver slot for Quivers and Rune Pouches
+  - Add spell triggers (for passives and stashes): ARROW_SHOT, ARROW_IMPACT, MELEE_IMPACT, SPELL_IMPACT_ANY, SPELL_IMPACT_SPECIFIC, DAMAGE_TAKEN, ROLL
+- Removed `HealthImpacting` status effect configuration interface. Replaced by new attributes:
+  - `spell_engine:healing_taken`
+  - `spell_engine:damage_taken`
+- Misc technical
+  - Impact.apply_to_caster now overrides all intent checks, add effect remove action
+  - Add StatusEffectClassification to check action impairing effects
+  - Included sound entries are now available as static references in `SpellEngineSounds`
+  - StatusEffect impact can now be used for helpful and harmful dispels
 - Add generic data file providers to be used by any content mod
   - SpellGenerator
   - SimpleParticleGenerator
   - SimpleSoundGenerator
-- Add StatusEffectClassification to check action impairing effects
-- Removed `HealthImpacting` status effect configuration interface. Replaced by new attributes:
-  - `spell_engine:healing_taken`
-  - `spell_engine:damage_taken`
-- Included sound entries are now available as static references in `SpellEngineSounds`
-- StatusEffect impact can now be used for helpful and harmful dispels
 
 # 1.4.5
 
