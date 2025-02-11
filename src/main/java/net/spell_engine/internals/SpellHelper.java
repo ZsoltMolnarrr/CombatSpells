@@ -24,7 +24,7 @@ import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityImmunity;
 import net.spell_engine.api.effect.StatusEffectClassification;
 import net.spell_engine.api.entity.SpellEngineEntityTags;
-import net.spell_engine.api.entity.SpellSpawnedEntity;
+import net.spell_engine.api.entity.SpellEntity;
 import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.event.SpellEvents;
@@ -944,8 +944,9 @@ public class SpellHelper {
 
                         var entity = (Entity)type.create(world);
                         applyEntityPlacement(entity, caster, target.getPos(), data.placement);
-                        if (entity instanceof SpellSpawnedEntity spellSpawnedEntity) {
-                            spellSpawnedEntity.onCreatedFromSpell(caster, spellEntry.getKey().get().getValue(), data);
+                        if (entity instanceof SpellEntity.Spawned spellSpawnedEntity) {
+                            var args = new SpellEntity.Spawned.Args(caster, spellEntry, data, context);
+                            spellSpawnedEntity.onSpawnedBySpell(args);
                         }
                         ((WorldScheduler)world).schedule(data.delay_ticks, () -> {
                             world.spawnEntity(entity);

@@ -319,6 +319,8 @@ public class Spell {
             // Populate either `spawn` or `spawns` but not both
             public List<Spawn> spawns;
             public static class Spawn {
+                // Custom entity type id to spawn
+                // Implement `SpellEntity.Spawned` to receive information about spawning context
                 public String entity_type_id;
                 public int time_to_live_seconds = 0;
                 public int delay_ticks = 0;

@@ -70,9 +70,9 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
                            Behaviour behaviour, RegistryEntry<Spell> spellEntry, SpellHelper.ImpactContext context, Spell.ProjectileData.Perks mutablePerks) {
         this(world, caster);
         this.setPosition(x, y, z);
+
         this.setBehaviour(behaviour);
         this.setSpell(spellEntry);
-
         this.perks = mutablePerks;
         this.context = context;
 
