@@ -1,9 +1,10 @@
-package net.spell_engine.api.spell.registry;
+package net.spell_engine.api.tags;
 
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.api.spell.registry.SpellRegistry;
 
 public class SpellTags {
     private static TagKey<Spell> tag(String name) {

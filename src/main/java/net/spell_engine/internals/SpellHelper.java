@@ -23,7 +23,7 @@ import net.minecraft.world.event.GameEvent;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityImmunity;
 import net.spell_engine.api.effect.StatusEffectClassification;
-import net.spell_engine.api.entity.SpellEngineEntityTags;
+import net.spell_engine.api.tags.SpellEngineEntityTags;
 import net.spell_engine.api.entity.SpellEntity;
 import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.Spell;

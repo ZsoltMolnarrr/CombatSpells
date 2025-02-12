@@ -6,7 +6,7 @@ import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.spell_engine.api.item.SpellEngineItemTags;
+import net.spell_engine.api.tags.SpellEngineItemTags;
 import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.*;
 import net.spell_engine.api.spell.registry.SpellRegistry;
