@@ -1,4 +1,4 @@
-package net.spell_engine.api.item.trinket;
+package net.spell_engine.api.item;
 
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
@@ -8,6 +8,8 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import net.spell_engine.api.item.trinket.ISpellBookItem;
+import net.spell_engine.api.item.trinket.SpellBookItem;
 import net.spell_engine.api.spell.container.SpellContainer;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.compat.trinkets.SpellBookTrinketItem;

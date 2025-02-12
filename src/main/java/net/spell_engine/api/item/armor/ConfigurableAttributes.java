@@ -1,4 +1,4 @@
-package net.spell_engine.api.item;
+package net.spell_engine.api.item.armor;
 
 import net.minecraft.component.type.AttributeModifiersComponent;
 

@@ -2,7 +2,6 @@ package net.spell_engine.api.item.trinket;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 
 public class SpellBookItem extends Item implements ISpellBookItem {

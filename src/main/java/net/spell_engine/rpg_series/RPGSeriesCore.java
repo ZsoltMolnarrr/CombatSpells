@@ -2,8 +2,8 @@ package net.spell_engine.rpg_series;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
-import net.spell_engine.api.loot.LootConfig;
-import net.spell_engine.api.loot.LootHelper;
+import net.spell_engine.rpg_series.loot.LootConfig;
+import net.spell_engine.rpg_series.loot.LootHelper;
 import net.spell_engine.rpg_series.config.Defaults;
 import net.tinyconfig.ConfigManager;
 

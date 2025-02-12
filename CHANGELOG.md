@@ -50,6 +50,7 @@ API Changes:
   - For all variants, check out `net.spell_engine.fx.Particles`
   - ParticleBatch `PIPE` shape now fixed, use `WIDE_PIPE` for old behaviour
   - Clean up magic related particle effects
+- Restructure config related api packages
 
 # 1.4.5
 

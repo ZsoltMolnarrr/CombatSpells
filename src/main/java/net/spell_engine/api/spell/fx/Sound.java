@@ -44,6 +44,17 @@ public final class Sound {
         this(id.toString());
     }
 
+    public Sound(String id, float volume, float pitch, float randomness) {
+        this.id = id;
+        this.volume = volume;
+        this.pitch = pitch;
+        this.randomness = randomness;
+    }
+
+    public Sound(Identifier id, float randomness) {
+        this(id.toString(), 1F, 1F, randomness);
+    }
+
     /**
      * Pitch randomness of the sound.
      * Has default value, optional to specify.

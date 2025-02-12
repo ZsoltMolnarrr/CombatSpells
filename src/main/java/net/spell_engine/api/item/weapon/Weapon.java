@@ -19,7 +19,8 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
-import net.spell_engine.api.item.ItemConfig;
+import net.spell_engine.api.config.AttributeModifier;
+import net.spell_engine.api.config.WeaponConfig;
 import net.spell_engine.api.item.Tiers;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,11 +40,11 @@ public class Weapon {
         private final CustomMaterial material;
         private final Factory factory;
         @Nullable private Item registeredItem;
-        private final ItemConfig.Weapon defaults;
+        private final WeaponConfig defaults;
         private @Nullable String requiredMod;
         private int tier = 0;
 
-        public Entry(String namespace, String name, CustomMaterial material, Factory factory, ItemConfig.Weapon defaults, @Nullable String requiredMod) {
+        public Entry(String namespace, String name, CustomMaterial material, Factory factory, WeaponConfig defaults, @Nullable String requiredMod) {
             this.namespace = namespace;
             this.name = name;
             this.material = material;
@@ -56,7 +57,7 @@ public class Weapon {
             return Identifier.of(namespace, name);
         }
 
-        public Entry attribute(ItemConfig.Attribute attribute) {
+        public Entry attribute(AttributeModifier attribute) {
             defaults.add(attribute);
             return this;
         }
@@ -91,7 +92,7 @@ public class Weapon {
             return registeredItem;
         }
 
-        public ItemConfig.Weapon defaults() {
+        public WeaponConfig defaults() {
             return defaults;
         }
 
@@ -158,7 +159,7 @@ public class Weapon {
 
     // MARK: Registration
 
-    public static void register(Map<String, ItemConfig.Weapon> configs, List<Entry> entries, RegistryKey<ItemGroup> itemGroupKey) {
+    public static void register(Map<String, WeaponConfig> configs, List<Entry> entries, RegistryKey<ItemGroup> itemGroupKey) {
         for(var entry: entries) {
             var config = configs.get(entry.name);
             if (config == null) {
@@ -183,7 +184,7 @@ public class Weapon {
         });
     }
 
-    public static AttributeModifiersComponent attributesFrom(ItemConfig.Weapon config) {
+    public static AttributeModifiersComponent attributesFrom(WeaponConfig config) {
         AttributeModifiersComponent.Builder builder = AttributeModifiersComponent.builder();
         builder.add(EntityAttributes.GENERIC_ATTACK_DAMAGE,
                 new EntityAttributeModifier(
@@ -199,7 +200,7 @@ public class Weapon {
                 AttributeModifierSlot.MAINHAND);
         for(var attribute: config.attributes) {
             try {
-                var attributeId = Identifier.of(attribute.id);
+                var attributeId = Identifier.of(attribute.attribute);
                 var entityAttribute = Registries.ATTRIBUTE.getEntry(attributeId).get();
                 builder.add(entityAttribute,
                         new EntityAttributeModifier(
@@ -214,11 +215,11 @@ public class Weapon {
         return builder.build();
     }
 
-    public static AttributeModifiersComponent attributesFrom(List<ItemConfig.Attribute> attributes) {
+    public static AttributeModifiersComponent attributesFrom(List<AttributeModifier> attributes) {
         AttributeModifiersComponent.Builder builder = AttributeModifiersComponent.builder();
         for(var attribute: attributes) {
             try {
-                var attributeId = Identifier.of(attribute.id);
+                var attributeId = Identifier.of(attribute.attribute);
                 var entityAttribute = Registries.ATTRIBUTE.getEntry(attributeId).get();
                 builder.add(entityAttribute,
                         new EntityAttributeModifier(

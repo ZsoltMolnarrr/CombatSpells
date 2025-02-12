@@ -14,8 +14,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
-import net.spell_engine.api.item.ConfigurableAttributes;
-import net.spell_engine.api.item.ItemConfig;
+import net.spell_engine.api.config.ArmorSetConfig;
 import net.spell_engine.api.item.Tiers;
 import net.spell_engine.mixin.item.ArmorMaterialLayerAccessor;
 
@@ -92,8 +91,8 @@ public class Armor {
         }
     }
 
-    public record Entry(RegistryEntry<ArmorMaterial> material, Armor.Set armorSet, ItemConfig.ArmorSet defaults) {
-        public static Entry create(RegistryEntry<ArmorMaterial> material, Identifier id, int durability, Set.ItemFactory factory, ItemConfig.ArmorSet defaults) {
+    public record Entry(RegistryEntry<ArmorMaterial> material, Armor.Set armorSet, ArmorSetConfig defaults) {
+        public static Entry create(RegistryEntry<ArmorMaterial> material, Identifier id, int durability, Set.ItemFactory factory, ArmorSetConfig defaults) {
 
             var helmetSettings = new Item.Settings()
                     .maxDamage(ArmorItem.Type.HELMET.getMaxDamage(durability));
@@ -138,7 +137,7 @@ public class Armor {
 
     // MARK: Registration
 
-    public static void register(Map<String, ItemConfig.ArmorSet> configs, List<Entry> entries, RegistryKey<ItemGroup> itemGroupKey) {
+    public static void register(Map<String, ArmorSetConfig> configs, List<Entry> entries, RegistryKey<ItemGroup> itemGroupKey) {
         for(var entry: entries) {
             var config = configs.get(entry.name());
             if (config == null) {
@@ -153,8 +152,8 @@ public class Armor {
         }
     }
 
-    private static AttributeModifiersComponent attributesFrom(ItemConfig.ArmorSet config, ArmorItem.Type slot) {
-        ItemConfig.ArmorSet.Piece piece = null;
+    private static AttributeModifiersComponent attributesFrom(ArmorSetConfig config, ArmorItem.Type slot) {
+        ArmorSetConfig.Piece piece = null;
         var modifierId = Identifier.ofVanilla("armor." + slot.getName());
         switch (slot) {
             case ArmorItem.Type.BOOTS -> {
@@ -201,7 +200,7 @@ public class Armor {
         }
         for (var attribute: piece.attributes) {
             try {
-                var entityAttribute = Registries.ATTRIBUTE.getEntry(Identifier.of(attribute.id)).get();
+                var entityAttribute = Registries.ATTRIBUTE.getEntry(Identifier.of(attribute.attribute)).get();
                 builder.add(entityAttribute,
                         new EntityAttributeModifier(
                                 modifierId,

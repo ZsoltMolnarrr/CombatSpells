@@ -1,7 +1,6 @@
-package net.spell_engine.api.loot;
+package net.spell_engine.rpg_series.loot;
 
 import net.spell_engine.item.ScrollItem;
-import net.spell_engine.spellbinding.SpellBindRandomlyLootFunction;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

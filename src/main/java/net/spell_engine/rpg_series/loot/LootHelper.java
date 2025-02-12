@@ -1,4 +1,4 @@
-package net.spell_engine.api.loot;
+package net.spell_engine.rpg_series.loot;
 
 import net.minecraft.item.Item;
 import net.minecraft.loot.LootPool;

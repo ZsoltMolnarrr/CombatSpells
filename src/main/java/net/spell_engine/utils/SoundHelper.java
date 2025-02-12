@@ -3,18 +3,11 @@ package net.spell_engine.utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import net.spell_engine.SpellEngineMod;
-import net.spell_engine.api.item.trinket.SpellBookItem;
 import net.spell_engine.api.spell.fx.Sound;
-import net.spell_engine.spellbinding.SpellBindingScreenHandler;
-
-import java.util.List;
-import java.util.Map;
 
 public class SoundHelper {
     public static void playSound(World world, Entity entity, Sound sound) {
