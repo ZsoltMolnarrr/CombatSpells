@@ -6,14 +6,14 @@ import net.minecraft.client.particle.*;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.random.Random;
-import net.spell_engine.fx.Particles;
+import net.spell_engine.fx.SpellEngineParticles;
 
 public class SpellVariantParticle extends SpriteBillboardParticle  {
     private static final Random RANDOM = Random.create();
     private final SpriteProvider spriteProvider;
-    private final Particles.MagicParticleFamily.Motion motion;
+    private final SpellEngineParticles.MagicParticleFamily.Motion motion;
 
-    SpellVariantParticle(ClientWorld world, SpriteProvider spriteProvider, Particles.MagicParticleFamily.Motion motion, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+    SpellVariantParticle(ClientWorld world, SpriteProvider spriteProvider, SpellEngineParticles.MagicParticleFamily.Motion motion, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         super(world, x, y, z, 0.5 - RANDOM.nextDouble(), velocityY, 0.5 - RANDOM.nextDouble());
         this.spriteProvider = spriteProvider;
         this.motion = motion;
@@ -27,7 +27,7 @@ public class SpellVariantParticle extends SpriteBillboardParticle  {
                 this.x = this.x + (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
                 this.y = this.y + (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
                 this.z = this.z + (double)((this.random.nextFloat() - this.random.nextFloat()) * 0.05F);
-                if (motion == Particles.MagicParticleFamily.Motion.DECELERATE) {
+                if (motion == SpellEngineParticles.MagicParticleFamily.Motion.DECELERATE) {
                     this.velocityMultiplier *= 0.8F;
                 }
                 this.maxAge = (int)(8.0 / (Math.random() * 0.8 + 0.2));
@@ -74,9 +74,9 @@ public class SpellVariantParticle extends SpriteBillboardParticle  {
     @Environment(EnvType.CLIENT)
     public static class Factory implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
-        private final Particles.MagicParticleFamily.Variant particleVariant;
+        private final SpellEngineParticles.MagicParticleFamily.Variant particleVariant;
 
-        public Factory(SpriteProvider spriteProvider, Particles.MagicParticleFamily.Variant particleVariant) {
+        public Factory(SpriteProvider spriteProvider, SpellEngineParticles.MagicParticleFamily.Variant particleVariant) {
             this.spriteProvider = spriteProvider;
             this.particleVariant = particleVariant;
         }

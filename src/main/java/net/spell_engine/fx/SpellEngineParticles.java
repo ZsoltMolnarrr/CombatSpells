@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
 
-public class Particles {
+public class SpellEngineParticles {
     private static class Helper extends SimpleParticleType {
         protected Helper(boolean alwaysShow) {
             super(alwaysShow);

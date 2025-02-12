@@ -7,7 +7,7 @@ import net.minecraft.registry.RegistryWrapper;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.data_gen.SimpleParticleGenerator;
 import net.spell_engine.api.data_gen.SimpleSoundGenerator;
-import net.spell_engine.fx.Particles;
+import net.spell_engine.fx.SpellEngineParticles;
 import net.spell_engine.fx.SpellEngineSounds;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class SpellEngineDataGenerator implements DataGeneratorEntrypoint {
 
         @Override
         public void generateSimpleParticles(Builder builder) {
-            for (var variant: Particles.MAGIC_FAMILY_VARIANTS.get()) {
+            for (var variant: SpellEngineParticles.MAGIC_FAMILY_VARIANTS.get()) {
                 var textures = new ArrayList<String>();
                 int frameCount = variant.frameCount();
                 String texture = "";
