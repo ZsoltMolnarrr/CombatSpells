@@ -37,7 +37,7 @@ public class SpellEngineDataGenerator implements DataGeneratorEntrypoint {
                         texture = "minecraft:spell";
                     }
                     case IMPACT -> {
-                        texture = "spell_engine:magic/impact_" + variant.family();
+                        texture = "spell_engine:magic/impact_" + variant.familyName();
                     }
                     case SPARK -> {
                         texture = "minecraft:generic_0";

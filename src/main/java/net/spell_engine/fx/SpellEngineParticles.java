@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.client.util.Color;
 import net.spell_power.api.SpellSchools;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,22 +62,25 @@ public class SpellEngineParticles {
             var variants = new ArrayList<Variant>();
             for(var motion: Motion.values()) {
                 for(var shape: Shape.values()) {
-                    variants.add(new Variant(name, color, shape, motion));
+                    variants.add(new Variant(this, shape, motion, createSimple()));
                 }
             }
             return variants;
         }
         public static final String prefix = "magic";
-        public record Variant(String family, Color color, Shape shape, Motion motion, SimpleParticleType particleType) {
-            public Variant(String name, Color color, Shape shape, Motion motion) {
-                this(name, color, shape, motion, createSimple());
-            }
+        public record Variant(MagicParticleFamily family, Shape shape, Motion motion, SimpleParticleType particleType) {
             public Identifier id() {
                 return Identifier.of(SpellEngineMod.ID, name());
             }
+            public String familyName() {
+                return family.name;
+            }
+            public Color color() {
+                return family.color;
+            }
             public String name() {
                 return String.format("%s_%s_%s_%s", prefix,
-                        family.toLowerCase(Locale.ENGLISH),
+                        familyName().toLowerCase(Locale.ENGLISH),
                         shape.toString().toLowerCase(Locale.ENGLISH),
                         motion.toString().toLowerCase(Locale.ENGLISH));
             }
@@ -101,6 +105,15 @@ public class SpellEngineParticles {
         }
         return variants;
     });
+
+    /**
+     * WARNING! This method is very slow, only to be used for data file generation!
+     */
+    public static MagicParticleFamily.Variant getMagicParticleVariant(MagicParticleFamily family, MagicParticleFamily.Shape shape, MagicParticleFamily.Motion motion) {
+        return MAGIC_FAMILY_VARIANTS.get().stream()
+                .filter(variant -> variant.familyName().equals(family.name) && variant.shape == shape && variant.motion == motion)
+                .findFirst().orElse(null);
+    }
 
     public static final ParticleEntry holy_spark = particle("holy_spark");
     public static final ParticleEntry fire_explosion = particle("fire_explosion").customTexture();
