@@ -348,7 +348,7 @@ public class SpellTooltip {
                 }
             }
 
-            if (spell.deliver.clouds != null && spell.deliver.clouds.isEmpty()) {
+            if (spell.deliver.clouds != null && !spell.deliver.clouds.isEmpty()) {
                 var cloud = spell.deliver.clouds.get(0);
                 if (cloud != null) {
                     var cloud_duration = cloud.time_to_live_seconds;
