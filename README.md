@@ -15,9 +15,11 @@ Data driven API
 - 🔮 Spells deal damage based on [Spell Power](https://github.com/ZsoltMolnarrr/SpellPower) entity attributes
 - ✍️ Spells defined in JSON format
 - ⚙️ Spells have a set of different mechanical behaviours:
-    - Cast options: duration, mode of release (charged or channeled)
-    - Targeting mode: Area, Beam, Cursor, Projectile, Meteor
-    - Impact actions: Damage, Heal, StatusEffect, Teleport, Spawn
+    - Active spells, can be casted, with various options: charged, channeled, instant
+    - Passive spells can be triggered: melee impact, arrow impact, spell impact (and much more...)
+    - Targeting mode: Aim, Beam, Area (and  more...)
+    - Delivery mode: Direct, Projectile, Cloud (and more...), including custom coded
+    - Impact actions: Damage, Heal, StatusEffect, Teleport, Spawn (and more...), including custom coded
     - Cost: exhaust (hunger), item (runes), cooldown (time), durability, consume effects
     - Support for various archery skills
 
@@ -34,27 +36,55 @@ In game features
 - 💰 Loot table injection
 
 
-# 📦️ Content
+# ⌨️ Game technical features
 
-This mod is primarily a batch of tools (APIs) for developers, but it comes with very little content.
+## Extra inventory slots
+
+### Trinkets integration
+
+The following slots are implemented, using Trinkets mod:
+- Spell Book slot `spell/book` (enabled by default)
+- Spell Scroll slot `spell/scroll` (disabled by default)
+- Quiver slot (in standalone group) `misc/quiver` (enabled by default)
+- Quiver slot (in the `spell group`) `spell/quiver` (disabled by default)
+
+## Tags for customization
+
+Check out the various tags (for items, entities, spells) [here](src/main/java/net/spell_engine/api/tags).
+
+## Commands
+
+Coming soon...
+
+# 📦️ Game Content
+
+This mod is primarily a batch of tools (APIs) for developers, but it comes with few generic content, primarily to allow spell book creation and spell binding.
+
+## Items
+
+### Spell Scroll
+
+- ID: `spell_engine:scroll`
+- Functions analogously to vanilla Enchanted Books. 
+  - Spell scroll is generated in creative mode tab, for all spells
+  - Spell scrolls with randomly bound spells can be found in dungeons loot chests
+- Can be placed into Spell Books, using the Spell Binding Table
+- Can be equipped into Spell Book slot (and Spell Scroll slot if enabled), to use without a spell book
+
+## Blocks
 
 ### Spell Binding Table block
 
 - ID: `spell_engine:spell_binding`
 - Use it to create spell books, and bind spells to them
 
-### Spell Infinity enchantment
+## Enchantments
+
+### Spell Infinity
 
 - ID: `spell_engine:spell_infinity`
 - Effect: negates spell cast rune cost 
 - Applicable: for items under the item tag `spell_engine:enchantable/spell_infinity`
-
-### Spell Book slot
-
-- Implemented with Trinkets mod
-- Adds a special inventory slot for players, where a spell book can be equipped
-- Trinket group: `charm spell_book`
-
 
 # 🔧 Configuration
 
@@ -305,8 +335,8 @@ When an item has an assigned Spell Container, it will be eligible for Spell Powe
 ## ✨ Audio and visuals
 
 Spell Engine has multiple kind of assets built in: 
-- Sound effects (you can find the available sounds [here](common/src/main/java/net/spell_engine/utils/SoundHelper.java))
-- Particle effects (you can find the available effects [here](common/src/main/java/net/spell_engine/particle/Particles.java))
-- Player Animations (you can find the available animations [here](common/src/main/resources/assets/spell_engine/spell_animations))
+- Sound effects (you can find the available sounds [here](src/main/java/net/spell_engine/fx/SpellEngineSounds.java))
+- Particle effects (you can find the available effects [here](src/main/java/net/spell_engine/fx/Particles.java))
+- Player Animations (you can find the available animations [here](src/main/resources/assets/spell_engine/player_animations))
 
 These assets are referenced in spell json files, by using their Identifier.
