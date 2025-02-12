@@ -49,6 +49,7 @@ API Changes:
   - Example: `magic_frost_impact_burst`
   - For all variants, check out `net.spell_engine.fx.Particles`
   - ParticleBatch `PIPE` shape now fixed, use `WIDE_PIPE` for old behaviour
+  - Clean up magic related particle effects
 
 # 1.4.5
 
