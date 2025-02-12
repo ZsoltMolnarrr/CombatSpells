@@ -5,6 +5,7 @@ import net.fabricmc.fabric.mixin.client.keybinding.KeyBindingAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
@@ -408,10 +409,6 @@ public class SpellTooltip {
         return description;
     }
 
-    public static String percent(float chance) {
-        return (int) (chance * 100) + "%";
-    }
-
     private static MutableText indentation(int level) {
         return Text.literal(level > 0 ? " ".repeat(level) : "");
     }
@@ -426,7 +423,7 @@ public class SpellTooltip {
         return text;
     }
 
-    private static String replaceTokens(String text, String token, List<String> values) {
+    public static String replaceTokens(String text, String token, List<String> values) {
         boolean indexTokens = values.size() > 1;
         for (int i = 0; i < values.size(); ++i) {
             var actualToken = indexTokens ? placeholder(token + "_" + (i + 1)) : placeholder(token);
@@ -435,7 +432,26 @@ public class SpellTooltip {
         return text;
     }
 
-    private static String formattedRange(double min, double max) {
+    public static String percent(float chance) {
+        return (int) (chance * 100) + "%";
+    }
+
+    public static String bonus(float amount, EntityAttributeModifier.Operation operation) {
+        switch (operation) {
+            case ADD_VALUE -> {
+                return formattedNumber(amount);
+            }
+            case ADD_MULTIPLIED_BASE -> {
+                return percent(amount);
+            }
+            case ADD_MULTIPLIED_TOTAL -> {
+                return percent(amount - 1F);
+            }
+        }
+        return "";
+    }
+
+    public static String formattedRange(double min, double max) {
         if (min == max) {
             return formattedNumber((float) min);
         }
