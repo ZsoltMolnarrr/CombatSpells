@@ -207,6 +207,11 @@ public class ParticleHelper {
                 return offset;
             }
             case PIPE -> {
+                var size = width * 0.5F + extent;
+                var angle = (float) Math.toRadians(rng.nextFloat() * 360F);
+                offset = new Vec3d(size,0,0).rotateY(angle);
+            }
+            case WIDE_PIPE -> {
                 var size = width + extent;
                 var angle = (float) Math.toRadians(rng.nextFloat() * 360F);
                 offset = new Vec3d(size,0,0).rotateY(angle);

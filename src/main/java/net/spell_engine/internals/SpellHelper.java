@@ -623,7 +623,7 @@ public class SpellHelper {
     public static void lookupAndPerformAreaImpact(Spell.AreaImpact area_impact, RegistryEntry<Spell> spellEntry, LivingEntity caster, Entity exclude, Entity aoeSource,
                                                   List<Spell.Impact> impacts, ImpactContext context, boolean additionalTargetLookup) {
         var center = context.position();
-        var radius = area_impact.combinedRadius(context.power());
+        var radius = area_impact.combinedRadius(context.power().baseValue());
         var targets = TargetHelper.targetsFromArea(aoeSource, center, radius, area_impact.area, null);
         if (exclude != null) {
             targets.remove(exclude);

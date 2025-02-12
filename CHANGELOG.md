@@ -48,6 +48,7 @@ API Changes:
   - Name formula: `magic_FAMILY_SHAPE_MOTION`
   - Example: `magic_frost_impact_burst`
   - For all variants, check out `net.spell_engine.fx.Particles`
+  - ParticleBatch `PIPE` shape now fixed, use `WIDE_PIPE` for old behaviour
 
 # 1.4.5
 

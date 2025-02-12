@@ -32,7 +32,7 @@ public class ParticleBatch { public ParticleBatch() { }
 
     public Shape shape;
     public enum Shape {
-        CIRCLE, PILLAR, PIPE, SPHERE, CONE, LINE
+        CIRCLE, PILLAR, PIPE, WIDE_PIPE, SPHERE, CONE, LINE
     }
 
     public float count = 1;

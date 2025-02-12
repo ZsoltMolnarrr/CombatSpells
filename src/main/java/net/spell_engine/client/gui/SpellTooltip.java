@@ -355,7 +355,7 @@ public class SpellTooltip {
                     if (cloud_duration > 0) {
                         description = description.replace(placeholder("cloud_duration"), formattedNumber(cloud_duration));
                     }
-                    var radius = cloud.volume.combinedRadius(primaryPower);
+                    var radius = cloud.volume.combinedRadius(primaryPower.baseValue());
                     description = description.replace(placeholder("cloud_radius"), formattedNumber(radius));
                 }
             }
@@ -393,7 +393,7 @@ public class SpellTooltip {
             }
             var area_impact = spell.area_impact;
             if (area_impact != null) {
-                var radius = area_impact.combinedRadius(primaryPower);
+                var radius = area_impact.combinedRadius(primaryPower.baseValue());
                 description = description.replace(placeholder(impactRangeToken), formattedNumber(radius));
             }
         }

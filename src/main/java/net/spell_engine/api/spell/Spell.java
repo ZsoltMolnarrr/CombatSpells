@@ -5,7 +5,6 @@ import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.api.spell.fx.ParticleBatch;
 import net.spell_engine.api.spell.fx.Sound;
 import net.spell_engine.internals.target.SpellTarget;
-import net.spell_power.api.SpellPower;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
 
@@ -464,8 +463,8 @@ public class Spell {
         @Nullable
         public Sound sound;
 
-        public float combinedRadius(SpellPower.Result power) {
-            return radius + extra_radius.power_coefficient * (float) Math.min(extra_radius.power_cap, power.baseValue());
+        public float combinedRadius(double power) {
+            return radius + extra_radius.power_coefficient * (float) Math.min(extra_radius.power_cap, power);
         }
     }
 
