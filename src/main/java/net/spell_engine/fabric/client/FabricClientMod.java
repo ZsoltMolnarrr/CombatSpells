@@ -64,36 +64,34 @@ public class FabricClientMod implements ClientModInitializer {
             );
         }
 
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.holy_spark.particleType, SpellSnowflakeParticle.HolyFactory::new);
-
         // Elemental
 
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.flame.particleType, SpellFlameParticle.FlameFactory::new);
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.flame_spark.particleType, SpellFlameParticle.AnimatedFlameFactory::new);
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.flame_ground.particleType, SpellFlameParticle.AnimatedFlameFactory::new);
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.flame_medium_a.particleType, SpellFlameParticle.MediumFlameFactory::new);
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.flame_medium_b.particleType, SpellFlameParticle.MediumFlameFactory::new);
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.snowflake.particleType, SpellSnowflakeParticle.FrostFactory::new);
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.frost_shard.particleType, SpellFlameParticle.FrostShard::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.flame.particleType(), SpellFlameParticle.FlameFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.flame_spark.particleType(), SpellFlameParticle.AnimatedFlameFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.flame_ground.particleType(), SpellFlameParticle.AnimatedFlameFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.flame_medium_a.particleType(), SpellFlameParticle.MediumFlameFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.flame_medium_b.particleType(), SpellFlameParticle.MediumFlameFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.snowflake.particleType(), SpellSnowflakeParticle.FrostFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.frost_shard.particleType(), SpellFlameParticle.FrostShard::new);
 
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.electric_arc_A.particleType, SpellFlameParticle.ElectricSparkFactory::new);
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.electric_arc_B.particleType, SpellFlameParticle.ElectricSparkFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.electric_arc_A.particleType(), SpellFlameParticle.ElectricSparkFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.electric_arc_B.particleType(), SpellFlameParticle.ElectricSparkFactory::new);
 
         // Physical
 
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.smoke_medium.particleType, SpellFlameParticle.SmokeFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.smoke_medium.particleType(), SpellFlameParticle.SmokeFactory::new);
 
         // Misc
 
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.weakness_smoke.particleType, SpellFlameParticle.WeaknessSmokeFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.weakness_smoke.particleType(), SpellFlameParticle.WeaknessSmokeFactory::new);
 
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.sign_charge.particleType, SpellFlameParticle.RageSignFactory::new);
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.dripping_blood.particleType, SpellSnowflakeParticle.DrippingBloodFactory::new);
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.roots.particleType, ShiftedParticle.RootsFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.sign_charge.particleType(), SpellFlameParticle.RageSignFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.dripping_blood.particleType(), SpellSnowflakeParticle.DrippingBloodFactory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.roots.particleType(), ShiftedParticle.RootsFactory::new);
 
         // Macro, billboard, whatever
 
-        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.fire_explosion.particleType, SpellExplosionParticle.Factory::new);
+        ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.fire_explosion.particleType(), SpellExplosionParticle.Factory::new);
 
         ModelLoadingPlugin.register(pluginCtx -> {
             pluginCtx.addModels(CustomModelRegistry.modelIds);

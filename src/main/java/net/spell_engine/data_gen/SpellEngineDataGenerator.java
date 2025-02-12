@@ -61,6 +61,19 @@ public class SpellEngineDataGenerator implements DataGeneratorEntrypoint {
                 }
                 builder.add(variant.id(), new SimpleParticleGenerator.ParticleData(textures));
             }
+            for (var entry: SpellEngineParticles.all()) {
+                ArrayList<String> textures = new ArrayList<>();
+                var frameCount = entry.texture().frames();
+                if (frameCount > 1) {
+                    for (int i = 0; i < entry.texture().frames(); i++) {
+                        var index = entry.texture().reverseOrder() ? (frameCount - 1 - i) : i;
+                        textures.add(entry.texture().id().toString() + "_" + index);
+                    }
+                } else {
+                    textures.add(entry.texture().id().toString());
+                }
+                builder.add(entry.id(), new SimpleParticleGenerator.ParticleData(textures));
+            }
         }
     }
 
