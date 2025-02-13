@@ -8,7 +8,6 @@ import net.minecraft.util.Identifier;
 import net.spell_engine.api.config.ConfigUtil;
 import net.spell_engine.api.config.EffectConfig;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +21,9 @@ public class Effects {
         public EffectConfig config;
         public RegistryEntry<StatusEffect> entry;
 
+        public Entry(Identifier id, String title, String description, StatusEffect effect) {
+            this(id, title, description, effect, EffectConfig.EMPTY);
+        }
         public Entry(Identifier id, String title, String description, StatusEffect effect, EffectConfig config) {
             this.id = id;
             this.title = title;

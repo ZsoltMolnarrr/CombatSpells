@@ -74,6 +74,10 @@ public class ParticleBatch { public ParticleBatch() { }
 
     // Compatibility constructors
 
+    public ParticleBatch(String particle_id, Shape shape, Origin origin, int count, float min_speed, float max_speed) {
+        this(particle_id, shape, origin, null, 0, 0, count, min_speed, max_speed, 0, 0, 0, false);
+    }
+
     public ParticleBatch(String particle_id, Shape shape, Origin origin, Rotation rotation,
                          float count, float min_speed, float max_speed, float angle) {
         this(particle_id, shape, origin, rotation, count, min_speed, max_speed, angle, 0);

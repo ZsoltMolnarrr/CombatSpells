@@ -32,6 +32,15 @@ public final class Sound {
 
 
     /**
+     * Pitch randomness of the sound.
+     * Has default value, optional to specify.
+     * Example values:
+     *   for additional pitch within a range of +/- 10%, use the value `0.1`
+     */
+    private float randomness = 0.1F;
+
+
+    /**
      * This empty initializer is needed for GSON, to support parsing over default values
      */
     public Sound() { }
@@ -55,13 +64,17 @@ public final class Sound {
         this(id.toString(), 1F, 1F, randomness);
     }
 
-    /**
-     * Pitch randomness of the sound.
-     * Has default value, optional to specify.
-     * Example values:
-     *   for additional pitch within a range of +/- 10%, use the value `0.1`
-     */
-    private float randomness = 0.1F;
+    public static Sound withRandomness(Identifier id, float randomness) {
+        var sound = new Sound(id.toString());
+        sound.randomness = randomness;
+        return sound;
+    }
+
+    public static Sound withVolume(Identifier id, float volume) {
+        var sound = new Sound(id.toString());
+        sound.volume = volume;
+        return sound;
+    }
 
     public String id() {
         return id;
