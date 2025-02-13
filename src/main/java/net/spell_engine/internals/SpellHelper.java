@@ -1122,7 +1122,7 @@ public class SpellHelper {
             }
             entity.setOwner(caster);
             entity.onCreatedFromSpell(spellEntry.getKey().get().getValue(), cloud, context);
-            applyEntityPlacement(entity, target, caster.getPos(), cloud.placement);
+            applyEntityPlacement(entity, target, target.getPos(), cloud.placement);
             ((WorldScheduler)world).schedule(cloud.delay_ticks, () -> {
                 world.spawnEntity(entity);
                 var sound = cloud.spawn.sound;
