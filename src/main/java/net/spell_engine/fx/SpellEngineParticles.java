@@ -157,7 +157,7 @@ public class SpellEngineParticles {
             Registry.register(Registries.PARTICLE_TYPE, entry.id, entry.particleType);
         }
         for (var variant: MAGIC_FAMILY_VARIANTS.get()) {
-            Registry.register(Registries.PARTICLE_TYPE, variant.id(), createSimple());
+            Registry.register(Registries.PARTICLE_TYPE, variant.id(), variant.particleType());
         }
     }
 }
