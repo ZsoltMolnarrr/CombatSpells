@@ -118,10 +118,9 @@ public final class Sound {
     }
 
     // Helper
-    private static Random rng = new Random();
     public float randomizedPitch() {
         float pitch = (this.randomness() > 0)
-                ?  rng.nextFloat(this.pitch() - this.randomness(), this.pitch() + this.randomness())
+                ? SoundRandom.rng.nextFloat(this.pitch() - this.randomness(), this.pitch() + this.randomness())
                 : this.pitch();
         return pitch;
     }

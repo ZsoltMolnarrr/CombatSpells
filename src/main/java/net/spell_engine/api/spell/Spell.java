@@ -503,7 +503,7 @@ public class Spell {
         @Nullable public Sound travel_sound;
 
         public Perks perks = new Perks();
-        public static class Perks { Perks() { }
+        public static class Perks { public Perks() { }
             /// How many entities projectile can ricochet to
             public int ricochet = 0;
             /// How far ricochet can look for a target

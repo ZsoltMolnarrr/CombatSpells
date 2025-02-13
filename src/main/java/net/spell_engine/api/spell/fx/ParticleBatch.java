@@ -5,10 +5,19 @@ import org.jetbrains.annotations.Nullable;
 public class ParticleBatch { public ParticleBatch() { }
     public String particle_id;
 
-
     public Origin origin = Origin.CENTER;
     public enum Origin {
         FEET, CENTER, LAUNCH_POINT
+    }
+    public Shape shape;
+    public enum Shape {
+        CIRCLE,
+        PILLAR,
+        PIPE,
+        WIDE_PIPE, /// Same as PIPE but with double the radius
+        SPHERE,
+        CONE,
+        LINE
     }
 
     // null = no rotation
@@ -29,17 +38,6 @@ public class ParticleBatch { public ParticleBatch() { }
     // Rotation offset (degrees)
     public float roll = 0; // TODO: Remove
     public float roll_offset = 0;
-
-    public Shape shape;
-    public enum Shape {
-        CIRCLE,
-        PILLAR,
-        PIPE,
-        WIDE_PIPE, /// Same as PIPE but with double the radius
-        SPHERE,
-        CONE,
-        LINE
-    }
 
     public float count = 1;
     public float min_speed = 0;
@@ -105,5 +103,30 @@ public class ParticleBatch { public ParticleBatch() { }
             other.extent,
             other.pre_spawn_travel,
             other.invert);
+    }
+
+    public ParticleBatch invert() {
+        this.invert = !this.invert;
+        return this;
+    }
+
+    public ParticleBatch preSpawnTravel(float pre_spawn_travel) {
+        this.pre_spawn_travel = pre_spawn_travel;
+        return this;
+    }
+
+    public ParticleBatch roll(float roll) {
+        this.roll = roll;
+        return this;
+    }
+
+    public ParticleBatch rollOffset(float roll_offset) {
+        this.roll_offset = roll_offset;
+        return this;
+    }
+
+    public ParticleBatch extent(float extent) {
+        this.extent = extent;
+        return this;
     }
 }
