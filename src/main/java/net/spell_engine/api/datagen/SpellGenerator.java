@@ -182,7 +182,6 @@ public abstract class SpellGenerator implements DataProvider {
 //                    if (!value.equals(defaultValue)) {
 //                        jsonObject.add(field.getName(), context.serialize(value));
 //                    }
-
                     if (!objectsJSONEqual(value, defaultValue)) {
                         jsonObject.add(field.getName(), context.serialize(value));
                     }
@@ -205,9 +204,7 @@ public abstract class SpellGenerator implements DataProvider {
 
         private static final Gson checkerGson = new GsonBuilder().create();
         private static boolean objectsJSONEqual(Object a, Object b) {
-            System.out.println("JSON Checking class A:" + a.getClass().getName());
             var jsonA = checkerGson.toJson(a);
-            System.out.println("JSON Checking class B: " + (b != null ? b.getClass().getName() : "null"));
             var jsonB = checkerGson.toJson(b);
             return jsonA.equals(jsonB);
         }
