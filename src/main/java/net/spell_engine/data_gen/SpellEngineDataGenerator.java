@@ -5,8 +5,8 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.registry.RegistryWrapper;
 import net.spell_engine.SpellEngineMod;
-import net.spell_engine.api.data_gen.SimpleParticleGenerator;
-import net.spell_engine.api.data_gen.SimpleSoundGenerator;
+import net.spell_engine.api.datagen.SimpleParticleGenerator;
+import net.spell_engine.api.datagen.SimpleSoundGenerator;
 import net.spell_engine.fx.SpellEngineParticles;
 import net.spell_engine.fx.SpellEngineSounds;
 

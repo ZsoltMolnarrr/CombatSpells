@@ -1,4 +1,4 @@
-package net.spell_engine.api.data_gen;
+package net.spell_engine.api.datagen;
 
 import com.google.common.hash.Hashing;
 import com.google.common.hash.HashingOutputStream;

@@ -1,4 +1,4 @@
-package net.spell_engine.api.data_gen;
+package net.spell_engine.api.datagen;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
