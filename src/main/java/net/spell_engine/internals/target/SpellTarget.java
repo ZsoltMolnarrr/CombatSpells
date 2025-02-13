@@ -7,7 +7,6 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.math.Vec3d;
 import net.spell_engine.api.entity.SpellEntityPredicates;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.utils.PatternMatching;
 import net.spell_engine.utils.TargetHelper;
@@ -39,7 +38,7 @@ public class SpellTarget {
         }
     }
 
-    public static SearchResult findTargets(PlayerEntity caster, Spell currentSpell, SearchResult previous) {
+    public static SearchResult findTargets(PlayerEntity caster, Spell currentSpell, SearchResult previous, boolean filterInvalidTargets) {
         List<Entity> targets = List.of();
         var previousTargets = previous.entities;
         Vec3d location = null;
@@ -63,7 +62,7 @@ public class SpellTarget {
                         : EntityRelations.actionAllowed(focusMode, intent, caster, target);
                 intentAllows = intentAllows || newValue;
             }
-            return !SpellEngineClient.config.filterInvalidTargets || intentAllows;
+            return !filterInvalidTargets || intentAllows;
         };
 
         switch (targetType) {

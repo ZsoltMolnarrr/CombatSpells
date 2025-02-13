@@ -12,6 +12,7 @@ import net.minecraft.util.Identifier;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityActionsAllowed;
 import net.spell_engine.api.spell.Spell;
+import net.spell_engine.client.SpellEngineClient;
 import net.spell_engine.client.input.SpellHotbar;
 import net.spell_engine.internals.SpellHelper;
 import net.spell_engine.internals.casting.SpellCast;
@@ -177,7 +178,7 @@ public abstract class ClientPlayerEntityMixin implements SpellCasterClient {
             }
             var spell = process.spell().value();
             var cast = spell.active.cast;
-            spellTarget = SpellTarget.findTargets(player, spell, spellTarget);
+            spellTarget = SpellTarget.findTargets(player, spell, spellTarget, SpellEngineClient.config.filterInvalidTargets);
 
             var spellCastTicks = process.spellCastTicksSoFar(player.getWorld().getTime());
             if (SpellHelper.isChanneled(spell)) {
