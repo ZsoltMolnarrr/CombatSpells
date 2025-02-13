@@ -4,6 +4,7 @@ import net.minecraft.util.Rarity;
 import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.api.spell.fx.ParticleBatch;
 import net.spell_engine.api.spell.fx.Sound;
+import net.spell_engine.api.util.TriState;
 import net.spell_engine.internals.target.SpellTarget;
 import net.spell_power.api.SpellSchool;
 import org.jetbrains.annotations.Nullable;
@@ -249,7 +250,12 @@ public class Spell {
             public boolean all_required = false;
             public List<TargetCondition> conditions = List.of();
 
-            public boolean allow_action = true;
+            /// Decides whether this impact should be carried out
+            /// - ALLOW: Executes the impact if conditions are met
+            /// - PASS: Executes the impact regardless of conditions
+            /// - DENY: Executes the impact if conditions are NOT met
+            public TriState execute = TriState.PASS;
+            /// Applies power modifiers for this impact (if executed)
             @Nullable public Modifier modifier;
         }
         public static class Modifier {

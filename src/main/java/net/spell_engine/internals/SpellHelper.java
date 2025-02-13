@@ -1078,10 +1078,19 @@ public class SpellHelper {
                 }
                 i += 1;
             }
-            if (conditionMet) {
-                if (!entry.allow_action) {
-                    return TargetConditionResult.DENIED;
+            switch (entry.execute) {
+                case ALLOW -> {
+                    if (!conditionMet) {
+                        return TargetConditionResult.DENIED;
+                    }
                 }
+                case DENY -> {
+                    if (conditionMet) {
+                        return TargetConditionResult.DENIED;
+                    }
+                }
+            }
+            if (conditionMet) {
                 if (entry.modifier != null) {
                     modifiers.add(entry.modifier);
                 }
