@@ -254,7 +254,7 @@ public class ParticleHelper {
                 direction = new Vec3d(0, 0, randomInRange(batch.min_speed, batch.max_speed))
                         .rotateY((float) Math.toRadians(rng.nextFloat() * 360F));
             }
-            case PILLAR, PIPE -> {
+            case PILLAR, PIPE, WIDE_PIPE -> {
                 direction = new Vec3d(0, randomInRange(batch.min_speed, batch.max_speed), 0);
             }
             case SPHERE -> {

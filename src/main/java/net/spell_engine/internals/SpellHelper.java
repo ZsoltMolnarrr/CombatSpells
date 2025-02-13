@@ -1066,11 +1066,17 @@ public class SpellHelper {
         var modifiers = new ArrayList<Spell.Impact.Modifier>();
         for (var entry: target_modifiers) {
             var conditionMet = true;
+            var i = 0;
             for (var condition: entry.conditions) {
                 var newResult = SpellTarget.evaluate(target, caster, condition);
-                conditionMet = entry.all_required
-                        ? conditionMet && newResult
-                        : conditionMet || newResult;
+                if (i == 0) {
+                    conditionMet = newResult;
+                } else {
+                    conditionMet = entry.all_required
+                            ? conditionMet && newResult
+                            : conditionMet || newResult;
+                }
+                i += 1;
             }
             if (conditionMet) {
                 if (!entry.allow_action) {
