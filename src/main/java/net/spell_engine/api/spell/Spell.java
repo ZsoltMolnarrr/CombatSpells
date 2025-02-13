@@ -33,8 +33,8 @@ public class Spell {
         public int level_requirement_per_tier = 10;
     }
 
-    public Tooltip tooltip = new Tooltip();
-    public static class Tooltip { public Tooltip() { }
+    @Nullable public Tooltip tooltip;
+    public static class Tooltip { public Tooltip() { }; public static final Tooltip DEFAULT = new Tooltip();
         public LineOptions name = new LineOptions(true, true);
         public LineOptions description = new LineOptions(false, true);
         public static class LineOptions { public LineOptions() { }

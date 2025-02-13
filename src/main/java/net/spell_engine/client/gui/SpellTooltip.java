@@ -179,9 +179,10 @@ public class SpellTooltip {
         var spellEntry = optionalSpellEntry.get();
         var spell = spellEntry.value();
         var primaryPower = SpellPower.getSpellPower(spell.school, player);
+        var tooltipData = spell.tooltip != null ? spell.tooltip : Spell.Tooltip.DEFAULT;
 
-        if (shouldShow(spell.tooltip.name, details)) {
-            var color = Formatting.byName(spell.tooltip.name.color);
+        if (shouldShow(tooltipData.name, details)) {
+            var color = Formatting.byName(tooltipData.name.color);
             var name = Text.translatable(spellTranslationKey(spellId))
                     .formatted(Formatting.BOLD)
                     .formatted(color);
@@ -197,8 +198,8 @@ public class SpellTooltip {
             indentLevel += 1;
         }
 
-        if (shouldShow(spell.tooltip.description, details)) {
-            var color = Formatting.byName(spell.tooltip.description.color);
+        if (shouldShow(tooltipData.description, details)) {
+            var color = Formatting.byName(tooltipData.description.color);
             var description = createDescription(spellEntry, spellId, player, itemStack, spell, primaryPower);
             lines.add(indentation(indentLevel)
                     .append(Text.translatable(description))
