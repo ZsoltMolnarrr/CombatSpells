@@ -50,7 +50,7 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
          return (PersistentProjectileEntity)(Object)this;
     }
 
-    private List<Identifier> spellIds = new ArrayList<>();
+    private final List<Identifier> spellIds = new ArrayList<>();
     private void addSpellId(Identifier id) {
         if (!spellIds.contains(id)) {
             spellIds.add(id);
@@ -98,7 +98,13 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
             var string = nbt.getString(NBT_KEY_SPELL_ID);
             if (string != null && !string.isEmpty()) {
                 List<String> stringList = new Gson().fromJson(string, stringListType);
-                this.spellIds = stringList.stream().map(Identifier::of).toList();
+                this.spellIds.clear();
+                for (var idString : stringList) {
+                    var id = Identifier.tryParse(idString);
+                    if (id != null) {
+                        addSpellId(Identifier.of(idString));
+                    }
+                }
             }
         }
     }
@@ -124,7 +130,8 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
             }
             try {
                 List<String> stringList = new Gson().fromJson(json, stringListType);
-                this.spellIds = stringList.stream().map(Identifier::of).toList();
+                this.spellIds.clear();
+                this.spellIds.addAll(stringList.stream().map(Identifier::of).toList());
                 this.spellEntries();
             } catch (Exception e) {
                 System.err.println("Spell Engine: Failed to parse spell id from arrow data tracker: " + json);
