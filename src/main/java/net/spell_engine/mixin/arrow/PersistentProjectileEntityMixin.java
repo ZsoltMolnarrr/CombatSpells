@@ -62,7 +62,7 @@ public abstract class PersistentProjectileEntityMixin implements ArrowExtension 
 
     private List<RegistryEntry<Spell>> cachedSpellEntry = List.of();
     @Nullable List<RegistryEntry<Spell>> spellEntries() {
-        if (cachedSpellEntry.size() != spellIds.size()) {
+        if (cachedSpellEntry == null || cachedSpellEntry.size() != spellIds.size()) {
             var entries = spellIds.stream()
                     .map(id -> {
                         var reference = SpellRegistry.from(arrow().getWorld()).getEntry(id).orElse(null);
