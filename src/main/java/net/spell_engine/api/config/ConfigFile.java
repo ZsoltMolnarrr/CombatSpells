@@ -8,6 +8,10 @@ public class ConfigFile {
         public LinkedHashMap<String, ArmorSetConfig> armor_sets = new LinkedHashMap<>();
     }
 
+    public static class Shields {
+        public LinkedHashMap<String, ShieldConfig> shields = new LinkedHashMap<>();
+    }
+
     public static class Effects {
         public LinkedHashMap<String, EffectConfig> effects = new LinkedHashMap<>();
     }
