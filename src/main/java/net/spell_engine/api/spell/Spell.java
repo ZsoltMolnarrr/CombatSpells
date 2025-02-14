@@ -372,7 +372,7 @@ public class Spell {
         public boolean skip_arrow_damage = false;
         public int pierce = 0;
         public float knockback = 1;
-        @Nullable public ParticleBatch[] travel_particles;
+        public ParticleBatch[] travel_particles = new ParticleBatch[]{};
         @Nullable public ProjectileModel override_render;
     }
 
@@ -549,7 +549,7 @@ public class Spell {
             /// 14 - torch
             /// 10 - soul torch
             public int light_level = 0;
-            public ParticleBatch[] travel_particles;
+            public ParticleBatch[] travel_particles = new ParticleBatch[]{};
             public ProjectileModel model;
         }
     }

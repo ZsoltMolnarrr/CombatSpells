@@ -20,6 +20,7 @@ import net.spell_engine.api.render.CustomModels;
 import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.entity.SpellProjectile;
+import net.spell_engine.mixin.client.render.ItemRendererAccessor;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -102,7 +103,7 @@ public class SpellProjectileRenderer<T extends Entity & FlyingItemEntity> extend
             if (modelItemStack != null) {
                 var model = itemRenderer.getModel(modelItemStack, entity.getWorld(), null, entity.getId());
                 model.getTransformation().getTransformation(ModelTransformationMode.FIXED).apply(false, matrices);
-                CustomModels.render(layer, itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
+                CustomModels.renderModel(layer, (ItemRendererAccessor) itemRenderer, matrices, vertexConsumers, light, model);
             } else if (modelId != null) {
                 CustomModels.render(layer, itemRenderer, modelId, matrices, vertexConsumers, light, entity.getId());
             }

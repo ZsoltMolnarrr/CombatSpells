@@ -5,6 +5,7 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -28,8 +29,13 @@ public class CustomModels {
                 model = itemRenderer.getModel(stack, null, null, seed);
             }
         }
+        renderModel(renderLayer, (ItemRendererAccessor) itemRenderer, matrices, vertexConsumers, light, model);
+    }
+
+    public static void renderModel(RenderLayer renderLayer, ItemRendererAccessor itemRenderer,
+                                    MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, BakedModel model) {
         var buffer = vertexConsumers.getBuffer(renderLayer);
         matrices.translate(-0.5, -0.5, -0.5);
-        ((ItemRendererAccessor)itemRenderer).SpellEngine_renderBakedItemModel(model, ItemStack.EMPTY, light, OverlayTexture.DEFAULT_UV, matrices, buffer);
+        itemRenderer.SpellEngine_renderBakedItemModel(model, ItemStack.EMPTY, light, OverlayTexture.DEFAULT_UV, matrices, buffer);
     }
 }
