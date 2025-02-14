@@ -4,6 +4,7 @@ import net.minecraft.util.Rarity;
 import net.spell_engine.api.render.LightEmission;
 import net.spell_engine.api.spell.fx.ParticleBatch;
 import net.spell_engine.api.spell.fx.Sound;
+import net.spell_engine.api.util.AlwaysSerialize;
 import net.spell_engine.api.util.TriState;
 import net.spell_engine.internals.target.SpellTarget;
 import net.spell_power.api.SpellSchool;
@@ -23,7 +24,7 @@ public class Spell {
     /// Spells with the same group override each other, prioritized by tier and rank
     @Nullable public String group;
     /// Quality classifier, used for sorting spells, in an increasing order
-    public int tier = 1;
+    @AlwaysSerialize public int tier = 1;
     /// Secondary quality classifier, used for sorting spells, in an increasing order
     public int sub_tier = 1;
 
