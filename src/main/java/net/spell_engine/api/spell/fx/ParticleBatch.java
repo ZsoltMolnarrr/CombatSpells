@@ -1,14 +1,17 @@
 package net.spell_engine.api.spell.fx;
 
+import net.spell_engine.api.util.AlwaysGenerate;
 import org.jetbrains.annotations.Nullable;
 
 public class ParticleBatch { public ParticleBatch() { }
     public String particle_id;
 
+    @AlwaysGenerate
     public Origin origin = Origin.CENTER;
     public enum Origin {
         FEET, CENTER, LAUNCH_POINT
     }
+    @AlwaysGenerate
     public Shape shape;
     public enum Shape {
         CIRCLE,
@@ -39,6 +42,7 @@ public class ParticleBatch { public ParticleBatch() { }
     public float roll = 0; // TODO: Remove
     public float roll_offset = 0;
 
+    @AlwaysGenerate
     public float count = 1;
     public float min_speed = 0;
     public float max_speed = 1;

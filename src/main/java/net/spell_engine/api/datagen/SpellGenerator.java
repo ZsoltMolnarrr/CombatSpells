@@ -16,7 +16,7 @@ import net.minecraft.util.Util;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.fx.ParticleBatch;
 import net.spell_engine.api.spell.fx.Sound;
-import net.spell_engine.api.util.AlwaysSerialize;
+import net.spell_engine.api.util.AlwaysGenerate;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -183,7 +183,7 @@ public abstract class SpellGenerator implements DataProvider {
 //                    if (!value.equals(defaultValue)) {
 //                        jsonObject.add(field.getName(), context.serialize(value));
 //                    }
-                    if (field.isAnnotationPresent(AlwaysSerialize.class) || !objectsJSONEqual(value, defaultValue)) {
+                    if (field.isAnnotationPresent(AlwaysGenerate.class) || !objectsJSONEqual(value, defaultValue)) {
                         jsonObject.add(field.getName(), context.serialize(value));
                     }
                 }
