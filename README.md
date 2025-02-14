@@ -8,7 +8,7 @@
 
 </div>
 
-# 🪄️ Features
+## 🪄️ Features
 
 Data driven API
 - 🗡️ Spells can be assigned to any weapon (data driven)
@@ -36,11 +36,11 @@ In game features
 - 💰 Loot table injection
 
 
-# ⌨️ Game technical features
+## ⌨️ Game technical features
 
-## Extra inventory slots
+### Extra inventory slots
 
-### Trinkets integration
+#### Trinkets integration
 
 The following slots are implemented, using Trinkets mod:
 - Spell Book slot `spell/book` (enabled by default)
@@ -48,21 +48,21 @@ The following slots are implemented, using Trinkets mod:
 - Quiver slot (in standalone group) `misc/quiver` (enabled by default)
 - Quiver slot (in the `spell group`) `spell/quiver` (disabled by default)
 
-## Tags for customization
+### Tags for customization
 
 Check out the various tags (for items, entities, spells) [here](src/main/java/net/spell_engine/api/tags).
 
-## Commands
+### Commands
 
 Coming soon...
 
-# 📦️ Game Content
+## 📦️ Game Content
 
 This mod is primarily a batch of tools (APIs) for developers, but it comes with few generic content, primarily to allow spell book creation and spell binding.
 
-## Items
+### Items
 
-### Spell Scroll
+#### Spell Scroll
 
 - ID: `spell_engine:scroll`
 - Functions analogously to vanilla Enchanted Books. 
@@ -71,22 +71,22 @@ This mod is primarily a batch of tools (APIs) for developers, but it comes with 
 - Can be placed into Spell Books, using the Spell Binding Table
 - Can be equipped into Spell Book slot (and Spell Scroll slot if enabled), to use without a spell book
 
-## Blocks
+### Blocks
 
-### Spell Binding Table block
+#### Spell Binding Table block
 
 - ID: `spell_engine:spell_binding`
 - Use it to create spell books, and bind spells to them
 
-## Enchantments
+### Enchantments
 
-### Spell Infinity
+#### Spell Infinity
 
 - ID: `spell_engine:spell_infinity`
 - Effect: negates spell cast rune cost 
 - Applicable: for items under the item tag `spell_engine:enchantable/spell_infinity`
 
-# 🔧 Configuration
+## 🔧 Configuration
 
 ### Fabric
 
@@ -96,14 +96,14 @@ Client side settings can be accessed via the [Mod Menu](https://github.com/Terra
 
 **Server side** configuration can be found in the `config` directory, after running the game with the mod installed.
 
-# 🤝 Compatibility for third party content
+## 🤝 Compatibility for third party content
 
-## 🤖 Automatic compatibility
+### 🤖 Automatic compatibility
 
 Sword like weapons are automatically picked up, and assigned _spell casting from spell book_ capability.
 This feature is turned on by default, it can be disabled in `config/spell_engine/server.json5`, black listing and white listing are also supported in form of regex. 
 
-## 🗡️ Adding spell casting capability for weapons
+### 🗡️ Adding spell casting capability for weapons
 
 Spell Engine is primarily data-driven, to specify what spells an item can cast, create a JSON file at: `data/MOD_ID/spell_assignments/ITEM_NAME.json`. (For example: `data/minecraft/spell_assignments/golden_axe.json`)
 
@@ -160,7 +160,7 @@ Example - Disabling spell casting for Stone Sword:
 
 In this case even automatic compatibility won't be able to assign any spell casting capability to the item.
 
-## ✨ Adding spell power attributes for items
+### ✨ Adding spell power attributes for items
 
 Install [Spell Power Attributes](https://github.com/ZsoltMolnarrr/SpellPower), use its Java API.
 
