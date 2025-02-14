@@ -40,6 +40,7 @@ API Changes:
   - Add StatusEffectClassification to check action impairing effects
   - Included sound entries are now available as static references in `SpellEngineSounds`
   - StatusEffect impact can now be used for helpful and harmful dispels
+  - Spell Projectile data synchronization rewritten
 - Add generic data file providers to be used by any content mod
   - SpellGenerator
   - SimpleParticleGenerator
