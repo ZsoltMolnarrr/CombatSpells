@@ -48,7 +48,7 @@ public abstract class SpellHotbarMinecraftClient {
         // This needs to run every tick because the player's held caster item may change any time
         var hotbarUpdated = SpellHotbar.INSTANCE.update(player, options);
         if (hotbarUpdated) {
-            itemUseCooldown = 5;
+            itemUseCooldown = 4;
         }
         SpellHotbar.INSTANCE.prepare(itemUseCooldown);
 

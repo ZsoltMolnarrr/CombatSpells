@@ -136,7 +136,9 @@ public class SpellHotbar {
 
     private @Nullable Handle handledThisTick = null;
     private @Nullable Handle handledPreviousTick = null;
+    private int itemUseCooldown = 0;
     public void prepare(int itemUseCooldown) {
+        this.itemUseCooldown = itemUseCooldown;
         this.handledPreviousTick = this.handledThisTick;
         this.handledThisTick = null;
         this.updateDebounced();
@@ -161,6 +163,9 @@ public class SpellHotbar {
         if (handledThisTick != null || player.isSpectator()) { return null; }
         if (Keybindings.bypass_spell_hotbar.isPressed()
                 || (SpellEngineClient.config.sneakingByPassSpellHotbar && options.sneakKey.isPressed())) {
+            return null;
+        }
+        if (itemUseCooldown > 0) {
             return null;
         }
         var caster = ((SpellCasterClient) player);

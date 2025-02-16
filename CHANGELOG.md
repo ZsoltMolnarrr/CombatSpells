@@ -3,7 +3,8 @@
 Functional changes:
 - Add `/spell_cooldown` command to reset specific or all spell cooldowns for given players
 - Spell Cooldowns are now persisted (between game sessions) and synchronized
-- Attempt to fix spell tooltip power estimation causing rare crashes
+- Fix spell tooltip power estimation causing rare crashes
+- Fix overly reactive spell hotbar
 
 # 1.5.0
 
