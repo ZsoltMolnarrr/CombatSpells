@@ -14,7 +14,7 @@ import net.minecraft.util.math.Direction;
 import net.spell_engine.api.spell.container.SpellContainer;
 import net.spell_engine.compat.trinkets.TrinketsCompat;
 import net.spell_engine.api.spell.container.SpellContainerHelper;
-import net.spell_engine.utils.AttributeModifierHelper;
+import net.spell_engine.utils.AttributeModifierUtil;
 import org.jetbrains.annotations.Nullable;
 
 public class AutoSwapHelper {
@@ -83,8 +83,8 @@ public class AutoSwapHelper {
     }
 
     public static boolean isMeleeWeapon(ItemStack itemStack) {
-        return AttributeModifierHelper.hasModifier(itemStack, EntityAttributes.GENERIC_ATTACK_DAMAGE)
-                && AttributeModifierHelper.hasModifier(itemStack, EntityAttributes.GENERIC_ATTACK_SPEED);
+        return AttributeModifierUtil.hasModifier(itemStack, EntityAttributes.GENERIC_ATTACK_DAMAGE)
+                && AttributeModifierUtil.hasModifier(itemStack, EntityAttributes.GENERIC_ATTACK_SPEED);
     }
 
     public static boolean isAnyWeapon(ItemStack itemStack) {
@@ -92,7 +92,7 @@ public class AutoSwapHelper {
             return true;
         }
         if (FabricLoader.getInstance().isModLoaded("ranged_weapon_api")
-                && AttributeModifierHelper.hasModifier(itemStack, EntityAttributes_RangedWeapon.DAMAGE.entry)) {
+                && AttributeModifierUtil.hasModifier(itemStack, EntityAttributes_RangedWeapon.DAMAGE.entry)) {
             return true;
         }
         return false;

@@ -10,19 +10,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 import org.jetbrains.annotations.NotNull;
 
-public class AttributeModifierHelper {
+public class AttributeModifierUtil {
     public static @NotNull Multimap<RegistryEntry<EntityAttribute>, EntityAttributeModifier> modifierMultimap(ItemStack itemStack) {
         var modifiers = itemStack.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
         Multimap<RegistryEntry<EntityAttribute>, EntityAttributeModifier> modifiersMap = HashMultimap.create();
         for (var entry : modifiers.modifiers()) {
             modifiersMap.put(entry.attribute(), entry.modifier());
         }
-        return modifiersMap;
-    }
-
-    public static @NotNull Multimap<RegistryEntry<EntityAttribute>, EntityAttributeModifier> fromModifier(RegistryEntry<EntityAttribute> attribute, EntityAttributeModifier modifier) {
-        Multimap<RegistryEntry<EntityAttribute>, EntityAttributeModifier> modifiersMap = HashMultimap.create();
-        modifiersMap.put(attribute, modifier);
         return modifiersMap;
     }
 
@@ -34,5 +28,15 @@ public class AttributeModifierHelper {
             }
         }
         return false;
+    }
+
+    public static double flatBonusFrom(ItemStack itemStack, RegistryEntry<EntityAttribute> attribute) {
+        var modifiers = itemStack.getOrDefault(DataComponentTypes.ATTRIBUTE_MODIFIERS, AttributeModifiersComponent.DEFAULT);
+        for (var entry : modifiers.modifiers()) {
+            if (entry.attribute().equals(attribute) && entry.modifier().operation() == EntityAttributeModifier.Operation.ADD_VALUE) {
+                return entry.modifier().value();
+            }
+        }
+        return 0;
     }
 }

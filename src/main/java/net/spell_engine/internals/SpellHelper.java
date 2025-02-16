@@ -23,9 +23,9 @@ import net.minecraft.world.event.GameEvent;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityImmunity;
 import net.spell_engine.api.effect.StatusEffectClassification;
+import net.spell_engine.api.spell.container.SpellContainerHelper;
 import net.spell_engine.api.tags.SpellEngineEntityTags;
 import net.spell_engine.api.entity.SpellEntity;
-import net.spell_engine.api.item.trinket.ISpellBookItem;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.event.SpellEvents;
 import net.spell_engine.api.spell.event.SpellHandlers;
@@ -1261,22 +1261,36 @@ public class SpellHelper {
         var damageEffects = new ArrayList<EstimatedValue>();
         var healEffects = new ArrayList<EstimatedValue>();
 
-        boolean forSpellBook = itemStack.getItem() instanceof ISpellBookItem;
-        var replaceAttributes = (caster.getMainHandStack() != itemStack && !forSpellBook);
-
-        var heldAttributes = AttributeModifierHelper.modifierMultimap(caster.getMainHandStack());
-        var itemAttributes = AttributeModifierHelper.modifierMultimap(itemStack);
-        if (replaceAttributes) {
-            caster.getAttributes().removeModifiers(heldAttributes);
-            caster.getAttributes().addTemporaryModifiers(itemAttributes);
-        }
-
         for (var impact: spell.impacts) {
             var school = impact.school != null ? impact.school : spellSchool;
-            var power = SpellPower.getSpellPower(school, caster);  // FIXME: ? Provisioned weapon
-            if (power.baseValue() < impact.action.min_power) {
-                power = new SpellPower.Result(power.school(), impact.action.min_power, power.criticalChance(), power.criticalDamage());
+            var attribute = school.attributeEntry;
+            boolean attributeOverride = false;
+            if (impact.attribute != null && !impact.attribute.isEmpty()) {
+                var optionalAttribute = Registries.ATTRIBUTE.getEntry(Identifier.of(impact.attribute));
+                if (optionalAttribute.isPresent()) {
+                    attribute = optionalAttribute.get();
+                    attributeOverride = true;
+                }
             }
+
+            var flatBonusOnItemStack = AttributeModifierUtil.flatBonusFrom(itemStack, attribute);
+            boolean useRealAttributes = caster.getMainHandStack() == itemStack || flatBonusOnItemStack == 0;
+
+            SpellPower.Result power;
+            if (useRealAttributes) {
+                power = SpellPower.getSpellPower(school, caster);
+                if (attributeOverride) {
+                    var value = caster.getAttributeValue(attribute);
+                    power = new SpellPower.Result(school, value, power.criticalChance(), power.criticalDamage());
+                }
+            } else {
+                power = new SpellPower.Result(school, flatBonusOnItemStack, 0, 1F);
+            }
+            if (power.baseValue() < impact.action.min_power || power.baseValue() > impact.action.max_power) {
+                var clampedValue = MathHelper.clamp(power.baseValue(), impact.action.min_power, impact.action.max_power);
+                power = new SpellPower.Result(power.school(), clampedValue, power.criticalChance(), power.criticalDamage());
+            }
+
             switch (impact.action.type) {
                 case DAMAGE -> {
                     var damageData = impact.action.damage;
@@ -1293,11 +1307,6 @@ public class SpellHelper {
                 case STATUS_EFFECT, FIRE, SPAWN -> {
                 }
             }
-        }
-
-        if (replaceAttributes) {
-            caster.getAttributes().removeModifiers(itemAttributes );
-            caster.getAttributes().addTemporaryModifiers(heldAttributes);
         }
 
         return new EstimatedOutput(damageEffects, healEffects);
