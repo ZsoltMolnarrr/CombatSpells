@@ -6,6 +6,7 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 import org.jetbrains.annotations.NotNull;
@@ -38,5 +39,22 @@ public class AttributeModifierUtil {
             }
         }
         return 0;
+    }
+
+    public static boolean isItemStackEquipped(ItemStack itemStack, PlayerEntity player) {
+        if (player.getMainHandStack().equals(itemStack)) {
+            return true;
+        }
+        for (var armorSlot: player.getInventory().armor) {
+            if (armorSlot.equals(itemStack)) {
+                return true;
+            }
+        }
+        for (var offhandSlot: player.getInventory().offHand) {
+            if (offhandSlot.equals(itemStack)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

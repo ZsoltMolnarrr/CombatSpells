@@ -1260,6 +1260,7 @@ public class SpellHelper {
         var spellSchool = spell.school;
         var damageEffects = new ArrayList<EstimatedValue>();
         var healEffects = new ArrayList<EstimatedValue>();
+        var isEquipped = AttributeModifierUtil.isItemStackEquipped(itemStack, caster);
 
         for (var impact: spell.impacts) {
             var school = impact.school != null ? impact.school : spellSchool;
@@ -1274,7 +1275,9 @@ public class SpellHelper {
             }
 
             var flatBonusOnItemStack = AttributeModifierUtil.flatBonusFrom(itemStack, attribute);
-            boolean useRealAttributes = caster.getMainHandStack() == itemStack || flatBonusOnItemStack == 0;
+            /// It would be best to have some information here about the context
+            /// whether the spell tooltip is generated for a cache, or for a player initiated tooltip
+            boolean useRealAttributes = isEquipped || flatBonusOnItemStack == 0;
 
             SpellPower.Result power;
             if (useRealAttributes) {
@@ -1303,8 +1306,6 @@ public class SpellHelper {
                     var healing = new EstimatedValue(power.nonCriticalValue(), power.forcedCriticalValue())
                             .multiply(healData.spell_power_coefficient);
                     healEffects.add(healing);
-                }
-                case STATUS_EFFECT, FIRE, SPAWN -> {
                 }
             }
         }
