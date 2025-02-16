@@ -10,11 +10,14 @@ import net.minecraft.util.math.Vec3d;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.spell.fx.ParticleBatch;
 import net.spell_engine.config.ServerConfig;
+import net.spell_engine.internals.SpellCooldownManager;
 import net.spell_engine.internals.casting.SpellCast;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Packets {
 
@@ -110,6 +113,39 @@ public class Packets {
             var spellId = Identifier.of(buffer.readString());
             int duration = buffer.readInt();
             return new SpellCooldown(spellId, duration);
+        }
+    }
+
+    public record SpellCooldownSync(int baseTick, Map<Identifier, SpellCooldownManager.Entry> cooldowns) implements CustomPayload {
+        public static Identifier ID = Identifier.of(SpellEngineMod.ID, "cooldown_sync");
+        public static final CustomPayload.Id<SpellCooldownSync> PACKET_ID = new CustomPayload.Id<>(ID);
+        public static final PacketCodec<RegistryByteBuf, SpellCooldownSync> CODEC = PacketCodec.of(SpellCooldownSync::write, SpellCooldownSync::read);
+        @Override
+        public Id<? extends CustomPayload> getId() {
+            return PACKET_ID;
+        }
+
+        public void write(RegistryByteBuf buffer) {
+            buffer.writeInt(baseTick);
+            buffer.writeInt(cooldowns.size());
+            for (var entry: cooldowns.entrySet()) {
+                buffer.writeString(entry.getKey().toString());
+                buffer.writeInt(entry.getValue().startTick());
+                buffer.writeInt(entry.getValue().endTick());
+            }
+        }
+
+        public static SpellCooldownSync read(RegistryByteBuf buffer) {
+            int baseTick = buffer.readInt();
+            int size = buffer.readInt();
+            var cooldowns = new HashMap<Identifier, SpellCooldownManager.Entry>();
+            for (int i = 0; i < size; ++i) {
+                var spellId = Identifier.of(buffer.readString());
+                var startTick = buffer.readInt();
+                var endTick = buffer.readInt();
+                cooldowns.put(spellId, new SpellCooldownManager.Entry(startTick, endTick));
+            }
+            return new SpellCooldownSync(baseTick, cooldowns);
         }
     }
 

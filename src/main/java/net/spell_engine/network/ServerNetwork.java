@@ -1,6 +1,7 @@
 package net.spell_engine.network;
 
 import com.google.common.collect.Iterables;
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.fabricmc.fabric.api.networking.v1.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.Packet;
@@ -12,6 +13,7 @@ import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.config.ServerConfig;
 import net.spell_engine.internals.casting.SpellCastSyncHelper;
 import net.spell_engine.internals.SpellHelper;
+import net.spell_engine.internals.casting.SpellCasterEntity;
 import net.spell_engine.internals.container.SpellAssignments;
 import net.spell_engine.internals.target.SpellTarget;
 
@@ -64,6 +66,7 @@ public class ServerNetwork {
         PayloadTypeRegistry.playC2S().register(Packets.SpellCastSync.PACKET_ID, Packets.SpellCastSync.CODEC);
         PayloadTypeRegistry.playC2S().register(Packets.SpellRequest.PACKET_ID, Packets.SpellRequest.CODEC);
         PayloadTypeRegistry.playS2C().register(Packets.SpellCooldown.PACKET_ID, Packets.SpellCooldown.CODEC);
+        PayloadTypeRegistry.playS2C().register(Packets.SpellCooldownSync.PACKET_ID, Packets.SpellCooldownSync.CODEC);
         PayloadTypeRegistry.playS2C().register(Packets.ParticleBatches.PACKET_ID, Packets.ParticleBatches.CODEC);
         PayloadTypeRegistry.playS2C().register(Packets.SpellAnimation.PACKET_ID, Packets.SpellAnimation.CODEC);
 
@@ -114,6 +117,13 @@ public class ServerNetwork {
                 var target = new SpellTarget.SearchResult(targets, packet.location());
                 SpellHelper.performSpell(world, player, spellEntry.get(), target, packet.action(), packet.progress());
             });
+        });
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            ((SpellCasterEntity)handler.getPlayer()).getCooldownManager().pushSync();
+        });
+        ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register((player, origin, target) -> {
+            ((SpellCasterEntity)player).getCooldownManager().pushSync();
         });
     }
 

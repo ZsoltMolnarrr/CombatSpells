@@ -3,6 +3,7 @@ package net.spell_engine.internals;
 import com.google.common.collect.Maps;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -12,6 +13,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class SpellCooldownManager {
+    public record Entry(int startTick, int endTick) {
+        int timeLeft(int currentTick) {
+            return Math.max(0, endTick - currentTick);
+        }
+    }
     private final Map<Identifier, Entry> entries = Maps.newHashMap();
     private int tick;
 
@@ -79,9 +85,40 @@ public class SpellCooldownManager {
         }
     }
 
-    record Entry(int startTick, int endTick) {
-        int timeLeft(int currentTick) {
-            return Math.max(0, endTick - currentTick);
+    private static final String NBT_KEY = "spell_engine_cooldowns";
+    public void writeCustomDataToNbt(NbtCompound nbt) {
+        NbtCompound cooldowns = new NbtCompound();
+        for (var entry: entries.entrySet()) {
+            var spell = entry.getKey();
+            var cooldown = entry.getValue();
+            NbtCompound cooldownData = new NbtCompound();
+            cooldownData.putInt("start", cooldown.startTick - tick);
+            cooldownData.putInt("end", cooldown.endTick - tick);
+            cooldowns.put(spell.toString(), cooldownData);
         }
+        nbt.put(NBT_KEY, cooldowns);
+    }
+
+    public void readCustomDataFromNbt(NbtCompound nbt) {
+        NbtCompound cooldowns = nbt.getCompound(NBT_KEY);
+        for (var key: cooldowns.getKeys()) {
+            var spell = Identifier.of(key);
+            var cooldownData = cooldowns.getCompound(key);
+            var start = cooldownData.getInt("start");
+            var end = cooldownData.getInt("end");
+            entries.put(spell, new Entry(start, end));
+        }
+    }
+
+    public void pushSync() {
+        if (owner instanceof ServerPlayerEntity serverPlayer) {
+            ServerPlayNetworking.send(serverPlayer, new Packets.SpellCooldownSync(this.tick, Map.copyOf(this.entries)));
+        }
+    }
+
+    public void acceptSync(int baseTick, Map<Identifier, Entry> cooldowns) {
+        this.tick = baseTick;
+        this.entries.clear();
+        this.entries.putAll(cooldowns);
     }
 }

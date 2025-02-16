@@ -1,3 +1,9 @@
+# 1.5.1
+
+Functional changes:
+- Spell Cooldowns are now persisted (between game sessions) and synchronized
+- Attempt to fix spell tooltip power estimation causing rare crashes
+
 # 1.5.0
 
 IMPORTANT DISCLAIMER:

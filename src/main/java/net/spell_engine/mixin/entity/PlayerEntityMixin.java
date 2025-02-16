@@ -5,6 +5,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.client.animation.AnimatablePlayer;
@@ -135,5 +136,17 @@ public class PlayerEntityMixin implements SpellCasterEntity {
             return spell.target.beam;
         }
         return null;
+    }
+
+    // MARK: Persistence
+
+    @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
+    public void writeCustomDataToNbt_TAIL_SpellEngine(NbtCompound nbt, CallbackInfo ci) {
+        spellCooldownManager.writeCustomDataToNbt(nbt);
+    }
+
+    @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
+    public void readCustomDataFromNbt_TAIL_SpellEngine(NbtCompound nbt, CallbackInfo ci) {
+        spellCooldownManager.readCustomDataFromNbt(nbt);
     }
 }
