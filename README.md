@@ -54,7 +54,7 @@ Check out the various tags (for items, entities, spells) [here](src/main/java/ne
 
 ### Commands
 
-Coming soon...
+- `/spell_cooldowns` command (added in Spell Engine 1.5.1). Use to reset specific or all spell cooldowns of given players.
 
 ## 📦️ Game Content
 

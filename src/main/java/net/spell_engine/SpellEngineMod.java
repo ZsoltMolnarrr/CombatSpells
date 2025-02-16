@@ -17,6 +17,7 @@ import net.spell_engine.api.spell.ExternalSpellSchools;
 import net.spell_engine.api.spell.registry.SpellRegistry;
 import net.spell_engine.config.ServerConfig;
 import net.spell_engine.config.ServerConfigWrapper;
+import net.spell_engine.internals.SpellEngineCommands;
 import net.spell_engine.internals.SpellTriggers;
 import net.spell_engine.internals.container.SpellAssignments;
 import net.spell_engine.internals.container.SpellContainerSource;
@@ -63,6 +64,7 @@ public class SpellEngineMod {
         SpellTriggers.init();
         SpellContainerSource.init();
         StatusEffectClassification.init();
+        SpellEngineCommands.register();
     }
 
     public static void registerSpellBinding() {

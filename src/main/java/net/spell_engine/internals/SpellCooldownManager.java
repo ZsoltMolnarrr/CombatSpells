@@ -8,6 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.spell_engine.network.Packets;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -108,6 +109,15 @@ public class SpellCooldownManager {
             var end = cooldownData.getInt("end");
             entries.put(spell, new Entry(start, end));
         }
+    }
+
+    public void reset(@Nullable Identifier spellId) {
+        if (spellId == null) {
+            entries.clear();
+        } else {
+            entries.remove(spellId);
+        }
+        pushSync();
     }
 
     public void pushSync() {
