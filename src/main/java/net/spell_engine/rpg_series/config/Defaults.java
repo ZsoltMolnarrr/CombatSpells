@@ -21,6 +21,10 @@ public class Defaults {
         return "#rpg_series:tier_" + tier + "_equipment";
     }
 
+    private static String relics(int tier) {
+        return "#rpg_series:tier_" + tier + "_relics";
+    }
+
     static {
         var WG = "#rpg_series:golden_weapons";
         var W0 = "#rpg_series:tier_0_weapons";
