@@ -19,6 +19,9 @@ public class AttributeModifier {
     public float value = 0;
     public EntityAttributeModifier.Operation operation = EntityAttributeModifier.Operation.ADD_VALUE;
 
+    public AttributeModifier(Identifier attribute, float value, EntityAttributeModifier.Operation operation) {
+        this(attribute.toString(), value, operation);
+    }
     public AttributeModifier(String attribute, float value, EntityAttributeModifier.Operation operation) {
         this.attribute = attribute;
         this.value = value;
