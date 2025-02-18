@@ -8,6 +8,9 @@ Functional changes:
 - Fix knockback direction of directly delivered spell impacts
 - Fix spell cloud data tracker
 
+API changes:
+- Add maxSpellCount option for spell book creation
+
 # 1.5.0
 
 IMPORTANT DISCLAIMER:

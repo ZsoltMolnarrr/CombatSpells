@@ -42,7 +42,11 @@ public class SpellBooks {
     }
 
     public static ISpellBookItem create(Identifier poolId, SpellContainer.ContentType contentType) {
-        var container = new SpellContainer(contentType, false, poolId.toString(), 0, List.of());
+        return create(poolId, contentType, 0);
+    }
+
+    public static ISpellBookItem create(Identifier poolId, SpellContainer.ContentType contentType, int maxSpellCount) {
+        var container = new SpellContainer(contentType, false, poolId.toString(), maxSpellCount, List.of());
         SpellAssignments.book_containers.put(itemIdFor(poolId), container);
         ISpellBookItem book = null;
         TrinketsCompat.init();
