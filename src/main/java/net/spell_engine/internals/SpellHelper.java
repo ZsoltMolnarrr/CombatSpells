@@ -23,7 +23,6 @@ import net.minecraft.world.event.GameEvent;
 import net.spell_engine.SpellEngineMod;
 import net.spell_engine.api.effect.EntityImmunity;
 import net.spell_engine.api.effect.StatusEffectClassification;
-import net.spell_engine.api.spell.container.SpellContainerHelper;
 import net.spell_engine.api.tags.SpellEngineEntityTags;
 import net.spell_engine.api.entity.SpellEntity;
 import net.spell_engine.api.spell.Spell;
@@ -242,7 +241,7 @@ public class SpellHelper {
                         success = deliver(world, spellEntry, player, List.of(), context, null);
                     }
                     case CASTER -> {
-                        var targetsWithContext = List.of(new TargetWithContext(player, context.position(player.getPos())));
+                        var targetsWithContext = List.of(new TargetWithContext(player, context));
                         success = deliver(world, spellEntry, player, targetsWithContext, context, null);
                     }
                     case AIM -> {
@@ -251,7 +250,7 @@ public class SpellHelper {
                         List<TargetWithContext> targetsWithContext = List.of();
                         if (firstTarget.isPresent()) {
                             var target = firstTarget.get();
-                            var targetSpecificContext = context.position(target.getPos());
+                            var targetSpecificContext = context;
                             targetsWithContext = List.of(new TargetWithContext(target, targetSpecificContext));
                         }
                         if (!aim.required || firstTarget.isPresent()) {
@@ -262,7 +261,7 @@ public class SpellHelper {
                         var center = player.getPos().add(0, player.getHeight() / 2F, 0);
                         var area = spell.target.area;
                         var range = getRange(player, spell) * player.getScale();
-                        final var centeredContext = context.position(center);
+                        final var centeredContext = context; // .position(center);
                         double squaredRange = range * range;
                         var targetsWithContext = targets.stream().map(target -> {
                             float distanceBasedMultiplier = 1F;
@@ -279,7 +278,7 @@ public class SpellHelper {
                         success = true; // Always true, otherwise area spells don't go to CD without targets
                     }
                     case BEAM, FROM_TRIGGER -> {
-                        var targetsWithContext = targets.stream().map(target -> new TargetWithContext(target, context.position(target.getPos()))).toList();
+                        var targetsWithContext = targets.stream().map(target -> new TargetWithContext(target, context)).toList();
                         success = deliver(world, spellEntry, player, targetsWithContext, context, null);
                     }
                     default -> throw new IllegalStateException("Unexpected value: " + targeting.type);
@@ -323,9 +322,10 @@ public class SpellHelper {
         switch (spell.deliver.type) {
             case DIRECT -> {
                 var anySuccess = false;
+                var casterPos = caster.getPos().add(0, caster.getHeight() / 2F, 0);
                 for(var targeted: targets) {
                     var target = targeted.entity;
-                    var targetSpecificContext = targeted.context;
+                    var targetSpecificContext = targeted.context.position(casterPos);
                     var result = performImpacts(world, caster, target, target, spellEntry, spell.impacts, targetSpecificContext);
                     anySuccess = anySuccess || result;
                 }
