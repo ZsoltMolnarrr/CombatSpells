@@ -5,6 +5,8 @@ Functional changes:
 - Spell Cooldowns are now persisted (between game sessions) and synchronized
 - Fix spell tooltip power estimation causing rare crashes
 - Fix overly reactive spell hotbar
+- Fix knockback direction of directly delivered spell impacts
+- Fix spell cloud data tracker
 
 # 1.5.0
 
