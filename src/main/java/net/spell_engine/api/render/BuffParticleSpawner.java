@@ -11,7 +11,7 @@ public class BuffParticleSpawner implements CustomParticleStatusEffect.Spawner {
     public BuffParticleSpawner(String particleId, int particleCount, float min_speed, float max_speed) {
         this.particles = new ParticleBatch(
                 particleId,
-                ParticleBatch.Shape.PIPE,
+                ParticleBatch.Shape.WIDE_PIPE,
                 ParticleBatch.Origin.FEET,
                 null,
                 particleCount,

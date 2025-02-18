@@ -7,6 +7,7 @@ Functional changes:
 - Fix overly reactive spell hotbar
 - Fix knockback direction of directly delivered spell impacts
 - Fix spell cloud data tracker
+- Fix BuffParticleSpawner spawned batch shape
 
 API changes:
 - Add maxSpellCount option for spell book creation
