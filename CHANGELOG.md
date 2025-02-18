@@ -11,6 +11,7 @@ Functional changes:
 
 API changes:
 - Add maxSpellCount option for spell book creation
+- Extend BuffParticleSpawner constructors
 
 # 1.5.0
 
