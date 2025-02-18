@@ -119,12 +119,14 @@ public class SpellCloud extends Entity implements Ownable {
 
     public void onTrackedDataSet(TrackedData<?> data) {
         super.onTrackedDataSet(data);
-        var rawSpellId = this.getDataTracker().get(SPELL_ID_TRACKER);
-        if (rawSpellId != null && !rawSpellId.isEmpty()) {
-            this.spellId = Identifier.of(rawSpellId);
+        if (getWorld().isClient) {
+            var rawSpellId = this.getDataTracker().get(SPELL_ID_TRACKER);
+            if (rawSpellId != null && !rawSpellId.isEmpty()) {
+                this.spellId = Identifier.of(rawSpellId);
+            }
+            this.dataIndex = this.getDataTracker().get(DATA_INDEX_TRACKER);
+            this.calculateDimensions();
         }
-        this.dataIndex = this.getDataTracker().get(DATA_INDEX_TRACKER);
-        this.calculateDimensions();
     }
 
     // MARK: Persistence
