@@ -8,12 +8,14 @@ import net.minecraft.particle.SimpleParticleType;
 import net.minecraft.util.math.random.Random;
 import net.spell_engine.fx.SpellEngineParticles;
 
-public class SpellVariantParticle extends SpriteBillboardParticle  {
+public class UniversalSpellParticle extends SpriteBillboardParticle  {
     private static final Random RANDOM = Random.create();
     private final SpriteProvider spriteProvider;
     private final SpellEngineParticles.MagicParticleFamily.Motion motion;
+    public boolean glows = true;
+    public boolean translucent = true;
 
-    SpellVariantParticle(ClientWorld world, SpriteProvider spriteProvider, SpellEngineParticles.MagicParticleFamily.Motion motion, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+    UniversalSpellParticle(ClientWorld world, SpriteProvider spriteProvider, SpellEngineParticles.MagicParticleFamily.Motion motion, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         super(world, x, y, z, 0.5 - RANDOM.nextDouble(), velocityY, 0.5 - RANDOM.nextDouble());
         this.spriteProvider = spriteProvider;
         this.motion = motion;
@@ -57,37 +59,54 @@ public class SpellVariantParticle extends SpriteBillboardParticle  {
         }
 
         this.setSpriteForAge(spriteProvider);
+        this.collidesWithWorld = false;
     }
 
     @Override
     public ParticleTextureSheet getType() {
-        return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
+        if (glows) {
+            if (translucent) {
+                return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
+            } else {
+                return ParticleTextureSheet.PARTICLE_SHEET_LIT;
+            }
+        } else {
+            if (translucent) {
+                return ParticleTextureSheet.PARTICLE_SHEET_TRANSLUCENT;
+            } else {
+                return ParticleTextureSheet.PARTICLE_SHEET_OPAQUE;
+            }
+        }
     }
 
     @Override
     public int getBrightness(float tint) {
-        return 255;
+        if (glows) {
+            return 255;
+        } else {
+            return super.getBrightness(tint);
+        }
     }
 
     // MARK: Factories
 
     @Environment(EnvType.CLIENT)
-    public static class Factory implements ParticleFactory<SimpleParticleType> {
+    public static class MagicVariant implements ParticleFactory<SimpleParticleType> {
         private final SpriteProvider spriteProvider;
         private final SpellEngineParticles.MagicParticleFamily.Variant particleVariant;
 
-        public Factory(SpriteProvider spriteProvider, SpellEngineParticles.MagicParticleFamily.Variant particleVariant) {
+        public MagicVariant(SpriteProvider spriteProvider, SpellEngineParticles.MagicParticleFamily.Variant particleVariant) {
             this.spriteProvider = spriteProvider;
             this.particleVariant = particleVariant;
         }
 
         public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
-            var particle = new SpellVariantParticle(clientWorld, this.spriteProvider, particleVariant.motion(), d, e, f, g, h, i);
+            var particle = new UniversalSpellParticle(clientWorld, this.spriteProvider, particleVariant.motion(), d, e, f, g, h, i);
+            particle.glows = true;
             float j = clientWorld.random.nextFloat() * 0.5F + 0.35F;
             var color = particleVariant.color();
             particle.setColor(color.red() * j, color.green() * j, color.blue() * j);
             particle.scale *= 0.75f;
-            particle.collidesWithWorld = false;
 
             switch (particleVariant.shape()) {
                 case SPELL, STRIPE -> {
@@ -98,6 +117,24 @@ public class SpellVariantParticle extends SpriteBillboardParticle  {
                 }
             }
 
+            return particle;
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static class Opaque implements ParticleFactory<SimpleParticleType> {
+        private final SpriteProvider spriteProvider;
+        private final SpellEngineParticles.MagicParticleFamily.Motion motion;
+
+        public Opaque(SpriteProvider spriteProvider, SpellEngineParticles.MagicParticleFamily.Motion motion) {
+            this.spriteProvider = spriteProvider;
+            this.motion = motion;
+        }
+
+        public Particle createParticle(SimpleParticleType SimpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+            var particle = new UniversalSpellParticle(clientWorld, this.spriteProvider, motion, d, e, f, g, h, i);
+            float j = clientWorld.random.nextFloat() * 0.25F + 0.7F;
+            particle.setColor(j,j,j);
             return particle;
         }
     }

@@ -148,6 +148,7 @@ public class SpellEngineParticles {
     public static final Entry electric_arc_A = add(new Entry("electric_arc_a", Texture.of("electric_arc_a", 8)));
     public static final Entry electric_arc_B = add(new Entry("electric_arc_b", Texture.of("electric_arc_b", 8)));
     public static final Entry smoke_medium = add(new Entry("smoke_medium", Texture.of("smoke_medium", 9)));
+    public static final Entry shield_small = add(new Entry("shield_small", Texture.of("shield_small")));
     public static final Entry weakness_smoke = add(new Entry("weakness_smoke", Texture.of("smoke_medium", 9)));
     public static final Entry sign_charge = add(new Entry("sign_charge", Texture.of("sign_speed")));
 

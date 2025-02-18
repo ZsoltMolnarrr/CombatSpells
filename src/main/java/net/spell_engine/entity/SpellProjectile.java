@@ -513,6 +513,10 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         if (getWorld().isClient) {
             return;
         }
+        var spellEntry = this.getSpellEntry();
+        if (spellEntry == null) {
+            return;
+        }
         var position = this.getPos();
         var spawnCount = this.perks.chain_reaction_size;
         var launchVector = new Vec3d(1, 0, 0).multiply(this.getVelocity().length());
@@ -526,7 +530,7 @@ public class SpellProjectile extends ProjectileEntity implements FlyingSpellEnti
         for (int i = 0; i < spawnCount; i++) {
             var projectile = new SpellProjectile(getWorld(), (LivingEntity)this.getOwner(),
                     position.getX(), position.getY(), position.getZ(),
-                    this.getBehaviour(), null, context, this.perks.copy());
+                    this.getBehaviour(), spellEntry, context, this.perks.copy());
 
             var angle = launchAngle * i + launchAngleOffset;
             projectile.setVelocity(launchVector.rotateY((float) Math.toRadians(angle)));

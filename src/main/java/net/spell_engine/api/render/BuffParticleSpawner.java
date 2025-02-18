@@ -10,7 +10,7 @@ import java.util.List;
 public class BuffParticleSpawner implements CustomParticleStatusEffect.Spawner {
     private final ParticleBatch[] particles;
 
-    private static ParticleBatch defaultBatch(String particleId, int particleCount, float min_speed, float max_speed) {
+    private static ParticleBatch defaultBatch(String particleId, float particleCount, float min_speed, float max_speed) {
         return new ParticleBatch(
                 particleId,
                 ParticleBatch.Shape.WIDE_PIPE,
@@ -23,18 +23,18 @@ public class BuffParticleSpawner implements CustomParticleStatusEffect.Spawner {
                 -0.2F);
     }
 
-    public BuffParticleSpawner(List<String> particleIds, int particleCount, float min_speed, float max_speed) {
+    public BuffParticleSpawner(List<String> particleIds, float particleCount, float min_speed, float max_speed) {
         this.particles = new ParticleBatch[particleIds.size()];
         for (int i = 0; i < particleIds.size(); i++) {
             particles[i] = defaultBatch(particleIds.get(i), particleCount, min_speed, max_speed);
         }
     }
 
-    public BuffParticleSpawner(String particleId, int particleCount, float min_speed, float max_speed) {
+    public BuffParticleSpawner(String particleId, float particleCount, float min_speed, float max_speed) {
         this.particles = new ParticleBatch[] { defaultBatch(particleId, particleCount, min_speed, max_speed) };
     }
 
-    public BuffParticleSpawner(String particleId, int particleCount) {
+    public BuffParticleSpawner(String particleId, float particleCount) {
         this(particleId, particleCount, 0.11F, 0.12F);
     }
 

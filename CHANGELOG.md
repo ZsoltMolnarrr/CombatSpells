@@ -8,6 +8,7 @@ Functional changes:
 - Fix knockback direction of directly delivered spell impacts
 - Fix spell cloud data tracker
 - Fix BuffParticleSpawner spawned batch shape
+- Fix spell projectile chain reaction forwarding null spell entry
 
 API changes:
 - Add maxSpellCount option for spell book creation

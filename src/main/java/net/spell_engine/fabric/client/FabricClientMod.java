@@ -60,7 +60,7 @@ public class FabricClientMod implements ClientModInitializer {
 
         for (var variant: SpellEngineParticles.MAGIC_FAMILY_VARIANTS.get()) {
             ParticleFactoryRegistry.getInstance().register(
-                    variant.particleType(), (provider) -> new SpellVariantParticle.Factory(provider, variant)
+                    variant.particleType(), (provider) -> new UniversalSpellParticle.MagicVariant(provider, variant)
             );
         }
 
@@ -86,6 +86,9 @@ public class FabricClientMod implements ClientModInitializer {
         ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.weakness_smoke.particleType(), SpellFlameParticle.WeaknessSmokeFactory::new);
 
         ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.sign_charge.particleType(), SpellFlameParticle.RageSignFactory::new);
+        ParticleFactoryRegistry.getInstance().register(
+                SpellEngineParticles.shield_small.particleType(), (provider) -> new UniversalSpellParticle.Opaque(provider, SpellEngineParticles.MagicParticleFamily.Motion.DECELERATE)
+        );
         ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.dripping_blood.particleType(), SpellSnowflakeParticle.DrippingBloodFactory::new);
         ParticleFactoryRegistry.getInstance().register(SpellEngineParticles.roots.particleType(), ShiftedParticle.RootsFactory::new);
 
