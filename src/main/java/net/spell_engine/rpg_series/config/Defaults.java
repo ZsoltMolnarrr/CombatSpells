@@ -174,6 +174,7 @@ public class Defaults {
                         .add(A2, true)
                         .add(A3, true)
                         .add(X4)
+                        .add(R4)
                 ));
 
         List.of("minecraft:chests/trial_chambers/corridor",
