@@ -42,6 +42,12 @@ public class Defaults {
         var X2 = "#rpg_series:tier_2_accessories";
         var X3 = "#rpg_series:tier_3_accessories";
         var X4 = "#rpg_series:tier_4_accessories";
+        var R1 = relics(1);
+        var R2 = relics(2);
+        var R3 = relics(3);
+        var R4 = relics(4);
+
+        var DRAGON = "#rpg_series:theme_loot_dragon";
 
         itemLootConfig = new LootConfig();
         var items = itemLootConfig.injectors;
@@ -102,6 +108,7 @@ public class Defaults {
                             .add(W1, true)
                             .add(A1, true)
                             .add(X1, true)
+                            .add(R1)
                     );
                     scrolls.put(id, new LootConfig.Pool()
                             .rolls(0.5)
@@ -133,6 +140,7 @@ public class Defaults {
                 .add(A2, true)
                 .add(W3, true)
                 .add(X3)
+                .add(R2)
         );
         scrolls.put("minecraft:chests/bastion_treasure", new LootConfig.Pool()
                 .rolls(0.5)
@@ -182,6 +190,7 @@ public class Defaults {
                         .rolls(0.5)
                         .add(W1)
                         .add(A1)
+                        .add(R1)
                     );
                     scrolls.put(id, new LootConfig.Pool()
                         .rolls(0.5)
@@ -197,6 +206,7 @@ public class Defaults {
                         .add(W2, true)
                         .add(A2, true)
                         .add(X2)
+                        .add(R2)
                     );
                     scrolls.put(id, new LootConfig.Pool()
                         .rolls(0.5)
@@ -211,18 +221,32 @@ public class Defaults {
                         .rolls(1)
                         .add(W3, true)
                         .add(X4)
+                        .add(R3)
                     );
                 });
 
         // BOSSES
 
-        // Vanilla bosses
+        // Vanilla demi bosses
+
+        items.put("minecraft:entities/evoker", new LootConfig.Pool()
+                .rolls(0.5F)
+                .add(R1)
+        );
+
+        items.put("minecraft:entities/illusioner", new LootConfig.Pool()
+                .rolls(0.5F)
+                .add(R1)
+        );
+
+        // Vanilla large bosses
 
         items.put("minecraft:entities/ender_dragon", new LootConfig.Pool()
                 .rolls(3)
                 .add(W3, true)
                 .add(A3, true)
                 .add(X4)
+                .add(DRAGON)
         );
 
         items.put("minecraft:entities/wither", new LootConfig.Pool()
@@ -230,6 +254,7 @@ public class Defaults {
                 .add(W3, true)
                 .add(A3, true)
                 .add(X3)
+                .add(R2)
         );
 
         items.put("minecraft:entities/warden", new LootConfig.Pool()
@@ -237,6 +262,7 @@ public class Defaults {
                 .add(W2, true)
                 .add(A2, true)
                 .add(X2)
+                .add(R2)
         );
 
         // MineCells bosses
@@ -246,6 +272,7 @@ public class Defaults {
                 .add(W2, true)
                 .add(A2, true)
                 .add(X4)
+                .add(R2)
         );
 
         items.put("minecells:entities/concierge", new LootConfig.Pool()
@@ -253,6 +280,7 @@ public class Defaults {
                 .add(W2, true)
                 .add(A2, true)
                 .add(X4)
+                .add(R3)
         );
 
         // Bosses of Mass Destruction mod
@@ -262,6 +290,7 @@ public class Defaults {
                 .add(W2, true)
                 .add(A2, true)
                 .add(X2)
+                .add(R2)
         );
 
         items.put("bosses_of_mass_destruction:entities/void_blossom", new LootConfig.Pool()
@@ -269,6 +298,7 @@ public class Defaults {
                 .add(W2, true)
                 .add(A2, true)
                 .add(X2)
+                .add(R2)
         );
 
         items.put("bosses_of_mass_destruction:chests/gauntlet", new LootConfig.Pool()
@@ -278,6 +308,7 @@ public class Defaults {
                 .add(W3, true)
                 .add(A3, true)
                 .add(X3)
+                .add(R3)
         );
 
         items.put("bosses_of_mass_destruction:chests/obsidilith", new LootConfig.Pool()
@@ -285,6 +316,7 @@ public class Defaults {
                 .add(W4, true)
                 .add(A3, true)
                 .add(X4)
+                .add(R4)
         );
 
         // Aehter mod
@@ -296,12 +328,14 @@ public class Defaults {
 
         items.put("aether:chests/dungeon/silver/silver_dungeon_reward", new LootConfig.Pool()
                 .rolls(0.5)
-                .add(W4_AE)
+                .add(W4_AE).weight(2)
+                .add(R2)
         );
 
         items.put("aether:chests/dungeon/gold/gold_dungeon_reward", new LootConfig.Pool()
                 .rolls(1)
-                .add(W4_AE, true)
+                .add(W4_AE, true).weight(2)
+                .add(R3)
         );
 
         // Aether villages
@@ -372,6 +406,7 @@ public class Defaults {
                 .add(W4, true)
                 .add(A3, true)
                 .add(X4)
+                .add(R4)
         );
         items.put("nova_structures:chests/end_castle/vault_slope", new LootConfig.Pool()
                 .rolls(0.5)
@@ -391,6 +426,7 @@ public class Defaults {
                 .rolls(0.5)
                 .add(W3, true)
                 .add(A2)
+                .add(R2)
         );
         scrolls.put("nova_structures:chests/nether_keep/vault_keep", new LootConfig.Pool()
                 .rolls(0.5)
@@ -403,6 +439,7 @@ public class Defaults {
                 .rolls(0.5)
                 .add(W2, true)
                 .add(X2, true)
+                .add(R1)
         );
         scrolls.put("nova_structures:chests/trident_trial_monument/ttm_common_vault", new LootConfig.Pool()
                 .rolls(0.5)
@@ -1266,6 +1303,7 @@ public class Defaults {
                 .add(W3, true)
                 .add(A3, true)
                 .add(X3)
+                .add(R3)
         );
     }
 }

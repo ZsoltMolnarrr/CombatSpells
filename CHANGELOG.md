@@ -2,7 +2,8 @@
 
 Functional changes:
 - Add `/spell_cooldown` command to reset specific or all spell cooldowns for given players
-- Spell Cooldowns are now persisted (between game sessions) and synchronized
+- Add Spell Cooldown are now persistence and synchronization (between game sessions and dimension changes)
+- Add relic loot tags and injection entries (bumped loot config: `config/rpg_series/loot_equipment_v1`)
 - Fix spell tooltip power estimation causing rare crashes
 - Fix overly reactive spell hotbar
 - Fix knockback direction of directly delivered spell impacts
